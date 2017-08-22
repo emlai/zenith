@@ -3,10 +3,8 @@
 #include "keyboard.h"
 #include <functional>
 
-void Engine::run(Window& window)
+void Engine::run()
 {
-    this->window = &window;
-
     for (running = true; running && !window.shouldClose();)
     {
         auto previousTick = getTick();

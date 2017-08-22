@@ -3,11 +3,14 @@
 #include "tile.h"
 #include <vector>
 
+class Window;
+
 class Area : public Entity
 {
 public:
-    Area();
+    Area(const Config& groundConfig, const Texture& groundSpriteSheet);
     void exist() override;
+    void render(Window&, int zIndex) const;
     Tile& getTileAt(Vector2 position) { return tiles[position.x + size * position.y]; }
     const Tile& getTileAt(Vector2 position) const { return tiles[position.x + size * position.y]; }
     static const int size = 64;

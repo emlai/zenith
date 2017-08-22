@@ -3,8 +3,12 @@
 #include "msgsystem.h"
 #include "engine/math.h"
 
-Game::Game()
-:   creatureConfig("data/config/creature.cfg"),
+Game::Game(Window& window)
+:   Engine(window),
+    creatureConfig("data/config/creature.cfg"),
+    groundConfig("data/config/ground.cfg"),
+    groundSpriteSheet(getWindow(), "data/graphics/ground.bmp"),
+    currentArea(groundConfig, groundSpriteSheet),
     framesUntilTick(framesPerTick)
 {
     mapKey(Esc, [this] { stop(); });
@@ -14,10 +18,9 @@ Game::Game()
     mapKey(DownArrow, [this] { player->tryToMove(South); });
     mapKey(UpArrow, [this] { player->tryToMove(North); });
 #ifdef DEBUG
-    mapKey(Tab, [this] { enterCommandMode(*getWindow()); });
+    mapKey(Tab, [this] { enterCommandMode(getWindow()); });
 #endif
 
-    rng.seed();
     player = getRandomTile(currentArea).spawnCreature("Human", creatureConfig);
 }
 
@@ -34,6 +37,7 @@ void Game::updateLogic()
 
 void Game::render(Window& window) const
 {
+    currentArea.render(window, 0);
     printPlayerInformation(window.getFont());
     MessageSystem::drawMessages(window.getFont());
 }

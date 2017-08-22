@@ -53,8 +53,9 @@ int main(int argc, const char** argv)
         {
             case NewGame:
             {
-                Game game;
-                game.run(window);
+                rng.seed();
+                Game game(window);
+                game.run();
                 break;
             }
             case LoadGame:

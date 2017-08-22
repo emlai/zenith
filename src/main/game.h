@@ -12,7 +12,7 @@
 class Game : public Engine
 {
 public:
-    Game();
+    Game(Window&);
 
 private:
     void render(Window&) const override;
@@ -22,8 +22,11 @@ private:
     static void printStat(BitmapFont&, const std::string&, int current, int max, Color16);
     static void printAttribute(BitmapFont&, const std::string&, int current);
 
-    Area currentArea;
     Config creatureConfig;
+    Config groundConfig;
+    Texture groundSpriteSheet;
+
+    Area currentArea;
     Creature* player;
     int framesUntilTick;
     static const int framesPerTick = 4;

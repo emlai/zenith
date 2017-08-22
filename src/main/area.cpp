@@ -3,19 +3,25 @@
 
 const Vector2 Area::sizeVector = Vector2(Area::size, Area::size);
 
-Area::Area()
+Area::Area(const Config& groundConfig, const Texture& groundSpriteSheet)
 {
     tiles.reserve(size * size);
 
     for (Vector2 pos(0, 0); pos.y < size; ++pos.y)
         for (pos.x = 0; pos.x < size; ++pos.x)
-            tiles.emplace_back(*this, pos);
+            tiles.emplace_back(*this, pos, "Grass", groundConfig, groundSpriteSheet);
 }
 
 void Area::exist()
 {
     for (auto& tile : tiles)
         tile.exist();
+}
+
+void Area::render(Window& window, int zIndex) const
+{
+    for (const auto& tile : tiles)
+        tile.render(window, zIndex);
 }
 
 const Tile& getRandomTile(const Area& area)

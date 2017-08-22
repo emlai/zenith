@@ -4,15 +4,20 @@
 #include "creature.h"
 #include "engine/config.h"
 #include "engine/geometry.h"
+#include "engine/sprite.h"
+#include <boost/utility/string_ref.hpp>
 #include <vector>
 
 class Area;
+class Window;
 
 class Tile : public Entity
 {
 public:
-    Tile(Area&, Vector2 position);
+    Tile(Area&, Vector2 position, boost::string_ref groundId, const Config& groundConfig,
+         const Texture& groundSpriteSheet);
     void exist() override;
+    void render(Window& window, int zIndex) const;
     template<typename... Args>
     Creature* spawnCreature(Args&&...);
     const auto& getCreatures() const { return creatures; }
@@ -20,7 +25,7 @@ public:
     void transferCreature(Creature&, Tile&);
     Tile* getAdjacentTile(Dir8) const;
     Vector2 getPosition() const { return position; }
-    static const int size = 24;
+    static const int size = 20;
     static const Vector2 sizeVector;
 
 private:
@@ -29,6 +34,7 @@ private:
     std::vector<std::unique_ptr<Creature>> creatures;
     Area& location;
     Vector2 position;
+    Sprite groundSprite;
 };
 
 template<typename... Args>
