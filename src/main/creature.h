@@ -3,11 +3,13 @@
 #include "entity.h"
 #include "engine/config.h"
 #include "engine/geometry.h"
+#include "engine/sprite.h"
 #include "engine/utility.h"
 #include <vector>
 #include <string>
 
 class Tile;
+class Window;
 
 enum Attribute
 {
@@ -53,8 +55,10 @@ const std::string statNames[] = { "HP", "AP", "MP" };
 class Creature final : public Entity
 {
 public:
-    Creature(Tile&, const std::string& id, const Config& creatureDB);
+    Creature(Tile&, const std::string& id, const Config& creatureConfig,
+             const Texture& creatureSpriteSheet);
     void exist() override;
+    void render(Window&) const;
     void tryToMove(Dir8);
     const auto& getTilesUnder() const { return tilesUnder; }
     Tile& getTileUnder(int index) const { return *tilesUnder[index]; }
@@ -88,6 +92,7 @@ private:
     std::vector<int> attributes;
     std::vector<Attribute> displayedAttributes;
     std::vector<std::vector<int>> attributeIndices;
+    Sprite sprite;
     static const int configAttributes[8];
 };
 

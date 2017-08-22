@@ -12,6 +12,6 @@ public:
     void render(Window&, Vector2 position) const;
 
 private:
-    const Texture& texture;
-    const Rect textureRegion;
+    const Texture* texture;
+    Rect textureRegion;
 };

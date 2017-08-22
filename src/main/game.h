@@ -24,6 +24,7 @@ private:
 
     Config creatureConfig;
     Config groundConfig;
+    Texture creatureSpriteSheet;
     Texture groundSpriteSheet;
 
     Area currentArea;

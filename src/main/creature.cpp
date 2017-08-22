@@ -17,7 +17,8 @@ std::vector<std::vector<int>> Creature::initAttributeIndices(const Config& confi
     return config.get<std::vector<std::vector<int>>>(id, "AttributeIndices");
 }
 
-Creature::Creature(Tile& tile, const std::string& id, const Config& config)
+Creature::Creature(Tile& tile, const std::string& id, const Config& config,
+                   const Texture& creatureSpriteSheet)
 :   tilesUnder({&tile}),
     currentHP(0),
     maxHP(0),
@@ -26,7 +27,8 @@ Creature::Creature(Tile& tile, const std::string& id, const Config& config)
     currentMP(0),
     maxMP(0),
     displayedAttributes(initDisplayedAttributes(config, id)),
-    attributeIndices(initAttributeIndices(config, id))
+    attributeIndices(initAttributeIndices(config, id)),
+    sprite(creatureSpriteSheet, getSpriteTextureRegion(config, id))
 {
     generateAttributes(config, id);
 }
@@ -41,6 +43,11 @@ void Creature::regenerate()
     editHP(1);
     editAP(1);
     editMP(1);
+}
+
+void Creature::render(Window& window) const
+{
+    sprite.render(window, getPosition() * Tile::size);
 }
 
 void Creature::generateAttributes(const Config& config, const std::string& id)

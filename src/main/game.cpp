@@ -7,6 +7,7 @@ Game::Game(Window& window)
 :   Engine(window),
     creatureConfig("data/config/creature.cfg"),
     groundConfig("data/config/ground.cfg"),
+    creatureSpriteSheet(getWindow(), "data/graphics/creature.bmp"),
     groundSpriteSheet(getWindow(), "data/graphics/ground.bmp"),
     currentArea(groundConfig, groundSpriteSheet),
     framesUntilTick(framesPerTick)
@@ -21,7 +22,7 @@ Game::Game(Window& window)
     mapKey(Tab, [this] { enterCommandMode(getWindow()); });
 #endif
 
-    player = getRandomTile(currentArea).spawnCreature("Human", creatureConfig);
+    player = getRandomTile(currentArea).spawnCreature("Human", creatureConfig, creatureSpriteSheet);
 }
 
 void Game::updateLogic()
@@ -38,6 +39,7 @@ void Game::updateLogic()
 void Game::render(Window& window) const
 {
     currentArea.render(window, 0);
+    currentArea.render(window, 2);
     printPlayerInformation(window.getFont());
     MessageSystem::drawMessages(window.getFont());
 }
@@ -107,7 +109,7 @@ void Game::enterCommandMode(Window& window)
 void Game::parseCommand(const std::string& command)
 {
     if (command == "respawn")
-        *player = Creature(player->getTileUnder(0), "Human", creatureConfig);
+        *player = Creature(player->getTileUnder(0), "Human", creatureConfig, creatureSpriteSheet);
     else if (command == "clear")
         MessageSystem::clearDebugMessageHistory();
     else if (command == "info")
