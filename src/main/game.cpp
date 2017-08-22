@@ -9,7 +9,7 @@ Game::Game(Window& window)
     groundConfig("data/config/ground.cfg"),
     creatureSpriteSheet(getWindow(), "data/graphics/creature.bmp", Color32(0x5A5268FF)),
     groundSpriteSheet(getWindow(), "data/graphics/ground.bmp"),
-    currentArea(groundConfig, groundSpriteSheet),
+    world(groundConfig, groundSpriteSheet),
     framesUntilTick(framesPerTick)
 {
     mapKey(Esc, [this] { stop(); });
@@ -22,7 +22,7 @@ Game::Game(Window& window)
     mapKey(Tab, [this] { enterCommandMode(getWindow()); });
 #endif
 
-    player = getRandomTile(currentArea).spawnCreature("Human", creatureConfig, creatureSpriteSheet);
+    player = getRandomTile(*world.getArea({0, 0})).spawnCreature("Human", creatureConfig, creatureSpriteSheet);
 }
 
 void Game::updateLogic()
@@ -33,7 +33,7 @@ void Game::updateLogic()
 
     advanceTick();
     framesUntilTick = framesPerTick;
-    currentArea.exist();
+    world.exist();
 }
 
 void Game::render(Window& window) const
@@ -43,8 +43,7 @@ void Game::render(Window& window) const
     window.setView(&playerView);
     window.setViewport(&GUI::viewport);
 
-    currentArea.render(window, 0);
-    currentArea.render(window, 2);
+    world.render(window);
 
     window.setView(nullptr);
     window.setViewport(nullptr);

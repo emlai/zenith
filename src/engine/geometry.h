@@ -111,6 +111,18 @@ inline Vector2Base<T> makeRandomVector(Vector2Base<T> min, Vector2Base<T> max)
     return { randInt(min.x, max.x), randInt(min.y, max.y) };
 }
 
+namespace std
+{
+    template<>
+    struct hash<Vector2>
+    {
+        size_t operator()(Vector2 vector) const
+        {
+            return (vector.x * 73856093) ^ (vector.y * 19349663);
+        }
+    };
+}
+
 struct Rect
 {
     Vector2 position; ///< Top-left corner

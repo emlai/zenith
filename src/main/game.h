@@ -1,7 +1,7 @@
 #pragma once
 
-#include "area.h"
 #include "creature.h"
+#include "world.h"
 #include "engine/keyboard.h"
 #include "engine/window.h"
 #include "engine/engine.h"
@@ -27,7 +27,7 @@ private:
     Texture creatureSpriteSheet;
     Texture groundSpriteSheet;
 
-    Area currentArea;
+    World world;
     Creature* player;
     int framesUntilTick;
     static const int framesPerTick = 4;
