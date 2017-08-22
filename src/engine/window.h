@@ -19,6 +19,7 @@ public:
     void sendCloseRequest();
     void setClearColor(Color32 color) { context.setClearColor(color); }
     void setViewport(const Rect* viewport) { context.setViewport(viewport); }
+    void setView(const Rect* view) { context.setView(view); }
     void setFont(BitmapFont& font) { context.setFont(font); }
     BitmapFont& getFont() { return context.getFont(); }
     void setAnimationFrameRate(int fps) { context.setAnimationFrameRate(fps); }

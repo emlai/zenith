@@ -38,10 +38,17 @@ void Game::updateLogic()
 
 void Game::render(Window& window) const
 {
+    Rect playerView(player->getPosition() * Tile::size + Tile::sizeVector / 2 - GUI::viewport.size / 2,
+                    GUI::viewport.size);
+    window.setView(&playerView);
     window.setViewport(&GUI::viewport);
+
     currentArea.render(window, 0);
     currentArea.render(window, 2);
+
+    window.setView(nullptr);
     window.setViewport(nullptr);
+
     printPlayerInformation(window.getFont());
     MessageSystem::drawMessages(window.getFont());
 }

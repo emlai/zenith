@@ -42,6 +42,14 @@ void GraphicsContext::setViewport(const Rect* viewport)
     SDL_RenderSetViewport(renderer.get(), reinterpret_cast<const SDL_Rect*>(viewport));
 }
 
+void GraphicsContext::setView(const Rect* view)
+{
+    if (view)
+        this->view = *view;
+    else
+        this->view = boost::none;
+}
+
 void GraphicsContext::setFont(BitmapFont& font)
 {
     this->font = &font;

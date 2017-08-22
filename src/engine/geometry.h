@@ -129,6 +129,8 @@ struct Rect
     int getArea() const { return size.getArea(); }
     int getPerimeter() const { return 2 * (size.x + size.y); }
     bool isSquare() const { return size.x == size.y; }
+
+    Rect offset(Vector2 offset) const { return Rect(position + offset, size); }
 };
 
 template<typename T>

@@ -12,7 +12,7 @@ Texture::Texture(const Window& window, const void* pixelData, uint32_t pixelForm
 }
 
 Texture::Texture(const Window& window, const std::string& fileName, Color32 transparentColor)
-:   renderer(window.context.getRenderer()), sdlTexture(nullptr, SDL_DestroyTexture)
+:   window(window), sdlTexture(nullptr, SDL_DestroyTexture)
 {
     std::unique_ptr<SDL_Surface, decltype(SDL_FreeSurface)&> surface(SDL_LoadBMP(fileName.c_str()),
                                                                      SDL_FreeSurface);
@@ -26,12 +26,12 @@ Texture::Texture(const Window& window, const std::string& fileName, Color32 tran
         SDL_SetColorKey(surface.get(), 1, colorKey);
     }
 
-    sdlTexture.reset(SDL_CreateTextureFromSurface(renderer, surface.get()));
+    sdlTexture.reset(SDL_CreateTextureFromSurface(getRenderer(), surface.get()));
 }
 
 Texture::Texture(const Window& window, SDL_TextureAccess textureAccess, uint32_t pixelFormat, Vector2 size)
-:   renderer(window.context.getRenderer()),
-    sdlTexture(SDL_CreateTexture(renderer, pixelFormat, textureAccess, size.x, size.y), SDL_DestroyTexture)
+:   window(window),
+    sdlTexture(SDL_CreateTexture(getRenderer(), pixelFormat, textureAccess, size.x, size.y), SDL_DestroyTexture)
 {
 }
 
@@ -40,11 +40,26 @@ void Texture::setBlendMode(bool state)
     SDL_SetTextureBlendMode(sdlTexture.get(), state ? SDL_BLENDMODE_BLEND : SDL_BLENDMODE_NONE);
 }
 
+SDL_Renderer* Texture::getRenderer() const
+{
+    return window.context.getRenderer();
+}
+
 void Texture::render(const Rect* source, const Rect* target) const
 {
-    SDL_RenderCopy(renderer, sdlTexture.get(),
-                   reinterpret_cast<const SDL_Rect*>(source),
-                   reinterpret_cast<const SDL_Rect*>(target));
+    if (target && window.context.view)
+    {
+        Rect offsetTarget = target->offset(-window.context.view->position);
+        SDL_RenderCopy(getRenderer(), sdlTexture.get(),
+                       reinterpret_cast<const SDL_Rect*>(source),
+                       reinterpret_cast<const SDL_Rect*>(&offsetTarget));
+    }
+    else
+    {
+        SDL_RenderCopy(getRenderer(), sdlTexture.get(),
+                       reinterpret_cast<const SDL_Rect*>(source),
+                       reinterpret_cast<const SDL_Rect*>(target));
+    }
 }
 
 Vector2 Texture::getSize() const

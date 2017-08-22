@@ -29,7 +29,9 @@ protected:
     SDL_Texture* getSDLTexture() const { return sdlTexture.get(); }
 
 private:
-    SDL_Renderer* renderer;
+    SDL_Renderer* getRenderer() const;
+
+    const Window& window;
     std::unique_ptr<SDL_Texture, void (&)(SDL_Texture*)> sdlTexture;
 };
 
