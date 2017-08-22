@@ -7,7 +7,7 @@ Game::Game(Window& window)
 :   Engine(window),
     creatureConfig("data/config/creature.cfg"),
     groundConfig("data/config/ground.cfg"),
-    creatureSpriteSheet(getWindow(), "data/graphics/creature.bmp"),
+    creatureSpriteSheet(getWindow(), "data/graphics/creature.bmp", Color32(0x5A5268FF)),
     groundSpriteSheet(getWindow(), "data/graphics/ground.bmp"),
     currentArea(groundConfig, groundSpriteSheet),
     framesUntilTick(framesPerTick)

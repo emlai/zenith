@@ -11,13 +11,20 @@ Texture::Texture(const Window& window, const void* pixelData, uint32_t pixelForm
     setBlendMode(true);
 }
 
-Texture::Texture(const Window& window, const std::string& fileName)
+Texture::Texture(const Window& window, const std::string& fileName, Color32 transparentColor)
 :   renderer(window.context.getRenderer()), sdlTexture(nullptr, SDL_DestroyTexture)
 {
     std::unique_ptr<SDL_Surface, decltype(SDL_FreeSurface)&> surface(SDL_LoadBMP(fileName.c_str()),
                                                                      SDL_FreeSurface);
     if (!surface)
         throw std::runtime_error("Unable to load " + fileName + ": " + SDL_GetError());
+
+    if (transparentColor)
+    {
+        auto colorKey = SDL_MapRGB(surface->format, transparentColor.getRed(),
+                                   transparentColor.getGreen(), transparentColor.getBlue());
+        SDL_SetColorKey(surface.get(), 1, colorKey);
+    }
 
     sdlTexture.reset(SDL_CreateTextureFromSurface(renderer, surface.get()));
 }
