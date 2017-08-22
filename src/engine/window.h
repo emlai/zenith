@@ -18,6 +18,7 @@ public:
     void toggleFullscreen();
     void sendCloseRequest();
     void setClearColor(Color32 color) { context.setClearColor(color); }
+    void setViewport(const Rect* viewport) { context.setViewport(viewport); }
     void setFont(BitmapFont& font) { context.setFont(font); }
     BitmapFont& getFont() { return context.getFont(); }
     void setAnimationFrameRate(int fps) { context.setAnimationFrameRate(fps); }

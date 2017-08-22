@@ -38,8 +38,10 @@ void Game::updateLogic()
 
 void Game::render(Window& window) const
 {
+    window.setViewport(&GUI::viewport);
     currentArea.render(window, 0);
     currentArea.render(window, 2);
+    window.setViewport(nullptr);
     printPlayerInformation(window.getFont());
     MessageSystem::drawMessages(window.getFont());
 }

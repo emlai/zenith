@@ -37,6 +37,11 @@ void GraphicsContext::setClearColor(Color32 color)
     clearScreen();
 }
 
+void GraphicsContext::setViewport(const Rect* viewport)
+{
+    SDL_RenderSetViewport(renderer.get(), reinterpret_cast<const SDL_Rect*>(viewport));
+}
+
 void GraphicsContext::setFont(BitmapFont& font)
 {
     this->font = &font;

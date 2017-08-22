@@ -1,6 +1,7 @@
 #pragma once
 
 #include "color.h"
+#include "geometry.h"
 #include <SDL.h>
 #include <memory>
 
@@ -14,6 +15,7 @@ public:
     GraphicsContext(const Window&);
     void setDrawColor(Color32);
     void setClearColor(Color32);
+    void setViewport(const Rect* viewport);
     void setFont(BitmapFont&);
     BitmapFont& getFont();
     void setRenderTarget(TargetTexture*);
