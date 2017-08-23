@@ -74,7 +74,7 @@ T randInt(T min, T max)
 }
 
 template<typename IndexableContainer>
-auto& randomElement(IndexableContainer& container)
+auto& randomElement(IndexableContainer&& container)
 {
     assert(!container.empty());
     return container[randInt(container.size() - 1)];

@@ -13,6 +13,7 @@ WorldGenerator::WorldGenerator(World& world)
 void WorldGenerator::generateRegion(Rect region)
 {
     generateBuildings(region);
+    generateItems(region);
     generateCreatures(region);
 }
 
@@ -78,6 +79,17 @@ void WorldGenerator::generateRoom(Rect region)
     randomElement(nonCornerWalls)->setObject(std::make_unique<Object>(doorId));
 
     world.forEachTile(region, [&](Tile& tile) { tile.setGround(floorId); });
+}
+
+void WorldGenerator::generateItems(Rect region)
+{
+    auto density = 0.75;
+
+    while (randFloat() < density)
+    {
+        std::string itemId = randomElement(Game::itemConfig.getToplevelKeys());
+        world.getTile(makeRandomVectorInside(region))->addItem(std::make_unique<Item>(itemId));
+    }
 }
 
 void WorldGenerator::generateCreatures(Rect region)

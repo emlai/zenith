@@ -33,9 +33,8 @@ void World::exist(Rect region)
 
 void World::render(Window& window, Rect region)
 {
-    forEachTile(region, [&](const Tile& tile) { tile.render(window, 0); });
-    forEachTile(region, [&](const Tile& tile) { tile.render(window, 1); });
-    forEachTile(region, [&](const Tile& tile) { tile.render(window, 2); });
+    for (int zIndex = 0; zIndex < 4; ++zIndex)
+        forEachTile(region, [&](const Tile& tile) { tile.render(window, zIndex); });
 }
 
 Area* World::getOrCreateArea(Vector2 position)

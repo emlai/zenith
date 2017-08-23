@@ -12,6 +12,17 @@ public:
     template<typename ValueType>
     ValueType get(const std::string& type, const std::string& attribute) const;
 
+    std::vector<std::string> getToplevelKeys() const
+    {
+        std::vector<std::string> keys;
+
+        for (auto& setting : config.getRoot())
+            if (!setting.exists("isAbstract") || !static_cast<bool>(setting.lookup("isAbstract")))
+                keys.push_back(setting.getName());
+
+        return keys;
+    }
+
 private:
     template<typename OutputType>
     struct ConversionTraits;

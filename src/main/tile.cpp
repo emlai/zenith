@@ -27,14 +27,19 @@ void Tile::render(Window& window, int zIndex) const
             groundSprite.render(window, position * sizeVector);
             break;
         case 1:
+            for (const auto& item : items)
+                item->render(window, position * sizeVector);
+            break;
+        case 2:
             if (object)
                 object->render(window, position * sizeVector);
             break;
-        case 2:
+        case 3:
             for (const auto& creature : creatures)
                 creature->render(window);
             break;
-        default: assert(false);
+        default:
+            assert(false);
     }
 }
 
@@ -58,6 +63,11 @@ void Tile::removeCreature(Creature& creature)
     auto newEnd = std::remove_if(creatures.begin(), creatures.end(),
                                  [&](auto& ptr) { return ptr.get() == &creature; });
     creatures.erase(newEnd, creatures.end());
+}
+
+void Tile::addItem(std::unique_ptr<Item> item)
+{
+    items.push_back(std::move(item));
 }
 
 void Tile::setObject(std::unique_ptr<Object> newObject)

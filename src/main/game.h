@@ -17,9 +17,11 @@ public:
 
     static const Config creatureConfig;
     static const Config objectConfig;
+    static const Config itemConfig;
     static const Config groundConfig;
     static boost::optional<const Texture> creatureSpriteSheet;
     static boost::optional<const Texture> objectSpriteSheet;
+    static boost::optional<const Texture> itemSpriteSheet;
     static boost::optional<const Texture> groundSpriteSheet;
 
 private:

@@ -2,6 +2,7 @@
 
 #include "entity.h"
 #include "creature.h"
+#include "item.h"
 #include "object.h"
 #include "engine/geometry.h"
 #include "engine/sprite.h"
@@ -26,6 +27,7 @@ public:
     Creature& getCreature(int index) const { return *creatures[index]; }
     void transferCreature(Creature&, Tile&);
     void removeCreature(Creature&);
+    void addItem(std::unique_ptr<Item> item);
     bool hasObject() const { return bool(object); }
     Object* getObject() { return object.get(); }
     const Object* getObject() const { return object.get(); }
@@ -41,6 +43,7 @@ private:
     void addCreature(std::unique_ptr<Creature> creature) { creatures.push_back(std::move(creature)); }
 
     std::vector<std::unique_ptr<Creature>> creatures;
+    std::vector<std::unique_ptr<Item>> items;
     std::unique_ptr<Object> object;
     World& world;
     Vector2 position;

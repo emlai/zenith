@@ -5,9 +5,11 @@
 
 const Config Game::creatureConfig("data/config/creature.cfg");
 const Config Game::objectConfig("data/config/object.cfg");
+const Config Game::itemConfig("data/config/item.cfg");
 const Config Game::groundConfig("data/config/ground.cfg");
 boost::optional<const Texture> Game::creatureSpriteSheet;
 boost::optional<const Texture> Game::objectSpriteSheet;
+boost::optional<const Texture> Game::itemSpriteSheet;
 boost::optional<const Texture> Game::groundSpriteSheet;
 
 static const Color32 transparentColor(0x5A5268FF);
@@ -18,6 +20,7 @@ Game::Game(Window& window)
 {
     creatureSpriteSheet.emplace(getWindow(), "data/graphics/creature.bmp", transparentColor);
     objectSpriteSheet.emplace(getWindow(), "data/graphics/object.bmp", transparentColor);
+    itemSpriteSheet.emplace(getWindow(), "data/graphics/item.bmp", transparentColor);
     groundSpriteSheet.emplace(getWindow(), "data/graphics/ground.bmp");
 
     mapKey(Esc, [this] { stop(); });
