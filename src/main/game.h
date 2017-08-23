@@ -23,8 +23,10 @@ private:
     static void printAttribute(BitmapFont&, const std::string&, int current);
 
     Config creatureConfig;
+    Config objectConfig;
     Config groundConfig;
     Texture creatureSpriteSheet;
+    Texture objectSpriteSheet;
     Texture groundSpriteSheet;
 
     World world;

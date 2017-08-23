@@ -2,13 +2,16 @@
 
 #include "entity.h"
 #include "creature.h"
+#include "object.h"
 #include "engine/config.h"
 #include "engine/geometry.h"
 #include "engine/sprite.h"
 #include <boost/utility/string_ref.hpp>
+#include <boost/optional.hpp>
 #include <vector>
 
 class Area;
+class Object;
 class Window;
 class World;
 
@@ -24,6 +27,9 @@ public:
     const auto& getCreatures() const { return creatures; }
     Creature& getCreature(int index) const { return *creatures[index]; }
     void transferCreature(Creature&, Tile&);
+    bool hasObject() const { return bool(object); }
+    const Object* getObject() const { return object.get_ptr(); }
+    void setObject(boost::optional<Object>);
     Tile* getAdjacentTile(Dir8) const;
     World& getWorld() const { return world; }
     Vector2 getPosition() const { return position; }
@@ -34,6 +40,7 @@ private:
     void addCreature(std::unique_ptr<Creature> creature) { creatures.push_back(std::move(creature)); }
 
     std::vector<std::unique_ptr<Creature>> creatures;
+    boost::optional<Object> object;
     World& world;
     Vector2 position;
     Sprite groundSprite;

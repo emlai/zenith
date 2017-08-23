@@ -3,13 +3,17 @@
 #include "msgsystem.h"
 #include "engine/math.h"
 
+static const Color32 transparentColor(0x5A5268FF);
+
 Game::Game(Window& window)
 :   Engine(window),
     creatureConfig("data/config/creature.cfg"),
+    objectConfig("data/config/object.cfg"),
     groundConfig("data/config/ground.cfg"),
-    creatureSpriteSheet(getWindow(), "data/graphics/creature.bmp", Color32(0x5A5268FF)),
+    creatureSpriteSheet(getWindow(), "data/graphics/creature.bmp", transparentColor),
+    objectSpriteSheet(getWindow(), "data/graphics/object.bmp", transparentColor),
     groundSpriteSheet(getWindow(), "data/graphics/ground.bmp"),
-    world(groundConfig, groundSpriteSheet),
+    world(groundConfig, groundSpriteSheet, objectConfig, objectSpriteSheet),
     framesUntilTick(framesPerTick)
 {
     mapKey(Esc, [this] { stop(); });

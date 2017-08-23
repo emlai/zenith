@@ -117,6 +117,20 @@ inline Vector2Base<T> makeRandomVector(Vector2Base<T> min, Vector2Base<T> max)
     return { randInt(min.x, max.x), randInt(min.y, max.y) };
 }
 
+template<typename T>
+inline Vector2Base<T> makeRandomVector(T max)
+{
+    // TODO: Add support for floating-point numbers.
+    return { randInt(max), randInt(max) };
+}
+
+template<typename T>
+inline Vector2Base<T> makeRandomVector(T min, T max)
+{
+    // TODO: Add support for floating-point numbers.
+    return { randInt(min, max), randInt(min, max) };
+}
+
 namespace std
 {
     template<>
@@ -143,6 +157,8 @@ struct Rect
     int getTop() const { return position.y; }
     int getBottom() const { return position.y + size.y; }
     Vector2 getCenter() const { return position + size / 2; }
+    int getWidth() const { return size.x; }
+    int getHeight() const { return size.y; }
 
     int getArea() const { return size.getArea(); }
     int getPerimeter() const { return 2 * (size.x + size.y); }

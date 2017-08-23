@@ -30,8 +30,13 @@ void Tile::render(Window& window, int zIndex) const
 {
     switch (zIndex)
     {
-        case 0: groundSprite.render(window, position * sizeVector); break;
-        case 1: /* TODO: render items etc. */ break;
+        case 0:
+            groundSprite.render(window, position * sizeVector);
+            break;
+        case 1:
+            if (object)
+                object->render(window, position * sizeVector);
+            break;
         case 2:
             for (const auto& creature : creatures)
                 creature->render(window);
@@ -53,6 +58,11 @@ void Tile::transferCreature(Creature& creature, Tile& destination)
     }
 
     assert(false);
+}
+
+void Tile::setObject(boost::optional<Object> newObject)
+{
+    object = std::move(newObject);
 }
 
 Tile* Tile::getAdjacentTile(Dir8 direction) const

@@ -10,7 +10,8 @@
 class World : public Entity
 {
 public:
-    World(const Config& groundConfig, const Texture& groundSpriteSheet);
+    World(const Config& groundConfig, const Texture& groundSpriteSheet,
+          const Config& objectConfig, const Texture& objectSpriteSheet);
     void exist() override;
     void render(Window&, Rect region);
     Tile* getOrCreateTile(Vector2 position);
@@ -26,4 +27,6 @@ private:
     std::unordered_map<Vector2, std::unique_ptr<Area>> areas;
     const Config& groundConfig;
     const Texture& groundSpriteSheet;
+    const Config& objectConfig;
+    const Texture& objectSpriteSheet;
 };

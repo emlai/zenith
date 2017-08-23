@@ -111,7 +111,7 @@ void Creature::tryToMove(Dir8 direction)
 {
     Tile* destination = getTileUnder(0).getAdjacentTile(direction);
 
-    if (destination && destination->getCreatures().empty())
+    if (destination && !destination->hasObject() && destination->getCreatures().empty())
         moveTo(*destination);
 }
 

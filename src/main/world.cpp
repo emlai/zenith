@@ -1,7 +1,10 @@
 #include "world.h"
+#include "worldgen.h"
 
-World::World(const Config& groundConfig, const Texture& groundSpriteSheet)
-:   groundConfig(groundConfig), groundSpriteSheet(groundSpriteSheet)
+World::World(const Config& groundConfig, const Texture& groundSpriteSheet,
+             const Config& objectConfig, const Texture& objectSpriteSheet)
+:   groundConfig(groundConfig), groundSpriteSheet(groundSpriteSheet),
+    objectConfig(objectConfig), objectSpriteSheet(objectSpriteSheet)
 {
 }
 
@@ -13,6 +16,7 @@ void World::exist()
 void World::render(Window& window, Rect region)
 {
     forEachTile(region, [&](const Tile& tile) { tile.render(window, 0); });
+    forEachTile(region, [&](const Tile& tile) { tile.render(window, 1); });
     forEachTile(region, [&](const Tile& tile) { tile.render(window, 2); });
 }
 
@@ -21,8 +25,11 @@ Area* World::getOrCreateArea(Vector2 position)
     if (auto* area = getArea(position))
         return area;
 
-    auto area = std::make_unique<Area>(*this, position, groundConfig, groundSpriteSheet);
-    return areas.emplace(position, std::move(area)).first->second.get();
+    auto& area = *areas.emplace(position, std::make_unique<Area>(*this, position, groundConfig,
+                                                                 groundSpriteSheet)).first->second;
+    WorldGenerator generator(*this, objectConfig, objectSpriteSheet);
+    generator.generateRegion(Rect(position * Area::sizeVector, Area::sizeVector));
+    return &area;
 }
 
 Area* World::getArea(Vector2 position) const
