@@ -6,7 +6,7 @@
 #include "engine/geometry.h"
 #include "engine/sprite.h"
 #include <boost/utility/string_ref.hpp>
-#include <boost/optional.hpp>
+#include <memory>
 #include <vector>
 
 class Area;
@@ -26,8 +26,9 @@ public:
     Creature& getCreature(int index) const { return *creatures[index]; }
     void transferCreature(Creature&, Tile&);
     bool hasObject() const { return bool(object); }
-    const Object* getObject() const { return object.get_ptr(); }
-    void setObject(boost::optional<Object>);
+    Object* getObject() { return object.get(); }
+    const Object* getObject() const { return object.get(); }
+    void setObject(std::unique_ptr<Object>);
     void setGround(boost::string_ref groundId);
     Tile* getAdjacentTile(Dir8) const;
     World& getWorld() const { return world; }
@@ -39,7 +40,7 @@ private:
     void addCreature(std::unique_ptr<Creature> creature) { creatures.push_back(std::move(creature)); }
 
     std::vector<std::unique_ptr<Creature>> creatures;
-    boost::optional<Object> object;
+    std::unique_ptr<Object> object;
     World& world;
     Vector2 position;
     Sprite groundSprite;

@@ -54,7 +54,7 @@ void WorldGenerator::generateRoom(Rect region)
     {
         if (auto* tile = world.getOrCreateTile(position))
         {
-            tile->setObject(Object(wallId));
+            tile->setObject(std::make_unique<Object>(wallId));
 
             if (!isCorner(position))
                 nonCornerWalls.push_back(tile);
@@ -74,7 +74,7 @@ void WorldGenerator::generateRoom(Rect region)
     }
 
     assert(nonCornerWalls.size() == nonCornerWallCount);
-    randomElement(nonCornerWalls)->setObject(Object(doorId));
+    randomElement(nonCornerWalls)->setObject(std::make_unique<Object>(doorId));
 
     world.forEachTile(region, [&](Tile& tile) { tile.setGround(floorId); });
 }

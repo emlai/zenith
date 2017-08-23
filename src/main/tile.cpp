@@ -60,7 +60,7 @@ void Tile::transferCreature(Creature& creature, Tile& destination)
     assert(false);
 }
 
-void Tile::setObject(boost::optional<Object> newObject)
+void Tile::setObject(std::unique_ptr<Object> newObject)
 {
     object = std::move(newObject);
 }

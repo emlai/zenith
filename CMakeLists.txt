@@ -4,8 +4,8 @@ project(zenith VERSION 0.0.0)
 set(CMAKE_CXX_STANDARD 14)
 add_definitions(-DPROJECT_NAME="${PROJECT_NAME}" -DPROJECT_VERSION="${PROJECT_VERSION}")
 
-file(GLOB ENGINE_SOURCES ${PROJECT_SOURCE_DIR}/src/engine/*.h ${PROJECT_SOURCE_DIR}/src/engine/*.cpp)
-file(GLOB MAIN_SOURCES ${PROJECT_SOURCE_DIR}/src/main/*.h ${PROJECT_SOURCE_DIR}/src/main/*.cpp)
+file(GLOB_RECURSE ENGINE_SOURCES ${PROJECT_SOURCE_DIR}/src/engine/*.h ${PROJECT_SOURCE_DIR}/src/engine/*.cpp)
+file(GLOB_RECURSE MAIN_SOURCES ${PROJECT_SOURCE_DIR}/src/main/*.h ${PROJECT_SOURCE_DIR}/src/main/*.cpp)
 
 include(CheckCXXCompilerFlag)
 check_cxx_compiler_flag(-Weverything HAS_WEVERYTHING)
