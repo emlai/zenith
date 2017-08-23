@@ -33,7 +33,7 @@ void MessageSystem::addMessage(const std::string& message)
 
 void MessageSystem::cleanUpOldMessages()
 {
-    for (int n = recentMessages.size(); n > recentMessageLimit; --n)
+    for (auto n = recentMessages.size(); n > recentMessageLimit; --n)
         recentMessages.pop_back();
 }
 
