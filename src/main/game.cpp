@@ -76,7 +76,7 @@ void Game::render(Window& window)
     window.setViewport(nullptr);
 
     printPlayerInformation(window.getFont());
-    MessageSystem::drawMessages(window.getFont());
+    MessageSystem::drawMessages(window.getFont(), player->getMessages());
 }
 
 void Game::printPlayerInformation(BitmapFont& font) const

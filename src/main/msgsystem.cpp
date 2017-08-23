@@ -4,8 +4,7 @@
 
 namespace MessageSystem
 {
-    static const int recentMessageLimit = 32;
-    static std::deque<std::string> recentMessages;
+    static const int maxMessagesToPrint = 6;
 
 #ifdef DEBUG
     struct DebugMessage
@@ -26,22 +25,11 @@ namespace MessageSystem
 #endif
 }
 
-void MessageSystem::addMessage(const std::string& message)
-{
-    recentMessages.push_front(message);
-}
-
-void MessageSystem::cleanUpOldMessages()
-{
-    for (auto n = recentMessages.size(); n > recentMessageLimit; --n)
-        recentMessages.pop_back();
-}
-
-void MessageSystem::drawMessages(BitmapFont& font)
+void MessageSystem::drawMessages(BitmapFont& font, const std::vector<std::string>& messages)
 {
     font.setArea(GUI::messageArea);
-    for (const std::string& message : recentMessages)
-        font.printLine(message);
+    for (int end = int(messages.size()), i = std::max(0, end - maxMessagesToPrint); i < end; ++i)
+        font.printLine(messages[i]);
 
 #ifdef DEBUG
     font.setArea(GUI::debugMessageArea);

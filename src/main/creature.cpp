@@ -19,7 +19,8 @@ std::vector<std::vector<int>> Creature::initAttributeIndices(const std::string& 
 }
 
 Creature::Creature(Tile& tile, const std::string& id, std::unique_ptr<CreatureController> controller)
-:   tilesUnder({&tile}),
+:   id(id),
+    tilesUnder({&tile}),
     currentHP(0),
     maxHP(0),
     currentAP(0),
@@ -109,6 +110,31 @@ void Creature::editAttribute(Attribute attribute, int amount)
         attributes[index] += amount;
 }
 
+std::string Creature::getName() const
+{
+    std::string name;
+
+    for (char ch : id)
+    {
+        if (std::isupper(ch))
+        {
+            if (!name.empty())
+                name += ' ';
+
+            name += std::tolower(ch);
+        }
+        else
+            name += ch;
+    }
+
+    return name;
+}
+
+void Creature::addMessage(std::string&& message)
+{
+    messages.push_back(std::move(message));
+}
+
 bool Creature::tryToMoveOrAttack(Dir8 direction)
 {
     Tile* destination = getTileUnder(0).getAdjacentTile(direction);
@@ -144,6 +170,9 @@ void Creature::moveTo(Tile& destination)
 
 void Creature::attack(Creature& target)
 {
+    addMessage("You hit the " + target.getName() + ".");
+    target.addMessage("The " + getName() + " hits you.");
+
     target.takeDamage(5);
 }
 

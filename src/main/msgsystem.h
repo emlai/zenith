@@ -9,9 +9,7 @@ enum MessageType { Normal, Warning };
 
 namespace MessageSystem
 {
-    void addMessage(const std::string& message);
-    void cleanUpOldMessages();
-    void drawMessages(BitmapFont&);
+    void drawMessages(BitmapFont&, const std::vector<std::string>& messages);
 
 #ifdef DEBUG
     void addDebugMessage(const std::string& message, MessageType = Normal);

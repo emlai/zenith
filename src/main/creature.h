@@ -74,6 +74,9 @@ public:
     int getMaxMP() const { return maxMP; }
     int getAttribute(Attribute) const;
     const auto& getDisplayedAttributes() const { return displayedAttributes; }
+    std::string getName() const;
+    void addMessage(std::string&& message);
+    const std::vector<std::string>& getMessages() const { return messages; }
 
 private:
     void moveTo(Tile&);
@@ -90,6 +93,7 @@ private:
     static std::vector<std::vector<int>> initAttributeIndices(const std::string&);
     const auto& getAttributeIndices(int attribute) const { return attributeIndices[attribute]; }
 
+    std::string id;
     std::vector<Tile*> tilesUnder;
     int currentHP, maxHP, currentAP, maxAP, currentMP, maxMP;
     std::vector<int> attributes;
@@ -97,6 +101,7 @@ private:
     std::vector<std::vector<int>> attributeIndices;
     Sprite sprite;
     std::unique_ptr<CreatureController> controller;
+    std::vector<std::string> messages;
     static const int configAttributes[8];
 };
 
