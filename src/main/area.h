@@ -14,7 +14,6 @@ public:
 private:
     friend class World;
 
-    void exist() override;
     Tile& getRandomTile();
     const Tile& getRandomTile() const;
     World& getWorld() const { return world; }

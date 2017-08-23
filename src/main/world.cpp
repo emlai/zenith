@@ -5,9 +5,22 @@ World::World()
 {
 }
 
-void World::exist()
+void World::exist(Rect region)
 {
-    areas.at({0, 0})->exist();
+    // Collect the creatures into a vector to avoid updating the same creature more than once.
+    std::vector<Creature*> creaturesToUpdate;
+
+    forEachTile(region, [&](Tile& tile)
+    {
+        for (auto& creature : tile.getCreatures())
+            creaturesToUpdate.push_back(creature.get());
+    });
+
+    for (auto* creature : creaturesToUpdate)
+        if (!creature->isDead())
+            creature->exist();
+
+    forEachTile(region, [&](Tile& tile) { tile.exist(); });
 }
 
 void World::render(Window& window, Rect region)

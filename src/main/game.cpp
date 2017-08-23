@@ -51,12 +51,14 @@ Game::Game(Window& window)
     mapKey(Tab, [this] { enterCommandMode(getWindow()); });
 #endif
 
-    player = world.getOrCreateTile({0, 0})->spawnCreature("Human");
+    player = world.getOrCreateTile({0, 0})->spawnCreature("Human", std::make_unique<PlayerController>());
 }
 
 void Game::updateLogic()
 {
-    world.exist();
+    Vector2 updateDistance(64, 64);
+    Rect regionToUpdate(player->getPosition() - updateDistance, updateDistance * 2);
+    world.exist(regionToUpdate);
 }
 
 void Game::render(Window& window)
@@ -142,7 +144,7 @@ void Game::enterCommandMode(Window& window)
 void Game::parseCommand(const std::string& command)
 {
     if (command == "respawn")
-        *player = Creature(player->getTileUnder(0), "Human");
+        *player = Creature(player->getTileUnder(0), "Human", std::make_unique<PlayerController>());
     else if (command == "clear")
         MessageSystem::clearDebugMessageHistory();
     else if (command == "info")

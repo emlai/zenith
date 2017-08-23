@@ -13,12 +13,6 @@ Area::Area(World& world, Vector2 position)
             tiles.emplace_back(world, position * sizeVector + pos, "Grass");
 }
 
-void Area::exist()
-{
-    for (auto& tile : tiles)
-        tile.exist();
-}
-
 Tile& Area::getTileAt(Vector2 position)
 {
     assert(position.x >= 0 && position.x < size);

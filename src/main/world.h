@@ -11,7 +11,7 @@ class World : public Entity
 {
 public:
     World();
-    void exist() override;
+    void exist(Rect region);
     void render(Window&, Rect region);
     Tile* getOrCreateTile(Vector2 position);
     Tile* getTile(Vector2 position) const;

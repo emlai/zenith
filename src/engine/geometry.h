@@ -18,6 +18,23 @@ enum Dir8
 
 const int directions = 8;
 
+inline Dir8 randomDir8()
+{
+    switch (randInt(7))
+    {
+        case 0: return North;
+        case 1: return NorthEast;
+        case 2: return East;
+        case 3: return SouthEast;
+        case 4: return South;
+        case 5: return SouthWest;
+        case 6: return West;
+        case 7: return NorthWest;
+    }
+
+    assert(false);
+}
+
 template<typename T>
 struct Vector2Base;
 

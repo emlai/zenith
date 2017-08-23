@@ -1,9 +1,11 @@
 #pragma once
 
+#include "creaturecontroller.h"
 #include "entity.h"
 #include "engine/geometry.h"
 #include "engine/sprite.h"
 #include "engine/utility.h"
+#include <memory>
 #include <vector>
 #include <string>
 
@@ -54,8 +56,8 @@ const std::string statNames[] = { "HP", "AP", "MP" };
 class Creature final : public Entity
 {
 public:
-    Creature(Tile&, const std::string& id);
-    void exist() override;
+    Creature(Tile&, const std::string& id, std::unique_ptr<CreatureController> controller);
+    void exist();
     void render(Window&) const;
     /// Returns true if the game should advance to the next turn.
     bool tryToMoveOrAttack(Dir8);
@@ -94,6 +96,7 @@ private:
     std::vector<Attribute> displayedAttributes;
     std::vector<std::vector<int>> attributeIndices;
     Sprite sprite;
+    std::unique_ptr<CreatureController> controller;
     static const int configAttributes[8];
 };
 

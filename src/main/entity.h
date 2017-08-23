@@ -9,5 +9,4 @@ public:
     Entity& operator=(const Entity&) = delete;
     Entity& operator=(Entity&&) = default;
     virtual ~Entity() = default;
-    virtual void exist() {}
 };

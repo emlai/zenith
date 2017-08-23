@@ -18,7 +18,7 @@ std::vector<std::vector<int>> Creature::initAttributeIndices(const std::string& 
     return Game::creatureConfig.get<std::vector<std::vector<int>>>(id, "AttributeIndices");
 }
 
-Creature::Creature(Tile& tile, const std::string& id)
+Creature::Creature(Tile& tile, const std::string& id, std::unique_ptr<CreatureController> controller)
 :   tilesUnder({&tile}),
     currentHP(0),
     maxHP(0),
@@ -28,7 +28,8 @@ Creature::Creature(Tile& tile, const std::string& id)
     maxMP(0),
     displayedAttributes(initDisplayedAttributes(id)),
     attributeIndices(initAttributeIndices(id)),
-    sprite(*Game::creatureSpriteSheet, getSpriteTextureRegion(Game::creatureConfig, id))
+    sprite(*Game::creatureSpriteSheet, getSpriteTextureRegion(Game::creatureConfig, id)),
+    controller(std::move(controller))
 {
     generateAttributes(id);
 }
@@ -36,6 +37,7 @@ Creature::Creature(Tile& tile, const std::string& id)
 void Creature::exist()
 {
     regenerate();
+    controller->control(*this);
 }
 
 void Creature::regenerate()

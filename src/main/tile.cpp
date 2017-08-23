@@ -17,13 +17,6 @@ Tile::Tile(World& world, Vector2 position, boost::string_ref groundId)
 
 void Tile::exist()
 {
-    for (auto it = creatures.begin(); it != creatures.end();)
-    {
-        if (!(*it)->isDead())
-            (*it++)->exist();
-        else
-            it = creatures.erase(it);
-    }
 }
 
 void Tile::render(Window& window, int zIndex) const

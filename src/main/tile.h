@@ -18,7 +18,7 @@ class Tile : public Entity
 {
 public:
     Tile(World& world, Vector2 position, boost::string_ref groundId);
-    void exist() override;
+    void exist();
     void render(Window& window, int zIndex) const;
     template<typename... Args>
     Creature* spawnCreature(Args&&...);

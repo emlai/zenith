@@ -85,5 +85,5 @@ void WorldGenerator::generateCreatures(Rect region)
     auto density = 0.75;
 
     while (randFloat() < density)
-        world.getTile(makeRandomVectorInside(region))->spawnCreature("Bat");
+        world.getTile(makeRandomVectorInside(region))->spawnCreature("Bat", std::make_unique<AIController>());
 }
