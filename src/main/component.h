@@ -14,6 +14,7 @@ public:
     Object& getParent() const { return *parent; }
 
     virtual void reactToMovementAttempt() {}
+    virtual bool preventsMovement() { return false; }
 
 private:
     Object* parent;

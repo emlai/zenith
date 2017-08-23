@@ -114,10 +114,20 @@ void Creature::tryToMove(Dir8 direction)
     if (!destination)
         return;
 
+    if (!destination->getCreatures().empty())
+        return;
+
     if (destination->hasObject())
+    {
+        bool preventsMovement = destination->getObject()->preventsMovement();
+
         destination->getObject()->reactToMovementAttempt();
-    else if (destination->getCreatures().empty())
-        moveTo(*destination);
+
+        if (preventsMovement)
+            return;
+    }
+
+    moveTo(*destination);
 }
 
 void Creature::moveTo(Tile& destination)
