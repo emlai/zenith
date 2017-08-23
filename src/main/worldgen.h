@@ -13,6 +13,7 @@ private:
     void generateBuildings(Rect region);
     void generateBuilding(Rect region);
     void generateRoom(Rect region);
+    void generateCreatures(Rect region);
 
     World& world;
 };
