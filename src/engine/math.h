@@ -57,7 +57,7 @@ template<typename T> T randInt(T min, T max);
 template<> RNG::result_type randInt(RNG::result_type max);
 template<> RNG::result_type randInt(RNG::result_type min, RNG::result_type max);
 double randFloat(double max = 1.0);
-double readFloat(double min, double max);
+double randFloat(double min, double max);
 double randNormal(double stdDev = 1.0);
 
 template<typename T>

@@ -60,7 +60,7 @@ double randFloat(double max)
     return std::uniform_real_distribution<double>(0, max)(rng);
 }
 
-double readFloat(double min, double max)
+double randFloat(double min, double max)
 {
     return std::uniform_real_distribution<double>(min, max)(rng);
 }
