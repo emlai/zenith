@@ -30,6 +30,8 @@ public:
     bool hasObject() const { return bool(object); }
     const Object* getObject() const { return object.get_ptr(); }
     void setObject(boost::optional<Object>);
+    void setGround(boost::string_ref groundId, const Config& groundConfig,
+                   const Texture& groundSpriteSheet);
     Tile* getAdjacentTile(Dir8) const;
     World& getWorld() const { return world; }
     Vector2 getPosition() const { return position; }

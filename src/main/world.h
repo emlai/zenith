@@ -16,11 +16,11 @@ public:
     void render(Window&, Rect region);
     Tile* getOrCreateTile(Vector2 position);
     Tile* getTile(Vector2 position) const;
+    void forEachTile(Rect region, const std::function<void(Tile&)>&);
 
 private:
     Area* getOrCreateArea(Vector2 position);
     Area* getArea(Vector2 position) const;
-    void forEachTile(Rect region, const std::function<void(const Tile&)>&);
     static Vector2 globalPositionToAreaPosition(Vector2 position);
     static Vector2 globalPositionToTilePosition(Vector2 position);
 

@@ -27,7 +27,7 @@ Area* World::getOrCreateArea(Vector2 position)
 
     auto& area = *areas.emplace(position, std::make_unique<Area>(*this, position, groundConfig,
                                                                  groundSpriteSheet)).first->second;
-    WorldGenerator generator(*this, objectConfig, objectSpriteSheet);
+    WorldGenerator generator(*this, objectConfig, objectSpriteSheet, groundConfig, groundSpriteSheet);
     generator.generateRegion(Rect(position * Area::sizeVector, Area::sizeVector));
     return &area;
 }
@@ -81,10 +81,10 @@ Tile* World::getTile(Vector2 position) const
     return nullptr;
 }
 
-void World::forEachTile(Rect region, const std::function<void(const Tile&)>& function)
+void World::forEachTile(Rect region, const std::function<void(Tile&)>& function)
 {
     for (int x = region.getLeft(); x < region.getRight(); ++x)
         for (int y = region.getTop(); y < region.getBottom(); ++y)
-            if (const auto* tile = getOrCreateTile(Vector2(x, y)))
+            if (auto* tile = getOrCreateTile(Vector2(x, y)))
                 function(*tile);
 }

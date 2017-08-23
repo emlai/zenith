@@ -5,8 +5,13 @@
 #include "engine/math.h"
 
 WorldGenerator::WorldGenerator(World& world,
-                               const Config& objectConfig, const Texture& objectSpriteSheet)
-:   world(world), objectConfig(objectConfig), objectSpriteSheet(objectSpriteSheet)
+                               const Config& objectConfig, const Texture& objectSpriteSheet,
+                               const Config& groundConfig, const Texture& groundSpriteSheet)
+:   world(world),
+    objectConfig(objectConfig),
+    objectSpriteSheet(objectSpriteSheet),
+    groundConfig(groundConfig),
+    groundSpriteSheet(groundSpriteSheet)
 {
 }
 
@@ -37,6 +42,7 @@ void WorldGenerator::generateBuilding(Rect region)
 void WorldGenerator::generateRoom(Rect region)
 {
     auto wallId = "BrickWall";
+    auto floorId = "WoodenFloor";
 
     auto generateWall = [&](Vector2 position)
     {
@@ -55,4 +61,9 @@ void WorldGenerator::generateRoom(Rect region)
 
     for (int y = region.getTop() + 1; y < region.getBottom(); ++y)
         generateWall(Vector2(region.getRight(), y));
+
+    world.forEachTile(region, [&](Tile& tile)
+    {
+        tile.setGround(floorId, groundConfig, groundSpriteSheet);
+    });
 }

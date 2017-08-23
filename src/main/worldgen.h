@@ -8,7 +8,9 @@ struct Rect;
 class WorldGenerator
 {
 public:
-    WorldGenerator(World& world, const Config& objectConfig, const Texture& objectSpriteSheet);
+    WorldGenerator(World& world,
+                   const Config& objectConfig, const Texture& objectSpriteSheet,
+                   const Config& groundConfig, const Texture& groundSpriteSheet);
     void generateRegion(Rect region);
 
 private:
@@ -19,4 +21,6 @@ private:
     World& world;
     const Config& objectConfig;
     const Texture& objectSpriteSheet;
+    const Config& groundConfig;
+    const Texture& groundSpriteSheet;
 };

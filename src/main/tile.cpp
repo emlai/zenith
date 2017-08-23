@@ -65,6 +65,12 @@ void Tile::setObject(boost::optional<Object> newObject)
     object = std::move(newObject);
 }
 
+void Tile::setGround(boost::string_ref groundId, const Config& groundConfig,
+                     const Texture& groundSpriteSheet)
+{
+    groundSprite = Sprite(groundSpriteSheet, getSpriteTextureRegion(groundConfig, groundId));
+}
+
 Tile* Tile::getAdjacentTile(Dir8 direction) const
 {
     return getWorld().getOrCreateTile(getPosition() + direction);

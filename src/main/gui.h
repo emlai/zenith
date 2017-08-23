@@ -41,5 +41,5 @@ inline Rect getSpriteTextureRegion(const Config& config, boost::string_ref id)
 {
     auto components = config.get<std::vector<int>>(id.to_string(), "spritePosition");
     auto offsetX = randInt(config.get<int>(id.to_string(), "spriteMultiplicity") - 1);
-    return Rect(components.at(0) + offsetX * Tile::size, components.at(1), Tile::size, Tile::size);
+    return Rect(Vector2(components.at(0) + offsetX, components.at(1)) * Tile::size, Tile::sizeVector);
 }
