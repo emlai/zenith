@@ -25,6 +25,7 @@ public:
     const auto& getCreatures() const { return creatures; }
     Creature& getCreature(int index) const { return *creatures[index]; }
     void transferCreature(Creature&, Tile&);
+    void removeCreature(Creature&);
     bool hasObject() const { return bool(object); }
     Object* getObject() { return object.get(); }
     const Object* getObject() const { return object.get(); }

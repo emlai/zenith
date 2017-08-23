@@ -23,10 +23,10 @@ Game::Game(Window& window)
 
     mapKey(Esc, [this] { stop(); });
     mapKey('q', [this] { stop(); });
-    mapKey(RightArrow, [this] { player->tryToMove(East); });
-    mapKey(LeftArrow, [this] { player->tryToMove(West); });
-    mapKey(DownArrow, [this] { player->tryToMove(South); });
-    mapKey(UpArrow, [this] { player->tryToMove(North); });
+    mapKey(RightArrow, [this] { player->tryToMoveOrAttack(East); });
+    mapKey(LeftArrow, [this] { player->tryToMoveOrAttack(West); });
+    mapKey(DownArrow, [this] { player->tryToMoveOrAttack(South); });
+    mapKey(UpArrow, [this] { player->tryToMoveOrAttack(North); });
 #ifdef DEBUG
     mapKey(Tab, [this] { enterCommandMode(getWindow()); });
 #endif

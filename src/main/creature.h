@@ -57,7 +57,8 @@ public:
     Creature(Tile&, const std::string& id);
     void exist() override;
     void render(Window&) const;
-    void tryToMove(Dir8);
+    void tryToMoveOrAttack(Dir8);
+    void takeDamage(int amount);
     const auto& getTilesUnder() const { return tilesUnder; }
     Tile& getTileUnder(int index) const { return *tilesUnder[index]; }
     Vector2 getPosition() const;
@@ -73,6 +74,7 @@ public:
 
 private:
     void moveTo(Tile&);
+    void attack(Creature&);
     void setAttribute(Attribute, int amount);
     void editAttribute(Attribute, int amount);
     void generateAttributes(const std::string&);

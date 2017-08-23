@@ -107,7 +107,7 @@ void Creature::editAttribute(Attribute attribute, int amount)
         attributes[index] += amount;
 }
 
-void Creature::tryToMove(Dir8 direction)
+void Creature::tryToMoveOrAttack(Dir8 direction)
 {
     Tile* destination = getTileUnder(0).getAdjacentTile(direction);
 
@@ -115,7 +115,10 @@ void Creature::tryToMove(Dir8 direction)
         return;
 
     if (!destination->getCreatures().empty())
+    {
+        attack(destination->getCreature(0));
         return;
+    }
 
     if (destination->hasObject())
     {
@@ -135,6 +138,22 @@ void Creature::moveTo(Tile& destination)
     getTileUnder(0).transferCreature(*this, destination);
     tilesUnder.clear();
     tilesUnder.push_back(&destination);
+}
+
+void Creature::attack(Creature& target)
+{
+    target.takeDamage(5);
+}
+
+void Creature::takeDamage(int amount)
+{
+    currentHP -= amount;
+
+    if (isDead())
+    {
+        for (auto* tile : getTilesUnder())
+            tile->removeCreature(*this);
+    }
 }
 
 Vector2 Creature::getPosition() const

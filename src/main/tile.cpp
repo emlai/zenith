@@ -60,6 +60,13 @@ void Tile::transferCreature(Creature& creature, Tile& destination)
     assert(false);
 }
 
+void Tile::removeCreature(Creature& creature)
+{
+    auto newEnd = std::remove_if(creatures.begin(), creatures.end(),
+                                 [&](auto& ptr) { return ptr.get() == &creature; });
+    creatures.erase(newEnd, creatures.end());
+}
+
 void Tile::setObject(std::unique_ptr<Object> newObject)
 {
     object = std::move(newObject);
