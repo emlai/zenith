@@ -41,7 +41,7 @@ void WorldGenerator::generateRoom(Rect region)
     auto doorId = "Door";
 
     std::vector<Tile*> nonCornerWalls;
-    const unsigned nonCornerWallCount = region.getPerimeter() - 4;
+    const unsigned nonCornerWallCount = region.getPerimeter() - 8;
     nonCornerWalls.reserve(nonCornerWallCount);
 
     auto isCorner = [&](Vector2 position)
@@ -62,16 +62,16 @@ void WorldGenerator::generateRoom(Rect region)
     };
 
     for (int x = region.getLeft(); x <= region.getRight(); ++x)
+    {
         generateWall(Vector2(x, region.getTop()));
-
-    for (int x = region.getLeft(); x <= region.getRight(); ++x)
         generateWall(Vector2(x, region.getBottom()));
+    }
 
     for (int y = region.getTop() + 1; y < region.getBottom(); ++y)
+    {
         generateWall(Vector2(region.getLeft(), y));
-
-    for (int y = region.getTop() + 1; y < region.getBottom(); ++y)
         generateWall(Vector2(region.getRight(), y));
+    }
 
     assert(nonCornerWalls.size() == nonCornerWallCount);
     randomElement(nonCornerWalls)->setObject(Object(doorId));

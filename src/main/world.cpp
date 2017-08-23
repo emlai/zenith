@@ -79,8 +79,8 @@ Tile* World::getTile(Vector2 position) const
 
 void World::forEachTile(Rect region, const std::function<void(Tile&)>& function)
 {
-    for (int x = region.getLeft(); x < region.getRight(); ++x)
-        for (int y = region.getTop(); y < region.getBottom(); ++y)
+    for (int x = region.getLeft(); x <= region.getRight(); ++x)
+        for (int y = region.getTop(); y <= region.getBottom(); ++y)
             if (auto* tile = getOrCreateTile(Vector2(x, y)))
                 function(*tile);
 }
