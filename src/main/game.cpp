@@ -14,8 +14,7 @@ static const Color32 transparentColor(0x5A5268FF);
 
 Game::Game(Window& window)
 :   Engine(window),
-    world(),
-    framesUntilTick(framesPerTick)
+    world()
 {
     creatureSpriteSheet.emplace(getWindow(), "data/graphics/creature.bmp", transparentColor);
     objectSpriteSheet.emplace(getWindow(), "data/graphics/object.bmp", transparentColor);
@@ -23,10 +22,31 @@ Game::Game(Window& window)
 
     mapKey(Esc, [this] { stop(); });
     mapKey('q', [this] { stop(); });
-    mapKey(RightArrow, [this] { player->tryToMoveOrAttack(East); });
-    mapKey(LeftArrow, [this] { player->tryToMoveOrAttack(West); });
-    mapKey(DownArrow, [this] { player->tryToMoveOrAttack(South); });
-    mapKey(UpArrow, [this] { player->tryToMoveOrAttack(North); });
+
+    mapKey(RightArrow, [this]
+    {
+        if (player->tryToMoveOrAttack(East))
+            advanceTurn();
+    });
+
+    mapKey(LeftArrow, [this]
+    {
+        if (player->tryToMoveOrAttack(West))
+            advanceTurn();
+    });
+
+    mapKey(DownArrow, [this]
+    {
+        if (player->tryToMoveOrAttack(South))
+            advanceTurn();
+    });
+
+    mapKey(UpArrow, [this]
+    {
+        if (player->tryToMoveOrAttack(North))
+            advanceTurn();
+    });
+
 #ifdef DEBUG
     mapKey(Tab, [this] { enterCommandMode(getWindow()); });
 #endif
@@ -36,12 +56,6 @@ Game::Game(Window& window)
 
 void Game::updateLogic()
 {
-    --framesUntilTick;
-    if (framesUntilTick > 0)
-        return;
-
-    advanceTick();
-    framesUntilTick = framesPerTick;
     world.exist();
 }
 
@@ -79,7 +93,7 @@ void Game::printPlayerInformation(BitmapFont& font) const
         font.printLine("");
         font.printLine("x: " + std::to_string(player->getPosition().x));
         font.printLine("y: " + std::to_string(player->getPosition().y));
-        font.printLine("Frame: #" + std::to_string(framesUntilTick));
+        font.printLine("Turn " + std::to_string(getTurn()));
     }
 #endif
 }

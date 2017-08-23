@@ -7,9 +7,9 @@ void Engine::run()
 {
     for (running = true; running && !window.shouldClose();)
     {
-        auto previousTick = getTick();
+        auto previousTurn = getTurn();
 
-        while (getTick() == previousTick)
+        while (getTurn() == previousTurn)
         {
             render(window);
             window.updateScreen();

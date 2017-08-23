@@ -107,30 +107,30 @@ void Creature::editAttribute(Attribute attribute, int amount)
         attributes[index] += amount;
 }
 
-void Creature::tryToMoveOrAttack(Dir8 direction)
+bool Creature::tryToMoveOrAttack(Dir8 direction)
 {
     Tile* destination = getTileUnder(0).getAdjacentTile(direction);
 
     if (!destination)
-        return;
+        return false;
 
     if (!destination->getCreatures().empty())
     {
         attack(destination->getCreature(0));
-        return;
+        return true;
     }
 
     if (destination->hasObject())
     {
         bool preventsMovement = destination->getObject()->preventsMovement();
-
-        destination->getObject()->reactToMovementAttempt();
+        bool didReactToMovementAttempt = destination->getObject()->reactToMovementAttempt();
 
         if (preventsMovement)
-            return;
+            return didReactToMovementAttempt;
     }
 
     moveTo(*destination);
+    return true;
 }
 
 void Creature::moveTo(Tile& destination)

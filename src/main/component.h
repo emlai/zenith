@@ -13,7 +13,8 @@ public:
     static std::unique_ptr<Component> get(boost::string_ref name, Object& parent);
     Object& getParent() const { return *parent; }
 
-    virtual void reactToMovementAttempt() {}
+    /// Returns true if the component did react to the movement attempt.
+    virtual bool reactToMovementAttempt() { return false; }
     virtual bool preventsMovement() { return false; }
 
 private:

@@ -4,7 +4,7 @@
 
 class Door : public Component
 {
-    void reactToMovementAttempt() override;
+    bool reactToMovementAttempt() override;
     bool preventsMovement() override { return !isOpen; }
 
 private:

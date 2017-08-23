@@ -32,8 +32,6 @@ private:
 
     World world;
     Creature* player;
-    int framesUntilTick;
-    static const int framesPerTick = 4;
 
 #ifdef DEBUG
     void enterCommandMode(Window&);

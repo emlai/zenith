@@ -32,10 +32,15 @@ void Object::render(Window& window, Vector2 position) const
     sprite.render(window, position);
 }
 
-void Object::reactToMovementAttempt()
+bool Object::reactToMovementAttempt()
 {
+    bool returnValue = false;
+
     for (auto& component : components)
-        component->reactToMovementAttempt();
+        if (component->reactToMovementAttempt())
+            returnValue = true;
+
+    return returnValue;
 }
 
 bool Object::preventsMovement()

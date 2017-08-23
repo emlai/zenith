@@ -57,7 +57,8 @@ public:
     Creature(Tile&, const std::string& id);
     void exist() override;
     void render(Window&) const;
-    void tryToMoveOrAttack(Dir8);
+    /// Returns true if the game should advance to the next turn.
+    bool tryToMoveOrAttack(Dir8);
     void takeDamage(int amount);
     const auto& getTilesUnder() const { return tilesUnder; }
     Tile& getTileUnder(int index) const { return *tilesUnder[index]; }

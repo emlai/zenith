@@ -11,9 +11,9 @@ public:
     void run();
 
 protected:
-    Engine(Window& window) : window(window), tick(0), running(false) {}
-    void advanceTick() { ++tick; }
-    auto getTick() const { return tick; }
+    Engine(Window& window) : window(window), turn(0), running(false) {}
+    void advanceTurn() { ++turn; }
+    auto getTurn() const { return turn; }
     void stop() { running = false; }
     void mapKey(Key, std::function<void()>);
     Window& getWindow() const { return window; }
@@ -24,6 +24,6 @@ private:
     void processInput(Window&);
 
     Window& window;
-    int tick;
+    int turn;
     bool running;
 };

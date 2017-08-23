@@ -11,7 +11,8 @@ class Object
 public:
     Object(boost::string_ref id);
     void render(Window& window, Vector2 position) const;
-    void reactToMovementAttempt();
+    /// Returns true if the object did react to the movement attempt.
+    bool reactToMovementAttempt();
     bool preventsMovement();
     Sprite& getSprite() { return sprite; }
 
