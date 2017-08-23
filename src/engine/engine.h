@@ -19,7 +19,7 @@ protected:
     Window& getWindow() const { return window; }
 
 private:
-    virtual void render(Window&) const = 0;
+    virtual void render(Window&) = 0;
     virtual void updateLogic() = 0;
     void processInput(Window&);
 

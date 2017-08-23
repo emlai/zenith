@@ -36,7 +36,7 @@ void Game::updateLogic()
     world.exist();
 }
 
-void Game::render(Window& window) const
+void Game::render(Window& window)
 {
     Rect playerView(player->getPosition() * Tile::size + Tile::sizeVector / 2 - GUI::viewport.size / 2,
                     GUI::viewport.size);

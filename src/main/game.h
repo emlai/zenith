@@ -15,7 +15,7 @@ public:
     Game(Window&);
 
 private:
-    void render(Window&) const override;
+    void render(Window&) override;
     void updateLogic() override;
 
     void printPlayerInformation(BitmapFont&) const;

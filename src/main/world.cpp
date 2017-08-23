@@ -10,7 +10,7 @@ void World::exist()
     areas.at({0, 0})->exist();
 }
 
-void World::render(Window& window, Rect region) const
+void World::render(Window& window, Rect region)
 {
     forEachTile(region, [&](const Tile& tile) { tile.render(window, 0); });
     forEachTile(region, [&](const Tile& tile) { tile.render(window, 2); });
@@ -74,10 +74,10 @@ Tile* World::getTile(Vector2 position) const
     return nullptr;
 }
 
-void World::forEachTile(Rect region, const std::function<void(const Tile&)>& function) const
+void World::forEachTile(Rect region, const std::function<void(const Tile&)>& function)
 {
     for (int x = region.getLeft(); x < region.getRight(); ++x)
         for (int y = region.getTop(); y < region.getBottom(); ++y)
-            if (const auto* tile = getTile(Vector2(x, y)))
+            if (const auto* tile = getOrCreateTile(Vector2(x, y)))
                 function(*tile);
 }
