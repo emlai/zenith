@@ -41,6 +41,14 @@ void Tile::render(Window& window, int zIndex) const
         default:
             assert(false);
     }
+
+    Rect tileRect(position * sizeVector, sizeVector);
+
+    if (window.getMousePosition().isWithin(tileRect))
+    {
+        Game::cursorTexture->setColor(GUIColor::White);
+        Game::cursorTexture->render(nullptr, &tileRect);
+    }
 }
 
 void Tile::transferCreature(Creature& creature, Tile& destination)

@@ -23,6 +23,7 @@ public:
     static boost::optional<const Texture> objectSpriteSheet;
     static boost::optional<const Texture> itemSpriteSheet;
     static boost::optional<const Texture> groundSpriteSheet;
+    static boost::optional<const Texture> cursorTexture;
 
 private:
     void render(Window&) override;

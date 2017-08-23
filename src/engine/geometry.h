@@ -187,8 +187,8 @@ struct Rect
 template<typename T>
 inline bool Vector2Base<T>::isWithin(Rect rect) const
 {
-    return x >= rect.getLeft() && x < rect.getRight() &&
-           y >= rect.getTop() && y < rect.getBottom();
+    return x >= rect.getLeft() && x <= rect.getRight() &&
+           y >= rect.getTop() && y <= rect.getBottom();
 }
 
 inline Vector2 makeRandomVectorInside(Rect rect)

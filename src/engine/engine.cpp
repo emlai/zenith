@@ -30,7 +30,7 @@ void Engine::mapKey(Key key, std::function<void()> function)
 
 void Engine::processInput(Window& window)
 {
-    if (auto key = window.waitForInputWithTimeout(window.getAnimationFrameTime()))
+    if (auto key = window.waitForInputWithTimeout(0))
         if (auto& command = keyboard::getMappedCommand(key, NoMod))
             command();
 }

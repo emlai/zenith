@@ -17,7 +17,9 @@ public:
     void setDrawColor(Color32);
     void setClearColor(Color32);
     void setViewport(const Rect* viewport);
+    Rect getViewport() const;
     void setView(const Rect* view);
+    const Rect* getView() const { return view.get_ptr(); }
     void setFont(BitmapFont&);
     BitmapFont& getFont();
     void setRenderTarget(TargetTexture*);

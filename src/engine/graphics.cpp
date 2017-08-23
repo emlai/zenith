@@ -42,6 +42,13 @@ void GraphicsContext::setViewport(const Rect* viewport)
     SDL_RenderSetViewport(renderer.get(), reinterpret_cast<const SDL_Rect*>(viewport));
 }
 
+Rect GraphicsContext::getViewport() const
+{
+    SDL_Rect viewport;
+    SDL_RenderGetViewport(renderer.get(), &viewport);
+    return Rect(viewport.x, viewport.y, viewport.w, viewport.h);
+}
+
 void GraphicsContext::setView(const Rect* view)
 {
     if (view)

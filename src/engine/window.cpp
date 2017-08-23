@@ -34,8 +34,6 @@ Window::Window(Vector2 size, const std::string& title)
 {
     SDL_EventState(SDL_WINDOWEVENT_ENTER, SDL_IGNORE);
     SDL_EventState(SDL_WINDOWEVENT_LEAVE, SDL_IGNORE);
-    SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
-    SDL_EventState(SDL_MOUSEBUTTONDOWN, SDL_IGNORE);
     SDL_EventState(SDL_MOUSEBUTTONUP, SDL_IGNORE);
     SDL_EventState(SDL_MOUSEWHEEL, SDL_IGNORE);
     SDL_EventState(SDL_FINGERMOTION, SDL_IGNORE);
@@ -109,7 +107,7 @@ Key Window::waitForInputWithTimeout(int timeoutMS)
     {
         auto startTime = SDL_GetTicks();
 
-        if (!SDL_WaitEventTimeout(&event, timeoutMS))
+        if (!SDL_WaitEventTimeout(&event, std::max(0, timeoutMS)))
             return NoKey;
 
         auto endTime = SDL_GetTicks();
@@ -150,6 +148,24 @@ void Window::sendCloseRequest()
 bool Window::shouldClose() const
 {
     return closeRequestReceived;
+}
+
+Vector2 Window::getMousePosition() const
+{
+    Vector2 position;
+    SDL_GetMouseState(&position.x, &position.y);
+
+    position -= context.getViewport().position;
+
+    if (const Rect* view = context.getView())
+        position += view->position;
+
+    return position;
+}
+
+void Window::setShowCursor(bool show)
+{
+    SDL_ShowCursor(show);
 }
 
 Vector2 Window::getSize() const

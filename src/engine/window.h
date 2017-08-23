@@ -15,6 +15,8 @@ public:
     void processInput(KeyDownCallback);
     Key waitForInput();
     Key waitForInputWithTimeout(int timeoutMS);
+    Vector2 getMousePosition() const;
+    void setShowCursor(bool show);
     void toggleFullscreen();
     void sendCloseRequest();
     void setClearColor(Color32 color) { context.setClearColor(color); }
