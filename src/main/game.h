@@ -7,12 +7,20 @@
 #include "engine/engine.h"
 #include "engine/config.h"
 #include "engine/color.h"
+#include <boost/optional.hpp>
 #include <string>
 
 class Game : public Engine
 {
 public:
     Game(Window&);
+
+    static const Config creatureConfig;
+    static const Config objectConfig;
+    static const Config groundConfig;
+    static boost::optional<const Texture> creatureSpriteSheet;
+    static boost::optional<const Texture> objectSpriteSheet;
+    static boost::optional<const Texture> groundSpriteSheet;
 
 private:
     void render(Window&) override;
@@ -21,13 +29,6 @@ private:
     void printPlayerInformation(BitmapFont&) const;
     static void printStat(BitmapFont&, const std::string&, int current, int max, Color16);
     static void printAttribute(BitmapFont&, const std::string&, int current);
-
-    Config creatureConfig;
-    Config objectConfig;
-    Config groundConfig;
-    Texture creatureSpriteSheet;
-    Texture objectSpriteSheet;
-    Texture groundSpriteSheet;
 
     World world;
     Creature* player;

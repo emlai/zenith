@@ -9,7 +9,7 @@ class World;
 class Area : public Entity
 {
 public:
-    Area(World& world, Vector2 position, const Config& groundConfig, const Texture& groundSpriteSheet);
+    Area(World& world, Vector2 position);
 
 private:
     friend class World;

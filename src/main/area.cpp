@@ -3,15 +3,14 @@
 
 const Vector2 Area::sizeVector = Vector2(Area::size, Area::size);
 
-Area::Area(World& world, Vector2 position, const Config& groundConfig, const Texture& groundSpriteSheet)
+Area::Area(World& world, Vector2 position)
 :   world(world), position(position)
 {
     tiles.reserve(size * size);
 
     for (Vector2 pos(0, 0); pos.y < size; ++pos.y)
         for (pos.x = 0; pos.x < size; ++pos.x)
-            tiles.emplace_back(world, position * sizeVector + pos, "Grass",
-                               groundConfig, groundSpriteSheet);
+            tiles.emplace_back(world, position * sizeVector + pos, "Grass");
 }
 
 void Area::exist()

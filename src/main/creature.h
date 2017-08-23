@@ -1,7 +1,6 @@
 #pragma once
 
 #include "entity.h"
-#include "engine/config.h"
 #include "engine/geometry.h"
 #include "engine/sprite.h"
 #include "engine/utility.h"
@@ -55,8 +54,7 @@ const std::string statNames[] = { "HP", "AP", "MP" };
 class Creature final : public Entity
 {
 public:
-    Creature(Tile&, const std::string& id, const Config& creatureConfig,
-             const Texture& creatureSpriteSheet);
+    Creature(Tile&, const std::string& id);
     void exist() override;
     void render(Window&) const;
     void tryToMove(Dir8);
@@ -77,14 +75,14 @@ private:
     void moveTo(Tile&);
     void setAttribute(Attribute, int amount);
     void editAttribute(Attribute, int amount);
-    void generateAttributes(const Config&, const std::string&);
+    void generateAttributes(const std::string&);
     void calculateDerivedStats();
     void editHP(int amount) { currentHP = std::min(currentHP + amount, maxHP); }
     void editAP(int amount) { currentAP = std::min(currentAP + amount, maxAP); }
     void editMP(int amount) { currentMP = std::min(currentMP + amount, maxMP); }
     void regenerate();
-    static std::vector<Attribute> initDisplayedAttributes(const Config&, const std::string&);
-    static std::vector<std::vector<int>> initAttributeIndices(const Config&, const std::string&);
+    static std::vector<Attribute> initDisplayedAttributes(const std::string&);
+    static std::vector<std::vector<int>> initAttributeIndices(const std::string&);
     const auto& getAttributeIndices(int attribute) const { return attributeIndices[attribute]; }
 
     std::vector<Tile*> tilesUnder;

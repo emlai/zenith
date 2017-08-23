@@ -1,10 +1,7 @@
 #include "world.h"
 #include "worldgen.h"
 
-World::World(const Config& groundConfig, const Texture& groundSpriteSheet,
-             const Config& objectConfig, const Texture& objectSpriteSheet)
-:   groundConfig(groundConfig), groundSpriteSheet(groundSpriteSheet),
-    objectConfig(objectConfig), objectSpriteSheet(objectSpriteSheet)
+World::World()
 {
 }
 
@@ -25,9 +22,8 @@ Area* World::getOrCreateArea(Vector2 position)
     if (auto* area = getArea(position))
         return area;
 
-    auto& area = *areas.emplace(position, std::make_unique<Area>(*this, position, groundConfig,
-                                                                 groundSpriteSheet)).first->second;
-    WorldGenerator generator(*this, objectConfig, objectSpriteSheet, groundConfig, groundSpriteSheet);
+    auto& area = *areas.emplace(position, std::make_unique<Area>(*this, position)).first->second;
+    WorldGenerator generator(*this);
     generator.generateRegion(Rect(position * Area::sizeVector, Area::sizeVector));
     return &area;
 }

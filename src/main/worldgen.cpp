@@ -1,17 +1,12 @@
 #include "worldgen.h"
+#include "game.h"
 #include "object.h"
 #include "world.h"
 #include "engine/geometry.h"
 #include "engine/math.h"
 
-WorldGenerator::WorldGenerator(World& world,
-                               const Config& objectConfig, const Texture& objectSpriteSheet,
-                               const Config& groundConfig, const Texture& groundSpriteSheet)
-:   world(world),
-    objectConfig(objectConfig),
-    objectSpriteSheet(objectSpriteSheet),
-    groundConfig(groundConfig),
-    groundSpriteSheet(groundSpriteSheet)
+WorldGenerator::WorldGenerator(World& world)
+:   world(world)
 {
 }
 
@@ -47,7 +42,7 @@ void WorldGenerator::generateRoom(Rect region)
     auto generateWall = [&](Vector2 position)
     {
         if (auto* tile = world.getOrCreateTile(position))
-            tile->setObject(Object(wallId, objectConfig, objectSpriteSheet));
+            tile->setObject(Object(wallId));
     };
 
     for (int x = region.getLeft(); x <= region.getRight(); ++x)
@@ -62,8 +57,5 @@ void WorldGenerator::generateRoom(Rect region)
     for (int y = region.getTop() + 1; y < region.getBottom(); ++y)
         generateWall(Vector2(region.getRight(), y));
 
-    world.forEachTile(region, [&](Tile& tile)
-    {
-        tile.setGround(floorId, groundConfig, groundSpriteSheet);
-    });
+    world.forEachTile(region, [&](Tile& tile) { tile.setGround(floorId); });
 }

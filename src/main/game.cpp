@@ -3,19 +3,24 @@
 #include "msgsystem.h"
 #include "engine/math.h"
 
+const Config Game::creatureConfig("data/config/creature.cfg");
+const Config Game::objectConfig("data/config/object.cfg");
+const Config Game::groundConfig("data/config/ground.cfg");
+boost::optional<const Texture> Game::creatureSpriteSheet;
+boost::optional<const Texture> Game::objectSpriteSheet;
+boost::optional<const Texture> Game::groundSpriteSheet;
+
 static const Color32 transparentColor(0x5A5268FF);
 
 Game::Game(Window& window)
 :   Engine(window),
-    creatureConfig("data/config/creature.cfg"),
-    objectConfig("data/config/object.cfg"),
-    groundConfig("data/config/ground.cfg"),
-    creatureSpriteSheet(getWindow(), "data/graphics/creature.bmp", transparentColor),
-    objectSpriteSheet(getWindow(), "data/graphics/object.bmp", transparentColor),
-    groundSpriteSheet(getWindow(), "data/graphics/ground.bmp"),
-    world(groundConfig, groundSpriteSheet, objectConfig, objectSpriteSheet),
+    world(),
     framesUntilTick(framesPerTick)
 {
+    creatureSpriteSheet.emplace(getWindow(), "data/graphics/creature.bmp", transparentColor);
+    objectSpriteSheet.emplace(getWindow(), "data/graphics/object.bmp", transparentColor);
+    groundSpriteSheet.emplace(getWindow(), "data/graphics/ground.bmp");
+
     mapKey(Esc, [this] { stop(); });
     mapKey('q', [this] { stop(); });
     mapKey(RightArrow, [this] { player->tryToMove(East); });
@@ -26,7 +31,7 @@ Game::Game(Window& window)
     mapKey(Tab, [this] { enterCommandMode(getWindow()); });
 #endif
 
-    player = world.getOrCreateTile({0, 0})->spawnCreature("Human", creatureConfig, creatureSpriteSheet);
+    player = world.getOrCreateTile({0, 0})->spawnCreature("Human");
 }
 
 void Game::updateLogic()
@@ -123,7 +128,7 @@ void Game::enterCommandMode(Window& window)
 void Game::parseCommand(const std::string& command)
 {
     if (command == "respawn")
-        *player = Creature(player->getTileUnder(0), "Human", creatureConfig, creatureSpriteSheet);
+        *player = Creature(player->getTileUnder(0), "Human");
     else if (command == "clear")
         MessageSystem::clearDebugMessageHistory();
     else if (command == "info")

@@ -1,5 +1,6 @@
 #include "tile.h"
 #include "area.h"
+#include "game.h"
 #include "gui.h"
 #include "world.h"
 #include "engine/texture.h"
@@ -7,11 +8,10 @@
 
 const Vector2 Tile::sizeVector = Vector2(Tile::size, Tile::size);
 
-Tile::Tile(World& world, Vector2 position, boost::string_ref groundId, const Config& groundConfig,
-           const Texture& groundSpriteSheet)
+Tile::Tile(World& world, Vector2 position, boost::string_ref groundId)
 :   world(world),
     position(position),
-    groundSprite(groundSpriteSheet, getSpriteTextureRegion(groundConfig, groundId))
+    groundSprite(*Game::groundSpriteSheet, getSpriteTextureRegion(Game::groundConfig, groundId))
 {
 }
 
@@ -65,10 +65,9 @@ void Tile::setObject(boost::optional<Object> newObject)
     object = std::move(newObject);
 }
 
-void Tile::setGround(boost::string_ref groundId, const Config& groundConfig,
-                     const Texture& groundSpriteSheet)
+void Tile::setGround(boost::string_ref groundId)
 {
-    groundSprite = Sprite(groundSpriteSheet, getSpriteTextureRegion(groundConfig, groundId));
+    groundSprite = Sprite(*Game::groundSpriteSheet, getSpriteTextureRegion(Game::groundConfig, groundId));
 }
 
 Tile* Tile::getAdjacentTile(Dir8 direction) const

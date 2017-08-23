@@ -3,7 +3,6 @@
 #include "entity.h"
 #include "creature.h"
 #include "object.h"
-#include "engine/config.h"
 #include "engine/geometry.h"
 #include "engine/sprite.h"
 #include <boost/utility/string_ref.hpp>
@@ -18,8 +17,7 @@ class World;
 class Tile : public Entity
 {
 public:
-    Tile(World& world, Vector2 position, boost::string_ref groundId, const Config& groundConfig,
-         const Texture& groundSpriteSheet);
+    Tile(World& world, Vector2 position, boost::string_ref groundId);
     void exist() override;
     void render(Window& window, int zIndex) const;
     template<typename... Args>
@@ -30,8 +28,7 @@ public:
     bool hasObject() const { return bool(object); }
     const Object* getObject() const { return object.get_ptr(); }
     void setObject(boost::optional<Object>);
-    void setGround(boost::string_ref groundId, const Config& groundConfig,
-                   const Texture& groundSpriteSheet);
+    void setGround(boost::string_ref groundId);
     Tile* getAdjacentTile(Dir8) const;
     World& getWorld() const { return world; }
     Vector2 getPosition() const { return position; }

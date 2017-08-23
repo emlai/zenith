@@ -1,8 +1,9 @@
 #include "object.h"
+#include "game.h"
 #include "gui.h"
 
-Object::Object(boost::string_ref id, const Config& config, const Texture& spriteSheet)
-:   sprite(spriteSheet, getSpriteTextureRegion(config, id))
+Object::Object(boost::string_ref id)
+:   sprite(*Game::objectSpriteSheet, getSpriteTextureRegion(Game::objectConfig, id))
 {
 }
 

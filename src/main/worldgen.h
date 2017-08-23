@@ -1,16 +1,12 @@
 #pragma once
 
-class Config;
-class Texture;
 class World;
 struct Rect;
 
 class WorldGenerator
 {
 public:
-    WorldGenerator(World& world,
-                   const Config& objectConfig, const Texture& objectSpriteSheet,
-                   const Config& groundConfig, const Texture& groundSpriteSheet);
+    WorldGenerator(World& world);
     void generateRegion(Rect region);
 
 private:
@@ -19,8 +15,4 @@ private:
     void generateRoom(Rect region);
 
     World& world;
-    const Config& objectConfig;
-    const Texture& objectSpriteSheet;
-    const Config& groundConfig;
-    const Texture& groundSpriteSheet;
 };

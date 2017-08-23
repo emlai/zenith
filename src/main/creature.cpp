@@ -1,24 +1,24 @@
 #include "creature.h"
+#include "game.h"
 #include "msgsystem.h"
 #include "tile.h"
 
-std::vector<Attribute> Creature::initDisplayedAttributes(const Config& config, const std::string& id)
+std::vector<Attribute> Creature::initDisplayedAttributes(const std::string& id)
 {
     std::vector<Attribute> displayedAttributes;
 
-    for (const auto& attribute : config.get<std::vector<std::string>>(id, "DisplayedAttributes"))
+    for (const auto& attribute : Game::creatureConfig.get<std::vector<std::string>>(id, "DisplayedAttributes"))
         displayedAttributes.push_back(stringToAttribute(attribute));
 
     return displayedAttributes;
 }
 
-std::vector<std::vector<int>> Creature::initAttributeIndices(const Config& config, const std::string& id)
+std::vector<std::vector<int>> Creature::initAttributeIndices(const std::string& id)
 {
-    return config.get<std::vector<std::vector<int>>>(id, "AttributeIndices");
+    return Game::creatureConfig.get<std::vector<std::vector<int>>>(id, "AttributeIndices");
 }
 
-Creature::Creature(Tile& tile, const std::string& id, const Config& config,
-                   const Texture& creatureSpriteSheet)
+Creature::Creature(Tile& tile, const std::string& id)
 :   tilesUnder({&tile}),
     currentHP(0),
     maxHP(0),
@@ -26,11 +26,11 @@ Creature::Creature(Tile& tile, const std::string& id, const Config& config,
     maxAP(0),
     currentMP(0),
     maxMP(0),
-    displayedAttributes(initDisplayedAttributes(config, id)),
-    attributeIndices(initAttributeIndices(config, id)),
-    sprite(creatureSpriteSheet, getSpriteTextureRegion(config, id))
+    displayedAttributes(initDisplayedAttributes(id)),
+    attributeIndices(initAttributeIndices(id)),
+    sprite(*Game::creatureSpriteSheet, getSpriteTextureRegion(Game::creatureConfig, id))
 {
-    generateAttributes(config, id);
+    generateAttributes(id);
 }
 
 void Creature::exist()
@@ -50,17 +50,17 @@ void Creature::render(Window& window) const
     sprite.render(window, getPosition() * Tile::size);
 }
 
-void Creature::generateAttributes(const Config& config, const std::string& id)
+void Creature::generateAttributes(const std::string& id)
 {
-    attributes.resize(config.get<int>(id, "Attributes"));
+    attributes.resize(Game::creatureConfig.get<int>(id, "Attributes"));
 
-    const auto& attributeStrings = config.get<std::vector<std::string>>(id, "ConfigAttributes");
+    auto attributeStrings = Game::creatureConfig.get<std::vector<std::string>>(id, "ConfigAttributes");
     auto configAttributes = stringsToAttributes(attributeStrings);
 
     for (auto attribute : configAttributes)
     {
         const std::string& attributeName = attributeAbbreviations[attribute];
-        setAttribute(attribute, config.get<int>(id, attributeName) + randNormal(2));
+        setAttribute(attribute, Game::creatureConfig.get<int>(id, attributeName) + randNormal(2));
     }
 
     calculateDerivedStats();
