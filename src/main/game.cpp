@@ -22,7 +22,7 @@ Game::Game(Window& window)
     mapKey(Tab, [this] { enterCommandMode(getWindow()); });
 #endif
 
-    player = getRandomTile(*world.getArea({0, 0})).spawnCreature("Human", creatureConfig, creatureSpriteSheet);
+    player = getRandomTile(*world.getOrCreateArea({0, 0})).spawnCreature("Human", creatureConfig, creatureSpriteSheet);
 }
 
 void Game::updateLogic()
@@ -43,7 +43,9 @@ void Game::render(Window& window) const
     window.setView(&playerView);
     window.setViewport(&GUI::viewport);
 
-    world.render(window);
+    Rect visibleRegion(player->getGlobalPosition() - GUI::viewport.size / Tile::size / 2,
+                       GUI::viewport.size / Tile::size);
+    world.render(window, visibleRegion);
 
     window.setView(nullptr);
     window.setViewport(nullptr);
@@ -68,6 +70,8 @@ void Game::printPlayerInformation(BitmapFont& font) const
         font.printLine("");
         font.printLine("Pos: " + std::to_string(player->getPosition().x) + "," +
                        std::to_string(player->getPosition().y));
+        font.printLine("GPos:" + std::to_string(player->getGlobalPosition().x) + "," +
+                       std::to_string(player->getGlobalPosition().y));
         font.printLine("Frame: #" + std::to_string(framesUntilTick));
     }
 #endif

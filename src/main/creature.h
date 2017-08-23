@@ -63,6 +63,7 @@ public:
     const auto& getTilesUnder() const { return tilesUnder; }
     Tile& getTileUnder(int index) const { return *tilesUnder[index]; }
     Vector2 getPosition() const;
+    Vector2 getGlobalPosition() const;
     bool isDead() const { return currentHP <= 0; }
     int getHP() const { return currentHP; }
     int getAP() const { return currentAP; }

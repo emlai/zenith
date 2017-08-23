@@ -25,6 +25,7 @@ public:
     void transferCreature(Creature&, Tile&);
     Tile* getAdjacentTile(Dir8) const;
     Vector2 getPosition() const { return position; }
+    Vector2 getGlobalPosition() const;
     static const int size = 20;
     static const Vector2 sizeVector;
 

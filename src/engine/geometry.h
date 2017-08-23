@@ -42,21 +42,27 @@ struct Vector2Base
     Vector2Base& operator-=(Vector2Base vector) { x -= vector.x; y -= vector.y; return *this; }
     Vector2Base& operator*=(Vector2Base vector) { x *= vector.x; y *= vector.y; return *this; }
     Vector2Base& operator/=(Vector2Base vector) { x /= vector.x; y /= vector.y; return *this; }
+    Vector2Base& operator%=(Vector2Base vector) { x %= vector.x; y %= vector.y; return *this; }
 
     template<typename U, typename = std::enable_if_t<std::is_arithmetic<U>::value>>
     Vector2Base& operator*=(U multiplier) { x *= multiplier; y *= multiplier; return *this; }
     template<typename U, typename = std::enable_if_t<std::is_arithmetic<U>::value>>
     Vector2Base& operator/=(U divisor) { x /= divisor; y /= divisor; return *this; }
+    template<typename U, typename = std::enable_if_t<std::is_arithmetic<U>::value>>
+    Vector2Base& operator%=(U divisor) { x %= divisor; y %= divisor; return *this; }
 
     Vector2Base operator+(Vector2Base vector) const { return Vector2Base(x + vector.x, y + vector.y); }
     Vector2Base operator-(Vector2Base vector) const { return Vector2Base(x - vector.x, y - vector.y); }
     Vector2Base operator*(Vector2Base vector) const { return Vector2Base(x * vector.x, y * vector.y); }
     Vector2Base operator/(Vector2Base vector) const { return Vector2Base(x / vector.x, y / vector.y); }
+    Vector2Base operator%(Vector2Base vector) const { return Vector2Base(x % vector.x, y % vector.y); }
 
     template<typename U, typename = std::enable_if_t<std::is_arithmetic<U>::value>>
     Vector2Base operator*(U multiplier) const { return Vector2Base(T(x * multiplier), T(y * multiplier)); }
     template<typename U, typename = std::enable_if_t<std::is_arithmetic<U>::value>>
     Vector2Base operator/(U divisor) const { return Vector2Base(T(x / divisor), T(y / divisor)); }
+    template<typename U, typename = std::enable_if_t<std::is_arithmetic<U>::value>>
+    Vector2Base operator%(U divisor) const { return Vector2Base(T(x % divisor), T(y % divisor)); }
 
     Vector2Base operator+() const { return *this; }
     Vector2Base operator-() const { return Vector2Base(-x, -y); }

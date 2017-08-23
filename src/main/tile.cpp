@@ -1,6 +1,7 @@
 #include "tile.h"
 #include "area.h"
 #include "gui.h"
+#include "world.h"
 #include "engine/texture.h"
 #include <cassert>
 
@@ -56,10 +57,10 @@ void Tile::transferCreature(Creature& creature, Tile& destination)
 
 Tile* Tile::getAdjacentTile(Dir8 direction) const
 {
-    auto adjacentPosition = position + direction;
+    return location.getWorld().getOrCreateTile(getGlobalPosition() + direction);
+}
 
-    if (!adjacentPosition.isWithin(location.sizeVector))
-        return nullptr;
-
-    return &location.getTileAt(adjacentPosition);
+Vector2 Tile::getGlobalPosition() const
+{
+    return location.getPosition() * location.sizeVector + position;
 }

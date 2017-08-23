@@ -3,7 +3,8 @@
 
 const Vector2 Area::sizeVector = Vector2(Area::size, Area::size);
 
-Area::Area(const Config& groundConfig, const Texture& groundSpriteSheet)
+Area::Area(World& world, Vector2 position, const Config& groundConfig, const Texture& groundSpriteSheet)
+:   world(world), position(position)
 {
     tiles.reserve(size * size);
 
@@ -18,10 +19,18 @@ void Area::exist()
         tile.exist();
 }
 
-void Area::render(Window& window, int zIndex) const
+Tile& Area::getTileAt(Vector2 position)
 {
-    for (const auto& tile : tiles)
-        tile.render(window, zIndex);
+    assert(position.x >= 0 && position.x < size);
+    assert(position.y >= 0 && position.y < size);
+    return tiles[position.x + size * position.y];
+}
+
+const Tile& Area::getTileAt(Vector2 position) const
+{
+    assert(position.x >= 0 && position.x < size);
+    assert(position.y >= 0 && position.y < size);
+    return tiles[position.x + size * position.y];
 }
 
 const Tile& getRandomTile(const Area& area)
