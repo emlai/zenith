@@ -44,32 +44,32 @@ static int divideRoundingDown(int dividend, int divisor)
         return quotient;
 }
 
-static std::pair<Vector2, Vector2> globalPositionToAreaAndTilePosition(Vector2 position)
+Vector2 World::globalPositionToAreaPosition(Vector2 position)
 {
-    const Vector2 areaPosition(divideRoundingDown(position.x, Area::size),
-                               divideRoundingDown(position.y, Area::size));
+    return Vector2(divideRoundingDown(position.x, Area::size),
+                   divideRoundingDown(position.y, Area::size));
+}
+
+Vector2 World::globalPositionToTilePosition(Vector2 position)
+{
     Vector2 tilePosition = position % Area::size;
     if (tilePosition.x < 0) tilePosition.x += Area::size;
     if (tilePosition.y < 0) tilePosition.y += Area::size;
-    return {areaPosition, tilePosition};
+    return tilePosition;
 }
 
 Tile* World::getOrCreateTile(Vector2 position)
 {
-    auto areaAndTilePosition = globalPositionToAreaAndTilePosition(position);
-
-    if (auto* area = getOrCreateArea(areaAndTilePosition.first))
-        return &area->getTileAt(areaAndTilePosition.second);
+    if (auto* area = getOrCreateArea(globalPositionToAreaPosition(position)))
+        return &area->getTileAt(globalPositionToTilePosition(position));
 
     return nullptr;
 }
 
 Tile* World::getTile(Vector2 position) const
 {
-    auto areaAndTilePosition = globalPositionToAreaAndTilePosition(position);
-
-    if (auto* area = getArea(areaAndTilePosition.first))
-        return &area->getTileAt(areaAndTilePosition.second);
+    if (auto* area = getArea(globalPositionToAreaPosition(position)))
+        return &area->getTileAt(globalPositionToTilePosition(position));
 
     return nullptr;
 }

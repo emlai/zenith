@@ -7,9 +7,9 @@
 
 const Vector2 Tile::sizeVector = Vector2(Tile::size, Tile::size);
 
-Tile::Tile(Area& location, Vector2 position, boost::string_ref groundId, const Config& groundConfig,
+Tile::Tile(World& world, Vector2 position, boost::string_ref groundId, const Config& groundConfig,
            const Texture& groundSpriteSheet)
-:   location(location),
+:   world(world),
     position(position),
     groundSprite(groundSpriteSheet, getSpriteTextureRegion(groundConfig, groundId))
 {
@@ -57,10 +57,5 @@ void Tile::transferCreature(Creature& creature, Tile& destination)
 
 Tile* Tile::getAdjacentTile(Dir8 direction) const
 {
-    return location.getWorld().getOrCreateTile(getGlobalPosition() + direction);
-}
-
-Vector2 Tile::getGlobalPosition() const
-{
-    return location.getPosition() * location.sizeVector + position;
+    return getWorld().getOrCreateTile(getPosition() + direction);
 }

@@ -127,11 +127,6 @@ Vector2 Creature::getPosition() const
     return getTileUnder(0).getPosition();
 }
 
-Vector2 Creature::getGlobalPosition() const
-{
-    return getTileUnder(0).getGlobalPosition();
-}
-
 Attribute stringToAttribute(const std::string& string)
 {
     auto it = std::find(std::begin(attributeAbbreviations), std::end(attributeAbbreviations), string);

@@ -10,11 +10,12 @@
 
 class Area;
 class Window;
+class World;
 
 class Tile : public Entity
 {
 public:
-    Tile(Area&, Vector2 position, boost::string_ref groundId, const Config& groundConfig,
+    Tile(World& world, Vector2 position, boost::string_ref groundId, const Config& groundConfig,
          const Texture& groundSpriteSheet);
     void exist() override;
     void render(Window& window, int zIndex) const;
@@ -24,8 +25,8 @@ public:
     Creature& getCreature(int index) const { return *creatures[index]; }
     void transferCreature(Creature&, Tile&);
     Tile* getAdjacentTile(Dir8) const;
+    World& getWorld() const { return world; }
     Vector2 getPosition() const { return position; }
-    Vector2 getGlobalPosition() const;
     static const int size = 20;
     static const Vector2 sizeVector;
 
@@ -33,7 +34,7 @@ private:
     void addCreature(std::unique_ptr<Creature> creature) { creatures.push_back(std::move(creature)); }
 
     std::vector<std::unique_ptr<Creature>> creatures;
-    Area& location;
+    World& world;
     Vector2 position;
     Sprite groundSprite;
 };

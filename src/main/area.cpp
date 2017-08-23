@@ -10,7 +10,8 @@ Area::Area(World& world, Vector2 position, const Config& groundConfig, const Tex
 
     for (Vector2 pos(0, 0); pos.y < size; ++pos.y)
         for (pos.x = 0; pos.x < size; ++pos.x)
-            tiles.emplace_back(*this, pos, "Grass", groundConfig, groundSpriteSheet);
+            tiles.emplace_back(world, position * sizeVector + pos, "Grass",
+                               groundConfig, groundSpriteSheet);
 }
 
 void Area::exist()
@@ -33,12 +34,12 @@ const Tile& Area::getTileAt(Vector2 position) const
     return tiles[position.x + size * position.y];
 }
 
-const Tile& getRandomTile(const Area& area)
+const Tile& Area::getRandomTile() const
 {
-    return area.getTileAt(makeRandomVector(area.sizeVector));
+    return getTileAt(makeRandomVector(sizeVector));
 }
 
-Tile& getRandomTile(Area& area)
+Tile& Area::getRandomTile()
 {
-    return area.getTileAt(makeRandomVector(area.sizeVector));
+    return getTileAt(makeRandomVector(sizeVector));
 }
