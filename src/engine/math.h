@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithm>
+#include <cassert>
 #include <functional>
 #include <limits>
 
@@ -70,4 +71,11 @@ template<typename T>
 T randInt(T min, T max)
 {
     return T(randInt(RNG::result_type(min), RNG::result_type(max)));
+}
+
+template<typename IndexableContainer>
+auto& randomElement(IndexableContainer& container)
+{
+    assert(!container.empty());
+    return container[randInt(container.size() - 1)];
 }

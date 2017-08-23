@@ -38,11 +38,27 @@ void WorldGenerator::generateRoom(Rect region)
 {
     auto wallId = "BrickWall";
     auto floorId = "WoodenFloor";
+    auto doorId = "Door";
+
+    std::vector<Tile*> nonCornerWalls;
+    const unsigned nonCornerWallCount = region.getPerimeter() - 4;
+    nonCornerWalls.reserve(nonCornerWallCount);
+
+    auto isCorner = [&](Vector2 position)
+    {
+        return (position.x == region.getLeft() || position.x == region.getRight())
+            && (position.y == region.getTop() || position.y == region.getBottom());
+    };
 
     auto generateWall = [&](Vector2 position)
     {
         if (auto* tile = world.getOrCreateTile(position))
+        {
             tile->setObject(Object(wallId));
+
+            if (!isCorner(position))
+                nonCornerWalls.push_back(tile);
+        }
     };
 
     for (int x = region.getLeft(); x <= region.getRight(); ++x)
@@ -56,6 +72,9 @@ void WorldGenerator::generateRoom(Rect region)
 
     for (int y = region.getTop() + 1; y < region.getBottom(); ++y)
         generateWall(Vector2(region.getRight(), y));
+
+    assert(nonCornerWalls.size() == nonCornerWallCount);
+    randomElement(nonCornerWalls)->setObject(Object(doorId));
 
     world.forEachTile(region, [&](Tile& tile) { tile.setGround(floorId); });
 }
