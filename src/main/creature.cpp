@@ -179,12 +179,6 @@ void Creature::attack(Creature& target)
 void Creature::takeDamage(int amount)
 {
     currentHP -= amount;
-
-    if (isDead())
-    {
-        for (auto* tile : getTilesUnder())
-            tile->removeCreature(*this);
-    }
 }
 
 Vector2 Creature::getPosition() const

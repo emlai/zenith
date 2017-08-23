@@ -16,11 +16,19 @@ void World::exist(Rect region)
             creaturesToUpdate.push_back(creature.get());
     });
 
+    creaturesToUpdate.erase(std::unique(creaturesToUpdate.begin(), creaturesToUpdate.end()),
+                            creaturesToUpdate.end());
+
     for (auto* creature : creaturesToUpdate)
         if (!creature->isDead())
             creature->exist();
 
     forEachTile(region, [&](Tile& tile) { tile.exist(); });
+
+    for (auto* creature : creaturesToUpdate)
+        if (creature->isDead())
+            for (auto* tile : creature->getTilesUnder())
+                tile->removeCreature(*creature);
 }
 
 void World::render(Window& window, Rect region)
