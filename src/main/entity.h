@@ -23,6 +23,10 @@ public:
     /// Returns true if the entity reacted to the movement attempt.
     bool reactToMovementAttempt();
     bool preventsMovement() const;
+    bool close();
+
+protected:
+    const std::vector<std::unique_ptr<Component>>& getComponents() const { return components; }
 
 private:
     std::string id;

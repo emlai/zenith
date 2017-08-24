@@ -8,6 +8,17 @@ Object::Object(boost::string_ref id)
 {
 }
 
+bool Object::close()
+{
+    bool returnValue = false;
+
+    for (auto& component : getComponents())
+        if (component->close())
+            returnValue = true;
+
+    return returnValue;
+}
+
 void Object::render(Window& window, Vector2 position) const
 {
     sprite.render(window, position);

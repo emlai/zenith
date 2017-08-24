@@ -58,11 +58,35 @@ Game::Game(Window& window)
             advanceTurn();
     });
 
+    mapKey(C, [this]
+    {
+        boost::optional<Dir8> direction = askForDirection("What do you want to close?");
+
+        if (direction && player->close(*direction))
+            advanceTurn();
+    });
+
 #ifdef DEBUG
     mapKey(Tab, [this] { enterCommandMode(getWindow()); });
 #endif
 
     player = world.getOrCreateTile({0, 0})->spawnCreature("Human", std::make_unique<PlayerController>());
+}
+
+boost::optional<Dir8> Game::askForDirection(boost::string_ref question)
+{
+    player->addMessage(question.to_string());
+    render(getWindow());
+    getWindow().updateScreen();
+
+    switch (getWindow().waitForInput())
+    {
+        case UpArrow: return North;
+        case RightArrow: return East;
+        case DownArrow: return South;
+        case LeftArrow: return West;
+        default: return boost::none;
+    }
 }
 
 void Game::updateLogic()

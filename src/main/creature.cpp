@@ -175,6 +175,12 @@ bool Creature::pickUpItem()
     return false;
 }
 
+bool Creature::close(Dir8 direction)
+{
+    Tile* destination = getTileUnder(0).getAdjacentTile(direction);
+    return destination && destination->hasObject() && destination->getObject()->close();
+}
+
 Vector2 Creature::getPosition() const
 {
     return getTileUnder(0).getPosition();

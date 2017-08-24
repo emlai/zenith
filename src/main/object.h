@@ -8,6 +8,7 @@ class Object : public Entity
 {
 public:
     Object(boost::string_ref id);
+    bool close();
     void render(Window& window, Vector2 position) const;
     Sprite& getSprite() { return sprite; }
 

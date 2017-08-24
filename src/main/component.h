@@ -16,6 +16,7 @@ public:
     /// Returns true if the component did react to the movement attempt.
     virtual bool reactToMovementAttempt() { return false; }
     virtual bool preventsMovement() { return false; }
+    virtual bool close() { return false; }
 
 private:
     Entity* parent;

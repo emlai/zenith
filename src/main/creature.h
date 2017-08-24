@@ -65,6 +65,7 @@ public:
     bool tryToMoveOrAttack(Dir8);
     void takeDamage(int amount);
     bool pickUpItem();
+    bool close(Dir8);
 
     const auto& getTilesUnder() const { return tilesUnder; }
     Tile& getTileUnder(int index) const { return *tilesUnder[index]; }
