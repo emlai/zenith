@@ -161,6 +161,20 @@ void Creature::takeDamage(int amount)
     currentHP -= amount;
 }
 
+bool Creature::pickUpItem()
+{
+    for (auto* tile : tilesUnder)
+    {
+        if (tile->hasItems())
+        {
+            inventory.push_back(tile->removeTopmostItem());
+            return true;
+        }
+    }
+
+    return false;
+}
+
 Vector2 Creature::getPosition() const
 {
     return getTileUnder(0).getPosition();

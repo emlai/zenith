@@ -107,6 +107,13 @@ void Tile::removeCreature(Creature& creature)
     creatures.erase(newEnd, creatures.end());
 }
 
+std::unique_ptr<Item> Tile::removeTopmostItem()
+{
+    auto item = std::move(items.back());
+    items.pop_back();
+    return item;
+}
+
 void Tile::addItem(std::unique_ptr<Item> item)
 {
     items.push_back(std::move(item));

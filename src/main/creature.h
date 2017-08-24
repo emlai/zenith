@@ -9,6 +9,7 @@
 #include <vector>
 #include <string>
 
+class Item;
 class Tile;
 class Window;
 
@@ -59,9 +60,12 @@ public:
     Creature(Tile&, const std::string& id, std::unique_ptr<CreatureController> controller);
     void exist();
     void render(Window&) const;
+
     /// Returns true if the game should advance to the next turn.
     bool tryToMoveOrAttack(Dir8);
     void takeDamage(int amount);
+    bool pickUpItem();
+
     const auto& getTilesUnder() const { return tilesUnder; }
     Tile& getTileUnder(int index) const { return *tilesUnder[index]; }
     Vector2 getPosition() const;
@@ -93,6 +97,7 @@ private:
     const auto& getAttributeIndices(int attribute) const { return attributeIndices[attribute]; }
 
     std::vector<Tile*> tilesUnder;
+    std::vector<std::unique_ptr<Item>> inventory;
     int currentHP, maxHP, currentAP, maxAP, currentMP, maxMP;
     std::vector<int> attributes;
     std::vector<Attribute> displayedAttributes;

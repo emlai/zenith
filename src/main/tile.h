@@ -27,6 +27,8 @@ public:
     Creature& getCreature(int index) const { return *creatures[index]; }
     void transferCreature(Creature&, Tile&);
     void removeCreature(Creature&);
+    bool hasItems() const { return !items.empty(); }
+    std::unique_ptr<Item> removeTopmostItem();
     void addItem(std::unique_ptr<Item> item);
     bool hasObject() const { return bool(object); }
     Object* getObject() { return object.get(); }

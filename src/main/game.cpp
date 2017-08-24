@@ -52,6 +52,12 @@ Game::Game(Window& window)
             advanceTurn();
     });
 
+    mapKey(Comma, [this]
+    {
+        if (player->pickUpItem())
+            advanceTurn();
+    });
+
 #ifdef DEBUG
     mapKey(Tab, [this] { enterCommandMode(getWindow()); });
 #endif
