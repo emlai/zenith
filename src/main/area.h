@@ -6,7 +6,7 @@
 class Window;
 class World;
 
-class Area : public Entity
+class Area
 {
 public:
     Area(World& world, Vector2 position);

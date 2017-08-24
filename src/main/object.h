@@ -1,12 +1,13 @@
 #pragma once
 
 #include "component.h"
+#include "entity.h"
 #include "engine/sprite.h"
 #include <boost/utility/string_ref.hpp>
 #include <memory>
 #include <vector>
 
-class Object
+class Object : public Entity
 {
 public:
     Object(boost::string_ref id);
@@ -17,7 +18,6 @@ public:
     Sprite& getSprite() { return sprite; }
 
 private:
-    std::string id;
     Sprite sprite;
     std::vector<std::unique_ptr<Component>> components;
 };

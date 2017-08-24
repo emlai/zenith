@@ -15,7 +15,7 @@ class Object;
 class Window;
 class World;
 
-class Tile : public Entity
+class Tile
 {
 public:
     Tile(World& world, Vector2 position, boost::string_ref groundId);
@@ -40,6 +40,7 @@ public:
     static const Vector2 sizeVector;
 
 private:
+    std::string getTooltip() const;
     void addCreature(std::unique_ptr<Creature> creature) { creatures.push_back(std::move(creature)); }
 
     std::vector<std::unique_ptr<Creature>> creatures;

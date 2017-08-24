@@ -13,7 +13,7 @@ static void reportUnknownComponent(boost::string_ref name)
 }
 
 Object::Object(boost::string_ref id)
-:   id(id),
+:   Entity(id),
     sprite(*Game::objectSpriteSheet, getSpriteTextureRegion(Game::objectConfig, id))
 {
     auto componentNames = Game::objectConfig.get<std::vector<std::string>>(id.to_string(), "components");
@@ -49,5 +49,5 @@ bool Object::preventsMovement()
         if (component->preventsMovement())
             return true;
 
-    return Game::objectConfig.get<bool>(id, "preventsMovement");
+    return Game::objectConfig.get<bool>(getId().to_string() , "preventsMovement");
 }

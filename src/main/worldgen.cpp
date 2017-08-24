@@ -88,7 +88,7 @@ void WorldGenerator::generateItems(Rect region)
     while (randFloat() < density)
     {
         std::string itemId = randomElement(Game::itemConfig.getToplevelKeys());
-        world.getTile(makeRandomVectorInside(region))->addItem(std::make_unique<Item>(itemId));
+        world.getTile(makeRandomVectorInside(region))->addItem(std::make_unique<Item>(std::move(itemId)));
     }
 }
 

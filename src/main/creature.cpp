@@ -19,7 +19,7 @@ std::vector<std::vector<int>> Creature::initAttributeIndices(const std::string& 
 }
 
 Creature::Creature(Tile& tile, const std::string& id, std::unique_ptr<CreatureController> controller)
-:   id(id),
+:   Entity(id),
     tilesUnder({&tile}),
     currentHP(0),
     maxHP(0),
@@ -108,26 +108,6 @@ void Creature::editAttribute(Attribute attribute, int amount)
 {
     for (auto index : getAttributeIndices(attribute))
         attributes[index] += amount;
-}
-
-std::string Creature::getName() const
-{
-    std::string name;
-
-    for (char ch : id)
-    {
-        if (std::isupper(ch))
-        {
-            if (!name.empty())
-                name += ' ';
-
-            name += std::tolower(ch);
-        }
-        else
-            name += ch;
-    }
-
-    return name;
 }
 
 void Creature::addMessage(std::string&& message)

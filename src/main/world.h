@@ -1,13 +1,12 @@
 #pragma once
 
 #include "area.h"
-#include "entity.h"
 #include "engine/geometry.h"
 #include <functional>
 #include <memory>
 #include <unordered_map>
 
-class World : public Entity
+class World
 {
 public:
     World();

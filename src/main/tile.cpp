@@ -38,17 +38,51 @@ void Tile::render(Window& window, int zIndex) const
             for (const auto& creature : creatures)
                 creature->render(window);
             break;
+        case 4:
+        {
+#ifdef TOOLTIP
+            Rect tileRect(position * sizeVector, sizeVector);
+
+            if (window.getMousePosition().isWithin(tileRect))
+            {
+                Game::cursorTexture->setColor(GUIColor::White);
+                Game::cursorTexture->render(nullptr, &tileRect);
+
+                window.getFont().setArea(tileRect.offset(Vector2(size * 1.2, 0)));
+                window.getFont().print(getTooltip());
+            }
+#endif
+            break;
+        }
         default:
             assert(false);
     }
 
-    Rect tileRect(position * sizeVector, sizeVector);
+}
 
-    if (window.getMousePosition().isWithin(tileRect))
+std::string Tile::getTooltip() const
+{
+    std::string tooltip;
+
+    for (auto& creature : creatures)
     {
-        Game::cursorTexture->setColor(GUIColor::White);
-        Game::cursorTexture->render(nullptr, &tileRect);
+        tooltip += creature->getName();
+        tooltip += '\n';
     }
+
+    for (auto& item : items)
+    {
+        tooltip += item->getName();
+        tooltip += '\n';
+    }
+
+    if (object)
+    {
+        tooltip += object->getName();
+        tooltip += '\n';
+    }
+
+    return tooltip;
 }
 
 void Tile::transferCreature(Creature& creature, Tile& destination)

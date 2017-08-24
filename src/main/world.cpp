@@ -33,7 +33,7 @@ void World::exist(Rect region)
 
 void World::render(Window& window, Rect region)
 {
-    for (int zIndex = 0; zIndex < 4; ++zIndex)
+    for (int zIndex = 0; zIndex < 5; ++zIndex)
         forEachTile(region, [&](const Tile& tile) { tile.render(window, zIndex); });
 }
 
