@@ -6,7 +6,8 @@ bool Door::reactToMovementAttempt()
     if (!isOpen)
     {
         isOpen = true;
-        getParent().getSprite().setFrame(1);
+        // TODO: Add getSprite() to Entity to avoid casting here.
+        dynamic_cast<Object&>(getParent()).getSprite().setFrame(1);
         return true;
     }
 

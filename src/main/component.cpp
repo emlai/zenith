@@ -3,7 +3,7 @@
 
 Component::~Component() {}
 
-std::unique_ptr<Component> Component::get(boost::string_ref name, Object& parent)
+std::unique_ptr<Component> Component::get(boost::string_ref name, Entity& parent)
 {
     std::unique_ptr<Component> component;
 

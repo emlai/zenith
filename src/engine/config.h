@@ -4,6 +4,8 @@
 #include <fstream>
 #include <functional>
 #include <stdexcept>
+#include <string>
+#include <vector>
 
 class Config
 {

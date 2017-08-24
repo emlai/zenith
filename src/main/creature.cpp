@@ -19,7 +19,7 @@ std::vector<std::vector<int>> Creature::initAttributeIndices(const std::string& 
 }
 
 Creature::Creature(Tile& tile, const std::string& id, std::unique_ptr<CreatureController> controller)
-:   Entity(id),
+:   Entity(id, Game::creatureConfig),
     tilesUnder({&tile}),
     currentHP(0),
     maxHP(0),

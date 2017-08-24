@@ -3,7 +3,7 @@
 #include "gui.h"
 
 Item::Item(boost::string_ref id)
-:   Entity(id),
+:   Entity(id, Game::itemConfig),
     sprite(*Game::itemSpriteSheet, getSpriteTextureRegion(Game::itemConfig, id))
 {
 }
