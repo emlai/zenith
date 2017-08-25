@@ -2,12 +2,12 @@
 
 #include "color.h"
 #include "geometry.h"
-#include "graphics.h"
 #include <SDL.h>
 #include <memory>
+#include <vector>
 
 struct SDL_Renderer;
-struct SDL_Texture;
+struct SDL_Surface;
 
 struct Rect;
 class Window;
@@ -15,32 +15,22 @@ class Window;
 class Texture
 {
 public:
-    Texture(const Window&, const void* pixelData, uint32_t pixelFormat, Vector2 size);
+    Texture(const Window&, std::vector<Color32>&& pixelData, uint32_t pixelFormat, Vector2 size);
     Texture(const Window&, const std::string& fileName, Color32 transparentColor = Color32::none);
+    Texture(const Window&, uint32_t pixelFormat, Vector2 size);
     void setBlendMode(bool);
     void setColor(Color32) const;
-    void render(const Rect* source, const Rect* target) const;
+    void render(Rect source, Rect target) const;
     Vector2 getSize() const;
     int getWidth() const;
     int getHeight() const;
 
-protected:
-    Texture(const Window&, SDL_TextureAccess, uint32_t pixelFormat, Vector2 size);
-    SDL_Texture* getSDLTexture() const { return sdlTexture.get(); }
-
 private:
-    SDL_Renderer* getRenderer() const;
+    friend class GraphicsContext;
+
+    SDL_Surface* getSurface() const { return surface.get(); }
 
     const Window& window;
-    std::unique_ptr<SDL_Texture, void (&)(SDL_Texture*)> sdlTexture;
-};
-
-class TargetTexture : public Texture
-{
-public:
-    TargetTexture(const Window& window, uint32_t pixelFormat, Vector2 size)
-    :   Texture(window, SDL_TEXTUREACCESS_TARGET, pixelFormat, size)
-    {
-    }
-    friend void GraphicsContext::setRenderTarget(TargetTexture*);
+    std::unique_ptr<SDL_Surface, void (&)(SDL_Surface*)> surface;
+    std::vector<Color32> pixelData;
 };

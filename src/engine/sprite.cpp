@@ -11,5 +11,5 @@ void Sprite::render(Window& window, Vector2 position) const
 {
     Rect source = textureRegion.offset(Vector2(frame * textureRegion.getWidth(), 0));
     Rect target(position, textureRegion.size);
-    texture->render(&source, &target);
+    texture->render(source, target);
 }

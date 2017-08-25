@@ -2,11 +2,11 @@
 
 #include "color.h"
 #include "geometry.h"
+#include "texture.h"
 #include <SDL.h>
 #include <boost/optional.hpp>
 #include <memory>
 
-class TargetTexture;
 class BitmapFont;
 class Window;
 
@@ -22,7 +22,6 @@ public:
     const Rect* getView() const { return view.get_ptr(); }
     void setFont(BitmapFont&);
     BitmapFont& getFont();
-    void setRenderTarget(TargetTexture*);
     void setAnimationFrameRate(int framesPerSecond);
     auto getAnimationFrameTime() const { return animationFrameTime; }
     void updateScreen();
@@ -36,8 +35,11 @@ private:
     void setRenderColor(Color32);
 
     std::unique_ptr<SDL_Renderer, void (&)(SDL_Renderer*)> renderer;
+    std::unique_ptr<SDL_Texture, void (&)(SDL_Texture*)> framebuffer;
+    Texture targetTexture;
     Color32 drawColor;
     Color32 clearColor;
+    boost::optional<Rect> viewport;
     boost::optional<Rect> view;
     BitmapFont* font;
     int animationFrameTime;

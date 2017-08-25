@@ -16,7 +16,7 @@ BitmapFont::BitmapFont(const Window& window, const std::string& fileName, Vector
     shadowPosition(1, 1),
     charSize(charSize),
     moveVector(charSize),
-    texture(window, loadFromFile(fileName).data(), SDL_PIXELFORMAT_RGBA8888, dimensions * charSize)
+    texture(window, loadFromFile(fileName), SDL_PIXELFORMAT_RGBA8888, dimensions * charSize)
 {
     texture.setBlendMode(true);
 }
@@ -133,7 +133,7 @@ void BitmapFont::printLine(PrintIterator lineBegin, PrintIterator lineEnd, Rect&
         {
             const auto index = *character - ' ';
             source.position = charSize * Vector2(index % dimensions.x, index / dimensions.x);
-            texture.render(&source, &target);
+            texture.render(source, target);
         }
 
         target.position.x += moveVector.x;

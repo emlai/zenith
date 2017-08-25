@@ -6,9 +6,10 @@
 #include "window.h"
 
 GraphicsContext::GraphicsContext(const Window& window)
-:   renderer(SDL_CreateRenderer(window.windowHandle.get(), -1,
-                                SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE),
-             SDL_DestroyRenderer),
+:   renderer(SDL_CreateRenderer(window.windowHandle.get(), -1, 0), SDL_DestroyRenderer),
+    framebuffer(SDL_CreateTexture(renderer.get(), SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING,
+                                  window.getWidth(), window.getHeight()), SDL_DestroyTexture),
+    targetTexture(window, SDL_PIXELFORMAT_RGBA8888, window.getSize()),
     animationFrameTime(10)
 {
     if (!renderer)
@@ -39,14 +40,18 @@ void GraphicsContext::setClearColor(Color32 color)
 
 void GraphicsContext::setViewport(const Rect* viewport)
 {
-    SDL_RenderSetViewport(renderer.get(), reinterpret_cast<const SDL_Rect*>(viewport));
+    if (viewport)
+        this->viewport = *viewport;
+    else
+        this->viewport = boost::none;
 }
 
 Rect GraphicsContext::getViewport() const
 {
-    SDL_Rect viewport;
-    SDL_RenderGetViewport(renderer.get(), &viewport);
-    return Rect(viewport.x, viewport.y, viewport.w, viewport.h);
+    if (viewport)
+        return *viewport;
+
+    return Rect(Vector2(0, 0), targetTexture.getSize());
 }
 
 void GraphicsContext::setView(const Rect* view)
@@ -67,22 +72,18 @@ BitmapFont& GraphicsContext::getFont()
     return *font;
 }
 
-void GraphicsContext::setRenderTarget(TargetTexture* target)
-{
-    SDL_SetRenderTarget(renderer.get(), target ? target->getSDLTexture() : nullptr);
-}
-
 void GraphicsContext::updateScreen()
 {
+    SDL_Surface* surface = targetTexture.getSurface();
+    SDL_UpdateTexture(framebuffer.get(), nullptr, surface->pixels, surface->pitch);
+    SDL_RenderCopy(renderer.get(), framebuffer.get(), nullptr, nullptr);
     SDL_RenderPresent(renderer.get());
     clearScreen();
 }
 
 void GraphicsContext::clearScreen()
 {
-    setRenderColor(clearColor);
-    SDL_RenderClear(renderer.get());
-    setRenderColor(drawColor);
+    SDL_FillRect(targetTexture.getSurface(), nullptr, clearColor);
 }
 
 void GraphicsContext::setRenderColor(Color32 color)

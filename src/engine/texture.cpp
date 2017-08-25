@@ -4,18 +4,21 @@
 #include <SDL.h>
 #include <stdexcept>
 
-Texture::Texture(const Window& window, const void* pixelData, uint32_t pixelFormat, Vector2 size)
-:   Texture(window, SDL_TEXTUREACCESS_STATIC, pixelFormat, size)
+Texture::Texture(const Window& window, std::vector<Color32>&& pixelData, uint32_t pixelFormat,
+                 Vector2 size)
+:   window(window),
+    surface(SDL_CreateRGBSurfaceWithFormatFrom(pixelData.data(), size.x, size.y,
+                                               SDL_BITSPERPIXEL(pixelFormat),
+                                               size.x * SDL_BYTESPERPIXEL(pixelFormat), pixelFormat),
+            SDL_FreeSurface),
+    pixelData(std::move(pixelData))
 {
-    SDL_UpdateTexture(sdlTexture.get(), nullptr, pixelData, size.x * SDL_BYTESPERPIXEL(pixelFormat));
     setBlendMode(true);
 }
 
 Texture::Texture(const Window& window, const std::string& fileName, Color32 transparentColor)
-:   window(window), sdlTexture(nullptr, SDL_DestroyTexture)
+:   window(window), surface(SDL_LoadBMP(fileName.c_str()), SDL_FreeSurface)
 {
-    std::unique_ptr<SDL_Surface, decltype(SDL_FreeSurface)&> surface(SDL_LoadBMP(fileName.c_str()),
-                                                                     SDL_FreeSurface);
     if (!surface)
         throw std::runtime_error("Unable to load " + fileName + ": " + SDL_GetError());
 
@@ -25,67 +28,51 @@ Texture::Texture(const Window& window, const std::string& fileName, Color32 tran
                                    transparentColor.getGreen(), transparentColor.getBlue());
         SDL_SetColorKey(surface.get(), 1, colorKey);
     }
-
-    sdlTexture.reset(SDL_CreateTextureFromSurface(getRenderer(), surface.get()));
 }
 
-Texture::Texture(const Window& window, SDL_TextureAccess textureAccess, uint32_t pixelFormat, Vector2 size)
+Texture::Texture(const Window& window, uint32_t pixelFormat, Vector2 size)
 :   window(window),
-    sdlTexture(SDL_CreateTexture(getRenderer(), pixelFormat, textureAccess, size.x, size.y), SDL_DestroyTexture)
+    surface(SDL_CreateRGBSurfaceWithFormat(0, size.x, size.y, 32, pixelFormat), SDL_FreeSurface)
 {
 }
 
 void Texture::setBlendMode(bool state)
 {
-    SDL_SetTextureBlendMode(sdlTexture.get(), state ? SDL_BLENDMODE_BLEND : SDL_BLENDMODE_NONE);
+    SDL_SetSurfaceBlendMode(surface.get(), state ? SDL_BLENDMODE_BLEND : SDL_BLENDMODE_NONE);
 }
 
-SDL_Renderer* Texture::getRenderer() const
+void Texture::render(Rect source, Rect target) const
 {
-    return window.context.getRenderer();
-}
+    if (window.context.view)
+        target.position -= window.context.view->position;
 
-void Texture::render(const Rect* source, const Rect* target) const
-{
-    if (target && window.context.view)
-    {
-        Rect offsetTarget = target->offset(-window.context.view->position);
-        SDL_RenderCopy(getRenderer(), sdlTexture.get(),
-                       reinterpret_cast<const SDL_Rect*>(source),
-                       reinterpret_cast<const SDL_Rect*>(&offsetTarget));
-    }
-    else
-    {
-        SDL_RenderCopy(getRenderer(), sdlTexture.get(),
-                       reinterpret_cast<const SDL_Rect*>(source),
-                       reinterpret_cast<const SDL_Rect*>(target));
-    }
+    target.position += window.context.getViewport().position;
+    // TODO: Clip based on viewport size.
+
+    SDL_BlitSurface(surface.get(),
+                    reinterpret_cast<SDL_Rect*>(&source),
+                    window.context.targetTexture.getSurface(),
+                    reinterpret_cast<SDL_Rect*>(&target));
 }
 
 Vector2 Texture::getSize() const
 {
-    Vector2 size;
-    SDL_QueryTexture(sdlTexture.get(), nullptr, nullptr, &size.x, &size.y);
-    return size;
+    return Vector2(surface->w, surface->h);
 }
 
 int Texture::getWidth() const
 {
-    int width;
-    SDL_QueryTexture(sdlTexture.get(), nullptr, nullptr, &width, nullptr);
-    return width;
+    return surface->w;
 }
 
 int Texture::getHeight() const
 {
-    int height;
-    SDL_QueryTexture(sdlTexture.get(), nullptr, nullptr, nullptr, &height);
-    return height;
+    return surface->h;
 }
 
 void Texture::setColor(Color32 color) const
 {
-    SDL_SetTextureColorMod(getSDLTexture(),
+    SDL_SetSurfaceColorMod(surface.get(),
                            uint8_t(color.getRed()),
                            uint8_t(color.getGreen()),
                            uint8_t(color.getBlue()));
