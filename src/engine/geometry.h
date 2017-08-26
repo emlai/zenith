@@ -115,6 +115,12 @@ template<typename T>
 const Vector2Base<T> Vector2Base<T>::zeroVector = Vector2Base<T>(0, 0);
 
 template<typename T>
+inline Vector2Base<T> abs(Vector2Base<T> vector)
+{
+    return Vector2Base<T>(abs(vector.x), abs(vector.y));
+}
+
+template<typename T>
 inline auto getDistanceSquared(Vector2Base<T> a, Vector2Base<T> b)
 {
     return (b - a).getLengthSquared();

@@ -43,6 +43,7 @@ public:
     void addLight(Color32 light) { this->light.lighten(light); }
     void resetLight();
     Tile* getAdjacentTile(Dir8) const;
+    Tile* getPreExistingAdjacentTile(Dir8) const;
     Tile* getTileBelow() const;
     Tile* getTileAbove() const;
     World& getWorld() const { return world; }

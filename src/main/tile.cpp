@@ -177,6 +177,11 @@ Tile* Tile::getAdjacentTile(Dir8 direction) const
     return getWorld().getOrCreateTile(getPosition() + direction, level);
 }
 
+Tile* Tile::getPreExistingAdjacentTile(Dir8 direction) const
+{
+    return getWorld().getTile(getPosition() + direction, level);
+}
+
 Tile* Tile::getTileBelow() const
 {
     return getWorld().getOrCreateTile(getPosition(), level - 1);
