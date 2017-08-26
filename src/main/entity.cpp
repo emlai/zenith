@@ -14,7 +14,7 @@ Entity::Entity(boost::string_ref id, const Config& config)
 :   id(id),
     config(&config)
 {
-    auto componentNames = config.get<std::vector<std::string>>(id.to_string(), "components");
+    auto componentNames = config.get<std::vector<std::string>>(id, "components");
 
     for (auto& componentName : componentNames)
     {

@@ -3,7 +3,7 @@
 #include "window.h"
 #include <cctype>
 
-void Menu::addItem(int id, const std::string& text, Key shortcut)
+void Menu::addItem(int id, boost::string_ref text, Key shortcut)
 {
     menuItems.push_back(MenuItem(id, text, shortcut));
     selection = menuItems.begin();
@@ -178,7 +178,7 @@ void Menu::render(BitmapFont& font) const
 
     for (auto item = menuItems.begin(); item != menuItems.end(); ++item, ++position)
     {
-        const std::string& text =
+        boost::string_ref text =
             showNumbers ? std::to_string(index++) + numberSeparator + item->text : item->text;
 
         if (selection == item)

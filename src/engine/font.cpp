@@ -6,7 +6,7 @@
 
 const Vector2 BitmapFont::dimensions = Vector2(16, 6);
 
-BitmapFont::BitmapFont(const Window& window, const std::string& fileName, Vector2 charSize)
+BitmapFont::BitmapFont(const Window& window, boost::string_ref fileName, Vector2 charSize)
 :   printArea(0, 0, 0, 0),
     lineContinuation(false),
     currentPosition(0, 0),
@@ -21,9 +21,9 @@ BitmapFont::BitmapFont(const Window& window, const std::string& fileName, Vector
     texture.setBlendMode(true);
 }
 
-std::vector<Color32> BitmapFont::loadFromFile(const std::string& fileName) const
+std::vector<Color32> BitmapFont::loadFromFile(boost::string_ref fileName) const
 {
-    std::ifstream inputFile(fileName, std::ios::binary);
+    std::ifstream inputFile(fileName.to_string(), std::ios::binary);
 
     if (!inputFile)
         throw std::runtime_error("Unable to open " + fileName);
@@ -44,7 +44,7 @@ std::vector<Color32> BitmapFont::loadFromFile(const std::string& fileName) const
     return pixelData;
 }
 
-void BitmapFont::print(const std::string& text, Color32 color)
+void BitmapFont::print(boost::string_ref text, Color32 color)
 {
     if (!color)
         color = defaultColor;
@@ -60,7 +60,7 @@ void BitmapFont::print(const std::string& text, Color32 color)
     lineContinuation = true;
 }
 
-void BitmapFont::printLine(const std::string& text, Color32 color)
+void BitmapFont::printLine(boost::string_ref text, Color32 color)
 {
     int startX = currentPosition.x;
     print(text, color);
@@ -68,7 +68,7 @@ void BitmapFont::printLine(const std::string& text, Color32 color)
     currentPosition.y += moveVector.y;
 }
 
-void BitmapFont::printWithCursor(const std::string& text, std::string::const_iterator cursor,
+void BitmapFont::printWithCursor(boost::string_ref text, const char* cursor,
                                  Color32 mainColor, Color32 cursorColor)
 {
     Vector2 cursorPosition = currentPosition + Vector2(int((cursor - text.begin()) * moveVector.x), 0);
@@ -80,7 +80,7 @@ void BitmapFont::printWithCursor(const std::string& text, std::string::const_ite
     printHelper("_", cursorPosition);
 }
 
-Vector2 BitmapFont::printHelper(const std::string& text, Vector2 position) const
+Vector2 BitmapFont::printHelper(boost::string_ref text, Vector2 position) const
 {
     Rect source;
     source.size = charSize;

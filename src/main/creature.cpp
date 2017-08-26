@@ -3,7 +3,7 @@
 #include "msgsystem.h"
 #include "tile.h"
 
-std::vector<Attribute> Creature::initDisplayedAttributes(const std::string& id)
+std::vector<Attribute> Creature::initDisplayedAttributes(boost::string_ref id)
 {
     std::vector<Attribute> displayedAttributes;
 
@@ -13,12 +13,12 @@ std::vector<Attribute> Creature::initDisplayedAttributes(const std::string& id)
     return displayedAttributes;
 }
 
-std::vector<std::vector<int>> Creature::initAttributeIndices(const std::string& id)
+std::vector<std::vector<int>> Creature::initAttributeIndices(boost::string_ref id)
 {
     return Game::creatureConfig.get<std::vector<std::vector<int>>>(id, "AttributeIndices");
 }
 
-Creature::Creature(Tile& tile, const std::string& id, std::unique_ptr<CreatureController> controller)
+Creature::Creature(Tile& tile, boost::string_ref id, std::unique_ptr<CreatureController> controller)
 :   Entity(id, Game::creatureConfig),
     tilesUnder({&tile}),
     currentHP(0),
@@ -53,7 +53,7 @@ void Creature::render(Window& window) const
     sprite.render(window, getPosition() * Tile::size);
 }
 
-void Creature::generateAttributes(const std::string& id)
+void Creature::generateAttributes(boost::string_ref id)
 {
     attributes.resize(Game::creatureConfig.get<int>(id, "Attributes"));
 
@@ -62,7 +62,7 @@ void Creature::generateAttributes(const std::string& id)
 
     for (auto attribute : configAttributes)
     {
-        const std::string& attributeName = attributeAbbreviations[attribute];
+        boost::string_ref attributeName = attributeAbbreviations[attribute];
         setAttribute(attribute, Game::creatureConfig.get<int>(id, attributeName) + randNormal(2));
     }
 
@@ -186,7 +186,7 @@ Vector2 Creature::getPosition() const
     return getTileUnder(0).getPosition();
 }
 
-Attribute stringToAttribute(const std::string& string)
+Attribute stringToAttribute(boost::string_ref string)
 {
     auto it = std::find(std::begin(attributeAbbreviations), std::end(attributeAbbreviations), string);
 

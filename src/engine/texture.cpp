@@ -16,8 +16,8 @@ Texture::Texture(const Window& window, std::vector<Color32>&& pixelData, uint32_
     setBlendMode(true);
 }
 
-Texture::Texture(const Window& window, const std::string& fileName, Color32 transparentColor)
-:   window(window), surface(SDL_LoadBMP(fileName.c_str()), SDL_FreeSurface)
+Texture::Texture(const Window& window, boost::string_ref fileName, Color32 transparentColor)
+:   window(window), surface(SDL_LoadBMP(fileName.to_string().c_str()), SDL_FreeSurface)
 {
     if (!surface)
         throw std::runtime_error("Unable to load " + fileName + ": " + SDL_GetError());

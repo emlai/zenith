@@ -26,10 +26,10 @@ struct TextLayout
 class BitmapFont
 {
 public:
-    BitmapFont(const Window&, const std::string& fileName, Vector2 charSize);
-    void print(const std::string&, Color32 = Color32::none);
-    void printLine(const std::string&, Color32 = Color32::none);
-    void printWithCursor(const std::string&, std::string::const_iterator cursorPosition,
+    BitmapFont(const Window&, boost::string_ref fileName, Vector2 charSize);
+    void print(boost::string_ref, Color32 = Color32::none);
+    void printLine(boost::string_ref, Color32 = Color32::none);
+    void printWithCursor(boost::string_ref, const char* cursorPosition,
                          Color32 mainColor = Color32::none, Color32 cursorColor = Color32::none);
     void setArea(Rect area) { printArea = area; initCurrentPosition(); }
     void setLayout(TextLayout layout) { this->layout = layout; initCurrentPosition(); }
@@ -47,11 +47,11 @@ public:
     TextLayout getLayout() const { return layout; }
 
 private:
-    using PrintIterator = std::string::const_iterator;
-    Vector2 printHelper(const std::string&, Vector2 position) const;
+    using PrintIterator = const char*;
+    Vector2 printHelper(boost::string_ref, Vector2 position) const;
     void printLine(PrintIterator lineBegin, PrintIterator lineEnd, Rect& source, Rect& target) const;
     void initCurrentPosition();
-    std::vector<Color32> loadFromFile(const std::string& fileName) const;
+    std::vector<Color32> loadFromFile(boost::string_ref fileName) const;
 
     Rect printArea;
     bool lineContinuation;

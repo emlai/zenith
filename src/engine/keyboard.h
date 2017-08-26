@@ -49,7 +49,7 @@ enum : Mod
 namespace keyboard
 {
     int readLine(Window&, std::string& lineContent, Vector2 position, RenderFunction,
-                 const std::string& prefix = "");
+                 boost::string_ref prefix = "");
     void mapKey(Key, Mod, CommandFunction);
     CommandFunction& getMappedCommand(Key, Mod);
 }

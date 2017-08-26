@@ -41,7 +41,7 @@ CommandFunction& keyboard::getMappedCommand(Key key, Mod mod)
 }
 
 int keyboard::readLine(Window& window, std::string& line, Vector2 position, RenderFunction render,
-                       const std::string& prefix)
+                       boost::string_ref prefix)
 {
     BitmapFont& font = window.getFont();
     std::string::iterator cursor = line.end();
@@ -54,7 +54,7 @@ int keyboard::readLine(Window& window, std::string& line, Vector2 position, Rend
         render(window);
         font.setArea(Rect(position, window.getSize() - position));
         font.print(prefix);
-        font.printWithCursor(line, cursor);
+        font.printWithCursor(line, &*cursor);
         window.updateScreen();
         SDL_WaitEvent(&event);
         exitCode = readLineProcessKey(event, line, cursor);
@@ -64,8 +64,7 @@ int keyboard::readLine(Window& window, std::string& line, Vector2 position, Rend
     return exitCode;
 }
 
-int keyboard::readLineProcessKey(const SDL_Event& event, std::string& line,
-                                 std::string::iterator& cursor)
+int keyboard::readLineProcessKey(const SDL_Event& event, std::string& line, std::string::iterator& cursor)
 {
     static const int maxBufferSize = 4096;
 

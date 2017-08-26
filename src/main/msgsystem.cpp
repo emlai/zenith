@@ -9,7 +9,7 @@ namespace MessageSystem
 #ifdef DEBUG
     struct DebugMessage
     {
-        DebugMessage(const std::string& content, MessageType type = Normal)
+        DebugMessage(boost::string_ref content, MessageType type = Normal)
         :   content(content), type(type)
         {
         }
@@ -40,7 +40,7 @@ void MessageSystem::drawMessages(BitmapFont& font, const std::vector<std::string
 
 #ifdef DEBUG
 
-void MessageSystem::addDebugMessage(const std::string& message, MessageType type)
+void MessageSystem::addDebugMessage(boost::string_ref message, MessageType type)
 {
     debugMessages.push_front(DebugMessage(message, type));
 
@@ -48,10 +48,10 @@ void MessageSystem::addDebugMessage(const std::string& message, MessageType type
         debugMessages.pop_back();
 }
 
-void MessageSystem::addToCommandHistory(const std::string& command)
+void MessageSystem::addToCommandHistory(std::string&& command)
 {
     if (commandHistory.empty() || commandHistory.back() != command)
-        commandHistory.push_back(command);
+        commandHistory.push_back(std::move(command));
 
     commandIterator = commandHistory.end();
 }

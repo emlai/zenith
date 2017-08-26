@@ -1,5 +1,6 @@
 #pragma once
 
+#include "utility.h"
 #include <libconfig.h++>
 #include <fstream>
 #include <functional>
@@ -10,9 +11,9 @@
 class Config
 {
 public:
-    Config(const std::string& fileName);
+    Config(boost::string_ref fileName);
     template<typename ValueType>
-    ValueType get(const std::string& type, const std::string& attribute) const;
+    ValueType get(boost::string_ref type, boost::string_ref attribute) const;
 
     std::vector<std::string> getToplevelKeys() const
     {
@@ -69,11 +70,11 @@ struct Config::ConversionTraits<std::vector<ElementType>>
     }
 };
 
-inline Config::Config(const std::string& fileName)
+inline Config::Config(boost::string_ref fileName)
 {
     try
     {
-        config.readFile(fileName.c_str());
+        config.readFile(fileName.to_string().c_str());
     }
     catch (const libconfig::FileIOException&)
     {
@@ -88,7 +89,7 @@ inline Config::Config(const std::string& fileName)
 }
 
 template<typename ValueType>
-ValueType Config::get(const std::string& type, const std::string& attribute) const
+ValueType Config::get(boost::string_ref type, boost::string_ref attribute) const
 {
     for (auto current = type;;)
     {
@@ -114,7 +115,7 @@ ValueType Config::get(const std::string& type, const std::string& attribute) con
                                      "\" has wrong type!");
         }
 
-        if (!config.exists(current))
+        if (!config.exists(current.to_string()))
             throw std::runtime_error("BaseType \"" + current + "\" doesn't exist!");
     }
 }

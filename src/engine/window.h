@@ -10,7 +10,7 @@ struct SDL_Window;
 class Window
 {
 public:
-    Window(Vector2 size, const std::string& title = "");
+    Window(Vector2 size, boost::string_ref title = "");
     ~Window();
     void processInput(KeyDownCallback);
     Key waitForInput();

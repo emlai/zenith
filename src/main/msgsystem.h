@@ -12,8 +12,8 @@ namespace MessageSystem
     void drawMessages(BitmapFont&, const std::vector<std::string>& messages);
 
 #ifdef DEBUG
-    void addDebugMessage(const std::string& message, MessageType = Normal);
-    void addToCommandHistory(const std::string& command);
+    void addDebugMessage(boost::string_ref message, MessageType = Normal);
+    void addToCommandHistory(std::string&& command);
     std::string getPreviousCommand();
     std::string getNextCommand();
     void clearDebugMessageHistory();

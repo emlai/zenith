@@ -10,7 +10,7 @@ class Window;
 
 struct MenuItem
 {
-    MenuItem(int id, const std::string& text, Key shortcut = NoKey)
+    MenuItem(int id, boost::string_ref text, Key shortcut = NoKey)
     : id(id), text(text), shortcut(shortcut)
     {
     }
@@ -38,11 +38,11 @@ public:
         area(0, 0, 0, 0)
     {
     }
-    void addItem(int id, const std::string& text, Key shortcut = NoKey);
+    void addItem(int id, boost::string_ref text, Key shortcut = NoKey);
     int getChoice(Window&, BitmapFont&);
     void setWrap(bool state) { wrapEnabled = state; }
     void setShowNumbers(bool state) { showNumbers = state; }
-    void setNumberSeparator(const std::string& string) { numberSeparator = string; }
+    void setNumberSeparator(std::string&& string) { numberSeparator = std::move(string); }
     void setTextLayout(TextLayout layout) { textLayout = layout; }
     void setItemLayout(ItemLayout layout) { itemLayout = layout; }
     void setItemSpacing(int amount) { itemSpacing = amount; }

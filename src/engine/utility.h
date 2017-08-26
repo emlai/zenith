@@ -1,5 +1,6 @@
 #pragma once
 
+#include <boost/utility/string_ref.hpp>
 #include <ostream>
 #include <string>
 #include <vector>
@@ -13,7 +14,7 @@ std::ostream& operator<<(std::ostream& outputStream, const std::vector<T>& eleme
     return outputStream;
 }
 
-std::string changeFileExtension(const std::string& fileName, const std::string& newExtension);
+std::string changeFileExtension(boost::string_ref fileName, boost::string_ref newExtension);
 
 /// Performs integer division, rounding towards negative infinity.
 inline int divideRoundingDown(int dividend, int divisor)
@@ -25,3 +26,5 @@ inline int divideRoundingDown(int dividend, int divisor)
     else
         return quotient;
 }
+
+std::string operator+(boost::string_ref a, boost::string_ref b);

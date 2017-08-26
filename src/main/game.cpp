@@ -73,9 +73,9 @@ Game::Game(Window& window)
     player = world.getOrCreateTile({0, 0})->spawnCreature("Human", std::make_unique<PlayerController>());
 }
 
-boost::optional<Dir8> Game::askForDirection(boost::string_ref question)
+boost::optional<Dir8> Game::askForDirection(std::string&& question)
 {
-    player->addMessage(question.to_string());
+    player->addMessage(std::move(question));
     render(getWindow());
     getWindow().updateScreen();
 
@@ -135,7 +135,7 @@ void Game::printPlayerInformation(BitmapFont& font) const
 #endif
 }
 
-void Game::printStat(BitmapFont& font, const std::string& statName, int currentValue, int maximumValue,
+void Game::printStat(BitmapFont& font, boost::string_ref statName, int currentValue, int maximumValue,
                      Color16 color)
 {
     std::string currentValueString = std::to_string(currentValue);
@@ -143,7 +143,7 @@ void Game::printStat(BitmapFont& font, const std::string& statName, int currentV
     font.printLine(statName + padding + currentValueString + '/' + std::to_string(maximumValue), color);
 }
 
-void Game::printAttribute(BitmapFont& font, const std::string& attributeName, int attributeValue)
+void Game::printAttribute(BitmapFont& font, boost::string_ref attributeName, int attributeValue)
 {
     std::string padding(5 - attributeName.size(), ' ');
     font.printLine(attributeName + padding + std::to_string(attributeValue));
@@ -160,7 +160,7 @@ void Game::enterCommandMode(Window& window)
 
         if (result == Enter && !command.empty())
         {
-            MessageSystem::addToCommandHistory(command);
+            MessageSystem::addToCommandHistory(std::string(command));
             parseCommand(command);
             command.clear();
         }
@@ -176,7 +176,7 @@ void Game::enterCommandMode(Window& window)
     }
 }
 
-void Game::parseCommand(const std::string& command)
+void Game::parseCommand(boost::string_ref command)
 {
     if (command == "respawn")
         *player = Creature(player->getTileUnder(0), "Human", std::make_unique<PlayerController>());

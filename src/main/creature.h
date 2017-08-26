@@ -57,7 +57,7 @@ const std::string statNames[] = { "HP", "AP", "MP" };
 class Creature final : public Entity
 {
 public:
-    Creature(Tile&, const std::string& id, std::unique_ptr<CreatureController> controller);
+    Creature(Tile&, boost::string_ref id, std::unique_ptr<CreatureController> controller);
     void exist();
     void render(Window&) const;
 
@@ -87,14 +87,14 @@ private:
     void attack(Creature&);
     void setAttribute(Attribute, int amount);
     void editAttribute(Attribute, int amount);
-    void generateAttributes(const std::string&);
+    void generateAttributes(boost::string_ref);
     void calculateDerivedStats();
     void editHP(int amount) { currentHP = std::min(currentHP + amount, maxHP); }
     void editAP(int amount) { currentAP = std::min(currentAP + amount, maxAP); }
     void editMP(int amount) { currentMP = std::min(currentMP + amount, maxMP); }
     void regenerate();
-    static std::vector<Attribute> initDisplayedAttributes(const std::string&);
-    static std::vector<std::vector<int>> initAttributeIndices(const std::string&);
+    static std::vector<Attribute> initDisplayedAttributes(boost::string_ref);
+    static std::vector<std::vector<int>> initAttributeIndices(boost::string_ref);
     const auto& getAttributeIndices(int attribute) const { return attributeIndices[attribute]; }
 
     std::vector<Tile*> tilesUnder;
@@ -109,5 +109,5 @@ private:
     static const int configAttributes[8];
 };
 
-Attribute stringToAttribute(const std::string&);
+Attribute stringToAttribute(boost::string_ref);
 std::vector<Attribute> stringsToAttributes(const std::vector<std::string>&);

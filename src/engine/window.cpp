@@ -27,9 +27,9 @@ SDL_Window* Window::initWindowHandle(Vector2 size, const char* title)
     return windowHandle;
 }
 
-Window::Window(Vector2 size, const std::string& title)
+Window::Window(Vector2 size, boost::string_ref title)
 :   closeRequestReceived(false),
-    windowHandle(initWindowHandle(size, title.c_str()), SDL_DestroyWindow),
+    windowHandle(initWindowHandle(size, title.to_string().c_str()), SDL_DestroyWindow),
     context(*this)
 {
     SDL_EventState(SDL_WINDOWEVENT_ENTER, SDL_IGNORE);

@@ -26,20 +26,20 @@ public:
     static boost::optional<const Texture> cursorTexture;
 
 private:
-    boost::optional<Dir8> askForDirection(boost::string_ref question);
+    boost::optional<Dir8> askForDirection(std::string&& question);
     void render(Window&) override;
     void updateLogic() override;
 
     void printPlayerInformation(BitmapFont&) const;
-    static void printStat(BitmapFont&, const std::string&, int current, int max, Color16);
-    static void printAttribute(BitmapFont&, const std::string&, int current);
+    static void printStat(BitmapFont&, boost::string_ref, int current, int max, Color16);
+    static void printAttribute(BitmapFont&, boost::string_ref, int current);
 
     World world;
     Creature* player;
 
 #ifdef DEBUG
     void enterCommandMode(Window&);
-    void parseCommand(const std::string&);
+    void parseCommand(boost::string_ref);
 
     bool showExtraInfo = true;
 #endif
