@@ -10,8 +10,15 @@ Area::Area(World& world, Vector2 position, int level)
     boost::string_ref groundId = level < 0 ? "DirtFloor" : "Grass";
 
     for (Vector2 pos(0, 0); pos.y < size; ++pos.y)
+    {
         for (pos.x = 0; pos.x < size; ++pos.x)
+        {
             tiles.emplace_back(world, position * sizeVector + pos, level, groundId);
+
+            if (level < 0)
+                tiles.back().setObject(std::make_unique<Object>("Ground"));
+        }
+    }
 }
 
 Tile& Area::getTileAt(Vector2 position)

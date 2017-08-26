@@ -77,6 +77,12 @@ bool WorldGenerator::generateRoom(Rect region, int level)
     auto floorId = "WoodenFloor";
     auto doorId = "Door";
 
+    world.forEachTile(region, level, [&](Tile& tile)
+    {
+        tile.setGround(floorId);
+        tile.setObject(nullptr);
+    });
+
     std::vector<Tile*> nonCornerWalls;
     const unsigned nonCornerWallCount = region.getPerimeter() - 8;
     nonCornerWalls.reserve(nonCornerWallCount);
@@ -112,8 +118,6 @@ bool WorldGenerator::generateRoom(Rect region, int level)
 
     assert(nonCornerWalls.size() == nonCornerWallCount);
     randomElement(nonCornerWalls)->setObject(std::make_unique<Object>(doorId));
-
-    world.forEachTile(region, level, [&](Tile& tile) { tile.setGround(floorId); });
 
     auto stairsProbability = 0.75;
 
