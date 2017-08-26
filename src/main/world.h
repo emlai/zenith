@@ -15,6 +15,7 @@ public:
     Tile* getOrCreateTile(Vector2 position);
     Tile* getTile(Vector2 position) const;
     void forEachTile(Rect region, const std::function<void(Tile&)>&);
+    Color32 getSunlight() const { return sunlight; }
 
 private:
     Area* getOrCreateArea(Vector2 position);
@@ -23,4 +24,5 @@ private:
     static Vector2 globalPositionToTilePosition(Vector2 position);
 
     std::unordered_map<Vector2, std::unique_ptr<Area>> areas;
+    Color32 sunlight = 0x888888FF;
 };

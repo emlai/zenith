@@ -1,5 +1,6 @@
 #include "world.h"
 #include "worldgen.h"
+#include "components/lightsource.h"
 
 World::World()
 {
@@ -23,8 +24,6 @@ void World::exist(Rect region)
         if (!creature->isDead())
             creature->exist();
 
-    forEachTile(region, [&](Tile& tile) { tile.exist(); });
-
     for (auto* creature : creaturesToUpdate)
         if (creature->isDead())
             for (auto* tile : creature->getTilesUnder())
@@ -33,7 +32,11 @@ void World::exist(Rect region)
 
 void World::render(Window& window, Rect region)
 {
-    for (int zIndex = 0; zIndex < 5; ++zIndex)
+    auto lightRegion = region.inset(Vector2(-LightSource::maxRadius, -LightSource::maxRadius));
+    forEachTile(lightRegion, [&](Tile& tile) { tile.resetLight(); });
+    forEachTile(lightRegion, [&](Tile& tile) { tile.emitLight(); });
+
+    for (int zIndex = 0; zIndex < 6; ++zIndex)
         forEachTile(region, [&](const Tile& tile) { tile.render(window, zIndex); });
 }
 
@@ -56,21 +59,9 @@ Area* World::getArea(Vector2 position) const
     return nullptr;
 }
 
-/// Performs integer division, rounding towards negative infinity.
-static int divideRoundingDown(int dividend, int divisor)
-{
-    const int quotient = dividend / divisor;
-
-    if ((dividend % divisor != 0) && ((dividend < 0) != (divisor < 0)))
-        return quotient - 1;
-    else
-        return quotient;
-}
-
 Vector2 World::globalPositionToAreaPosition(Vector2 position)
 {
-    return Vector2(divideRoundingDown(position.x, Area::size),
-                   divideRoundingDown(position.y, Area::size));
+    return position.divideRoundingDown(Area::size);
 }
 
 Vector2 World::globalPositionToTilePosition(Vector2 position)

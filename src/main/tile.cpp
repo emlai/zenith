@@ -3,6 +3,7 @@
 #include "game.h"
 #include "gui.h"
 #include "world.h"
+#include "components/lightsource.h"
 #include "engine/texture.h"
 #include <cassert>
 
@@ -11,11 +12,8 @@ const Vector2 Tile::sizeVector = Vector2(Tile::size, Tile::size);
 Tile::Tile(World& world, Vector2 position, boost::string_ref groundId)
 :   world(world),
     position(position),
-    groundSprite(*Game::groundSpriteSheet, getSpriteTextureRegion(Game::groundConfig, groundId))
-{
-}
-
-void Tile::exist()
+    groundSprite(*Game::groundSpriteSheet, getSpriteTextureRegion(Game::groundConfig, groundId)),
+    light(Color32::black)
 {
 }
 
@@ -39,6 +37,10 @@ void Tile::render(Window& window, int zIndex) const
                 creature->render(window);
             break;
         case 4:
+            window.getGraphicsContext().renderRectangle(Rect(position * sizeVector, sizeVector),
+                                                        light, BlendMode::LinearLight);
+            break;
+        case 5:
         {
 #ifdef TOOLTIP
             Rect tileRect(position * sizeVector, sizeVector);
@@ -127,6 +129,44 @@ void Tile::setObject(std::unique_ptr<Object> newObject)
 void Tile::setGround(boost::string_ref groundId)
 {
     groundSprite = Sprite(*Game::groundSpriteSheet, getSpriteTextureRegion(Game::groundConfig, groundId));
+}
+
+std::vector<Entity*> Tile::getEntities() const
+{
+    std::vector<Entity*> entities;
+
+    for (auto& creature : creatures)
+        entities.push_back(creature.get());
+
+    for (auto& item : items)
+        entities.push_back(item.get());
+
+    if (object)
+        entities.push_back(object.get());
+
+    return entities;
+}
+
+std::vector<LightSource*> Tile::getLightSources() const
+{
+    std::vector<LightSource*> lightSources;
+
+    for (auto* entity : getEntities())
+        for (auto* lightSource : entity->getComponentsOfType<LightSource>())
+            lightSources.push_back(lightSource);
+
+    return lightSources;
+}
+
+void Tile::emitLight()
+{
+    for (auto* lightSource : getLightSources())
+        lightSource->emitLight(world, getCenterPosition());
+}
+
+void Tile::resetLight()
+{
+    light = world.getSunlight();
 }
 
 Tile* Tile::getAdjacentTile(Dir8 direction) const

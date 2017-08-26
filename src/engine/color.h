@@ -45,6 +45,13 @@ struct Color
         return (0.299 * getRed() + 0.587 * getGreen() + 0.114 * getBlue()) / max;
     }
 
+    void lighten(Color32 other)
+    {
+        set(Red, std::max(getRed(), other.getRed()));
+        set(Green, std::max(getGreen(), other.getGreen()));
+        set(Blue, std::max(getBlue(), other.getBlue()));
+    }
+
     Color& operator*=(double mod)
     {
         int delta = int(modulateTemperature * sign(mod - 1.0) * ((2.0 - mod) * mod - 1.0) *

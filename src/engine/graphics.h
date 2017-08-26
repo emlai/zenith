@@ -10,6 +10,8 @@
 class BitmapFont;
 class Window;
 
+enum class BlendMode { Normal, LinearLight };
+
 class GraphicsContext
 {
 public:
@@ -26,6 +28,7 @@ public:
     auto getAnimationFrameTime() const { return animationFrameTime; }
     void updateScreen();
     SDL_Renderer* getRenderer() const { return renderer.get(); }
+    void renderRectangle(Rect rectangle, Color32 color, BlendMode blendMode = BlendMode::Normal);
 
 private:
     friend class Texture;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "math.h"
+#include "utility.h"
 #include <cassert>
 #include <cmath>
 
@@ -95,6 +96,11 @@ struct Vector2Base
     bool isWithin(Vector2Base<U>) const;
     bool isWithin(struct Rect) const;
 
+    Vector2 divideRoundingDown(int divisor) const
+    {
+        return Vector2(::divideRoundingDown(x, divisor), ::divideRoundingDown(y, divisor));
+    }
+
     static const Vector2Base zeroVector;
 };
 
@@ -182,6 +188,13 @@ struct Rect
     bool isSquare() const { return size.x == size.y; }
 
     Rect offset(Vector2 offset) const { return Rect(position + offset, size); }
+    Rect inset(Vector2 amount) const { return Rect(position + amount, size - amount * 2); }
+
+    bool intersects(Rect other) const
+    {
+        return getLeft() < other.getRight() && getRight() > other.getLeft()
+            && getTop() < other.getBottom() && getBottom() > other.getTop();
+    }
 };
 
 template<typename T>

@@ -4,6 +4,7 @@
 #include "creature.h"
 #include "item.h"
 #include "object.h"
+#include "engine/color.h"
 #include "engine/geometry.h"
 #include "engine/sprite.h"
 #include <boost/utility/string_ref.hpp>
@@ -11,6 +12,7 @@
 #include <vector>
 
 class Area;
+class LightSource;
 class Object;
 class Window;
 class World;
@@ -19,7 +21,6 @@ class Tile
 {
 public:
     Tile(World& world, Vector2 position, boost::string_ref groundId);
-    void exist();
     void render(Window& window, int zIndex) const;
     template<typename... Args>
     Creature* spawnCreature(Args&&...);
@@ -35,9 +36,15 @@ public:
     const Object* getObject() const { return object.get(); }
     void setObject(std::unique_ptr<Object>);
     void setGround(boost::string_ref groundId);
+    std::vector<Entity*> getEntities() const;
+    std::vector<LightSource*> getLightSources() const;
+    void emitLight();
+    void addLight(Color32 light) { this->light.lighten(light); }
+    void resetLight();
     Tile* getAdjacentTile(Dir8) const;
     World& getWorld() const { return world; }
     Vector2 getPosition() const { return position; }
+    Vector2 getCenterPosition() const { return position * sizeVector + sizeVector / 2; }
     static const int size = 20;
     static const Vector2 sizeVector;
 
@@ -51,6 +58,7 @@ private:
     World& world;
     Vector2 position;
     Sprite groundSprite;
+    Color32 light;
 };
 
 template<typename... Args>

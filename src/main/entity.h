@@ -19,6 +19,9 @@ public:
 
     std::string getName() const;
     boost::string_ref getId() const { return id; }
+    const Config& getConfig() const { return *config; }
+    template<typename ComponentType>
+    std::vector<ComponentType*> getComponentsOfType() const;
 
     /// Returns true if the entity reacted to the movement attempt.
     bool reactToMovementAttempt();
@@ -33,3 +36,15 @@ private:
     const Config* config;
     std::vector<std::unique_ptr<Component>> components;
 };
+
+template<typename ComponentType>
+std::vector<ComponentType*> Entity::getComponentsOfType() const
+{
+    std::vector<ComponentType*> componentsOfType;
+
+    for (auto& component : components)
+        if (auto* p = dynamic_cast<ComponentType*>(component.get()))
+            componentsOfType.push_back(p);
+
+    return componentsOfType;
+}

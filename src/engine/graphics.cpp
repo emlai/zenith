@@ -94,3 +94,73 @@ void GraphicsContext::setRenderColor(Color32 color)
                            static_cast<uint8_t>(color.getBlue()),
                            static_cast<uint8_t>(color.getAlpha()));
 }
+
+void GraphicsContext::renderRectangle(Rect rectangle, Color32 color, BlendMode blendMode)
+{
+    if (view)
+        rectangle.position -= view->position;
+
+    rectangle.position += getViewport().position;
+
+    switch (blendMode)
+    {
+        case BlendMode::Normal:
+            uint8_t rgba[4];
+            SDL_GetRenderDrawColor(renderer.get(), &rgba[0], &rgba[1], &rgba[2], &rgba[3]);
+            setRenderColor(color);
+            SDL_RenderFillRect(renderer.get(), reinterpret_cast<const SDL_Rect*>(&rectangle));
+            SDL_SetRenderDrawColor(renderer.get(), rgba[0], rgba[1], rgba[2], rgba[3]);
+            break;
+
+        case BlendMode::LinearLight:
+            SDL_Surface* targetSurface = targetTexture.getSurface();
+
+            if (rectangle.getLeft() < 0 || rectangle.getTop() < 0
+                || rectangle.getRight() >= targetSurface->w || rectangle.getBottom() >= targetSurface->h)
+                return;
+
+            double dstR = color.getRed() / 255.0;
+            double dstG = color.getGreen() / 255.0;
+            double dstB = color.getBlue() / 255.0;
+            uint32_t* pixels = static_cast<uint32_t*>(targetSurface->pixels);
+            auto targetWidth = targetSurface->w;
+
+            for (auto y = rectangle.getTop(); y <= rectangle.getBottom(); ++y)
+            {
+                for (auto x = rectangle.getLeft(); x <= rectangle.getRight(); ++x)
+                {
+                    uint32_t* pixel = pixels + (y * targetWidth + x);
+                    double srcR = ((*pixel & 0xFF000000) >> 24) / 255.0;
+                    double srcG = ((*pixel & 0x00FF0000) >> 16) / 255.0;
+                    double srcB = ((*pixel & 0x0000FF00) >> 8) / 255.0;
+
+                    auto blendLinearLight = [](auto& src, auto dst)
+                    {
+                        if (dst > 0.5)
+                            src += 2.0 * dst - 1.0;
+                        else
+                            src = src + 2.0 * dst - 1.0;
+                    };
+
+                    blendLinearLight(srcR, dstR);
+                    blendLinearLight(srcG, dstG);
+                    blendLinearLight(srcB, dstB);
+
+                    auto wrap = [](auto& src)
+                    {
+                        if (src > 1.0)
+                            src = 1.0;
+                        else if (src < 0.0)
+                            src = 0.0;
+                    };
+
+                    wrap(srcR);
+                    wrap(srcG);
+                    wrap(srcB);
+
+                    *pixel = int(255 * srcR) << 24 | int(255 * srcG) << 16 | int(255 * srcB) << 8 | 255;
+                }
+            }
+            break;
+    }
+}

@@ -31,6 +31,7 @@ public:
     Vector2 getSize() const;
     int getWidth() const;
     int getHeight() const;
+    GraphicsContext& getGraphicsContext() { return context; }
 
     enum { CloseRequest = -2 };
 
