@@ -9,7 +9,7 @@ class World;
 class LightSource : public Component
 {
 public:
-    void emitLight(World& world, Vector2 position) const;
+    void emitLight(World& world, Vector2 position, int level) const;
 
     static const int maxRadius = 20;
 };

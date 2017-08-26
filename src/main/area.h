@@ -9,7 +9,7 @@ class World;
 class Area
 {
 public:
-    Area(World& world, Vector2 position);
+    Area(World& world, Vector2 position, int level);
 
 private:
     friend class World;

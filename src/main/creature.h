@@ -63,6 +63,7 @@ public:
 
     /// Returns true if the game should advance to the next turn.
     bool tryToMoveOrAttack(Dir8);
+    bool enter();
     void takeDamage(int amount);
     bool pickUpItem();
     bool close(Dir8);
@@ -70,6 +71,7 @@ public:
     const auto& getTilesUnder() const { return tilesUnder; }
     Tile& getTileUnder(int index) const { return *tilesUnder[index]; }
     Vector2 getPosition() const;
+    int getLevel() const;
     bool isDead() const { return currentHP <= 0; }
     int getHP() const { return currentHP; }
     int getAP() const { return currentAP; }

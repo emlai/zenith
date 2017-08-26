@@ -20,7 +20,7 @@ class World;
 class Tile
 {
 public:
-    Tile(World& world, Vector2 position, boost::string_ref groundId);
+    Tile(World& world, Vector2 position, int level, boost::string_ref groundId);
     void render(Window& window, int zIndex) const;
     template<typename... Args>
     Creature* spawnCreature(Args&&...);
@@ -42,8 +42,11 @@ public:
     void addLight(Color32 light) { this->light.lighten(light); }
     void resetLight();
     Tile* getAdjacentTile(Dir8) const;
+    Tile* getTileBelow() const;
+    Tile* getTileAbove() const;
     World& getWorld() const { return world; }
     Vector2 getPosition() const { return position; }
+    int getLevel() const { return level; }
     Vector2 getCenterPosition() const { return position * sizeVector + sizeVector / 2; }
     static const int size = 20;
     static const Vector2 sizeVector;
@@ -57,6 +60,7 @@ private:
     std::unique_ptr<Object> object;
     World& world;
     Vector2 position;
+    int level;
     Sprite groundSprite;
     Color32 light;
 };

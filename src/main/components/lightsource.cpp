@@ -3,7 +3,7 @@
 #include "../world.h"
 #include "engine/window.h"
 
-void LightSource::emitLight(World& world, Vector2 position) const
+void LightSource::emitLight(World& world, Vector2 position, int level) const
 {
     position = position.divideRoundingDown(Tile::size);
     Color32 color = getParent().getConfig().get<int>(getParent().getId(), "LightColor");
@@ -22,7 +22,7 @@ void LightSource::emitLight(World& world, Vector2 position) const
 
             auto intensity = 1.0 - reverseIntensity;
 
-            if (auto* tile = world.getTile(position + Vector2(dx, dy)))
+            if (auto* tile = world.getTile(position + Vector2(dx, dy), level))
                 tile->addLight(color * intensity);
         }
     }

@@ -10,33 +10,49 @@ WorldGenerator::WorldGenerator(World& world)
 {
 }
 
-void WorldGenerator::generateRegion(Rect region)
+void WorldGenerator::generateRegion(Rect region, int level)
 {
-    generateBuildings(region);
-    generateItems(region);
-    generateCreatures(region);
+    generateBuildings(region, level);
+    generateItems(region, level);
+    generateCreatures(region, level);
 }
 
-void WorldGenerator::generateBuildings(Rect region)
+void WorldGenerator::generateBuildings(Rect region, int level)
 {
+    auto minSize = 4;
+    auto maxSize = 10;
+
+    if (world.getTile(region.position, level + 1) != nullptr)
+    {
+        world.forEachTile(region, level + 1, [&](const Tile& tile)
+        {
+            if (tile.hasObject() && tile.getObject()->getId() == "StairsDown")
+            {
+                auto size = makeRandomVector(minSize, maxSize);
+                // Makes sure the StairsUp are inside the building.
+                auto topLeftPosition = tile.getPosition() - Vector2(1, 1) - makeRandomVector(size - Vector2(3, 3));
+                generateBuilding(Rect(topLeftPosition, size), level);
+                tile.getTileBelow()->setObject(std::make_unique<Object>("StairsUp"));
+            }
+        });
+    }
+
     auto density = 0.75;
 
     while (randFloat() < density)
     {
-        auto minSize = 4;
-        auto maxSize = 10;
         auto size = makeRandomVector(minSize, maxSize);
         auto topLeftPosition = region.position + makeRandomVector(region.size - size);
-        generateBuilding(Rect(topLeftPosition, size));
+        generateBuilding(Rect(topLeftPosition, size), level);
     }
 }
 
-void WorldGenerator::generateBuilding(Rect region)
+void WorldGenerator::generateBuilding(Rect region, int level)
 {
-    generateRoom(region);
+    generateRoom(region, level);
 }
 
-void WorldGenerator::generateRoom(Rect region)
+void WorldGenerator::generateRoom(Rect region, int level)
 {
     auto wallId = "BrickWall";
     auto floorId = "WoodenFloor";
@@ -54,7 +70,7 @@ void WorldGenerator::generateRoom(Rect region)
 
     auto generateWall = [&](Vector2 position)
     {
-        if (auto* tile = world.getOrCreateTile(position))
+        if (auto* tile = world.getOrCreateTile(position, level))
         {
             tile->setObject(std::make_unique<Object>(wallId));
 
@@ -78,24 +94,37 @@ void WorldGenerator::generateRoom(Rect region)
     assert(nonCornerWalls.size() == nonCornerWallCount);
     randomElement(nonCornerWalls)->setObject(std::make_unique<Object>(doorId));
 
-    world.forEachTile(region, [&](Tile& tile) { tile.setGround(floorId); });
+    world.forEachTile(region, level, [&](Tile& tile) { tile.setGround(floorId); });
+
+    auto stairsProbability = 0.75;
+
+    if (randFloat() < stairsProbability)
+    {
+        Rect roomInnerRegion = region.inset(Vector2(1, 1));
+        Tile* stairsTile = world.getTile(makeRandomVectorInside(roomInnerRegion), level);
+        stairsTile->setObject(std::make_unique<Object>("StairsDown"));
+    }
 }
 
-void WorldGenerator::generateItems(Rect region)
+void WorldGenerator::generateItems(Rect region, int level)
 {
     auto density = 0.75;
 
     while (randFloat() < density)
     {
         std::string itemId = randomElement(Game::itemConfig.getToplevelKeys());
-        world.getTile(makeRandomVectorInside(region))->addItem(std::make_unique<Item>(std::move(itemId)));
+        Tile* tile = world.getTile(makeRandomVectorInside(region), level);
+        tile->addItem(std::make_unique<Item>(std::move(itemId)));
     }
 }
 
-void WorldGenerator::generateCreatures(Rect region)
+void WorldGenerator::generateCreatures(Rect region, int level)
 {
     auto density = 0.75;
 
     while (randFloat() < density)
-        world.getTile(makeRandomVectorInside(region))->spawnCreature("Bat", std::make_unique<AIController>());
+    {
+        Tile* tile = world.getTile(makeRandomVectorInside(region), level);
+        tile->spawnCreature("Bat", std::make_unique<AIController>());
+    }
 }

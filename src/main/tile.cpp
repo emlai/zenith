@@ -9,9 +9,10 @@
 
 const Vector2 Tile::sizeVector = Vector2(Tile::size, Tile::size);
 
-Tile::Tile(World& world, Vector2 position, boost::string_ref groundId)
+Tile::Tile(World& world, Vector2 position, int level, boost::string_ref groundId)
 :   world(world),
     position(position),
+    level(level),
     groundSprite(*Game::groundSpriteSheet, getSpriteTextureRegion(Game::groundConfig, groundId)),
     light(Color32::black)
 {
@@ -161,7 +162,7 @@ std::vector<LightSource*> Tile::getLightSources() const
 void Tile::emitLight()
 {
     for (auto* lightSource : getLightSources())
-        lightSource->emitLight(world, getCenterPosition());
+        lightSource->emitLight(world, getCenterPosition(), level);
 }
 
 void Tile::resetLight()
@@ -171,5 +172,15 @@ void Tile::resetLight()
 
 Tile* Tile::getAdjacentTile(Dir8 direction) const
 {
-    return getWorld().getOrCreateTile(getPosition() + direction);
+    return getWorld().getOrCreateTile(getPosition() + direction, level);
+}
+
+Tile* Tile::getTileBelow() const
+{
+    return getWorld().getOrCreateTile(getPosition(), level - 1);
+}
+
+Tile* Tile::getTileAbove() const
+{
+    return getWorld().getOrCreateTile(getPosition(), level + 1);
 }

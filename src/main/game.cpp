@@ -52,6 +52,12 @@ Game::Game(Window& window)
             advanceTurn();
     });
 
+    mapKey(Enter, [this]
+    {
+        if (player->enter())
+            advanceTurn();
+    });
+
     mapKey(Comma, [this]
     {
         if (player->pickUpItem())
@@ -70,7 +76,7 @@ Game::Game(Window& window)
     mapKey(Tab, [this] { enterCommandMode(getWindow()); });
 #endif
 
-    player = world.getOrCreateTile({0, 0})->spawnCreature("Human", std::make_unique<PlayerController>());
+    player = world.getOrCreateTile({0, 0}, 0)->spawnCreature("Human", std::make_unique<PlayerController>());
 }
 
 boost::optional<Dir8> Game::askForDirection(std::string&& question)
@@ -93,7 +99,7 @@ void Game::updateLogic()
 {
     Vector2 updateDistance(64, 64);
     Rect regionToUpdate(player->getPosition() - updateDistance, updateDistance * 2);
-    world.exist(regionToUpdate);
+    world.exist(regionToUpdate, player->getLevel());
 }
 
 void Game::render(Window& window)
@@ -105,7 +111,7 @@ void Game::render(Window& window)
 
     Rect visibleRegion(player->getPosition() - GUI::viewport.size / Tile::size / 2,
                        GUI::viewport.size / Tile::size);
-    world.render(window, visibleRegion);
+    world.render(window, visibleRegion, player->getLevel());
 
     window.setView(nullptr);
     window.setViewport(nullptr);
@@ -130,6 +136,7 @@ void Game::printPlayerInformation(BitmapFont& font) const
         font.printLine("");
         font.printLine("x: " + std::to_string(player->getPosition().x));
         font.printLine("y: " + std::to_string(player->getPosition().y));
+        font.printLine("z: " + std::to_string(player->getLevel()));
         font.printLine("Turn " + std::to_string(getTurn()));
     }
 #endif

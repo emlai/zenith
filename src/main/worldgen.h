@@ -7,14 +7,14 @@ class WorldGenerator
 {
 public:
     WorldGenerator(World& world);
-    void generateRegion(Rect region);
+    void generateRegion(Rect region, int level);
 
 private:
-    void generateBuildings(Rect region);
-    void generateBuilding(Rect region);
-    void generateRoom(Rect region);
-    void generateItems(Rect region);
-    void generateCreatures(Rect region);
+    void generateBuildings(Rect region, int level);
+    void generateBuilding(Rect region, int level);
+    void generateRoom(Rect region, int level);
+    void generateItems(Rect region, int level);
+    void generateCreatures(Rect region, int level);
 
     World& world;
 };

@@ -148,6 +148,29 @@ void Creature::moveTo(Tile& destination)
     tilesUnder.push_back(&destination);
 }
 
+bool Creature::enter()
+{
+    for (Tile* tile : getTilesUnder())
+    {
+        if (!tile->hasObject())
+            continue;
+
+        if (tile->getObject()->getId() == "StairsDown")
+        {
+            moveTo(*tile->getTileBelow());
+            return true;
+        }
+
+        if (tile->getObject()->getId() == "StairsUp")
+        {
+            moveTo(*tile->getTileAbove());
+            return true;
+        }
+    }
+
+    return false;
+}
+
 void Creature::attack(Creature& target)
 {
     addMessage("You hit the " + target.getName() + ".");
@@ -184,6 +207,11 @@ bool Creature::close(Dir8 direction)
 Vector2 Creature::getPosition() const
 {
     return getTileUnder(0).getPosition();
+}
+
+int Creature::getLevel() const
+{
+    return getTileUnder(0).getLevel();
 }
 
 Attribute stringToAttribute(boost::string_ref string)
