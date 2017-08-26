@@ -35,6 +35,7 @@ public:
     Object* getObject() { return object.get(); }
     const Object* getObject() const { return object.get(); }
     void setObject(std::unique_ptr<Object>);
+    boost::string_ref getGroundId() const { return groundId; }
     void setGround(boost::string_ref groundId);
     std::vector<Entity*> getEntities() const;
     std::vector<LightSource*> getLightSources() const;
@@ -62,6 +63,7 @@ private:
     Vector2 position;
     int level;
     Sprite groundSprite;
+    std::string groundId;
     Color32 light;
 };
 

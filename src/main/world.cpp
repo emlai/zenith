@@ -49,6 +49,13 @@ Area* World::getOrCreateArea(Vector2 position, int level)
                                 std::make_unique<Area>(*this, position, level)).first->second;
     WorldGenerator generator(*this);
     generator.generateRegion(Rect(position * Area::sizeVector, Area::sizeVector), level);
+
+    // Also generate the area below, because currently generateRegion() may modify the above area
+    // to get the stairs right, and we don't want any stairs to disappear from levels that the
+    // player has visited.
+    areas.emplace(std::make_pair(position, level -1 ), std::make_unique<Area>(*this, position, level - 1));
+    generator.generateRegion(Rect(position * Area::sizeVector, Area::sizeVector), level - 1);
+
     return &area;
 }
 

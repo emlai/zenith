@@ -14,6 +14,7 @@ Tile::Tile(World& world, Vector2 position, int level, boost::string_ref groundId
     position(position),
     level(level),
     groundSprite(*Game::groundSpriteSheet, getSpriteTextureRegion(Game::groundConfig, groundId)),
+    groundId(groundId),
     light(Color32::black)
 {
 }
@@ -129,6 +130,7 @@ void Tile::setObject(std::unique_ptr<Object> newObject)
 
 void Tile::setGround(boost::string_ref groundId)
 {
+    this->groundId = groundId.to_string();
     groundSprite = Sprite(*Game::groundSpriteSheet, getSpriteTextureRegion(Game::groundConfig, groundId));
 }
 

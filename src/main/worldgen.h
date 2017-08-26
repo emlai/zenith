@@ -11,8 +11,8 @@ public:
 
 private:
     void generateBuildings(Rect region, int level);
-    void generateBuilding(Rect region, int level);
-    void generateRoom(Rect region, int level);
+    bool generateBuilding(Rect region, int level);
+    bool generateRoom(Rect region, int level);
     void generateItems(Rect region, int level);
     void generateCreatures(Rect region, int level);
 
