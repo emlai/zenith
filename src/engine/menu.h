@@ -3,21 +3,24 @@
 #include "color.h"
 #include "keyboard.h"
 #include "geometry.h"
+#include <boost/optional.hpp>
 #include <vector>
 
 class BitmapFont;
+class Sprite;
 class Window;
 
 struct MenuItem
 {
-    MenuItem(int id, boost::string_ref text, Key shortcut = NoKey)
-    : id(id), text(text), shortcut(shortcut)
+    MenuItem(int id, boost::string_ref text, Key shortcut = NoKey, const Sprite* image = nullptr)
+    : id(id), text(text), shortcut(shortcut), image(image)
     {
     }
 
     const int id;
     const std::string text;
     const Key shortcut;
+    const Sprite* const image;
 };
 
 class Menu
@@ -32,13 +35,16 @@ public:
         numberSeparator(". "),
         itemLayout(Vertical),
         itemSpacing(1),
+        itemSize(boost::none),
+        imageSpacing(0),
         normalColor(Color32::white * 0.6),
         selectionColor(Color32::white),
         selectionOffset(0, 0),
         area(0, 0, 0, 0)
     {
     }
-    void addItem(int id, boost::string_ref text, Key shortcut = NoKey);
+    void addTitle(boost::string_ref text);
+    void addItem(int id, boost::string_ref text, Key shortcut = NoKey, const Sprite* image = nullptr);
     int getChoice(Window&, BitmapFont&);
     void setWrap(bool state) { wrapEnabled = state; }
     void setShowNumbers(bool state) { showNumbers = state; }
@@ -46,6 +52,8 @@ public:
     void setTextLayout(TextLayout layout) { textLayout = layout; }
     void setItemLayout(ItemLayout layout) { itemLayout = layout; }
     void setItemSpacing(int amount) { itemSpacing = amount; }
+    void setItemSize(boost::optional<int> amount) { itemSize = amount; }
+    void setImageSpacing(int amount) { imageSpacing = amount; }
     void setNormalColor(Color32 color) { normalColor = color; }
     void setSelectionColor(Color32 color) { selectionColor = color; }
     void setSelectionOffset(Vector2 offset) { selectionOffset = offset; }
@@ -62,8 +70,9 @@ private:
     int calculateMaxTextSize();
     void calculateSize();
     void calculateItemPositions();
-    void render(BitmapFont&) const;
+    void render(Window& window, BitmapFont& font) const;
 
+    std::string title;
     std::vector<MenuItem> menuItems;
     std::vector<MenuItem>::iterator selection;
     std::vector<Rect> itemPositions;
@@ -73,6 +82,8 @@ private:
     TextLayout textLayout;
     ItemLayout itemLayout;
     int itemSpacing;
+    boost::optional<int> itemSize;
+    int imageSpacing;
     Color32 normalColor;
     Color32 selectionColor;
     Vector2 selectionOffset;

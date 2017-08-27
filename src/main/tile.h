@@ -50,7 +50,7 @@ public:
     Vector2 getPosition() const { return position; }
     int getLevel() const { return level; }
     Vector2 getCenterPosition() const { return position * sizeVector + sizeVector / 2; }
-    static const int size = 20;
+    static const int size;
     static const Vector2 sizeVector;
 
 private:

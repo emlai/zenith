@@ -1,11 +1,17 @@
 #include "menu.h"
 #include "font.h"
 #include "window.h"
+#include "sprite.h"
 #include <cctype>
 
-void Menu::addItem(int id, boost::string_ref text, Key shortcut)
+void Menu::addTitle(boost::string_ref text)
 {
-    menuItems.push_back(MenuItem(id, text, shortcut));
+    title = text.to_string();
+}
+
+void Menu::addItem(int id, boost::string_ref text, Key shortcut, const Sprite* image)
+{
+    menuItems.push_back(MenuItem(id, text, shortcut, image));
     selection = menuItems.begin();
 }
 
@@ -19,7 +25,7 @@ int Menu::getChoice(Window& window, BitmapFont& font)
 
     while (exitCode == -3)
     {
-        render(font);
+        render(window, font);
         window.updateScreen();
         const Key input = window.waitForInput();
 
@@ -154,13 +160,13 @@ void Menu::calculateItemPositions()
     Vector2 size;
 
     if (itemLayout == Vertical)
-        size = Vector2(area.size.x, area.size.y / menuItems.size());
+        size = Vector2(area.size.x, itemSize ? *itemSize : area.size.y / menuItems.size());
     else
-        size = Vector2(area.size.x / menuItems.size(), area.size.y);
+        size = Vector2(itemSize ? *itemSize : area.size.x / menuItems.size(), area.size.y);
 
     Vector2 position = area.position;
 
-    for (unsigned count = 0; count < menuItems.size(); ++count)
+    for (unsigned i = 0, count = menuItems.size() + (title.empty() ? 0 : 1); i < count; ++i)
     {
         itemPositions.push_back(Rect(position, size));
 
@@ -171,21 +177,32 @@ void Menu::calculateItemPositions()
     }
 }
 
-void Menu::render(BitmapFont& font) const
+void Menu::render(Window& window, BitmapFont& font) const
 {
     int index = 1;
     auto position = itemPositions.begin();
 
+    if (!title.empty())
+    {
+        font.setArea(*position);
+        font.print(title, normalColor);
+        ++position;
+    }
+
     for (auto item = menuItems.begin(); item != menuItems.end(); ++item, ++position)
     {
+        Vector2 itemPosition = selection == item ? position->position + selectionOffset : position->position;
+
+        if (item->image)
+        {
+            item->image->render(window, position->position);
+            itemPosition.x += item->image->getWidth() + imageSpacing;
+        }
+
         boost::string_ref text =
             showNumbers ? std::to_string(index++) + numberSeparator + item->text : item->text;
 
-        if (selection == item)
-            font.setArea(Rect(position->position + selectionOffset, position->size));
-        else
-            font.setArea(*position);
-
+        font.setArea(Rect(itemPosition, position->size));
         font.print(text, selection == item ? selectionColor : normalColor);
     }
 }

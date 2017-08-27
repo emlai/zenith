@@ -2,8 +2,8 @@
 #include "geometry.h"
 #include "texture.h"
 
-Sprite::Sprite(const Texture& texture, Rect textureRegion)
-:   texture(&texture), textureRegion(textureRegion), frame(0)
+Sprite::Sprite(const Texture& texture, Rect textureRegion, Color32 materialColor)
+:   texture(&texture), textureRegion(textureRegion), materialColor(materialColor), frame(0)
 {
 }
 
@@ -11,12 +11,9 @@ void Sprite::render(Window& window, Vector2 position) const
 {
     Rect source = textureRegion.offset(Vector2(frame * textureRegion.getWidth(), 0));
     Rect target(position, textureRegion.size);
-    texture->render(source, target);
-}
 
-void Sprite::render(Window&, Vector2 position, Color32 materialColor) const
-{
-    Rect source = textureRegion.offset(Vector2(frame * textureRegion.getWidth(), 0));
-    Rect target(position, textureRegion.size);
-    texture->render(source, target, materialColor);
+    if (materialColor)
+        texture->render(source, target, materialColor);
+    else
+        texture->render(source, target);
 }

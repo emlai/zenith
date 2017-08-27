@@ -7,6 +7,7 @@
 #include "engine/texture.h"
 #include <cassert>
 
+const int Tile::size = 20;
 const Vector2 Tile::sizeVector = Vector2(Tile::size, Tile::size);
 
 Tile::Tile(World& world, Vector2 position, int level, boost::string_ref groundId)

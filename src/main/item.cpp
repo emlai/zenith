@@ -5,14 +5,12 @@
 Item::Item(boost::string_ref id, boost::string_ref materialId)
 :   Entity(id, Game::itemConfig),
     materialId(materialId.to_string()),
-    sprite(*Game::itemSpriteSheet, getSpriteTextureRegion(Game::itemConfig, id))
+    sprite(*Game::itemSpriteSheet, getSpriteTextureRegion(Game::itemConfig, id),
+           materialId.empty() ? Color16::none : Color16(Game::materialConfig.get<int>(materialId, "Color")))
 {
 }
 
 void Item::render(Window& window, Vector2 position) const
 {
-    if (materialId.empty())
-        sprite.render(window, position);
-    else
-        sprite.render(window, position, Color16(Game::materialConfig.get<int>(materialId, "Color")));
+    sprite.render(window, position);
 }

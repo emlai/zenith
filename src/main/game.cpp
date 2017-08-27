@@ -2,6 +2,7 @@
 #include "gui.h"
 #include "msgsystem.h"
 #include "engine/math.h"
+#include "engine/menu.h"
 
 const Config Game::creatureConfig("data/config/creature.cfg");
 const Config Game::objectConfig("data/config/object.cfg");
@@ -87,29 +88,19 @@ Game::Game(Window& window)
 
 void Game::showInventory()
 {
-    auto& font = getWindow().getFont();
-    auto oldFontLayout = font.getLayout();
-    font.setLayout(TextLayout(LeftAlign, VerticalCenter));
-    auto lineHeight = Tile::size;
-    Rect row = GUI::viewport;
-    row.size.y = lineHeight;
-
-    font.setArea(row);
-    font.print("Inventory");
-    row.position.y += lineHeight * 1.5;
+    Menu menu;
+    menu.addTitle("Inventory");
+    menu.setArea(GUI::viewport);
+    menu.setItemSize(Tile::size);
+    menu.setTextLayout(TextLayout(LeftAlign, VerticalCenter));
+    menu.setImageSpacing(Tile::size / 2);
+    menu.setSelectionOffset(Vector2(0, 1));
+    int id = 0;
 
     for (auto& item : player->getInventory())
-    {
-        item->render(getWindow(), row.position);
-        font.setArea(row.offset(Vector2(Tile::size * 1.5, 0)));
-        font.print(item->getName());
-        row.position.y += lineHeight;
-    }
+        menu.addItem(id++, item->getName(), NoKey, &item->getSprite());
 
-    font.setLayout(oldFontLayout);
-
-    getWindow().updateScreen();
-    getWindow().waitForInput();
+    menu.getChoice(getWindow(), getWindow().getFont());
 }
 
 boost::optional<Dir8> Game::askForDirection(std::string&& question)
