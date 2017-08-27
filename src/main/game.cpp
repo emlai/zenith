@@ -7,6 +7,7 @@ const Config Game::creatureConfig("data/config/creature.cfg");
 const Config Game::objectConfig("data/config/object.cfg");
 const Config Game::itemConfig("data/config/item.cfg");
 const Config Game::groundConfig("data/config/ground.cfg");
+const Config Game::materialConfig("data/config/material.cfg");
 boost::optional<const Texture> Game::creatureSpriteSheet;
 boost::optional<const Texture> Game::objectSpriteSheet;
 boost::optional<const Texture> Game::itemSpriteSheet;

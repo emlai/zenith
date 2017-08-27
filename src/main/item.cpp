@@ -2,13 +2,17 @@
 #include "game.h"
 #include "gui.h"
 
-Item::Item(boost::string_ref id)
+Item::Item(boost::string_ref id, boost::string_ref materialId)
 :   Entity(id, Game::itemConfig),
+    materialId(materialId.to_string()),
     sprite(*Game::itemSpriteSheet, getSpriteTextureRegion(Game::itemConfig, id))
 {
 }
 
 void Item::render(Window& window, Vector2 position) const
 {
-    sprite.render(window, position);
+    if (materialId.empty())
+        sprite.render(window, position);
+    else
+        sprite.render(window, position, Color16(Game::materialConfig.get<int>(materialId, "Color")));
 }

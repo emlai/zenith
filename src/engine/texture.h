@@ -21,6 +21,7 @@ public:
     void setBlendMode(bool);
     void setColor(Color32) const;
     void render(Rect source, Rect target) const;
+    void render(Rect source, Rect target, Color32 materialColor) const;
     Vector2 getSize() const;
     int getWidth() const;
     int getHeight() const;

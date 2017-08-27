@@ -13,3 +13,10 @@ void Sprite::render(Window& window, Vector2 position) const
     Rect target(position, textureRegion.size);
     texture->render(source, target);
 }
+
+void Sprite::render(Window&, Vector2 position, Color32 materialColor) const
+{
+    Rect source = textureRegion.offset(Vector2(frame * textureRegion.getWidth(), 0));
+    Rect target(position, textureRegion.size);
+    texture->render(source, target, materialColor);
+}
