@@ -68,15 +68,20 @@ Game::Game(Window& window)
 
     mapKey(I, [this]
     {
-        showInventory("Inventory");
+        showInventory("Inventory", false);
     });
 
     mapKey(W, [this]
     {
-        int selectedItemIndex = showInventory("What do you want to wield?");
+        int selectedItemIndex = showInventory("What do you want to wield?", true);
 
         if (selectedItemIndex != Menu::Exit)
-            player->wield(player->getInventory()[selectedItemIndex].get());
+        {
+            if (selectedItemIndex == -1)
+                player->wield(nullptr);
+            else
+                player->wield(player->getInventory()[selectedItemIndex].get());
+        }
     });
 
     mapKey(C, [this]
@@ -94,7 +99,7 @@ Game::Game(Window& window)
     player = world.getOrCreateTile({0, 0}, 0)->spawnCreature("Human", std::make_unique<PlayerController>());
 }
 
-int Game::showInventory(boost::string_ref title)
+int Game::showInventory(boost::string_ref title, bool showNothingAsOption)
 {
     Menu menu;
     menu.addTitle(title);
@@ -103,6 +108,10 @@ int Game::showInventory(boost::string_ref title)
     menu.setTextLayout(TextLayout(LeftAlign, VerticalCenter));
     menu.setImageSpacing(Tile::size / 2);
     menu.setSelectionOffset(Vector2(0, 1));
+
+    if (showNothingAsOption)
+        menu.addItem(-1, "nothing");
+
     int id = 0;
 
     for (auto& item : player->getInventory())

@@ -27,7 +27,7 @@ class Menu
 {
 public:
     enum ItemLayout { Vertical, Horizontal };
-    enum { Exit = -1 };
+    enum { Exit = INT_MIN };
 
     Menu()
     :   wrapEnabled(true),
