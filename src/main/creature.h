@@ -72,6 +72,7 @@ public:
     Tile& getTileUnder(int index) const { return *tilesUnder[index]; }
     Vector2 getPosition() const;
     int getLevel() const;
+    const auto& getInventory() const { return inventory; }
     bool isDead() const { return currentHP <= 0; }
     int getHP() const { return currentHP; }
     int getAP() const { return currentAP; }

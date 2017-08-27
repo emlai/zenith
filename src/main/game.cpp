@@ -65,6 +65,11 @@ Game::Game(Window& window)
             advanceTurn();
     });
 
+    mapKey(I, [this]
+    {
+        showInventory();
+    });
+
     mapKey(C, [this]
     {
         boost::optional<Dir8> direction = askForDirection("What do you want to close?");
@@ -78,6 +83,33 @@ Game::Game(Window& window)
 #endif
 
     player = world.getOrCreateTile({0, 0}, 0)->spawnCreature("Human", std::make_unique<PlayerController>());
+}
+
+void Game::showInventory()
+{
+    auto& font = getWindow().getFont();
+    auto oldFontLayout = font.getLayout();
+    font.setLayout(TextLayout(LeftAlign, VerticalCenter));
+    auto lineHeight = Tile::size;
+    Rect row = GUI::viewport;
+    row.size.y = lineHeight;
+
+    font.setArea(row);
+    font.print("Inventory");
+    row.position.y += lineHeight * 1.5;
+
+    for (auto& item : player->getInventory())
+    {
+        item->render(getWindow(), row.position);
+        font.setArea(row.offset(Vector2(Tile::size * 1.5, 0)));
+        font.print(item->getName());
+        row.position.y += lineHeight;
+    }
+
+    font.setLayout(oldFontLayout);
+
+    getWindow().updateScreen();
+    getWindow().waitForInput();
 }
 
 boost::optional<Dir8> Game::askForDirection(std::string&& question)

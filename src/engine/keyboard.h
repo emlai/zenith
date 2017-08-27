@@ -23,7 +23,8 @@ enum : Key
     DownArrow = SDLK_DOWN,
     UpArrow = SDLK_UP,
     Comma = SDLK_COMMA,
-    C = SDLK_c
+    C = SDLK_c,
+    I = SDLK_i
 };
 
 enum : Mod
