@@ -105,11 +105,7 @@ void GraphicsContext::renderRectangle(Rect rectangle, Color32 color, BlendMode b
     switch (blendMode)
     {
         case BlendMode::Normal:
-            uint8_t rgba[4];
-            SDL_GetRenderDrawColor(renderer.get(), &rgba[0], &rgba[1], &rgba[2], &rgba[3]);
-            setRenderColor(color);
-            SDL_RenderFillRect(renderer.get(), reinterpret_cast<const SDL_Rect*>(&rectangle));
-            SDL_SetRenderDrawColor(renderer.get(), rgba[0], rgba[1], rgba[2], rgba[3]);
+            SDL_FillRect(targetTexture.getSurface(), reinterpret_cast<const SDL_Rect*>(&rectangle), color.value);
             break;
 
         case BlendMode::LinearLight:
