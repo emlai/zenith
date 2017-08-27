@@ -313,7 +313,12 @@ void WorldGenerator::generateItems(Rect region, int level)
         std::string itemId = randomElement(Game::itemConfig.getToplevelKeys());
         auto materials = Game::itemConfig.get<std::vector<std::string>>(itemId, "PossibleMaterials");
         std::string materialId = materials.empty() ? "" : randomElement(materials);
-        Tile* tile = world.getTile(makeRandomVectorInside(region), level);
+
+        Tile* tile = nullptr;
+
+        while (!tile || tile->hasObject())
+            tile = world.getTile(makeRandomVectorInside(region), level);
+
         tile->addItem(std::make_unique<Item>(std::move(itemId), std::move(materialId)));
     }
 }
@@ -324,7 +329,11 @@ void WorldGenerator::generateCreatures(Rect region, int level)
 
     while (randFloat() < density)
     {
-        Tile* tile = world.getTile(makeRandomVectorInside(region), level);
+        Tile* tile = nullptr;
+
+        while (!tile || tile->hasObject())
+            tile = world.getTile(makeRandomVectorInside(region), level);
+
         tile->spawnCreature("Bat", std::make_unique<AIController>());
     }
 }
