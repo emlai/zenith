@@ -42,7 +42,6 @@ int main(int argc, const char** argv)
     }
 
     Window window(GUI::windowSize, PROJECT_NAME);
-    window.setClearColor(GUIColor::Black);
     window.setAnimationFrameRate(24);
     BitmapFont font = initFont(window);
     Menu mainMenu = initMainMenu(window.getSize());

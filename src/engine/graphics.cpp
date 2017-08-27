@@ -26,18 +26,6 @@ void GraphicsContext::setAnimationFrameRate(int framesPerSecond)
     animationFrameTime = 1000 / framesPerSecond;
 }
 
-void GraphicsContext::setDrawColor(Color32 color)
-{
-    drawColor = color;
-    setRenderColor(color);
-}
-
-void GraphicsContext::setClearColor(Color32 color)
-{
-    clearColor = color;
-    clearScreen();
-}
-
 void GraphicsContext::setViewport(const Rect* viewport)
 {
     if (viewport)
@@ -83,16 +71,7 @@ void GraphicsContext::updateScreen()
 
 void GraphicsContext::clearScreen()
 {
-    SDL_FillRect(targetTexture.getSurface(), nullptr, clearColor);
-}
-
-void GraphicsContext::setRenderColor(Color32 color)
-{
-    SDL_SetRenderDrawColor(renderer.get(),
-                           static_cast<uint8_t>(color.getRed()),
-                           static_cast<uint8_t>(color.getGreen()),
-                           static_cast<uint8_t>(color.getBlue()),
-                           static_cast<uint8_t>(color.getAlpha()));
+    SDL_FillRect(targetTexture.getSurface(), nullptr, 0);
 }
 
 void GraphicsContext::renderRectangle(Rect rectangle, Color32 color, BlendMode blendMode)

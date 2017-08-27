@@ -16,8 +16,6 @@ class GraphicsContext
 {
 public:
     GraphicsContext(const Window&);
-    void setDrawColor(Color32);
-    void setClearColor(Color32);
     void setViewport(const Rect* viewport);
     Rect getViewport() const;
     void setView(const Rect* view);
@@ -35,13 +33,10 @@ private:
 
     void applyFrameLimit();
     void clearScreen();
-    void setRenderColor(Color32);
 
     std::unique_ptr<SDL_Renderer, void (&)(SDL_Renderer*)> renderer;
     std::unique_ptr<SDL_Texture, void (&)(SDL_Texture*)> framebuffer;
     Texture targetTexture;
-    Color32 drawColor;
-    Color32 clearColor;
     boost::optional<Rect> viewport;
     boost::optional<Rect> view;
     BitmapFont* font;
