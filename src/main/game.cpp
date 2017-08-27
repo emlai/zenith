@@ -60,18 +60,18 @@ Game::Game(Window& window)
             advanceTurn();
     });
 
-    mapKey(Comma, [this]
+    mapKey(',', [this]
     {
         if (player->pickUpItem())
             advanceTurn();
     });
 
-    mapKey(I, [this]
+    mapKey('i', [this]
     {
         showInventory("Inventory", false);
     });
 
-    mapKey(W, [this]
+    mapKey('w', [this]
     {
         int selectedItemIndex = showInventory("What do you want to wield?", true);
 
@@ -84,7 +84,7 @@ Game::Game(Window& window)
         }
     });
 
-    mapKey(C, [this]
+    mapKey('c', [this]
     {
         boost::optional<Dir8> direction = askForDirection("What do you want to close?");
 
