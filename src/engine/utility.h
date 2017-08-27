@@ -28,3 +28,5 @@ inline int divideRoundingDown(int dividend, int divisor)
 }
 
 std::string operator+(boost::string_ref a, boost::string_ref b);
+
+std::string pascalCaseToSentenceCase(boost::string_ref pascalCaseString);

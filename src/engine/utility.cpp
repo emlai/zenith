@@ -22,3 +22,24 @@ std::string operator+(boost::string_ref a, boost::string_ref b)
     result.append(b.data(), b.size());
     return result;
 }
+
+std::string pascalCaseToSentenceCase(boost::string_ref pascalCaseString)
+{
+    std::string name;
+    name.reserve(pascalCaseString.size());
+
+    for (char ch : pascalCaseString)
+    {
+        if (std::isupper(ch))
+        {
+            if (!name.empty())
+                name += ' ';
+
+            name += std::tolower(ch);
+        }
+        else
+            name += ch;
+    }
+
+    return name;
+}

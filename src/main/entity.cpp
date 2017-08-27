@@ -27,23 +27,12 @@ Entity::Entity(boost::string_ref id, const Config& config)
 
 std::string Entity::getName() const
 {
-    std::string name;
-    name.reserve(id.size());
+    std::string prefix = getNamePrefix();
 
-    for (char ch : id)
-    {
-        if (std::isupper(ch))
-        {
-            if (!name.empty())
-                name += ' ';
+    if (!prefix.empty())
+        prefix += ' ';
 
-            name += std::tolower(ch);
-        }
-        else
-            name += ch;
-    }
-
-    return name;
+    return prefix + pascalCaseToSentenceCase(id);
 }
 
 bool Entity::reactToMovementAttempt()

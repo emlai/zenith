@@ -10,6 +10,11 @@ Item::Item(boost::string_ref id, boost::string_ref materialId)
 {
 }
 
+std::string Item::getNamePrefix() const
+{
+    return pascalCaseToSentenceCase(materialId);
+}
+
 void Item::render(Window& window, Vector2 position) const
 {
     sprite.render(window, position);

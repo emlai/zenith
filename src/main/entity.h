@@ -17,7 +17,7 @@ public:
     Entity& operator=(Entity&&) = default;
     virtual ~Entity() = default;
 
-    std::string getName() const;
+    virtual std::string getName() const;
     boost::string_ref getId() const { return id; }
     const Config& getConfig() const { return *config; }
     template<typename ComponentType>
@@ -32,6 +32,8 @@ protected:
     const std::vector<std::unique_ptr<Component>>& getComponents() const { return components; }
 
 private:
+    virtual std::string getNamePrefix() const { return ""; }
+
     std::string id;
     const Config* config;
     std::vector<std::unique_ptr<Component>> components;
