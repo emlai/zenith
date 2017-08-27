@@ -66,6 +66,7 @@ public:
     bool enter();
     void takeDamage(int amount);
     bool pickUpItem();
+    void wield(Item*);
     bool close(Dir8);
 
     const auto& getTilesUnder() const { return tilesUnder; }
@@ -102,6 +103,7 @@ private:
 
     std::vector<Tile*> tilesUnder;
     std::vector<std::unique_ptr<Item>> inventory;
+    Item* wieldedItem;
     int currentHP, maxHP, currentAP, maxAP, currentMP, maxMP;
     std::vector<int> attributes;
     std::vector<Attribute> displayedAttributes;

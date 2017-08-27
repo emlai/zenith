@@ -27,7 +27,7 @@ public:
     static boost::optional<const Texture> cursorTexture;
 
 private:
-    void showInventory();
+    int showInventory(boost::string_ref title);
     boost::optional<Dir8> askForDirection(std::string&& question);
     void render(Window&) override;
     void updateLogic() override;

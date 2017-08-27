@@ -14,3 +14,8 @@ void Item::render(Window& window, Vector2 position) const
 {
     sprite.render(window, position);
 }
+
+void Item::renderWielded(Window& window, Vector2 position) const
+{
+    sprite.render(window, position, Vector2(0, Tile::size));
+}

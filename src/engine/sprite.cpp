@@ -7,9 +7,9 @@ Sprite::Sprite(const Texture& texture, Rect textureRegion, Color32 materialColor
 {
 }
 
-void Sprite::render(Window& window, Vector2 position) const
+void Sprite::render(Window& window, Vector2 position, Vector2 sourceOffset) const
 {
-    Rect source = textureRegion.offset(Vector2(frame * textureRegion.getWidth(), 0));
+    Rect source = textureRegion.offset(Vector2(frame * textureRegion.getWidth(), 0) + sourceOffset);
     Rect target(position, textureRegion.size);
 
     if (materialColor)

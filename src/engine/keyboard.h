@@ -24,7 +24,8 @@ enum : Key
     UpArrow = SDLK_UP,
     Comma = SDLK_COMMA,
     C = SDLK_c,
-    I = SDLK_i
+    I = SDLK_i,
+    W = SDLK_w
 };
 
 enum : Mod

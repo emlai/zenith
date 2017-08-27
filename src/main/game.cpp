@@ -68,7 +68,15 @@ Game::Game(Window& window)
 
     mapKey(I, [this]
     {
-        showInventory();
+        showInventory("Inventory");
+    });
+
+    mapKey(W, [this]
+    {
+        int selectedItemIndex = showInventory("What do you want to wield?");
+
+        if (selectedItemIndex != Menu::Exit)
+            player->wield(player->getInventory()[selectedItemIndex].get());
     });
 
     mapKey(C, [this]
@@ -86,10 +94,10 @@ Game::Game(Window& window)
     player = world.getOrCreateTile({0, 0}, 0)->spawnCreature("Human", std::make_unique<PlayerController>());
 }
 
-void Game::showInventory()
+int Game::showInventory(boost::string_ref title)
 {
     Menu menu;
-    menu.addTitle("Inventory");
+    menu.addTitle(title);
     menu.setArea(GUI::viewport);
     menu.setItemSize(Tile::size);
     menu.setTextLayout(TextLayout(LeftAlign, VerticalCenter));
@@ -100,7 +108,7 @@ void Game::showInventory()
     for (auto& item : player->getInventory())
         menu.addItem(id++, item->getName(), NoKey, &item->getSprite());
 
-    menu.getChoice(getWindow(), getWindow().getFont());
+    return menu.getChoice(getWindow(), getWindow().getFont());
 }
 
 boost::optional<Dir8> Game::askForDirection(std::string&& question)

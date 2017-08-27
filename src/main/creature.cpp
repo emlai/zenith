@@ -21,6 +21,7 @@ std::vector<std::vector<int>> Creature::initAttributeIndices(boost::string_ref i
 Creature::Creature(Tile& tile, boost::string_ref id, std::unique_ptr<CreatureController> controller)
 :   Entity(id, Game::creatureConfig),
     tilesUnder({&tile}),
+    wieldedItem(nullptr),
     currentHP(0),
     maxHP(0),
     currentAP(0),
@@ -51,6 +52,9 @@ void Creature::regenerate()
 void Creature::render(Window& window) const
 {
     sprite.render(window, getPosition() * Tile::size);
+
+    if (wieldedItem)
+        wieldedItem->renderWielded(window, getPosition() * Tile::size);
 }
 
 void Creature::generateAttributes(boost::string_ref id)
@@ -196,6 +200,11 @@ bool Creature::pickUpItem()
     }
 
     return false;
+}
+
+void Creature::wield(Item* itemToWield)
+{
+    wieldedItem = itemToWield;
 }
 
 bool Creature::close(Dir8 direction)
