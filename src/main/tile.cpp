@@ -140,7 +140,12 @@ std::vector<Entity*> Tile::getEntities() const
     std::vector<Entity*> entities;
 
     for (auto& creature : creatures)
+    {
         entities.push_back(creature.get());
+
+        if (creature->hasWieldedItem())
+            entities.push_back(creature->getWieldedItem());
+    }
 
     for (auto& item : items)
         entities.push_back(item.get());

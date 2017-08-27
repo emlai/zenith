@@ -74,6 +74,8 @@ public:
     Vector2 getPosition() const;
     int getLevel() const;
     const auto& getInventory() const { return inventory; }
+    bool hasWieldedItem() const { return wieldedItem != nullptr; }
+    Item* getWieldedItem() const { return wieldedItem; }
     bool isDead() const { return currentHP <= 0; }
     int getHP() const { return currentHP; }
     int getAP() const { return currentAP; }
