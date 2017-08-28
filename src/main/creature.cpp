@@ -309,6 +309,12 @@ void Creature::wield(Item* itemToWield)
     wieldedItem = itemToWield;
 }
 
+bool Creature::use(Item& itemToUse, Game& game)
+{
+    assert(itemToUse.isUsable());
+    return itemToUse.use(*this, game);
+}
+
 void Creature::drop(Item& itemToDrop)
 {
     for (auto it = inventory.begin(), end = inventory.end(); it != end; ++it)

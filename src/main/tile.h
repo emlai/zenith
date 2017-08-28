@@ -24,6 +24,7 @@ public:
     void render(Window& window, int zIndex, bool fogOfWar) const;
     template<typename... Args>
     Creature* spawnCreature(Args&&...);
+    bool hasCreature() const { return !creatures.empty(); }
     const auto& getCreatures() const { return creatures; }
     Creature& getCreature(int index) const { return *creatures[index]; }
     void transferCreature(Creature&, Tile&);

@@ -100,6 +100,20 @@ Game::Game(Window& window)
         }
     }));
 
+    mapKey('u', ifAlive([this]
+    {
+        int selectedItemIndex = showInventory("What do you want to use?", false, [](auto& item)
+        {
+            return item.isUsable();
+        });
+
+        if (selectedItemIndex != Menu::Exit)
+        {
+            if (player->use(*player->getInventory()[selectedItemIndex], *this))
+                advanceTurn();
+        }
+    }));
+
     mapKey('d', ifAlive([this]
     {
         int selectedItemIndex = showInventory("What do you want to drop?", false);
@@ -126,7 +140,8 @@ Game::Game(Window& window)
     player = world.getOrCreateTile({0, 0}, 0)->spawnCreature("Human", std::make_unique<PlayerController>());
 }
 
-int Game::showInventory(boost::string_ref title, bool showNothingAsOption)
+int Game::showInventory(boost::string_ref title, bool showNothingAsOption,
+                        std::function<bool(const Item&)> itemFilter)
 {
     Menu menu;
     menu.addTitle(title);
@@ -142,7 +157,12 @@ int Game::showInventory(boost::string_ref title, bool showNothingAsOption)
     int id = 0;
 
     for (auto& item : player->getInventory())
-        menu.addItem(id++, item->getName(), NoKey, &item->getSprite());
+    {
+        if (!itemFilter || itemFilter(*item))
+            menu.addItem(id, item->getName(), NoKey, &item->getSprite());
+
+        ++id;
+    }
 
     return menu.getChoice(getWindow(), getWindow().getFont());
 }

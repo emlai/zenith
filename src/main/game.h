@@ -14,6 +14,7 @@ class Game : public Engine
 {
 public:
     Game(Window&);
+    boost::optional<Dir8> askForDirection(std::string&& question);
 
     static const Config creatureConfig;
     static const Config objectConfig;
@@ -28,8 +29,8 @@ public:
     static boost::optional<const Texture> fogOfWarTexture;
 
 private:
-    int showInventory(boost::string_ref title, bool showNothingAsOption);
-    boost::optional<Dir8> askForDirection(std::string&& question);
+    int showInventory(boost::string_ref title, bool showNothingAsOption,
+                      std::function<bool(const Item&)> itemFilter = nullptr);
     void render(Window&) override;
     void updateLogic() override;
 

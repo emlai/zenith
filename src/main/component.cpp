@@ -1,4 +1,5 @@
 #include "component.h"
+#include "components/dig.h"
 #include "components/door.h"
 #include "components/lightsource.h"
 
@@ -8,6 +9,7 @@ std::unique_ptr<Component> Component::get(boost::string_ref name, Entity& parent
 {
     std::unique_ptr<Component> component;
 
+    if (name == "Dig") component = std::make_unique<Dig>();
     if (name == "Door") component = std::make_unique<Door>();
     if (name == "LightSource") component = std::make_unique<LightSource>();
 

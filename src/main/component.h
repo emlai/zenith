@@ -4,7 +4,10 @@
 #include <cassert>
 #include <memory>
 
+class Creature;
 class Entity;
+class Game;
+class Item;
 
 class Component
 {
@@ -18,6 +21,8 @@ public:
     virtual bool preventsMovement() { return false; }
     virtual bool close() { return false; }
     virtual bool blocksSight() const { return false; }
+    virtual bool isUsable() const { return false; }
+    virtual bool use(Creature&, Item&, Game&) { return false; }
 
 private:
     Entity* parent;

@@ -23,6 +23,27 @@ Item::Item(boost::string_ref id, boost::string_ref materialId, Sprite&& sprite)
 {
 }
 
+bool Item::isUsable() const
+{
+    for (auto& component : getComponents())
+        if (component->isUsable())
+            return true;
+
+    return false;
+}
+
+bool Item::use(Creature& user, Game& game)
+{
+    assert(isUsable());
+    bool returnValue = false;
+
+    for (auto& component : getComponents())
+        if (component->use(user, *this, game))
+            returnValue = true;
+
+    return returnValue;
+}
+
 std::string Item::getNamePrefix() const
 {
     return pascalCaseToSentenceCase(materialId);

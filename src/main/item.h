@@ -13,6 +13,8 @@ class Item : public Entity
 {
 public:
     Item(boost::string_ref id, boost::string_ref materialId);
+    bool isUsable() const;
+    bool use(Creature& user, Game& game);
     virtual std::string getNamePrefix() const override;
     void render(Vector2 position) const;
     virtual void renderWielded(Vector2 position) const;
