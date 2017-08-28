@@ -86,6 +86,17 @@ Game::Game(Window& window)
         }
     });
 
+    mapKey('d', [this]
+    {
+        int selectedItemIndex = showInventory("What do you want to drop?", false);
+
+        if (selectedItemIndex != Menu::Exit)
+        {
+            player->drop(*player->getInventory()[selectedItemIndex]);
+            advanceTurn();
+        }
+    });
+
     mapKey('c', [this]
     {
         boost::optional<Dir8> direction = askForDirection("What do you want to close?");

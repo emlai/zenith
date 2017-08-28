@@ -228,6 +228,24 @@ void Creature::wield(Item* itemToWield)
     wieldedItem = itemToWield;
 }
 
+void Creature::drop(Item& itemToDrop)
+{
+    for (auto it = inventory.begin(), end = inventory.end(); it != end; ++it)
+    {
+        if (it->get() == &itemToDrop)
+        {
+            if (wieldedItem == &itemToDrop)
+                wield(nullptr);
+
+            getTileUnder(0).addItem(std::move(*it));
+            inventory.erase(it);
+            return;
+        }
+    }
+
+    assert(false);
+}
+
 bool Creature::close(Dir8 direction)
 {
     Tile* destination = getTileUnder(0).getAdjacentTile(direction);

@@ -68,6 +68,7 @@ public:
     void takeDamage(int amount);
     bool pickUpItem();
     void wield(Item*);
+    void drop(Item&);
     bool close(Dir8);
 
     const auto& getTilesUnder() const { return tilesUnder; }
