@@ -2,6 +2,7 @@
 
 #include "utility.h"
 #include <libconfig.h++>
+#include <boost/optional.hpp>
 #include <fstream>
 #include <functional>
 #include <stdexcept>
@@ -14,6 +15,8 @@ public:
     Config(boost::string_ref fileName);
     template<typename ValueType>
     ValueType get(boost::string_ref type, boost::string_ref attribute) const;
+    template<typename ValueType>
+    boost::optional<ValueType> getOptional(boost::string_ref type, boost::string_ref attribute) const;
 
     std::vector<std::string> getToplevelKeys() const
     {
@@ -91,6 +94,15 @@ inline Config::Config(boost::string_ref fileName)
 template<typename ValueType>
 ValueType Config::get(boost::string_ref type, boost::string_ref attribute) const
 {
+    if (auto value = getOptional<ValueType>(type, attribute))
+        return std::move(*value);
+    else
+        throw std::runtime_error("attribute \"" + attribute + "\" not found for \"" + type + "\"!");
+}
+
+template<typename ValueType>
+boost::optional<ValueType> Config::getOptional(boost::string_ref type, boost::string_ref attribute) const
+{
     for (auto current = type;;)
     {
         try
@@ -105,8 +117,7 @@ ValueType Config::get(boost::string_ref type, boost::string_ref attribute) const
             }
             catch (const libconfig::SettingNotFoundException&)
             {
-                throw std::runtime_error("attribute \"" + attribute +
-                                         "\" not found for \"" + type + "\"!");
+                return boost::none;
             }
         }
         catch (const libconfig::SettingTypeException&)

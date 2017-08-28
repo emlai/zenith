@@ -13,10 +13,19 @@ public:
     Item(boost::string_ref id, boost::string_ref materialId);
     virtual std::string getNamePrefix() const override;
     void render(Window& window, Vector2 position) const;
-    void renderWielded(Window& window, Vector2 position) const;
+    virtual void renderWielded(Window& window, Vector2 position) const;
     const Sprite& getSprite() const { return sprite; }
 
-private:
+protected:
+    Item(boost::string_ref id, boost::string_ref materialId, Sprite&& sprite);
+
     std::string materialId;
     Sprite sprite;
+};
+
+class Corpse final : public Item
+{
+public:
+    Corpse(boost::string_ref creatureId);
+    void renderWielded(Window& window, Vector2 position) const override;
 };

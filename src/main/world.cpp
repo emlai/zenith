@@ -27,8 +27,12 @@ void World::exist(Rect region, int level)
 
     for (auto* creature : creaturesToUpdate)
         if (creature->isDead())
+        {
+            creature->getTileUnder(0).addItem(std::make_unique<Corpse>(creature->getId()));
+
             for (auto* tile : creature->getTilesUnder())
                 tile->removeCreature(*creature);
+        }
 }
 
 void World::render(Window& window, Rect region, int level, const Creature& player)

@@ -14,14 +14,15 @@ Entity::Entity(boost::string_ref id, const Config& config)
 :   id(id),
     config(&config)
 {
-    auto componentNames = config.get<std::vector<std::string>>(id, "components");
-
-    for (auto& componentName : componentNames)
+    if (auto componentNames = config.getOptional<std::vector<std::string>>(id, "components"))
     {
-        if (auto component = Component::get(componentName, *this))
-            components.push_back(std::move(component));
-        else
-            reportUnknownComponent(componentName);
+        for (auto& componentName : *componentNames)
+        {
+            if (auto component = Component::get(componentName, *this))
+                components.push_back(std::move(component));
+            else
+                reportUnknownComponent(componentName);
+        }
     }
 }
 
