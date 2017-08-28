@@ -32,53 +32,62 @@ Game::Game(Window& window)
     mapKey(Esc, [this] { stop(); });
     mapKey('q', [this] { stop(); });
 
-    mapKey(RightArrow, [this]
+    auto ifAlive = [&](auto action)
+    {
+        return [=]
+        {
+            if (!player->isDead())
+                action();
+        };
+    };
+
+    mapKey(RightArrow, ifAlive([this]
     {
         if (player->tryToMoveOrAttack(East))
             advanceTurn();
-    });
+    }));
 
-    mapKey(LeftArrow, [this]
+    mapKey(LeftArrow, ifAlive([this]
     {
         if (player->tryToMoveOrAttack(West))
             advanceTurn();
-    });
+    }));
 
-    mapKey(DownArrow, [this]
+    mapKey(DownArrow, ifAlive([this]
     {
         if (player->tryToMoveOrAttack(South))
             advanceTurn();
-    });
+    }));
 
-    mapKey(UpArrow, [this]
+    mapKey(UpArrow, ifAlive([this]
     {
         if (player->tryToMoveOrAttack(North))
             advanceTurn();
-    });
+    }));
 
-    mapKey(Enter, [this]
+    mapKey(Enter, ifAlive([this]
     {
         if (player->enter())
             advanceTurn();
-    });
+    }));
 
     mapKey('.', [this]
     {
         advanceTurn();
     });
 
-    mapKey(',', [this]
+    mapKey(',', ifAlive([this]
     {
         if (player->pickUpItem())
             advanceTurn();
-    });
+    }));
 
     mapKey('i', [this]
     {
         showInventory("Inventory", false);
     });
 
-    mapKey('w', [this]
+    mapKey('w', ifAlive([this]
     {
         int selectedItemIndex = showInventory("What do you want to wield?", true);
 
@@ -89,9 +98,9 @@ Game::Game(Window& window)
             else
                 player->wield(player->getInventory()[selectedItemIndex].get());
         }
-    });
+    }));
 
-    mapKey('d', [this]
+    mapKey('d', ifAlive([this]
     {
         int selectedItemIndex = showInventory("What do you want to drop?", false);
 
@@ -100,15 +109,15 @@ Game::Game(Window& window)
             player->drop(*player->getInventory()[selectedItemIndex]);
             advanceTurn();
         }
-    });
+    }));
 
-    mapKey('c', [this]
+    mapKey('c', ifAlive([this]
     {
         boost::optional<Dir8> direction = askForDirection("What do you want to close?");
 
         if (direction && player->close(*direction))
             advanceTurn();
-    });
+    }));
 
 #ifdef DEBUG
     mapKey(Tab, [this] { enterCommandMode(getWindow()); });
