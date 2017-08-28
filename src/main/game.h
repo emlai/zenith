@@ -25,6 +25,7 @@ public:
     static boost::optional<const Texture> itemSpriteSheet;
     static boost::optional<const Texture> groundSpriteSheet;
     static boost::optional<const Texture> cursorTexture;
+    static boost::optional<const Texture> fogOfWarTexture;
 
 private:
     int showInventory(boost::string_ref title, bool showNothingAsOption);

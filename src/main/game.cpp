@@ -14,6 +14,7 @@ boost::optional<const Texture> Game::objectSpriteSheet;
 boost::optional<const Texture> Game::itemSpriteSheet;
 boost::optional<const Texture> Game::groundSpriteSheet;
 boost::optional<const Texture> Game::cursorTexture;
+boost::optional<const Texture> Game::fogOfWarTexture;
 
 static const Color32 transparentColor(0x5A5268FF);
 
@@ -26,6 +27,7 @@ Game::Game(Window& window)
     itemSpriteSheet.emplace(getWindow(), "data/graphics/item.bmp", transparentColor);
     groundSpriteSheet.emplace(getWindow(), "data/graphics/ground.bmp");
     cursorTexture.emplace(getWindow(), "data/graphics/cursor.bmp", transparentColor);
+    fogOfWarTexture.emplace(getWindow(), "data/graphics/fow.bmp", transparentColor);
 
     mapKey(Esc, [this] { stop(); });
     mapKey('q', [this] { stop(); });

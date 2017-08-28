@@ -8,6 +8,7 @@
 #include <memory>
 #include <vector>
 #include <string>
+#include <unordered_set>
 
 class Item;
 class Tile;
@@ -88,6 +89,7 @@ public:
     void addMessage(std::string&& message);
     const std::vector<std::string>& getMessages() const { return messages; }
     bool sees(const Tile& tile) const;
+    bool remembers(const Tile& tile) const;
 
 private:
     void moveTo(Tile&);
@@ -105,6 +107,7 @@ private:
     const auto& getAttributeIndices(int attribute) const { return attributeIndices[attribute]; }
 
     std::vector<Tile*> tilesUnder;
+    mutable std::unordered_set<const Tile*> seenTiles;
     std::vector<std::unique_ptr<Item>> inventory;
     Item* wieldedItem;
     int currentHP, maxHP, currentAP, maxAP, currentMP, maxMP;

@@ -21,7 +21,7 @@ class Tile
 {
 public:
     Tile(World& world, Vector2 position, int level, boost::string_ref groundId);
-    void render(Window& window, int zIndex) const;
+    void render(Window& window, int zIndex, bool fogOfWar) const;
     template<typename... Args>
     Creature* spawnCreature(Args&&...);
     const auto& getCreatures() const { return creatures; }

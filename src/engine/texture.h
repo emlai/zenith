@@ -20,6 +20,8 @@ public:
     Texture(const Window&, uint32_t pixelFormat, Vector2 size);
     void setBlendMode(bool);
     void setColor(Color32) const;
+    void render(Vector2 position) const;
+    void render(Rect target) const;
     void render(Rect source, Rect target) const;
     void render(Rect source, Rect target, Color32 materialColor) const;
     Vector2 getSize() const;

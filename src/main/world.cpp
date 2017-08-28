@@ -1,4 +1,5 @@
 #include "world.h"
+#include "game.h"
 #include "worldgen.h"
 #include "components/lightsource.h"
 
@@ -36,14 +37,20 @@ void World::render(Window& window, Rect region, int level, const Creature& playe
     forEachTile(lightRegion, level, [&](Tile& tile) { tile.resetLight(); });
     forEachTile(lightRegion, level, [&](Tile& tile) { tile.emitLight(); });
 
-    for (int zIndex = 0; zIndex < 6; ++zIndex)
+    std::vector<std::pair<const Tile*, bool>> tilesToRender;
+    tilesToRender.reserve(region.getArea());
+
+    forEachTile(region, level, [&](const Tile& tile)
     {
-        forEachTile(region, level, [&](const Tile& tile)
-        {
-            if (player.sees(tile))
-                tile.render(window, zIndex);
-        });
-    }
+        if (player.sees(tile))
+            tilesToRender.emplace_back(&tile, false);
+        else if (player.remembers(tile))
+            tilesToRender.emplace_back(&tile, true);
+    });
+
+    for (int zIndex = 0; zIndex < 7; ++zIndex)
+        for (auto tileAndFogOfWar : tilesToRender)
+            tileAndFogOfWar.first->render(window, zIndex, tileAndFogOfWar.second);
 }
 
 Area* World::getOrCreateArea(Vector2 position, int level)

@@ -20,7 +20,7 @@ Tile::Tile(World& world, Vector2 position, int level, boost::string_ref groundId
 {
 }
 
-void Tile::render(Window& window, int zIndex) const
+void Tile::render(Window& window, int zIndex, bool fogOfWar) const
 {
     switch (zIndex)
     {
@@ -36,6 +36,9 @@ void Tile::render(Window& window, int zIndex) const
                 object->render(window, position * sizeVector);
             break;
         case 3:
+            if (fogOfWar)
+                break;
+
             for (const auto& creature : creatures)
                 creature->render(window);
             break;
@@ -44,6 +47,10 @@ void Tile::render(Window& window, int zIndex) const
                                                         light, BlendMode::LinearLight);
             break;
         case 5:
+            if (fogOfWar)
+                Game::fogOfWarTexture->render(position * sizeVector);
+            break;
+        case 6:
         {
 #ifdef TOOLTIP
             Rect tileRect(position * sizeVector, sizeVector);

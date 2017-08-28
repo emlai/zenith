@@ -125,14 +125,19 @@ bool Creature::sees(const Tile& tile) const
 
     return raycastIntegerBresenham(getPosition(), tile.getPosition(), [&](Vector2 vector)
     {
-        if (vector == tile.getPosition())
-            return true;
+        auto* currentTile = getTileUnder(0).getWorld().getTile(vector, getLevel());
 
-        if (getTileUnder(0).getWorld().getTile(vector, getLevel())->blocksSight())
+        if (currentTile != &tile && currentTile->blocksSight())
             return false;
 
+        seenTiles.insert(currentTile);
         return true;
     });
+}
+
+bool Creature::remembers(const Tile& tile) const
+{
+    return seenTiles.find(&tile) != seenTiles.end();
 }
 
 bool Creature::tryToMoveOrAttack(Dir8 direction)
