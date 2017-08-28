@@ -125,7 +125,7 @@ bool Creature::sees(const Tile& tile) const
 
     return raycastIntegerBresenham(getPosition(), tile.getPosition(), [&](Vector2 vector)
     {
-        auto* currentTile = getTileUnder(0).getWorld().getTile(vector, getLevel());
+        auto* currentTile = getWorld().getTile(vector, getLevel());
 
         if (!currentTile)
             return false;
@@ -151,7 +151,7 @@ std::vector<Creature*> Creature::getCurrentlySeenCreatures(int fieldOfVisionRadi
     {
         for (int y = -fieldOfVisionRadius; y <= fieldOfVisionRadius; ++y)
         {
-            auto* tile = getTileUnder(0).getWorld().getTile(getPosition() + Vector2(x, y), getLevel());
+            auto* tile = getWorld().getTile(getPosition() + Vector2(x, y), getLevel());
 
             if (!tile || !sees(*tile))
                 continue;
@@ -318,6 +318,11 @@ Vector2 Creature::getPosition() const
 int Creature::getLevel() const
 {
     return getTileUnder(0).getLevel();
+}
+
+World& Creature::getWorld() const
+{
+    return getTileUnder(0).getWorld();
 }
 
 Attribute stringToAttribute(boost::string_ref string)

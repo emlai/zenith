@@ -13,6 +13,7 @@
 class Item;
 class Tile;
 class Window;
+class World;
 
 enum Attribute
 {
@@ -96,6 +97,7 @@ public:
     Creature* getNearestEnemy() const;
 
 private:
+    World& getWorld() const;
     void moveTo(Tile&);
     void attack(Creature&);
     void setAttribute(Attribute, int amount);
