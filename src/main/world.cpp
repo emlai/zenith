@@ -28,10 +28,17 @@ void World::exist(Rect region, int level)
     for (auto* creature : creaturesToUpdate)
         if (creature->isDead())
         {
-            creature->getTileUnder(0).addItem(std::make_unique<Corpse>(creature->getId()));
-
-            for (auto* tile : creature->getTilesUnder())
-                tile->removeCreature(*creature);
+            if (creature->getTilesUnder().size() == 1)
+            {
+                auto dead = creature->getTileUnder(0).removeSingleTileCreature(*creature);
+                creature->getTileUnder(0).addItem(std::make_unique<Corpse>(std::move(dead)));
+            }
+            else
+            {
+                // TODO: Implement multi-tile creature corpses.
+                for (auto* tile : creature->getTilesUnder())
+                    tile->removeCreature(*creature);
+            }
         }
 }
 

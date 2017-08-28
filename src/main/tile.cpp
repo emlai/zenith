@@ -115,6 +115,23 @@ void Tile::transferCreature(Creature& creature, Tile& destination)
     assert(false);
 }
 
+std::unique_ptr<Creature> Tile::removeSingleTileCreature(Creature& creature)
+{
+    assert(creature.getTilesUnder().size() == 1);
+
+    for (auto it = creatures.begin(); it != creatures.end(); ++it)
+    {
+        if (it->get() == &creature)
+        {
+            auto removed = std::move(*it);
+            creatures.erase(it);
+            return removed;
+        }
+    }
+
+    assert(false);
+}
+
 void Tile::removeCreature(Creature& creature)
 {
     auto newEnd = std::remove_if(creatures.begin(), creatures.end(),

@@ -4,7 +4,9 @@
 #include "engine/geometry.h"
 #include "engine/sprite.h"
 #include <boost/utility/string_ref.hpp>
+#include <memory>
 
+class Creature;
 class Window;
 
 class Item : public Entity
@@ -26,6 +28,10 @@ protected:
 class Corpse final : public Item
 {
 public:
+    Corpse(std::unique_ptr<Creature> creature);
     Corpse(boost::string_ref creatureId);
     void renderWielded(Vector2 position) const override;
+
+private:
+    std::unique_ptr<Creature> creature;
 };

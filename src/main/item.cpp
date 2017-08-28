@@ -38,6 +38,14 @@ void Item::renderWielded(Vector2 position) const
     sprite.render(position, Vector2(0, Tile::size));
 }
 
+Corpse::Corpse(std::unique_ptr<Creature> creature)
+:   Item(creature->getId() + "Corpse", "",
+         Sprite(*Game::creatureSpriteSheet, getSpriteTextureRegion(Game::creatureConfig, creature->getId()))),
+    creature(std::move(creature))
+{
+    sprite.setFrame(2);
+}
+
 Corpse::Corpse(boost::string_ref creatureId)
 :   Item(creatureId + "Corpse", "",
          Sprite(*Game::creatureSpriteSheet, getSpriteTextureRegion(Game::creatureConfig, creatureId)))

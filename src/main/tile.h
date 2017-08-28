@@ -27,6 +27,7 @@ public:
     const auto& getCreatures() const { return creatures; }
     Creature& getCreature(int index) const { return *creatures[index]; }
     void transferCreature(Creature&, Tile&);
+    std::unique_ptr<Creature> removeSingleTileCreature(Creature&);
     void removeCreature(Creature&);
     bool hasItems() const { return !items.empty(); }
     const std::vector<std::unique_ptr<Item>>& getItems() const { return items; }
