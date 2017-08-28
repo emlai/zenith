@@ -25,7 +25,7 @@ class World
 public:
     World();
     void exist(Rect region, int level);
-    void render(Window&, Rect region, int level);
+    void render(Window&, Rect region, int level, const Creature& player);
     Tile* getOrCreateTile(Vector2 position, int level);
     Tile* getTile(Vector2 position, int level) const;
     void forEachTile(Rect region, int level, const std::function<void(Tile&)>&);

@@ -119,6 +119,22 @@ void Creature::addMessage(std::string&& message)
     messages.push_back(std::move(message));
 }
 
+bool Creature::sees(const Tile& tile) const
+{
+    assert(tile.getLevel() == getLevel());
+
+    return raycastIntegerBresenham(getPosition(), tile.getPosition(), [&](Vector2 vector)
+    {
+        if (vector == tile.getPosition())
+            return true;
+
+        if (getTileUnder(0).getWorld().getTile(vector, getLevel())->blocksSight())
+            return false;
+
+        return true;
+    });
+}
+
 bool Creature::tryToMoveOrAttack(Dir8 direction)
 {
     Tile* destination = getTileUnder(0).getAdjacentTile(direction);

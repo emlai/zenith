@@ -30,14 +30,20 @@ void World::exist(Rect region, int level)
                 tile->removeCreature(*creature);
 }
 
-void World::render(Window& window, Rect region, int level)
+void World::render(Window& window, Rect region, int level, const Creature& player)
 {
     auto lightRegion = region.inset(Vector2(-LightSource::maxRadius, -LightSource::maxRadius));
     forEachTile(lightRegion, level, [&](Tile& tile) { tile.resetLight(); });
     forEachTile(lightRegion, level, [&](Tile& tile) { tile.emitLight(); });
 
     for (int zIndex = 0; zIndex < 6; ++zIndex)
-        forEachTile(region, level, [&](const Tile& tile) { tile.render(window, zIndex); });
+    {
+        forEachTile(region, level, [&](const Tile& tile)
+        {
+            if (player.sees(tile))
+                tile.render(window, zIndex);
+        });
+    }
 }
 
 Area* World::getOrCreateArea(Vector2 position, int level)

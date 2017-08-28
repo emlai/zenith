@@ -178,6 +178,11 @@ void Tile::resetLight()
     light = world.getSunlight();
 }
 
+bool Tile::blocksSight() const
+{
+    return hasObject() && getObject()->blocksSight();
+}
+
 Tile* Tile::getAdjacentTile(Dir8 direction) const
 {
     return getWorld().getOrCreateTile(getPosition() + direction, level);

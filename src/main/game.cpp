@@ -152,7 +152,7 @@ void Game::render(Window& window)
 
     Rect visibleRegion(player->getPosition() - GUI::viewport.size / Tile::size / 2,
                        GUI::viewport.size / Tile::size);
-    world.render(window, visibleRegion, player->getLevel());
+    world.render(window, visibleRegion, player->getLevel(), *player);
 
     window.setView(nullptr);
     window.setViewport(nullptr);

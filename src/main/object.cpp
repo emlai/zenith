@@ -19,6 +19,15 @@ bool Object::close()
     return returnValue;
 }
 
+bool Object::blocksSight() const
+{
+    for (auto& component : getComponents())
+        if (component->blocksSight())
+            return true;
+
+    return Game::objectConfig.get<bool>(getId(), "blocksSight");
+}
+
 void Object::render(Window& window, Vector2 position) const
 {
     sprite.render(window, position);

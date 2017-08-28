@@ -121,6 +121,12 @@ inline Vector2Base<T> abs(Vector2Base<T> vector)
 }
 
 template<typename T>
+inline Vector2Base<T> sign(Vector2Base<T> vector)
+{
+    return Vector2Base<T>(sign(vector.x), sign(vector.y));
+}
+
+template<typename T>
 inline auto getDistanceSquared(Vector2Base<T> a, Vector2Base<T> b)
 {
     return (b - a).getLengthSquared();

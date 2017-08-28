@@ -17,6 +17,7 @@ public:
     virtual bool reactToMovementAttempt() { return false; }
     virtual bool preventsMovement() { return false; }
     virtual bool close() { return false; }
+    virtual bool blocksSight() const { return false; }
 
 private:
     Entity* parent;

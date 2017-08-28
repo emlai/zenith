@@ -42,6 +42,7 @@ public:
     void emitLight();
     void addLight(Color32 light) { this->light.lighten(light); }
     void resetLight();
+    bool blocksSight() const;
     Tile* getAdjacentTile(Dir8) const;
     Tile* getPreExistingAdjacentTile(Dir8) const;
     Tile* getTileBelow() const;

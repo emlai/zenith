@@ -87,6 +87,7 @@ public:
     const auto& getDisplayedAttributes() const { return displayedAttributes; }
     void addMessage(std::string&& message);
     const std::vector<std::string>& getMessages() const { return messages; }
+    bool sees(const Tile& tile) const;
 
 private:
     void moveTo(Tile&);
