@@ -62,6 +62,11 @@ Game::Game(Window& window)
             advanceTurn();
     });
 
+    mapKey('.', [this]
+    {
+        advanceTurn();
+    });
+
     mapKey(',', [this]
     {
         if (player->pickUpItem())
