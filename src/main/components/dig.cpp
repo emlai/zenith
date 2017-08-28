@@ -9,16 +9,16 @@ bool Dig::use(Creature& digger, Item& digItem, Game& game)
 
         if (tileToDig->hasObject())
         {
-            digger.addMessage("You dig the " + tileToDig->getObject()->getName() + ".");
+            digger.addMessage("You dig the ", tileToDig->getObject()->getName(), ".");
             tileToDig->setObject(nullptr);
         }
         else if (tileToDig->hasCreature())
         {
-            digger.addMessage("You can't dig the " + tileToDig->getCreature(0).getName() + ".");
+            digger.addMessage("You can't dig the ", tileToDig->getCreature(0).getName(), ".");
             return false;
         }
         else
-            digger.addMessage("You swing the " + digItem.getName() + " at the air.");
+            digger.addMessage("You swing the ", digItem.getName(), " at the air.");
 
         return true;
     }

@@ -116,12 +116,6 @@ void Creature::editAttribute(Attribute attribute, double amount)
         attributeValues[index] += amount;
 }
 
-void Creature::addMessage(std::string&& message)
-{
-    message[0] = char(std::toupper(message[0]));
-    messages.push_back(std::move(message));
-}
-
 bool Creature::sees(const Tile& tile) const
 {
     assert(tile.getLevel() == getLevel());
@@ -251,7 +245,7 @@ void Creature::moveTo(Tile& destination)
     }
 
     if (itemOnTile)
-        addMessage(itemOnTile->getNameIndefinite() + " is lying here.");
+        addMessage(itemOnTile->getNameIndefinite(), " is lying here.");
 }
 
 bool Creature::enter()
@@ -279,8 +273,8 @@ bool Creature::enter()
 
 void Creature::attack(Creature& target)
 {
-    addMessage("You hit the " + target.getName() + ".");
-    target.addMessage("The " + getName() + " hits you.");
+    addMessage("You hit the ", target.getName(), ".");
+    target.addMessage("The ", getName(), " hits you.");
 
     target.takeDamage(5);
 }

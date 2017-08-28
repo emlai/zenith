@@ -6,9 +6,10 @@
 #include "engine/sprite.h"
 #include "engine/utility.h"
 #include <memory>
-#include <vector>
+#include <sstream>
 #include <string>
 #include <unordered_set>
+#include <vector>
 
 class Item;
 class Tile;
@@ -90,7 +91,8 @@ public:
     double getMaxMP() const { return maxMP; }
     double getAttribute(Attribute) const;
     const auto& getDisplayedAttributes() const { return displayedAttributes; }
-    void addMessage(std::string&& message);
+    template<typename... Args>
+    void addMessage(Args&&...);
     const std::vector<std::string>& getMessages() const { return messages; }
     bool sees(const Tile& tile) const;
     bool remembers(const Tile& tile) const;
@@ -126,6 +128,17 @@ private:
     std::vector<std::string> messages;
     static const int configAttributes[8];
 };
+
+template<typename... Args>
+void Creature::addMessage(Args&&... messageParts)
+{
+    std::stringstream stream;
+    auto expansion = { (stream << messageParts, 0)... };
+    (void) expansion;
+    std::string message = stream.str();
+    message[0] = char(std::toupper(message[0]));
+    messages.push_back(std::move(message));
+}
 
 Attribute stringToAttribute(boost::string_ref);
 std::vector<Attribute> stringsToAttributes(const std::vector<std::string>&);
