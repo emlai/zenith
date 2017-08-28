@@ -64,6 +64,7 @@ public:
 
     /// Returns true if the game should advance to the next turn.
     bool tryToMoveOrAttack(Dir8);
+    bool tryToMoveTowardsOrAttack(Creature& target);
     bool enter();
     void takeDamage(int amount);
     bool pickUpItem();
@@ -91,6 +92,8 @@ public:
     const std::vector<std::string>& getMessages() const { return messages; }
     bool sees(const Tile& tile) const;
     bool remembers(const Tile& tile) const;
+    std::vector<Creature*> getCurrentlySeenCreatures(int fieldOfVisionRadius) const;
+    Creature* getNearestEnemy() const;
 
 private:
     void moveTo(Tile&);

@@ -101,6 +101,8 @@ struct Vector2Base
         return Vector2(::divideRoundingDown(x, divisor), ::divideRoundingDown(y, divisor));
     }
 
+    Dir8 getDir8() const;
+
     static const Vector2Base zeroVector;
 };
 
@@ -110,6 +112,38 @@ inline bool Vector2Base<T>::isWithin(Vector2Base<U> vector) const
 {
     return x >= 0 && U(x) < vector.x && y >= 0 && U(y) < vector.y;
 }
+
+template<typename T>
+Dir8 Vector2Base<T>::getDir8() const
+{
+    switch (sign(x))
+    {
+        case -1:
+            switch (sign(y))
+            {
+                case -1: return NorthWest;
+                case 0: return West;
+                case 1: return SouthWest;
+            }
+        case 0:
+            switch (sign(y))
+            {
+                case -1: return North;
+                case 0: assert(false);
+                case 1: return South;
+            }
+        case 1:
+            switch (sign(y))
+            {
+                case -1: return NorthEast;
+                case 0: return East;
+                case 1: return SouthEast;
+            }
+    }
+
+    assert(false);
+}
+
 
 template<typename T>
 const Vector2Base<T> Vector2Base<T>::zeroVector = Vector2Base<T>(0, 0);

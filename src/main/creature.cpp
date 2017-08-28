@@ -127,6 +127,9 @@ bool Creature::sees(const Tile& tile) const
     {
         auto* currentTile = getTileUnder(0).getWorld().getTile(vector, getLevel());
 
+        if (!currentTile)
+            return false;
+
         if (currentTile != &tile && currentTile->blocksSight())
             return false;
 
@@ -138,6 +141,55 @@ bool Creature::sees(const Tile& tile) const
 bool Creature::remembers(const Tile& tile) const
 {
     return seenTiles.find(&tile) != seenTiles.end();
+}
+
+std::vector<Creature*> Creature::getCurrentlySeenCreatures(int fieldOfVisionRadius) const
+{
+    std::vector<Creature*> currentlySeenCreatures;
+
+    for (int x = -fieldOfVisionRadius; x <= fieldOfVisionRadius; ++x)
+    {
+        for (int y = -fieldOfVisionRadius; y <= fieldOfVisionRadius; ++y)
+        {
+            auto* tile = getTileUnder(0).getWorld().getTile(getPosition() + Vector2(x, y), getLevel());
+
+            if (!tile || !sees(*tile))
+                continue;
+
+            for (auto& creature : tile->getCreatures())
+            {
+                if (creature.get() != this)
+                    currentlySeenCreatures.push_back(creature.get());
+            }
+        }
+    }
+
+    return currentlySeenCreatures;
+}
+
+Creature* Creature::getNearestEnemy() const
+{
+    // TODO: Optimize by iterating in a spiral starting from this creature's position.
+
+    int fieldOfVisionRadius = 10;
+    Creature* nearestEnemy = nullptr;
+    int nearestEnemyDistance = INT_MAX;
+
+    for (auto* other : getCurrentlySeenCreatures(fieldOfVisionRadius))
+    {
+        if (other->getId() == getId())
+            continue;
+
+        int enemyDistance = getDistanceSquared(getPosition(), other->getPosition());
+
+        if (enemyDistance < nearestEnemyDistance)
+        {
+            nearestEnemy = other;
+            nearestEnemyDistance = enemyDistance;
+        }
+    }
+
+    return nearestEnemy;
 }
 
 bool Creature::tryToMoveOrAttack(Dir8 direction)
@@ -164,6 +216,12 @@ bool Creature::tryToMoveOrAttack(Dir8 direction)
 
     moveTo(*destination);
     return true;
+}
+
+bool Creature::tryToMoveTowardsOrAttack(Creature& target)
+{
+    auto directionVector = target.getPosition() - getPosition();
+    return tryToMoveOrAttack(directionVector.getDir8());
 }
 
 void Creature::moveTo(Tile& destination)
