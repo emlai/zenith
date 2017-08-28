@@ -17,9 +17,14 @@ SDL_Window* Window::initWindowHandle(Vector2 size, const char* title, bool fulls
         sdlVideoInitialized = true;
     }
 
+    uint32_t windowFlags = SDL_WINDOW_ALLOW_HIGHDPI;
+
+    if (fullscreen)
+        windowFlags |= fullscreenFlag;
+
     SDL_Window* windowHandle = SDL_CreateWindow(title,
                                                 SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                                                size.x, size.y, fullscreen ? fullscreenFlag : 0);
+                                                size.x, size.y, windowFlags);
 
     if (!windowHandle)
         throw std::runtime_error(SDL_GetError());
@@ -166,6 +171,11 @@ Vector2 Window::getMousePosition() const
 void Window::setShowCursor(bool show)
 {
     SDL_ShowCursor(show);
+}
+
+Vector2 Window::getResolution() const
+{
+    return getSize() / context.getScale();
 }
 
 Vector2 Window::getSize() const

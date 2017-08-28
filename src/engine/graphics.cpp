@@ -6,19 +6,34 @@
 #include "window.h"
 
 GraphicsContext::GraphicsContext(const Window& window)
-:   renderer(SDL_CreateRenderer(window.windowHandle.get(), -1, 0), SDL_DestroyRenderer),
+:   window(window),
+    renderer(SDL_CreateRenderer(window.windowHandle.get(), -1, 0), SDL_DestroyRenderer),
     framebuffer(SDL_CreateTexture(renderer.get(), SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING,
-                                  window.getWidth(), window.getHeight()), SDL_DestroyTexture),
-    targetTexture(window, SDL_PIXELFORMAT_RGBA8888, window.getSize()),
+                                  window.getResolution().x, window.getResolution().y), SDL_DestroyTexture),
+    targetTexture(window, SDL_PIXELFORMAT_RGBA8888, window.getResolution()),
     animationFrameTime(10)
 {
     if (!renderer)
         throw std::runtime_error(SDL_GetError());
 
     SDL_SetRenderDrawColor(renderer.get(), 0x0, 0x0, 0x0, 0xFF);
-    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
-    SDL_RenderSetLogicalSize(renderer.get(), window.getWidth(), window.getHeight());
+    SDL_RenderSetLogicalSize(renderer.get(), window.getResolution().x, window.getResolution().y);
     SDL_RenderClear(renderer.get());
+}
+
+void GraphicsContext::setScale(double scale)
+{
+    SDL_RenderSetScale(renderer.get(), float(scale), float(scale));
+    framebuffer.reset(SDL_CreateTexture(renderer.get(), SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING,
+                                        window.getResolution().x, window.getResolution().y));
+    targetTexture = Texture(window, SDL_PIXELFORMAT_RGBA8888, window.getResolution());
+}
+
+double GraphicsContext::getScale() const
+{
+    float scale;
+    SDL_RenderGetScale(renderer.get(), &scale, nullptr);
+    return double(scale);
 }
 
 void GraphicsContext::setAnimationFrameRate(int framesPerSecond)

@@ -22,6 +22,8 @@ public:
     const Rect* getView() const { return view.get_ptr(); }
     void setFont(BitmapFont&);
     BitmapFont& getFont();
+    void setScale(double scale);
+    double getScale() const;
     void setAnimationFrameRate(int framesPerSecond);
     auto getAnimationFrameTime() const { return animationFrameTime; }
     void updateScreen();
@@ -34,6 +36,7 @@ private:
     void applyFrameLimit();
     void clearScreen();
 
+    const Window& window;
     std::unique_ptr<SDL_Renderer, void (&)(SDL_Renderer*)> renderer;
     std::unique_ptr<SDL_Texture, void (&)(SDL_Texture*)> framebuffer;
     Texture targetTexture;

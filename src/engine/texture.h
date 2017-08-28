@@ -33,7 +33,7 @@ private:
 
     SDL_Surface* getSurface() const { return surface.get(); }
 
-    const Window& window;
-    std::unique_ptr<SDL_Surface, void (&)(SDL_Surface*)> surface;
+    const Window* window;
+    std::unique_ptr<SDL_Surface, void (*)(SDL_Surface*)> surface;
     std::vector<Color32> pixelData;
 };

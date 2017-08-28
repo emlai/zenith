@@ -27,6 +27,7 @@ public:
     auto getAnimationFrameTime() const { return context.getAnimationFrameTime(); }
     void updateScreen() { context.updateScreen(); }
     bool shouldClose() const;
+    Vector2 getResolution() const;
     Vector2 getSize() const;
     int getWidth() const;
     int getHeight() const;

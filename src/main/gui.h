@@ -32,17 +32,17 @@ namespace GUI
 
     inline Rect getWorldViewport(const Window& window)
     {
-        return Rect(24, 36, window.getWidth() - 160, window.getHeight() - 132);
+        return Rect(24, 36, window.getResolution().x - 160, window.getResolution().y - 132);
     }
 
     inline Rect getSidebarArea(const Window& window)
     {
-        return Rect(window.getWidth() - 84, 48, 84, window.getHeight() - 24);
+        return Rect(window.getResolution().x - 84, 48, 84, window.getResolution().y - 24);
     }
 
     inline Rect getMessageArea(const Window& window)
     {
-        return Rect(36, window.getHeight() - 85, window.getWidth() - 136, 60);
+        return Rect(36, window.getResolution().y - 85, window.getResolution().x - 136, 60);
     }
 
 #ifdef DEBUG
@@ -50,7 +50,7 @@ namespace GUI
 
     inline Rect getDebugMessageArea(const Window& window)
     {
-        return Rect(36, 48, window.getWidth() - 124, 60);
+        return Rect(36, 48, window.getResolution().x - 124, 60);
     }
 #endif
 }

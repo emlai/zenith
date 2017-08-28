@@ -52,7 +52,7 @@ int keyboard::readLine(Window& window, std::string& line, Vector2 position, Rend
     while (!exitCode)
     {
         render(window);
-        font.setArea(Rect(position, window.getSize() - position));
+        font.setArea(Rect(position, window.getResolution() - position));
         font.print(prefix);
         font.printWithCursor(line, &*cursor);
         window.updateScreen();

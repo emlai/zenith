@@ -42,9 +42,10 @@ int main(int argc, const char** argv)
     }
 
     Window window(GUI::windowSize, PROJECT_NAME, true);
+    window.getGraphicsContext().setScale(2);
     window.setAnimationFrameRate(24);
     BitmapFont font = initFont(window);
-    Menu mainMenu = initMainMenu(window.getSize());
+    Menu mainMenu = initMainMenu(window.getResolution());
 
     for (bool exit = false; !exit && !window.shouldClose();)
     {
