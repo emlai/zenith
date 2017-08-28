@@ -45,9 +45,9 @@ void Creature::exist()
 
 void Creature::regenerate()
 {
-    editHP(1);
-    editAP(1);
-    editMP(1);
+    editHP(0.1);
+    editAP(0.1);
+    editMP(0.1);
 }
 
 void Creature::render(Window& window) const
@@ -60,7 +60,7 @@ void Creature::render(Window& window) const
 
 void Creature::generateAttributes(boost::string_ref id)
 {
-    attributes.resize(Game::creatureConfig.get<int>(id, "Attributes"));
+    attributeValues.resize(Game::creatureConfig.get<int>(id, "Attributes"));
 
     auto attributeStrings = Game::creatureConfig.get<std::vector<std::string>>(id, "ConfigAttributes");
     auto configAttributes = stringsToAttributes(attributeStrings);
@@ -69,7 +69,7 @@ void Creature::generateAttributes(boost::string_ref id)
     {
         boost::string_ref attributeName = attributeAbbreviations[attribute];
         int baseAttributeValue = Game::creatureConfig.get<int>(id, attributeName);
-        setAttribute(attribute, static_cast<int>(baseAttributeValue + randNormal(2)));
+        setAttribute(attribute, baseAttributeValue + randNormal(2));
     }
 
     calculateDerivedStats();
@@ -81,39 +81,39 @@ void Creature::generateAttributes(boost::string_ref id)
 
 void Creature::calculateDerivedStats()
 {
-    auto hpRatio = double(currentHP) / double(maxHP);
-    auto apRatio = double(currentAP) / double(maxAP);
-    auto mpRatio = double(currentMP) / double(maxMP);
+    double hpRatio = currentHP / maxHP;
+    double apRatio = currentAP / maxAP;
+    double mpRatio = currentMP / maxMP;
 
     maxHP = 2 * getAttribute(Endurance) + getAttribute(Strength) / 2;
     maxAP = 2 * getAttribute(Agility) + getAttribute(Dexterity) / 2;
     maxMP = 2 * getAttribute(Psyche) + getAttribute(Intelligence) / 2;
 
-    currentHP = int(hpRatio * maxHP);
-    currentAP = int(apRatio * maxAP);
-    currentMP = int(mpRatio * maxMP);
+    currentHP = hpRatio * maxHP;
+    currentAP = apRatio * maxAP;
+    currentMP = mpRatio * maxMP;
 }
 
-int Creature::getAttribute(Attribute attribute) const
+double Creature::getAttribute(Attribute attribute) const
 {
-    int sum = 0;
+    double sum = 0;
 
     for (auto index : getAttributeIndices(attribute))
-        sum += attributes[index];
+        sum += attributeValues[index];
 
     return sum / getAttributeIndices(attribute).size();
 }
 
-void Creature::setAttribute(Attribute attribute, int amount)
+void Creature::setAttribute(Attribute attribute, double amount)
 {
     for (auto index : getAttributeIndices(attribute))
-        attributes[index] = amount;
+        attributeValues[index] = amount;
 }
 
-void Creature::editAttribute(Attribute attribute, int amount)
+void Creature::editAttribute(Attribute attribute, double amount)
 {
     for (auto index : getAttributeIndices(attribute))
-        attributes[index] += amount;
+        attributeValues[index] += amount;
 }
 
 void Creature::addMessage(std::string&& message)

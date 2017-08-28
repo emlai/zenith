@@ -203,18 +203,18 @@ void Game::printPlayerInformation(BitmapFont& font) const
 #endif
 }
 
-void Game::printStat(BitmapFont& font, boost::string_ref statName, int currentValue, int maximumValue,
-                     Color16 color)
+void Game::printStat(BitmapFont& font, boost::string_ref statName, double currentValue,
+                     double maximumValue, Color16 color)
 {
-    std::string currentValueString = std::to_string(currentValue);
+    std::string currentValueString = std::to_string(int(currentValue));
     std::string padding(std::max(0, 4 - int(currentValueString.size())), ' ');
-    font.printLine(statName + padding + currentValueString + '/' + std::to_string(maximumValue), color);
+    font.printLine(statName + padding + currentValueString + '/' + std::to_string(int(maximumValue)), color);
 }
 
-void Game::printAttribute(BitmapFont& font, boost::string_ref attributeName, int attributeValue)
+void Game::printAttribute(BitmapFont& font, boost::string_ref attributeName, double attributeValue)
 {
     std::string padding(5 - attributeName.size(), ' ');
-    font.printLine(attributeName + padding + std::to_string(attributeValue));
+    font.printLine(attributeName + padding + std::to_string(int(attributeValue)));
 }
 
 #ifdef DEBUG

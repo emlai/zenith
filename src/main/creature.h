@@ -81,13 +81,13 @@ public:
     bool hasWieldedItem() const { return wieldedItem != nullptr; }
     Item* getWieldedItem() const { return wieldedItem; }
     bool isDead() const { return currentHP <= 0; }
-    int getHP() const { return currentHP; }
-    int getAP() const { return currentAP; }
-    int getMP() const { return currentMP; }
-    int getMaxHP() const { return maxHP; }
-    int getMaxAP() const { return maxAP; }
-    int getMaxMP() const { return maxMP; }
-    int getAttribute(Attribute) const;
+    double getHP() const { return currentHP; }
+    double getAP() const { return currentAP; }
+    double getMP() const { return currentMP; }
+    double getMaxHP() const { return maxHP; }
+    double getMaxAP() const { return maxAP; }
+    double getMaxMP() const { return maxMP; }
+    double getAttribute(Attribute) const;
     const auto& getDisplayedAttributes() const { return displayedAttributes; }
     void addMessage(std::string&& message);
     const std::vector<std::string>& getMessages() const { return messages; }
@@ -100,13 +100,13 @@ private:
     World& getWorld() const;
     void moveTo(Tile&);
     void attack(Creature&);
-    void setAttribute(Attribute, int amount);
-    void editAttribute(Attribute, int amount);
+    void setAttribute(Attribute, double amount);
+    void editAttribute(Attribute, double amount);
     void generateAttributes(boost::string_ref);
     void calculateDerivedStats();
-    void editHP(int amount) { currentHP = std::min(currentHP + amount, maxHP); }
-    void editAP(int amount) { currentAP = std::min(currentAP + amount, maxAP); }
-    void editMP(int amount) { currentMP = std::min(currentMP + amount, maxMP); }
+    void editHP(double amount) { currentHP = std::min(currentHP + amount, maxHP); }
+    void editAP(double amount) { currentAP = std::min(currentAP + amount, maxAP); }
+    void editMP(double amount) { currentMP = std::min(currentMP + amount, maxMP); }
     void regenerate();
     static std::vector<Attribute> initDisplayedAttributes(boost::string_ref);
     static std::vector<std::vector<int>> initAttributeIndices(boost::string_ref);
@@ -116,8 +116,8 @@ private:
     mutable std::unordered_set<const Tile*> seenTiles;
     std::vector<std::unique_ptr<Item>> inventory;
     Item* wieldedItem;
-    int currentHP, maxHP, currentAP, maxAP, currentMP, maxMP;
-    std::vector<int> attributes;
+    double currentHP, maxHP, currentAP, maxAP, currentMP, maxMP;
+    std::vector<double> attributeValues;
     std::vector<Attribute> displayedAttributes;
     std::vector<std::vector<int>> attributeIndices;
     Sprite sprite;

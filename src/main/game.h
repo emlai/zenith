@@ -34,8 +34,8 @@ private:
     void updateLogic() override;
 
     void printPlayerInformation(BitmapFont&) const;
-    static void printStat(BitmapFont&, boost::string_ref, int current, int max, Color16);
-    static void printAttribute(BitmapFont&, boost::string_ref, int current);
+    static void printStat(BitmapFont&, boost::string_ref, double current, double max, Color16);
+    static void printAttribute(BitmapFont&, boost::string_ref, double current);
 
     World world;
     Creature* player;
