@@ -67,7 +67,8 @@ void Creature::generateAttributes(boost::string_ref id)
     for (auto attribute : configAttributes)
     {
         boost::string_ref attributeName = attributeAbbreviations[attribute];
-        setAttribute(attribute, Game::creatureConfig.get<int>(id, attributeName) + randNormal(2));
+        int baseAttributeValue = Game::creatureConfig.get<int>(id, attributeName);
+        setAttribute(attribute, static_cast<int>(baseAttributeValue + randNormal(2)));
     }
 
     calculateDerivedStats();

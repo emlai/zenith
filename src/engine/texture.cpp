@@ -27,8 +27,10 @@ Texture::Texture(const Window& window, boost::string_ref fileName, Color32 trans
 
     if (transparentColor)
     {
-        auto colorKey = SDL_MapRGB(surface->format, transparentColor.getRed(),
-                                   transparentColor.getGreen(), transparentColor.getBlue());
+        auto colorKey = SDL_MapRGB(surface->format,
+                                   static_cast<uint8_t>(transparentColor.getRed()),
+                                   static_cast<uint8_t>(transparentColor.getGreen()),
+                                   static_cast<uint8_t>(transparentColor.getBlue()));
         SDL_SetColorKey(surface.get(), 1, colorKey);
     }
 }

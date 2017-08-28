@@ -35,7 +35,7 @@ std::string pascalCaseToSentenceCase(boost::string_ref pascalCaseString)
             if (!name.empty())
                 name += ' ';
 
-            name += std::tolower(ch);
+            name += char(std::tolower(ch));
         }
         else
             name += ch;
