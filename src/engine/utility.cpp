@@ -43,3 +43,8 @@ std::string pascalCaseToSentenceCase(boost::string_ref pascalCaseString)
 
     return name;
 }
+
+bool isVowel(char ch)
+{
+    return ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u';
+}

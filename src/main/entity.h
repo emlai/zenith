@@ -17,7 +17,8 @@ public:
     Entity& operator=(Entity&&) = default;
     virtual ~Entity() = default;
 
-    virtual std::string getName() const;
+    std::string getName() const;
+    std::string getNameIndefinite() const;
     boost::string_ref getId() const { return id; }
     const Config& getConfig() const { return *config; }
     template<typename ComponentType>

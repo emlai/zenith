@@ -29,6 +29,7 @@ public:
     void transferCreature(Creature&, Tile&);
     void removeCreature(Creature&);
     bool hasItems() const { return !items.empty(); }
+    const std::vector<std::unique_ptr<Item>>& getItems() const { return items; }
     std::unique_ptr<Item> removeTopmostItem();
     void addItem(std::unique_ptr<Item> item);
     bool hasObject() const { return bool(object); }

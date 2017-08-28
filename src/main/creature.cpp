@@ -2,6 +2,7 @@
 #include "game.h"
 #include "msgsystem.h"
 #include "tile.h"
+#include <cctype>
 
 std::vector<Attribute> Creature::initDisplayedAttributes(boost::string_ref id)
 {
@@ -117,6 +118,7 @@ void Creature::editAttribute(Attribute attribute, int amount)
 
 void Creature::addMessage(std::string&& message)
 {
+    message[0] = char(std::toupper(message[0]));
     messages.push_back(std::move(message));
 }
 
@@ -230,6 +232,26 @@ void Creature::moveTo(Tile& destination)
     getTileUnder(0).transferCreature(*this, destination);
     tilesUnder.clear();
     tilesUnder.push_back(&destination);
+
+    Item* itemOnTile = nullptr;
+
+    for (auto* tile : getTilesUnder())
+    {
+        if (tile->hasItems())
+        {
+            if (itemOnTile || tile->getItems().size() > 1)
+            {
+                addMessage("Many items are lying here.");
+                itemOnTile = nullptr;
+                break;
+            }
+
+            itemOnTile = tile->getItems()[0].get();
+        }
+    }
+
+    if (itemOnTile)
+        addMessage(itemOnTile->getNameIndefinite() + " is lying here.");
 }
 
 bool Creature::enter()

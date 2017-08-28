@@ -35,6 +35,18 @@ std::string Entity::getName() const
     return prefix + pascalCaseToSentenceCase(id);
 }
 
+std::string Entity::getNameIndefinite() const
+{
+    auto name = getName();
+
+    if (isVowel(name[0]))
+        name.insert(0, "an ");
+    else
+        name.insert(0, "a ");
+
+    return name;
+}
+
 bool Entity::reactToMovementAttempt()
 {
     bool returnValue = false;
