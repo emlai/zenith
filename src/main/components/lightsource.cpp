@@ -17,13 +17,22 @@ void LightSource::emitLight(World& world, Vector2 position, int level) const
         {
             double reverseIntensity = Vector2(dx, dy).getLengthSquared() / radiusSquared;
 
-            if (reverseIntensity > 1.0)
+            if (reverseIntensity >= 1.0)
                 continue;
 
-            auto intensity = 1.0 - reverseIntensity;
+            auto targetPosition = position + Vector2(dx, dy);
 
-            if (auto* tile = world.getTile(position + Vector2(dx, dy), level))
-                tile->addLight(color * intensity);
+            bool isLit = raycastIntegerBresenham(position, targetPosition, [&](Vector2 vector)
+            {
+                auto* tile = world.getTile(vector, level);
+                return tile && (tile->getPosition() == targetPosition || !tile->blocksSight());
+            });
+
+            if (isLit)
+            {
+                auto intensity = 1.0 - reverseIntensity;
+                world.getTile(targetPosition, level)->addLight(color * intensity);
+            }
         }
     }
 }
