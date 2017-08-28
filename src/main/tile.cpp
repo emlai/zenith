@@ -43,6 +43,9 @@ void Tile::render(Window& window, int zIndex, bool fogOfWar) const
                 creature->render(window);
             break;
         case 4:
+            if (fogOfWar)
+                break;
+
             window.getGraphicsContext().renderRectangle(Rect(position * sizeVector, sizeVector),
                                                         light, BlendMode::LinearLight);
             break;
@@ -182,7 +185,10 @@ void Tile::emitLight()
 
 void Tile::resetLight()
 {
-    light = world.getSunlight();
+    if (getLevel() >= 0)
+        light = world.getSunlight();
+    else
+        light = Color32::black;
 }
 
 bool Tile::blocksSight() const
