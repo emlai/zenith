@@ -50,12 +50,12 @@ void Creature::regenerate()
     editMP(0.1);
 }
 
-void Creature::render(Window& window) const
+void Creature::render() const
 {
-    sprite.render(window, getPosition() * Tile::size);
+    sprite.render(getPosition() * Tile::size);
 
     if (wieldedItem)
-        wieldedItem->renderWielded(window, getPosition() * Tile::size);
+        wieldedItem->renderWielded(getPosition() * Tile::size);
 }
 
 void Creature::generateAttributes(boost::string_ref id)

@@ -11,7 +11,7 @@ void AIController::control(Creature& creature)
         creature.tryToMoveOrAttack(randomDir8());
 }
 
-void PlayerController::control(Creature& creature)
+void PlayerController::control(Creature&)
 {
     // TODO: Move player input handling here.
 }

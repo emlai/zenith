@@ -70,7 +70,7 @@ private:
     int calculateMaxTextSize();
     void calculateSize();
     void calculateItemPositions();
-    void render(Window& window, BitmapFont& font) const;
+    void render(BitmapFont& font) const;
 
     std::string title;
     std::vector<MenuItem> menuItems;

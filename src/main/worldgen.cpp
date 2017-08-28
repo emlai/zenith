@@ -33,7 +33,7 @@ void WorldGenerator::generateRegion(Rect region, int level)
     auto buildings = generateBuildings(region, level);
 
     if (level < 0)
-        generatePaths(region, level, buildings);
+        generatePaths(buildings);
 
     generateItems(region, level);
     generateCreatures(region, level);
@@ -257,7 +257,7 @@ std::vector<Tile*> WorldGenerator::findPathAStar(Tile& source, Tile& target,
     return {};
 }
 
-void WorldGenerator::generatePaths(Rect region, int level, const std::vector<Building>& buildings)
+void WorldGenerator::generatePaths(const std::vector<Building>& buildings)
 {
     if (buildings.empty())
         return;

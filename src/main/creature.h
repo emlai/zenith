@@ -61,7 +61,7 @@ class Creature final : public Entity
 public:
     Creature(Tile&, boost::string_ref id, std::unique_ptr<CreatureController> controller);
     void exist();
-    void render(Window&) const;
+    void render() const;
 
     /// Returns true if the game should advance to the next turn.
     bool tryToMoveOrAttack(Dir8);

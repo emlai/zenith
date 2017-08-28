@@ -13,7 +13,7 @@ public:
     Vector2 getSize() const { return textureRegion.size; }
     int getWidth() const { return textureRegion.size.x; }
     int getHeight() const { return textureRegion.size.y; }
-    void render(Window&, Vector2 position, Vector2 sourceOffset = Vector2(0, 0)) const;
+    void render(Vector2 position, Vector2 sourceOffset = Vector2(0, 0)) const;
     void setFrame(int newFrame) { frame = newFrame; }
 
 private:

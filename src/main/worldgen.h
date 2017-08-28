@@ -47,7 +47,7 @@ private:
     Tile* findPathStart(Tile& tile) const;
     std::vector<Tile*> findPathAStar(Tile& source, Tile& target,
                                      const std::function<bool(Tile&)>& isAllowed) const;
-    void generatePaths(Rect region, int level, const std::vector<Building>& buildings);
+    void generatePaths(const std::vector<Building>& buildings);
     void generateItems(Rect region, int level);
     void generateCreatures(Rect region, int level);
 

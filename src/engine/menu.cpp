@@ -25,7 +25,7 @@ int Menu::getChoice(Window& window, BitmapFont& font)
 
     while (exitCode == -3)
     {
-        render(window, font);
+        render(font);
         window.updateScreen();
         const Key input = window.waitForInput();
 
@@ -177,7 +177,7 @@ void Menu::calculateItemPositions()
     }
 }
 
-void Menu::render(Window& window, BitmapFont& font) const
+void Menu::render(BitmapFont& font) const
 {
     int index = 1;
     auto position = itemPositions.begin();
@@ -195,7 +195,7 @@ void Menu::render(Window& window, BitmapFont& font) const
 
         if (item->image)
         {
-            item->image->render(window, position->position);
+            item->image->render(position->position);
             itemPosition.x += item->image->getWidth() + imageSpacing;
         }
 

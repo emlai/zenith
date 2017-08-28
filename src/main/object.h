@@ -10,7 +10,7 @@ public:
     Object(boost::string_ref id);
     bool close();
     bool blocksSight() const;
-    void render(Window& window, Vector2 position) const;
+    void render(Vector2 position) const;
     Sprite& getSprite() { return sprite; }
 
 private:

@@ -12,8 +12,8 @@ class Item : public Entity
 public:
     Item(boost::string_ref id, boost::string_ref materialId);
     virtual std::string getNamePrefix() const override;
-    void render(Window& window, Vector2 position) const;
-    virtual void renderWielded(Window& window, Vector2 position) const;
+    void render(Vector2 position) const;
+    virtual void renderWielded(Vector2 position) const;
     const Sprite& getSprite() const { return sprite; }
 
 protected:
@@ -27,5 +27,5 @@ class Corpse final : public Item
 {
 public:
     Corpse(boost::string_ref creatureId);
-    void renderWielded(Window& window, Vector2 position) const override;
+    void renderWielded(Vector2 position) const override;
 };

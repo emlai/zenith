@@ -28,14 +28,14 @@ std::string Item::getNamePrefix() const
     return pascalCaseToSentenceCase(materialId);
 }
 
-void Item::render(Window& window, Vector2 position) const
+void Item::render(Vector2 position) const
 {
-    sprite.render(window, position);
+    sprite.render(position);
 }
 
-void Item::renderWielded(Window& window, Vector2 position) const
+void Item::renderWielded(Vector2 position) const
 {
-    sprite.render(window, position, Vector2(0, Tile::size));
+    sprite.render(position, Vector2(0, Tile::size));
 }
 
 Corpse::Corpse(boost::string_ref creatureId)
@@ -45,7 +45,7 @@ Corpse::Corpse(boost::string_ref creatureId)
     sprite.setFrame(2);
 }
 
-void Corpse::renderWielded(Window& window, Vector2 position) const
+void Corpse::renderWielded(Vector2 position) const
 {
-    render(window, position);
+    render(position);
 }
