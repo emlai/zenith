@@ -4,6 +4,7 @@
 #include "engine/color.h"
 #include "engine/config.h"
 #include "engine/geometry.h"
+#include "engine/window.h"
 #include <boost/utility/string_ref.hpp>
 #include <vector>
 
@@ -28,12 +29,29 @@ namespace TextColor
 namespace GUI
 {
     const Vector2 windowSize = Vector2(640, 480);
-    const Rect viewport = Rect(24, 36, windowSize.x - 160, windowSize.y - 132);
-    const Rect sidebar = Rect(int(windowSize.x - 84), 48, 84, windowSize.y - 24);
-    const Rect messageArea = Rect(36, int(windowSize.y - 85), windowSize.x - 136, 60);
+
+    inline Rect getWorldViewport(const Window& window)
+    {
+        return Rect(24, 36, window.getWidth() - 160, window.getHeight() - 132);
+    }
+
+    inline Rect getSidebarArea(const Window& window)
+    {
+        return Rect(window.getWidth() - 84, 48, 84, window.getHeight() - 24);
+    }
+
+    inline Rect getMessageArea(const Window& window)
+    {
+        return Rect(36, window.getHeight() - 85, window.getWidth() - 136, 60);
+    }
+
 #ifdef DEBUG
     const Vector2 commandLinePosition = Vector2(36, 36);
-    const Rect debugMessageArea = Rect(36, 48, windowSize.x - 124, 60);
+
+    inline Rect getDebugMessageArea(const Window& window)
+    {
+        return Rect(36, 48, window.getWidth() - 124, 60);
+    }
 #endif
 }
 

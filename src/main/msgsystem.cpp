@@ -25,14 +25,14 @@ namespace MessageSystem
 #endif
 }
 
-void MessageSystem::drawMessages(BitmapFont& font, const std::vector<std::string>& messages)
+void MessageSystem::drawMessages(const Window& window, BitmapFont& font, const std::vector<std::string>& messages)
 {
-    font.setArea(GUI::messageArea);
+    font.setArea(GUI::getMessageArea(window));
     for (int end = int(messages.size()), i = std::max(0, end - maxMessagesToPrint); i < end; ++i)
         font.printLine(messages[i]);
 
 #ifdef DEBUG
-    font.setArea(GUI::debugMessageArea);
+    font.setArea(GUI::getDebugMessageArea(window));
     for (const DebugMessage& message : debugMessages)
         font.printLine(message.content, messageColors[message.type]);
 #endif

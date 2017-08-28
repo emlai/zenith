@@ -10,7 +10,7 @@ struct SDL_Window;
 class Window
 {
 public:
-    Window(Vector2 size, boost::string_ref title = "");
+    Window(Vector2 size, boost::string_ref title = "", bool fullscreen = true);
     ~Window();
     void processInput(KeyDownCallback);
     Key waitForInput();
@@ -38,7 +38,7 @@ private:
     friend class GraphicsContext;
     friend class Texture;
 
-    static SDL_Window* initWindowHandle(Vector2 size, const char* title);
+    static SDL_Window* initWindowHandle(Vector2 size, const char* title, bool fullscreen);
     bool handleWindowEvent(int eventType);
 
     bool closeRequestReceived;
@@ -46,4 +46,5 @@ private:
     GraphicsContext context;
     static int windowCount;
     static bool sdlVideoInitialized;
+    static const int fullscreenFlag;
 };

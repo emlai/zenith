@@ -41,7 +41,7 @@ int main(int argc, const char** argv)
         return 0;
     }
 
-    Window window(GUI::windowSize, PROJECT_NAME);
+    Window window(GUI::windowSize, PROJECT_NAME, true);
     window.setAnimationFrameRate(24);
     BitmapFont font = initFont(window);
     Menu mainMenu = initMainMenu(window.getSize());

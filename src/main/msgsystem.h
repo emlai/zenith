@@ -9,7 +9,7 @@ enum MessageType { Normal, Warning };
 
 namespace MessageSystem
 {
-    void drawMessages(BitmapFont&, const std::vector<std::string>& messages);
+    void drawMessages(const Window& window, BitmapFont&, const std::vector<std::string>& messages);
 
 #ifdef DEBUG
     void addDebugMessage(boost::string_ref message, MessageType = Normal);

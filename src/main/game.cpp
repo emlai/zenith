@@ -116,7 +116,7 @@ int Game::showInventory(boost::string_ref title, bool showNothingAsOption)
 {
     Menu menu;
     menu.addTitle(title);
-    menu.setArea(GUI::viewport);
+    menu.setArea(GUI::getWorldViewport(getWindow()));
     menu.setItemSize(Tile::size);
     menu.setTextLayout(TextLayout(LeftAlign, VerticalCenter));
     menu.setImageSpacing(Tile::size / 2);
@@ -158,25 +158,27 @@ void Game::updateLogic()
 
 void Game::render(Window& window)
 {
-    Rect playerView(player->getPosition() * Tile::size + Tile::sizeVector / 2 - GUI::viewport.size / 2,
-                    GUI::viewport.size);
-    window.setView(&playerView);
-    window.setViewport(&GUI::viewport);
+    Rect worldViewport = GUI::getWorldViewport(getWindow());
 
-    Rect visibleRegion(player->getPosition() - GUI::viewport.size / Tile::size / 2,
-                       GUI::viewport.size / Tile::size);
+    Rect playerView(player->getPosition() * Tile::size + Tile::sizeVector / 2 - worldViewport.size / 2,
+                    worldViewport.size);
+    window.setView(&playerView);
+    window.setViewport(&worldViewport);
+
+    Rect visibleRegion(player->getPosition() - worldViewport.size / Tile::size / 2,
+                       worldViewport.size / Tile::size);
     world.render(window, visibleRegion, player->getLevel(), *player);
 
     window.setView(nullptr);
     window.setViewport(nullptr);
 
     printPlayerInformation(window.getFont());
-    MessageSystem::drawMessages(window.getFont(), player->getMessages());
+    MessageSystem::drawMessages(window, window.getFont(), player->getMessages());
 }
 
 void Game::printPlayerInformation(BitmapFont& font) const
 {
-    font.setArea(GUI::sidebar);
+    font.setArea(GUI::getSidebarArea(getWindow()));
     printStat(font, "HP", player->getHP(), player->getMaxHP(), TextColor::Red);
     printStat(font, "AP", player->getAP(), player->getMaxAP(), TextColor::Green);
     printStat(font, "MP", player->getMP(), player->getMaxMP(), TextColor::Blue);

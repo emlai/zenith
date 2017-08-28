@@ -7,8 +7,9 @@
 
 int Window::windowCount = 0;
 bool Window::sdlVideoInitialized = false;
+const int Window::fullscreenFlag = SDL_WINDOW_FULLSCREEN_DESKTOP;
 
-SDL_Window* Window::initWindowHandle(Vector2 size, const char* title)
+SDL_Window* Window::initWindowHandle(Vector2 size, const char* title, bool fullscreen)
 {
     if (!sdlVideoInitialized)
     {
@@ -18,7 +19,7 @@ SDL_Window* Window::initWindowHandle(Vector2 size, const char* title)
 
     SDL_Window* windowHandle = SDL_CreateWindow(title,
                                                 SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                                                size.x, size.y, 0);
+                                                size.x, size.y, fullscreen ? fullscreenFlag : 0);
 
     if (!windowHandle)
         throw std::runtime_error(SDL_GetError());
@@ -27,9 +28,9 @@ SDL_Window* Window::initWindowHandle(Vector2 size, const char* title)
     return windowHandle;
 }
 
-Window::Window(Vector2 size, boost::string_ref title)
+Window::Window(Vector2 size, boost::string_ref title, bool fullscreen)
 :   closeRequestReceived(false),
-    windowHandle(initWindowHandle(size, title.to_string().c_str()), SDL_DestroyWindow),
+    windowHandle(initWindowHandle(size, title.to_string().c_str(), fullscreen), SDL_DestroyWindow),
     context(*this)
 {
     SDL_EventState(SDL_WINDOWEVENT_ENTER, SDL_IGNORE);
@@ -55,7 +56,6 @@ Window::~Window()
 
 void Window::toggleFullscreen()
 {
-    auto fullscreenFlag = SDL_WINDOW_FULLSCREEN;
     bool isFullscreen = SDL_GetWindowFlags(windowHandle.get()) & fullscreenFlag;
     SDL_SetWindowFullscreen(windowHandle.get(), isFullscreen ? 0 : fullscreenFlag);
     SDL_ShowCursor(isFullscreen);
