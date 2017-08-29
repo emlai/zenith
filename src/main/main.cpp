@@ -33,6 +33,15 @@ Menu initMainMenu(Vector2 size)
     return menu;
 }
 
+static const auto preferencesFileName = "prefs.cfg";
+
+static void savePreferencesToFile(double graphicsScale)
+{
+    Config preferences;
+    preferences.set("GraphicsScale", graphicsScale);
+    preferences.writeToFile(preferencesFileName);
+}
+
 static void showPreferences(Window& window)
 {
     enum { GraphicsScale };
@@ -58,6 +67,7 @@ static void showPreferences(Window& window)
                     window.getGraphicsContext().setScale(window.getGraphicsContext().getScale() + 0.5);
                 break;
             case Menu::Exit:
+                savePreferencesToFile(window.getGraphicsContext().getScale());
                 return;
             default:
                 assert(false);
@@ -73,8 +83,10 @@ int main(int argc, const char** argv)
         return 0;
     }
 
+    Config preferences(preferencesFileName);
+
     Window window(GUI::windowSize, PROJECT_NAME, true);
-    window.getGraphicsContext().setScale(1);
+    window.getGraphicsContext().setScale(preferences.getOptional<double>("GraphicsScale").value_or(1));
     window.setAnimationFrameRate(24);
     BitmapFont font = initFont(window);
     Menu::setDefaultNormalColor(TextColor::Gray);

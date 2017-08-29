@@ -12,7 +12,10 @@
 class Config
 {
 public:
+    Config() {}
     Config(boost::string_ref fileName);
+    template<typename ValueType>
+    boost::optional<ValueType> getOptional(boost::string_ref key) const;
     template<typename ValueType>
     ValueType get(boost::string_ref type, boost::string_ref attribute) const;
     template<typename ValueType>
@@ -28,6 +31,13 @@ public:
 
         return keys;
     }
+
+    void set(boost::string_ref key, double value)
+    {
+        config.getRoot().add(key.to_string(), libconfig::Setting::TypeFloat) = value;
+    }
+
+    void writeToFile(boost::string_ref filePath);
 
 private:
     template<typename OutputType>
@@ -92,6 +102,17 @@ inline Config::Config(boost::string_ref fileName)
 }
 
 template<typename ValueType>
+boost::optional<ValueType> Config::getOptional(boost::string_ref key) const
+{
+    ValueType value;
+
+    if (config.lookupValue(key.to_string(), value))
+        return value;
+    else
+        return boost::none;
+}
+
+template<typename ValueType>
 ValueType Config::get(boost::string_ref type, boost::string_ref attribute) const
 {
     if (auto value = getOptional<ValueType>(type, attribute))
@@ -129,4 +150,9 @@ boost::optional<ValueType> Config::getOptional(boost::string_ref type, boost::st
         if (!config.exists(current.to_string()))
             throw std::runtime_error("BaseType \"" + current + "\" doesn't exist!");
     }
+}
+
+inline void Config::writeToFile(boost::string_ref filePath)
+{
+    config.writeFile(filePath.to_string().c_str());
 }
