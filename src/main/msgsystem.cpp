@@ -25,11 +25,15 @@ namespace MessageSystem
 #endif
 }
 
-void MessageSystem::drawMessages(const Window& window, BitmapFont& font, const std::vector<std::string>& messages)
+void MessageSystem::drawMessages(const Window& window, BitmapFont& font,
+                                 const std::vector<Message>& messages, int currentTurn)
 {
     font.setArea(GUI::getMessageArea(window));
     for (int end = int(messages.size()), i = std::max(0, end - maxMessagesToPrint); i < end; ++i)
-        font.printLine(messages[i]);
+    {
+        bool isNewMessage = messages[i].getTurn() >= currentTurn - 1;
+        font.printLine(messages[i].getText(), isNewMessage ? TextColor::White : TextColor::Gray);
+    }
 
 #ifdef DEBUG
     font.setArea(GUI::getDebugMessageArea(window));

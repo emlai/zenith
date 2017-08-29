@@ -348,6 +348,11 @@ World& Creature::getWorld() const
     return getTileUnder(0).getWorld();
 }
 
+int Creature::getTurn() const
+{
+    return getWorld().getTurn();
+}
+
 Attribute stringToAttribute(boost::string_ref string)
 {
     auto it = std::find(std::begin(attributeAbbreviations), std::end(attributeAbbreviations), string);

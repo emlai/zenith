@@ -1,10 +1,12 @@
 #include "world.h"
 #include "game.h"
+#include "tile.h"
 #include "worldgen.h"
 #include "components/lightsource.h"
 
-World::World()
+int World::getTurn() const
 {
+    return game.getTurn();
 }
 
 void World::exist(Rect region, int level)

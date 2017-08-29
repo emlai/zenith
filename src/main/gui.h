@@ -1,17 +1,17 @@
 #pragma once
 
-#include "tile.h"
 #include "engine/color.h"
-#include "engine/config.h"
 #include "engine/geometry.h"
 #include "engine/window.h"
 #include <boost/utility/string_ref.hpp>
 #include <vector>
 
+class Config;
+
 namespace GUIColor
 {
     const Color16 White = 0xFEEF;
-    const Color16 Gray = 0xBBBF;
+    const Color16 Gray = 0x778F;
     const Color16 Black = 0x001F;
 }
 
@@ -55,9 +55,4 @@ namespace GUI
 #endif
 }
 
-inline Rect getSpriteTextureRegion(const Config& config, boost::string_ref id)
-{
-    auto components = config.get<std::vector<int>>(id, "spritePosition");
-    auto offsetX = randInt(config.get<int>(id, "spriteMultiplicity") - 1);
-    return Rect(Vector2(components.at(0) + offsetX, components.at(1)) * Tile::size, Tile::sizeVector);
-}
+Rect getSpriteTextureRegion(const Config& config, boost::string_ref id);

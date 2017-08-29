@@ -1,6 +1,8 @@
 #include "game.h"
 #include "gui.h"
+#include "item.h"
 #include "msgsystem.h"
+#include "tile.h"
 #include "engine/math.h"
 #include "engine/menu.h"
 
@@ -20,7 +22,7 @@ static const Color32 transparentColor(0x5A5268FF);
 
 Game::Game(Window& window)
 :   Engine(window),
-    world()
+    world(*this)
 {
     creatureSpriteSheet.emplace(getWindow(), "data/graphics/creature.bmp", transparentColor);
     objectSpriteSheet.emplace(getWindow(), "data/graphics/object.bmp", transparentColor);
@@ -29,62 +31,56 @@ Game::Game(Window& window)
     cursorTexture.emplace(getWindow(), "data/graphics/cursor.bmp", transparentColor);
     fogOfWarTexture.emplace(getWindow(), "data/graphics/fow.bmp", transparentColor);
 
-    mapKey(Esc, [this] { stop(); });
-    mapKey('q', [this] { stop(); });
+    mapKey(Esc, [this] { stop(); return false; });
+    mapKey('q', [this] { stop(); return false; });
 
     auto ifAlive = [&](auto action)
     {
         return [=]
         {
-            if (!player->isDead())
-                action();
+            return !player->isDead() && action();
         };
     };
 
     mapKey(RightArrow, ifAlive([this]
     {
-        if (player->tryToMoveOrAttack(East))
-            advanceTurn();
+        return player->tryToMoveOrAttack(East);
     }));
 
     mapKey(LeftArrow, ifAlive([this]
     {
-        if (player->tryToMoveOrAttack(West))
-            advanceTurn();
+        return player->tryToMoveOrAttack(West);
     }));
 
     mapKey(DownArrow, ifAlive([this]
     {
-        if (player->tryToMoveOrAttack(South))
-            advanceTurn();
+        return player->tryToMoveOrAttack(South);
     }));
 
     mapKey(UpArrow, ifAlive([this]
     {
-        if (player->tryToMoveOrAttack(North))
-            advanceTurn();
+        return player->tryToMoveOrAttack(North);
     }));
 
     mapKey(Enter, ifAlive([this]
     {
-        if (player->enter())
-            advanceTurn();
+        return player->enter();
     }));
 
     mapKey('.', [this]
     {
-        advanceTurn();
+        return true;
     });
 
     mapKey(',', ifAlive([this]
     {
-        if (player->pickUpItem())
-            advanceTurn();
+        return player->pickUpItem();
     }));
 
     mapKey('i', [this]
     {
         showInventory("Inventory", false);
+        return false;
     });
 
     mapKey('w', ifAlive([this]
@@ -98,6 +94,8 @@ Game::Game(Window& window)
             else
                 player->wield(player->getInventory()[selectedItemIndex].get());
         }
+
+        return false;
     }));
 
     mapKey('u', ifAlive([this]
@@ -108,10 +106,9 @@ Game::Game(Window& window)
         });
 
         if (selectedItemIndex != Menu::Exit)
-        {
-            if (player->use(*player->getInventory()[selectedItemIndex], *this))
-                advanceTurn();
-        }
+            return player->use(*player->getInventory()[selectedItemIndex], *this);
+
+        return false;
     }));
 
     mapKey('d', ifAlive([this]
@@ -121,20 +118,21 @@ Game::Game(Window& window)
         if (selectedItemIndex != Menu::Exit)
         {
             player->drop(*player->getInventory()[selectedItemIndex]);
-            advanceTurn();
+            return true;
         }
+
+        return false;
     }));
 
     mapKey('c', ifAlive([this]
     {
         boost::optional<Dir8> direction = askForDirection("What do you want to close?");
 
-        if (direction && player->close(*direction))
-            advanceTurn();
+        return direction && player->close(*direction);
     }));
 
 #ifdef DEBUG
-    mapKey(Tab, [this] { enterCommandMode(getWindow()); });
+    mapKey(Tab, [this] { enterCommandMode(getWindow()); return false; });
 #endif
 
     player = world.getOrCreateTile({0, 0}, 0)->spawnCreature("Human", std::make_unique<PlayerController>());
@@ -207,7 +205,7 @@ void Game::render(Window& window)
     window.setViewport(nullptr);
 
     printPlayerInformation(window.getFont());
-    MessageSystem::drawMessages(window, window.getFont(), player->getMessages());
+    MessageSystem::drawMessages(window, window.getFont(), player->getMessages(), getTurn());
 }
 
 void Game::printPlayerInformation(BitmapFont& font) const

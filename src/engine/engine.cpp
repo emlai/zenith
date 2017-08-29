@@ -7,30 +7,33 @@ void Engine::run()
 {
     for (running = true; running && !window.shouldClose();)
     {
-        auto previousTurn = getTurn();
-
-        while (getTurn() == previousTurn)
+        while (true)
         {
             render(window);
             window.updateScreen();
-            processInput(window);
+
+            if (processInput(window))
+            {
+                updateLogic();
+                advanceTurn();
+            }
 
             if (!running || window.shouldClose())
                 return;
         }
-
-        updateLogic();
     }
 }
 
-void Engine::mapKey(Key key, std::function<void()> function)
+void Engine::mapKey(Key key, const std::function<bool()>& function)
 {
     keyboard::mapKey(key, NoMod, function);
 }
 
-void Engine::processInput(Window& window)
+bool Engine::processInput(Window& window)
 {
     if (auto key = window.waitForInputWithTimeout(0))
         if (auto& command = keyboard::getMappedCommand(key, NoMod))
-            command();
+            return command();
+
+    return false;
 }

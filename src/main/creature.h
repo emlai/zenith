@@ -2,6 +2,7 @@
 
 #include "creaturecontroller.h"
 #include "entity.h"
+#include "msgsystem.h"
 #include "engine/geometry.h"
 #include "engine/sprite.h"
 #include "engine/utility.h"
@@ -12,6 +13,7 @@
 #include <vector>
 
 class Item;
+class Message;
 class Tile;
 class Window;
 class World;
@@ -93,7 +95,7 @@ public:
     const auto& getDisplayedAttributes() const { return displayedAttributes; }
     template<typename... Args>
     void addMessage(Args&&...);
-    const std::vector<std::string>& getMessages() const { return messages; }
+    const std::vector<Message>& getMessages() const { return messages; }
     bool sees(const Tile& tile) const;
     bool remembers(const Tile& tile) const;
     std::vector<Creature*> getCurrentlySeenCreatures(int fieldOfVisionRadius) const;
@@ -101,6 +103,7 @@ public:
 
 private:
     World& getWorld() const;
+    int getTurn() const;
     void moveTo(Tile&);
     void attack(Creature&);
     void setAttribute(Attribute, double amount);
@@ -125,7 +128,7 @@ private:
     std::vector<std::vector<int>> attributeIndices;
     Sprite sprite;
     std::unique_ptr<CreatureController> controller;
-    std::vector<std::string> messages;
+    std::vector<Message> messages;
     static const int configAttributes[8];
 };
 
@@ -137,7 +140,7 @@ void Creature::addMessage(Args&&... messageParts)
     (void) expansion;
     std::string message = stream.str();
     message[0] = char(std::toupper(message[0]));
-    messages.push_back(std::move(message));
+    messages.emplace_back(std::move(message), getTurn());
 }
 
 Attribute stringToAttribute(boost::string_ref);

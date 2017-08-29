@@ -1,6 +1,7 @@
 #include "worldgen.h"
 #include "game.h"
 #include "object.h"
+#include "tile.h"
 #include "world.h"
 #include "engine/geometry.h"
 #include "engine/math.h"

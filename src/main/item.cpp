@@ -1,6 +1,7 @@
 #include "item.h"
 #include "game.h"
 #include "gui.h"
+#include "tile.h"
 
 static Color16 getMaterialColor(boost::string_ref materialId)
 {

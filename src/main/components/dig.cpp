@@ -1,5 +1,6 @@
 #include "dig.h"
 #include "../game.h"
+#include "../tile.h"
 
 bool Dig::use(Creature& digger, Item& digItem, Game& game)
 {

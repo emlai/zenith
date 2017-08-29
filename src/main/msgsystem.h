@@ -2,14 +2,28 @@
 
 #include "gui.h"
 #include "engine/font.h"
+#include <boost/utility/string_ref.hpp>
 #include <deque>
 #include <string>
 
 enum MessageType { Normal, Warning };
 
+class Message
+{
+public:
+    Message(std::string&& text, int turn) : text(std::move(text)), turn(turn) {}
+    boost::string_ref getText() const { return text; }
+    int getTurn() const { return turn; }
+
+private:
+    std::string text;
+    int turn;
+};
+
 namespace MessageSystem
 {
-    void drawMessages(const Window& window, BitmapFont&, const std::vector<std::string>& messages);
+    void drawMessages(const Window& window, BitmapFont&, const std::vector<Message>& messages,
+                      int currentTurn);
 
 #ifdef DEBUG
     void addDebugMessage(boost::string_ref message, MessageType = Normal);

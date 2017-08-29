@@ -1,10 +1,15 @@
 #pragma once
 
 #include "area.h"
+#include "engine/color.h"
 #include "engine/geometry.h"
 #include <functional>
 #include <memory>
 #include <unordered_map>
+
+class Creature;
+class Game;
+class Tile;
 
 namespace std
 {
@@ -23,7 +28,8 @@ namespace std
 class World
 {
 public:
-    World();
+    World(const Game& game) : game(game) {}
+    int getTurn() const;
     void exist(Rect region, int level);
     void render(Window&, Rect region, int level, const Creature& player);
     Tile* getOrCreateTile(Vector2 position, int level);
@@ -37,6 +43,7 @@ private:
     static Vector2 globalPositionToAreaPosition(Vector2 position);
     static Vector2 globalPositionToTilePosition(Vector2 position);
 
+    const Game& game;
     std::unordered_map<std::pair<Vector2, int>, std::unique_ptr<Area>> areas;
     Color32 sunlight = 0x888888FF;
 };

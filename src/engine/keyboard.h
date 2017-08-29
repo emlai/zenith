@@ -8,7 +8,7 @@ using Key = decltype(SDL_Keysym::sym);
 using Mod = decltype(SDL_Keysym::mod);
 using KeyDownCallback = std::function<void(Window&, Key, Mod)>;
 using RenderFunction = std::function<void(Window&)>;
-using CommandFunction = std::function<void()>;
+using CommandFunction = std::function<bool()>;
 
 enum : Key
 {
