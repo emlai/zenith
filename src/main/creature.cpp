@@ -130,6 +130,9 @@ bool Creature::sees(const Tile& tile) const
         if (currentTile != &tile && currentTile->blocksSight())
             return false;
 
+        if (currentTile->getLight().getLuminance() < 0.3)
+            return false;
+
         seenTiles.insert(currentTile);
         return true;
     });

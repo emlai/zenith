@@ -42,6 +42,7 @@ public:
     void setGround(boost::string_ref groundId);
     std::vector<Entity*> getEntities() const;
     std::vector<LightSource*> getLightSources() const;
+    Color32 getLight() const { return light; }
     void emitLight();
     void addLight(Color32 light) { this->light.lighten(light); }
     void resetLight();
