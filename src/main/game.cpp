@@ -166,8 +166,9 @@ int Game::showInventory(boost::string_ref title, bool showNothingAsOption,
 
 boost::optional<Dir8> Game::askForDirection(std::string&& question)
 {
-    player->addMessage(std::move(question));
     render(getWindow());
+    getWindow().getFont().setArea(GUI::getQuestionArea(getWindow()));
+    getWindow().getFont().print(question);
     getWindow().updateScreen();
 
     switch (getWindow().waitForInput())

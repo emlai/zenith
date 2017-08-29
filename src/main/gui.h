@@ -45,6 +45,11 @@ namespace GUI
         return Rect(36, window.getResolution().y - 85, window.getResolution().x - 136, 60);
     }
 
+    inline Rect getQuestionArea(const Window& window)
+    {
+        return Rect(36, 12, window.getResolution().x - 136, 12);
+    }
+
 #ifdef DEBUG
     const Vector2 commandLinePosition = Vector2(36, 36);
 
