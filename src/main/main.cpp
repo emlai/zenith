@@ -3,6 +3,7 @@
 #include "engine/menu.h"
 #include "engine/geometry.h"
 #include "engine/window.h"
+#include <cassert>
 #include <iostream>
 
 BitmapFont initFont(Window& window)
@@ -32,6 +33,38 @@ Menu initMainMenu(Vector2 size)
     return menu;
 }
 
+static void showPreferences(Window& window)
+{
+    enum { GraphicsScale };
+
+    while (true)
+    {
+        Menu menu;
+        menu.addTitle("Preferences");
+        menu.addItem(GraphicsScale, "Graphics scale",
+                     toStringAvoidingDecimalPlaces(window.getGraphicsContext().getScale()) + "x");
+        menu.addItem(Menu::Exit, "Back", 'q');
+        menu.setItemLayout(Menu::Vertical);
+        menu.setItemSize(Tile::size);
+        menu.setTextLayout(TextLayout(LeftAlign, TopAlign));
+        menu.setArea(window.getResolution() / 4, window.getResolution() / 2);
+
+        switch (menu.getChoice(window, window.getFont()))
+        {
+            case GraphicsScale:
+                if (window.getGraphicsContext().getScale() >= 2)
+                    window.getGraphicsContext().setScale(1);
+                else
+                    window.getGraphicsContext().setScale(window.getGraphicsContext().getScale() + 0.5);
+                break;
+            case Menu::Exit:
+                return;
+            default:
+                assert(false);
+        }
+    }
+}
+
 int main(int argc, const char** argv)
 {
     if (argc == 2 && std::string(argv[1]) == "--version")
@@ -41,16 +74,17 @@ int main(int argc, const char** argv)
     }
 
     Window window(GUI::windowSize, PROJECT_NAME, true);
-    window.getGraphicsContext().setScale(2);
+    window.getGraphicsContext().setScale(1);
     window.setAnimationFrameRate(24);
     BitmapFont font = initFont(window);
     Menu::setDefaultNormalColor(TextColor::Gray);
     Menu::setDefaultSelectionColor(TextColor::White);
     Menu::setDefaultSelectionOffset(Vector2(0, 1));
-    Menu mainMenu = initMainMenu(window.getResolution());
 
     for (bool exit = false; !exit && !window.shouldClose();)
     {
+        Menu mainMenu = initMainMenu(window.getResolution());
+
         switch (mainMenu.getChoice(window, font))
         {
             case NewGame:
@@ -63,6 +97,7 @@ int main(int argc, const char** argv)
             case LoadGame:
                 break;
             case Preferences:
+                showPreferences(window);
                 break;
             case Menu::Exit:
             case Window::CloseRequest:

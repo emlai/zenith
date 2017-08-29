@@ -13,12 +13,18 @@ class Window;
 struct MenuItem
 {
     MenuItem(int id, boost::string_ref text, Key shortcut = NoKey, const Sprite* image = nullptr)
-    : id(id), text(text), shortcut(shortcut), image(image)
+    : id(id), mainText(text), shortcut(shortcut), image(image)
+    {
+    }
+    MenuItem(int id, boost::string_ref mainText, boost::string_ref secondaryText,
+             Key shortcut = NoKey, const Sprite* image = nullptr)
+    : id(id), mainText(mainText), secondaryText(secondaryText), shortcut(shortcut), image(image)
     {
     }
 
     const int id;
-    const std::string text;
+    const std::string mainText;
+    const std::string secondaryText;
     const Key shortcut;
     const Sprite* const image;
 };
@@ -45,6 +51,8 @@ public:
     }
     void addTitle(boost::string_ref text);
     void addItem(int id, boost::string_ref text, Key shortcut = NoKey, const Sprite* image = nullptr);
+    void addItem(int id, boost::string_ref text, boost::string_ref secondaryText,
+                 Key shortcut = NoKey, const Sprite* image = nullptr);
     int getChoice(Window&, BitmapFont&);
     void setWrap(bool state) { wrapEnabled = state; }
     void setShowNumbers(bool state) { showNumbers = state; }

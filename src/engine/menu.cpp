@@ -19,6 +19,13 @@ void Menu::addItem(int id, boost::string_ref text, Key shortcut, const Sprite* i
     selection = menuItems.begin();
 }
 
+void Menu::addItem(int id, boost::string_ref mainText, boost::string_ref secondaryText,
+                   Key shortcut, const Sprite* image)
+{
+    menuItems.push_back(MenuItem(id, mainText, secondaryText, shortcut, image));
+    selection = menuItems.begin();
+}
+
 int Menu::getChoice(Window& window, BitmapFont& font)
 {
     TextLayout oldLayout = font.getLayout();
@@ -121,7 +128,7 @@ int Menu::calculateMaxTextSize()
 
     for (const MenuItem& item : menuItems)
     {
-        const int currentSize = int(item.text.size());
+        const int currentSize = int(item.mainText.size());
         if (currentSize < maxSize)
         {
             maxSize = currentSize;
@@ -150,7 +157,7 @@ void Menu::calculateSize()
         maxCharsPerLine = int((menuItems.size() - 1) * itemSpacing);
         if (showNumbers)
             maxCharsPerLine += std::to_string(menuItems.size()).size() + numberSeparator.size();
-        maxCharsPerLine += menuItems.back().text.size();
+        maxCharsPerLine += menuItems.back().mainText.size();
         lines = 1;
     }
 
@@ -204,9 +211,17 @@ void Menu::render(BitmapFont& font) const
         }
 
         boost::string_ref text =
-            showNumbers ? std::to_string(index++) + numberSeparator + item->text : item->text;
+            showNumbers ? std::to_string(index++) + numberSeparator + item->mainText : item->mainText;
 
         font.setArea(Rect(itemPosition, position->size));
         font.print(text, selection == item ? selectionColor : normalColor);
+
+        if (!item->secondaryText.empty())
+        {
+            auto oldLayout = font.getLayout();
+            font.setLayout(TextLayout(RightAlign, font.getLayout().verticalAlignment));
+            font.print(item->secondaryText, selection == item ? selectionColor : normalColor);
+            font.setLayout(oldLayout);
+        }
     }
 }
