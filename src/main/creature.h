@@ -70,7 +70,7 @@ public:
     bool tryToMoveOrAttack(Dir8);
     bool tryToMoveTowardsOrAttack(Creature& target);
     bool enter();
-    void takeDamage(int amount);
+    void takeDamage(double amount);
     bool pickUpItem();
     void wield(Item*);
     bool use(Item&, Game& game);

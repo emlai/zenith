@@ -3,6 +3,7 @@
 #include "msgsystem.h"
 #include "tile.h"
 #include <cctype>
+#include <iomanip>
 
 std::vector<Attribute> Creature::initDisplayedAttributes(boost::string_ref id)
 {
@@ -276,15 +277,23 @@ bool Creature::enter()
 
 void Creature::attack(Creature& target)
 {
+    double damage = std::max(0.0, getAttribute(ArmStrength) / 2 + randNormal());
+
+#ifdef DEBUG
+    addMessage("You hit the ", target.getName(), ". (", std::fixed, std::setprecision(1), damage, ")");
+    target.addMessage("The ", getName(), " hits you. (", std::fixed, std::setprecision(1), damage, ")");
+#else
     addMessage("You hit the ", target.getName(), ".");
     target.addMessage("The ", getName(), " hits you.");
+#endif
 
-    target.takeDamage(5);
+    target.takeDamage(damage);
 }
 
-void Creature::takeDamage(int amount)
+void Creature::takeDamage(double amount)
 {
-    currentHP -= amount;
+    if (amount > 0)
+        currentHP -= amount;
 }
 
 bool Creature::pickUpItem()
