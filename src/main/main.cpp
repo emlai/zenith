@@ -6,7 +6,7 @@
 #include <cassert>
 #include <iostream>
 
-BitmapFont initFont(Window& window)
+static BitmapFont initFont(Window& window)
 {
     BitmapFont font(window, "data/graphics/font.dat", Vector2(8, 10));
     font.setDefaultColor(TextColor::White);
@@ -19,7 +19,7 @@ BitmapFont initFont(Window& window)
 
 enum { NewGame, LoadGame, Preferences };
 
-Menu initMainMenu(Vector2 size)
+static Menu initMainMenu(Vector2 size)
 {
     Menu menu;
     menu.addItem(NewGame, "New game", 'n');

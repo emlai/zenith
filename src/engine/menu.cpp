@@ -177,7 +177,7 @@ void Menu::calculateItemPositions()
 
     Vector2 position = area.position;
 
-    for (unsigned i = 0, count = menuItems.size() + (title.empty() ? 0 : 1); i < count; ++i)
+    for (int i = 0, count = int(menuItems.size()) + (title.empty() ? 0 : 1); i < count; ++i)
     {
         itemPositions.push_back(Rect(position, size));
 
