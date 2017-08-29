@@ -89,12 +89,30 @@ void GraphicsContext::clearScreen()
     SDL_FillRect(targetTexture.getSurface(), nullptr, 0);
 }
 
-void GraphicsContext::renderRectangle(Rect rectangle, Color32 color, BlendMode blendMode)
+Vector2 GraphicsContext::mapFromTargetCoordinates(Vector2 position) const
+{
+    position -= getViewport().position;
+
+    if (view)
+        position += view->position;
+
+    return position;
+}
+
+Rect GraphicsContext::mapToTargetCoordinates(Rect rectangle) const
 {
     if (view)
         rectangle.position -= view->position;
 
     rectangle.position += getViewport().position;
+    // TODO: Clip based on viewport size.
+
+    return rectangle;
+}
+
+void GraphicsContext::renderRectangle(Rect rectangle, Color32 color, BlendMode blendMode)
+{
+    rectangle = mapToTargetCoordinates(rectangle);
 
     switch (blendMode)
     {

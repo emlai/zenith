@@ -159,13 +159,7 @@ Vector2 Window::getMousePosition() const
 {
     Vector2 position;
     SDL_GetMouseState(&position.x, &position.y);
-
-    position -= context.getViewport().position;
-
-    if (const Rect* view = context.getView())
-        position += view->position;
-
-    return position;
+    return context.mapFromTargetCoordinates(position);
 }
 
 void Window::setShowCursor(bool show)

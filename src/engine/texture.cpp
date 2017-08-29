@@ -58,11 +58,7 @@ void Texture::render(Rect target) const
 
 void Texture::render(Rect source, Rect target) const
 {
-    if (window->context.view)
-        target.position -= window->context.view->position;
-
-    target.position += window->context.getViewport().position;
-    // TODO: Clip based on viewport size.
+    target = window->context.mapToTargetCoordinates(target);
 
     SDL_BlitSurface(surface.get(),
                     reinterpret_cast<SDL_Rect*>(&source),
@@ -73,11 +69,7 @@ void Texture::render(Rect source, Rect target) const
 // TODO: Move this functionality out of the engine to the game.
 void Texture::render(Rect source, Rect target, Color32 materialColor) const
 {
-    if (window->context.view)
-        target.position -= window->context.view->position;
-
-    target.position += window->context.getViewport().position;
-    // TODO: Clip based on viewport size.
+    target = window->context.mapToTargetCoordinates(target);
 
     SDL_Surface* targetSurface = window->context.targetTexture.getSurface();
     const uint32_t* sourcePixels = static_cast<const uint32_t*>(surface->pixels);

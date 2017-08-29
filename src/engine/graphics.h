@@ -32,9 +32,12 @@ public:
 
 private:
     friend class Texture;
+    friend class Window;
 
     void applyFrameLimit();
     void clearScreen();
+    Vector2 mapFromTargetCoordinates(Vector2) const;
+    Rect mapToTargetCoordinates(Rect) const;
 
     const Window& window;
     std::unique_ptr<SDL_Renderer, void (&)(SDL_Renderer*)> renderer;
