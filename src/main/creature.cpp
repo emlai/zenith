@@ -144,6 +144,30 @@ bool Creature::remembers(const Tile& tile) const
     return seenTiles.find(&tile) != seenTiles.end();
 }
 
+std::vector<Creature*> Creature::getCreaturesCurrentlySeenBy(int fieldOfVisionRadius) const
+{
+    std::vector<Creature*> creatures;
+
+    for (int x = -fieldOfVisionRadius; x <= fieldOfVisionRadius; ++x)
+    {
+        for (int y = -fieldOfVisionRadius; y <= fieldOfVisionRadius; ++y)
+        {
+            auto* tile = getWorld().getTile(getPosition() + Vector2(x, y), getLevel());
+
+            if (!tile)
+                continue;
+
+            for (auto& creature : tile->getCreatures())
+            {
+                if (creature.get() != this && creature->sees(getTileUnder(0)))
+                    creatures.push_back(creature.get());
+            }
+        }
+    }
+
+    return creatures;
+}
+
 std::vector<Creature*> Creature::getCurrentlySeenCreatures(int fieldOfVisionRadius) const
 {
     std::vector<Creature*> currentlySeenCreatures;
@@ -293,7 +317,17 @@ void Creature::attack(Creature& target)
 void Creature::takeDamage(double amount)
 {
     if (amount > 0)
+    {
         currentHP -= amount;
+
+        if (isDead())
+        {
+            addMessage("You die.");
+
+            for (auto* observer : getCreaturesCurrentlySeenBy(20))
+                observer->addMessage("The ", getName(), " dies.");
+        }
+    }
 }
 
 bool Creature::pickUpItem()

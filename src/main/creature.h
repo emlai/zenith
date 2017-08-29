@@ -98,6 +98,7 @@ public:
     const std::vector<Message>& getMessages() const { return messages; }
     bool sees(const Tile& tile) const;
     bool remembers(const Tile& tile) const;
+    std::vector<Creature*> getCreaturesCurrentlySeenBy(int fieldOfVisionRadius) const;
     std::vector<Creature*> getCurrentlySeenCreatures(int fieldOfVisionRadius) const;
     Creature* getNearestEnemy() const;
 
