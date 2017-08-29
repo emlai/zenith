@@ -28,7 +28,6 @@ Menu initMainMenu(Vector2 size)
     menu.setItemLayout(Menu::Horizontal);
     menu.setItemSpacing(18);
     menu.setTextLayout(TextLayout(HorizontalCenter, VerticalCenter));
-    menu.setSelectionOffset(Vector2(0, 1));
     menu.setArea(Vector2(0, 0), size / Vector2(1, 6));
     return menu;
 }
@@ -45,6 +44,9 @@ int main(int argc, const char** argv)
     window.getGraphicsContext().setScale(2);
     window.setAnimationFrameRate(24);
     BitmapFont font = initFont(window);
+    Menu::setDefaultNormalColor(TextColor::Gray);
+    Menu::setDefaultSelectionColor(TextColor::White);
+    Menu::setDefaultSelectionOffset(Vector2(0, 1));
     Menu mainMenu = initMainMenu(window.getResolution());
 
     for (bool exit = false; !exit && !window.shouldClose();)

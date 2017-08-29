@@ -37,9 +37,9 @@ public:
         itemSpacing(1),
         itemSize(boost::none),
         imageSpacing(0),
-        normalColor(Color32::white * 0.6),
-        selectionColor(Color32::white),
-        selectionOffset(0, 0),
+        normalColor(defaultNormalColor),
+        selectionColor(defaultSelectionColor),
+        selectionOffset(defaultSelectionOffset),
         area(0, 0, 0, 0)
     {
     }
@@ -60,6 +60,9 @@ public:
     void setArea(Rect area) { this->area = area; }
     void setArea(Vector2 position, Vector2 size) { area = Rect(position, size); }
     void setArea(int x, int y, int width, int height) { area = Rect(x, y, width, height); }
+    static void setDefaultNormalColor(Color32 color) { defaultNormalColor = color; }
+    static void setDefaultSelectionColor(Color32 color) { defaultSelectionColor = color; }
+    static void setDefaultSelectionOffset(Vector2 offset) { defaultSelectionOffset = offset; }
 
 private:
     bool isValidIndex(unsigned index) const { return index < menuItems.size(); }
@@ -89,4 +92,7 @@ private:
     Vector2 selectionOffset;
     Rect area;
     Vector2 size;
+    static Color32 defaultNormalColor;
+    static Color32 defaultSelectionColor;
+    static Vector2 defaultSelectionOffset;
 };

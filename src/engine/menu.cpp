@@ -4,6 +4,10 @@
 #include "sprite.h"
 #include <cctype>
 
+Color32 Menu::defaultNormalColor = Color32::white * 0.6;
+Color32 Menu::defaultSelectionColor = Color32::white;
+Vector2 Menu::defaultSelectionOffset(0, 0);
+
 void Menu::addTitle(boost::string_ref text)
 {
     title = text.to_string();

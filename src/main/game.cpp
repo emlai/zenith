@@ -147,7 +147,6 @@ int Game::showInventory(boost::string_ref title, bool showNothingAsOption,
     menu.setItemSize(Tile::size);
     menu.setTextLayout(TextLayout(LeftAlign, VerticalCenter));
     menu.setImageSpacing(Tile::size / 2);
-    menu.setSelectionOffset(Vector2(0, 1));
 
     if (showNothingAsOption)
         menu.addItem(-1, "nothing");
