@@ -75,6 +75,12 @@ void Item::renderEquipped(Vector2 position) const
     sprite.render(position, Vector2(0, Tile::size));
 }
 
+std::string getRandomMaterialId(boost::string_ref itemId)
+{
+    auto materials = Game::itemConfig.get<std::vector<std::string>>(itemId, "PossibleMaterials");
+    return materials.empty() ? "" : randomElement(materials);
+}
+
 Corpse::Corpse(std::unique_ptr<Creature> creature)
 :   Item(creature->getId() + "Corpse", "",
          Sprite(*Game::creatureSpriteSheet, getSpriteTextureRegion(Game::creatureConfig, creature->getId()))),

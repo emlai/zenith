@@ -29,6 +29,8 @@ protected:
     Sprite sprite;
 };
 
+std::string getRandomMaterialId(boost::string_ref itemId);
+
 class Corpse final : public Item
 {
 public:

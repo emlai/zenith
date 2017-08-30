@@ -47,6 +47,15 @@ Creature::Creature(Tile& tile, boost::string_ref id, std::unique_ptr<CreatureCon
     controller(std::move(controller))
 {
     generateAttributes(id);
+
+    if (auto initialEquipment = getConfig().getOptional<std::vector<std::string>>(getId(), "Equipment"))
+    {
+        for (auto& itemId : *initialEquipment)
+        {
+            inventory.push_back(std::make_unique<Item>(itemId, getRandomMaterialId(itemId)));
+            equip(inventory.back()->getEquipmentSlot(), &*inventory.back());
+        }
+    }
 }
 
 void Creature::exist()

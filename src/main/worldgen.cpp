@@ -320,11 +320,7 @@ void WorldGenerator::generateItems(Rect region, int level)
             item = std::make_unique<Corpse>(std::move(creatureId));
         }
         else
-        {
-            auto materials = Game::itemConfig.get<std::vector<std::string>>(itemId, "PossibleMaterials");
-            std::string materialId = materials.empty() ? "" : randomElement(materials);
-            item = std::make_unique<Item>(std::move(itemId), std::move(materialId));
-        }
+            item = std::make_unique<Item>(std::move(itemId), getRandomMaterialId(itemId));
 
         Tile* tile = nullptr;
 
