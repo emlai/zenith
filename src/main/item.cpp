@@ -7,7 +7,19 @@
 static Color16 getMaterialColor(boost::string_ref materialId)
 {
     if (!materialId.empty())
-        return Color16(static_cast<uint16_t>(Game::materialConfig.get<int>(materialId, "Color")));
+    {
+        try
+        {
+            return Color16(static_cast<uint16_t>(Game::materialConfig.get<int>(materialId, "Color")));
+        }
+        catch (const std::runtime_error&)
+        {
+            if (Game::materialConfig.get<std::string>(materialId, "Color") == "Random")
+                return Color16(randInt(Color16::max / 2), randInt(Color16::max / 2), randInt(Color16::max / 2));
+            else
+                throw;
+        }
+    }
     else
         return Color16::none;
 }

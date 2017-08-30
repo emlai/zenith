@@ -79,7 +79,7 @@ struct Color
 private:
     static inline T createValue(int red, int green, int blue, int alpha = max)
     {
-        return red << bit[Red] | green << bit[Green] | blue << bit[Blue] | alpha << bit[Alpha];
+        return static_cast<T>(red << bit[Red] | green << bit[Green] | blue << bit[Blue] | alpha << bit[Alpha]);
     }
 };
 
