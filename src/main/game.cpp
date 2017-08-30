@@ -91,7 +91,7 @@ Game::Game(Window& window)
 
     mapKey('u', ifAlive([this]
     {
-        int selectedItemIndex = showInventory("What do you want to use?", false, [](auto& item)
+        int selectedItemIndex = showInventory("What do you want to use?", false, nullptr, [](auto& item)
         {
             return item.isUsable();
         });
@@ -129,7 +129,7 @@ Game::Game(Window& window)
     player = world.getOrCreateTile({0, 0}, 0)->spawnCreature("Human", std::make_unique<PlayerController>());
 }
 
-int Game::showInventory(boost::string_ref title, bool showNothingAsOption,
+int Game::showInventory(boost::string_ref title, bool showNothingAsOption, Item* preselectedItem,
                         std::function<bool(const Item&)> itemFilter)
 {
     Menu menu;
@@ -143,20 +143,29 @@ int Game::showInventory(boost::string_ref title, bool showNothingAsOption,
         menu.addItem(MenuItem(-1, "nothing"));
 
     int id = 0;
+    int preselectedIndex = 0;
 
     for (auto& item : player->getInventory())
     {
         if (!itemFilter || itemFilter(*item))
-            menu.addItem(MenuItem(id, item->getName(), NoKey, &item->getSprite()));
+        {
+            int index = menu.addItem(MenuItem(id, item->getName(), NoKey, &item->getSprite()));
+
+            if (&*item == preselectedItem)
+                preselectedIndex = index;
+        }
 
         ++id;
     }
 
+    menu.select(preselectedIndex);
     return menu.getChoice(getWindow(), getWindow().getFont());
 }
 
 void Game::showEquipmentMenu()
 {
+    int selectedMenuItem = 0;
+
     while (true)
     {
         Menu menu;
@@ -174,12 +183,16 @@ void Game::showEquipmentMenu()
             menu.addItem(MenuItem(i, toString(slot) + ":", itemName, NoKey, nullptr, image));
         }
 
+        menu.select(selectedMenuItem);
+
         auto choice = menu.getChoice(getWindow(), getWindow().getFont());
         if (choice == Menu::Exit)
             break;
 
+        selectedMenuItem = menu.getSelectedIndex();
+
         auto selectedSlot = static_cast<EquipmentSlot>(choice);
-        auto selectedItemIndex = showInventory("", true, [&](auto& item)
+        auto selectedItemIndex = showInventory("", true, player->getEquipment(selectedSlot), [&](auto& item)
         {
             return item.getEquipmentSlot() == selectedSlot;
         });

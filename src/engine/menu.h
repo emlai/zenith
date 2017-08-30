@@ -53,7 +53,8 @@ public:
     {
     }
     void addTitle(boost::string_ref text);
-    void addItem(MenuItem&& item);
+    /// Returns the index of the added menu item.
+    int addItem(MenuItem&& item);
     int getChoice(Window&, BitmapFont&);
     void setWrap(bool state) { wrapEnabled = state; }
     void setShowNumbers(bool state) { showNumbers = state; }
@@ -70,13 +71,14 @@ public:
     void setArea(Rect area) { this->area = area; }
     void setArea(Vector2 position, Vector2 size) { area = Rect(position, size); }
     void setArea(int x, int y, int width, int height) { area = Rect(x, y, width, height); }
+    void select(int index);
+    int getSelectedIndex() const { return int(selection - menuItems.begin()); }
     static void setDefaultNormalColor(Color32 color) { defaultNormalColor = color; }
     static void setDefaultSelectionColor(Color32 color) { defaultSelectionColor = color; }
     static void setDefaultSelectionOffset(Vector2 offset) { defaultSelectionOffset = offset; }
 
 private:
     bool isValidIndex(unsigned index) const { return index < menuItems.size(); }
-    void select(int index);
     void select(std::vector<MenuItem>::iterator newSelection);
     void selectNext();
     void selectPrevious();

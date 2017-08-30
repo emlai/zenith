@@ -29,7 +29,7 @@ public:
     static boost::optional<const Texture> fogOfWarTexture;
 
 private:
-    int showInventory(boost::string_ref title, bool showNothingAsOption,
+    int showInventory(boost::string_ref title, bool showNothingAsOption, Item* preselectedItem = nullptr,
                       std::function<bool(const Item&)> itemFilter = nullptr);
     void showEquipmentMenu();
     void render(Window&) override;

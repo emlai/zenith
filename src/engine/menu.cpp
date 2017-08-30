@@ -13,10 +13,11 @@ void Menu::addTitle(boost::string_ref text)
     title = text.to_string();
 }
 
-void Menu::addItem(MenuItem&& item)
+int Menu::addItem(MenuItem&& item)
 {
     menuItems.push_back(std::move(item));
     selection = menuItems.begin();
+    return int(menuItems.size() - 1);
 }
 
 int Menu::getChoice(Window& window, BitmapFont& font)
