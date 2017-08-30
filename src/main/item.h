@@ -8,6 +8,7 @@
 
 class Creature;
 class Window;
+enum EquipmentSlot : int;
 
 class Item : public Entity
 {
@@ -15,9 +16,10 @@ public:
     Item(boost::string_ref id, boost::string_ref materialId);
     bool isUsable() const;
     bool use(Creature& user, Game& game);
-    virtual std::string getNamePrefix() const override;
+    EquipmentSlot getEquipmentSlot() const;
+    virtual std::string getNameAdjective() const override;
     void render(Vector2 position) const;
-    virtual void renderWielded(Vector2 position) const;
+    virtual void renderEquipped(Vector2 position) const;
     const Sprite& getSprite() const { return sprite; }
 
 protected:
@@ -32,7 +34,7 @@ class Corpse final : public Item
 public:
     Corpse(std::unique_ptr<Creature> creature);
     Corpse(boost::string_ref creatureId);
-    void renderWielded(Vector2 position) const override;
+    void renderEquipped(Vector2 position) const override;
 
 private:
     std::unique_ptr<Creature> creature;

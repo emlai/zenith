@@ -28,12 +28,17 @@ Entity::Entity(boost::string_ref id, const Config& config)
 
 std::string Entity::getName() const
 {
-    std::string prefix = getNamePrefix();
+    std::string prefix = std::move(getConfig().getOptional<std::string>(getId(), "NamePrefix").get_value_or(""));
 
     if (!prefix.empty())
         prefix += ' ';
 
-    return prefix + pascalCaseToSentenceCase(id);
+    std::string adjective = getNameAdjective();
+
+    if (!adjective.empty())
+        adjective += ' ';
+
+    return prefix + adjective + pascalCaseToSentenceCase(id);
 }
 
 std::string Entity::getNameIndefinite() const

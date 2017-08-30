@@ -33,7 +33,7 @@ protected:
     const std::vector<std::unique_ptr<Component>>& getComponents() const { return components; }
 
 private:
-    virtual std::string getNamePrefix() const { return ""; }
+    virtual std::string getNameAdjective() const { return ""; }
 
     std::string id;
     const Config* config;

@@ -9,6 +9,7 @@
 #include <memory>
 #include <sstream>
 #include <string>
+#include <unordered_map>
 #include <unordered_set>
 #include <vector>
 
@@ -59,6 +60,18 @@ const std::string attributeAbbreviations[] =
 
 const std::string statNames[] = { "HP", "AP", "MP" };
 
+enum EquipmentSlot : int
+{
+    Hand,
+    Head,
+    Torso,
+    Legs
+};
+
+const int equipmentSlots = 4;
+
+boost::string_ref toString(EquipmentSlot slot);
+
 class Creature final : public Entity
 {
 public:
@@ -72,7 +85,7 @@ public:
     bool enter();
     void takeDamage(double amount);
     bool pickUpItem();
-    void wield(Item*);
+    void equip(EquipmentSlot slot, Item* itemToEquip);
     bool use(Item&, Game& game);
     void drop(Item&);
     bool close(Dir8);
@@ -82,8 +95,8 @@ public:
     Vector2 getPosition() const;
     int getLevel() const;
     const auto& getInventory() const { return inventory; }
-    bool hasWieldedItem() const { return wieldedItem != nullptr; }
-    Item* getWieldedItem() const { return wieldedItem; }
+    const auto& getEquipment() const { return equipment; }
+    Item* getEquipment(EquipmentSlot slot) const { return equipment.at(slot); }
     bool isDead() const { return currentHP <= 0; }
     double getHP() const { return currentHP; }
     double getAP() const { return currentAP; }
@@ -122,7 +135,7 @@ private:
     std::vector<Tile*> tilesUnder;
     mutable std::unordered_set<const Tile*> seenTiles;
     std::vector<std::unique_ptr<Item>> inventory;
-    Item* wieldedItem;
+    std::unordered_map<EquipmentSlot, Item*> equipment;
     double currentHP, maxHP, currentAP, maxAP, currentMP, maxMP;
     std::vector<double> attributeValues;
     std::vector<Attribute> displayedAttributes;

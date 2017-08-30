@@ -44,6 +44,7 @@ public:
     int getCharHeight() const { return charSize.y; }
     int getCharSpacing() const { return moveVector.x - charSize.x; }
     int getLineSpacing() const { return moveVector.y - charSize.y; }
+    int getColumnWidth() const { return moveVector.x; }
     TextLayout getLayout() const { return layout; }
 
 private:

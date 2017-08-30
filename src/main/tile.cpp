@@ -170,8 +170,9 @@ std::vector<Entity*> Tile::getEntities() const
     {
         entities.push_back(creature.get());
 
-        if (creature->hasWieldedItem())
-            entities.push_back(creature->getWieldedItem());
+        for (auto slotAndItem : creature->getEquipment())
+            if (slotAndItem.second)
+                entities.push_back(slotAndItem.second);
     }
 
     for (auto& item : items)

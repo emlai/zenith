@@ -22,10 +22,10 @@ enum { NewGame, LoadGame, Preferences };
 static Menu initMainMenu(Vector2 size)
 {
     Menu menu;
-    menu.addItem(NewGame, "New game", 'n');
-    menu.addItem(LoadGame, "Load game", 'l');
-    menu.addItem(Preferences, "Preferences", 'p');
-    menu.addItem(Menu::Exit, "Quit", 'q');
+    menu.addItem(MenuItem(NewGame, "New game", 'n'));
+    menu.addItem(MenuItem(LoadGame, "Load game", 'l'));
+    menu.addItem(MenuItem(Preferences, "Preferences", 'p'));
+    menu.addItem(MenuItem(Menu::Exit, "Quit", 'q'));
     menu.setItemLayout(Menu::Horizontal);
     menu.setItemSpacing(18);
     menu.setTextLayout(TextLayout(HorizontalCenter, VerticalCenter));
@@ -50,12 +50,13 @@ static void showPreferences(Window& window)
     {
         Menu menu;
         menu.addTitle("Preferences");
-        menu.addItem(GraphicsScale, "Graphics scale",
-                     toStringAvoidingDecimalPlaces(window.getGraphicsContext().getScale()) + "x");
-        menu.addItem(Menu::Exit, "Back", 'q');
+        menu.addItem(MenuItem(GraphicsScale, "Graphics scale",
+                     toStringAvoidingDecimalPlaces(window.getGraphicsContext().getScale()) + "x"));
+        menu.addItem(MenuItem(Menu::Exit, "Back", 'q'));
         menu.setItemLayout(Menu::Vertical);
         menu.setItemSize(Tile::size);
         menu.setTextLayout(TextLayout(LeftAlign, TopAlign));
+        menu.setSecondaryColumnAlignment(RightAlign);
         menu.setArea(window.getResolution() / 4, window.getResolution() / 2);
 
         switch (menu.getChoice(window, window.getFont()))

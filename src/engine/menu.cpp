@@ -13,16 +13,9 @@ void Menu::addTitle(boost::string_ref text)
     title = text.to_string();
 }
 
-void Menu::addItem(int id, boost::string_ref text, Key shortcut, const Sprite* image)
+void Menu::addItem(MenuItem&& item)
 {
-    menuItems.push_back(MenuItem(id, text, shortcut, image));
-    selection = menuItems.begin();
-}
-
-void Menu::addItem(int id, boost::string_ref mainText, boost::string_ref secondaryText,
-                   Key shortcut, const Sprite* image)
-{
-    menuItems.push_back(MenuItem(id, mainText, secondaryText, shortcut, image));
+    menuItems.push_back(std::move(item));
     selection = menuItems.begin();
 }
 
@@ -121,7 +114,8 @@ void Menu::selectPrevious()
         selection = menuItems.end() - 1;
 }
 
-int Menu::calculateMaxTextSize()
+int Menu::calculateMaxTextSize() const
+
 {
     int maxSize = 0;
     int indexOfMax = 0;
@@ -129,7 +123,7 @@ int Menu::calculateMaxTextSize()
     for (const MenuItem& item : menuItems)
     {
         const int currentSize = int(item.mainText.size());
-        if (currentSize < maxSize)
+        if (currentSize > maxSize)
         {
             maxSize = currentSize;
             indexOfMax = int(&item - &menuItems[0]);
@@ -202,12 +196,13 @@ void Menu::render(BitmapFont& font) const
 
     for (auto item = menuItems.begin(); item != menuItems.end(); ++item, ++position)
     {
-        Vector2 itemPosition = selection == item ? position->position + selectionOffset : position->position;
+        Vector2 initialPosition = selection == item ? position->position + selectionOffset : position->position;
+        Vector2 itemPosition = initialPosition;
 
-        if (item->image)
+        if (item->mainImage)
         {
-            item->image->render(position->position);
-            itemPosition.x += item->image->getWidth() + imageSpacing;
+            item->mainImage->render(itemPosition);
+            itemPosition.x += item->mainImage->getWidth() + columnSpacing;
         }
 
         boost::string_ref text =
@@ -215,11 +210,19 @@ void Menu::render(BitmapFont& font) const
 
         font.setArea(Rect(itemPosition, position->size));
         font.print(text, selection == item ? selectionColor : normalColor);
+        itemPosition.x += calculateMaxTextSize() * font.getColumnWidth() + columnSpacing;
+
+        if (item->secondaryImage)
+        {
+            item->secondaryImage->render(itemPosition);
+            itemPosition.x += item->secondaryImage->getWidth() + columnSpacing;
+        }
 
         if (!item->secondaryText.empty())
         {
             auto oldLayout = font.getLayout();
-            font.setLayout(TextLayout(RightAlign, font.getLayout().verticalAlignment));
+            font.setLayout(TextLayout(secondaryColumnAlignment, font.getLayout().verticalAlignment));
+            font.setArea(Rect(itemPosition, position->size - Vector2(itemPosition.x - initialPosition.x, 0)));
             font.print(item->secondaryText, selection == item ? selectionColor : normalColor);
             font.setLayout(oldLayout);
         }

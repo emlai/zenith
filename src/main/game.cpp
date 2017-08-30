@@ -83,18 +83,9 @@ Game::Game(Window& window)
         return false;
     });
 
-    mapKey('w', ifAlive([this]
+    mapKey('e', ifAlive([this]
     {
-        int selectedItemIndex = showInventory("What do you want to wield?", true);
-
-        if (selectedItemIndex != Menu::Exit)
-        {
-            if (selectedItemIndex == -1)
-                player->wield(nullptr);
-            else
-                player->wield(player->getInventory()[selectedItemIndex].get());
-        }
-
+        showEquipmentMenu();
         return false;
     }));
 
@@ -146,22 +137,58 @@ int Game::showInventory(boost::string_ref title, bool showNothingAsOption,
     menu.setArea(GUI::getWorldViewport(getWindow()));
     menu.setItemSize(Tile::size);
     menu.setTextLayout(TextLayout(LeftAlign, VerticalCenter));
-    menu.setImageSpacing(Tile::size / 2);
+    menu.setColumnSpacing(Tile::size / 2);
 
     if (showNothingAsOption)
-        menu.addItem(-1, "nothing");
+        menu.addItem(MenuItem(-1, "nothing"));
 
     int id = 0;
 
     for (auto& item : player->getInventory())
     {
         if (!itemFilter || itemFilter(*item))
-            menu.addItem(id, item->getName(), NoKey, &item->getSprite());
+            menu.addItem(MenuItem(id, item->getName(), NoKey, &item->getSprite()));
 
         ++id;
     }
 
     return menu.getChoice(getWindow(), getWindow().getFont());
+}
+
+void Game::showEquipmentMenu()
+{
+    while (true)
+    {
+        Menu menu;
+        menu.addTitle("Equipment");
+        menu.setArea(GUI::getWorldViewport(getWindow()));
+        menu.setItemSize(Tile::size);
+        menu.setTextLayout(TextLayout(LeftAlign, VerticalCenter));
+        menu.setColumnSpacing(Tile::size / 2);
+
+        for (int i = 0; i < equipmentSlots; ++i)
+        {
+            auto slot = static_cast<EquipmentSlot>(i);
+            auto* image = player->getEquipment(slot) ? &player->getEquipment(slot)->getSprite() : nullptr;
+            auto itemName = player->getEquipment(slot) ? player->getEquipment(slot)->getName() : "-";
+            menu.addItem(MenuItem(i, toString(slot) + ":", itemName, NoKey, nullptr, image));
+        }
+
+        auto choice = menu.getChoice(getWindow(), getWindow().getFont());
+        if (choice == Menu::Exit)
+            break;
+
+        auto selectedSlot = static_cast<EquipmentSlot>(choice);
+        auto selectedItemIndex = showInventory("", true, [&](auto& item)
+        {
+            return item.getEquipmentSlot() == selectedSlot;
+        });
+
+        if (selectedItemIndex == -1)
+            player->equip(selectedSlot, nullptr);
+        else if (selectedItemIndex != Menu::Exit)
+            player->equip(selectedSlot, &*player->getInventory()[selectedItemIndex]);
+    }
 }
 
 boost::optional<Dir8> Game::askForDirection(std::string&& question)

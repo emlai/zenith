@@ -31,6 +31,7 @@ public:
 private:
     int showInventory(boost::string_ref title, bool showNothingAsOption,
                       std::function<bool(const Item&)> itemFilter = nullptr);
+    void showEquipmentMenu();
     void render(Window&) override;
     void updateLogic() override;
 

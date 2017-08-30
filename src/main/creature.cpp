@@ -5,6 +5,17 @@
 #include <cctype>
 #include <iomanip>
 
+boost::string_ref toString(EquipmentSlot slot)
+{
+    switch (slot)
+    {
+        case Head: return "head";
+        case Torso: return "torso";
+        case Hand: return "hand";
+        case Legs: return "legs";
+    }
+}
+
 std::vector<Attribute> Creature::initDisplayedAttributes(boost::string_ref id)
 {
     std::vector<Attribute> displayedAttributes;
@@ -23,7 +34,7 @@ std::vector<std::vector<int>> Creature::initAttributeIndices(boost::string_ref i
 Creature::Creature(Tile& tile, boost::string_ref id, std::unique_ptr<CreatureController> controller)
 :   Entity(id, Game::creatureConfig),
     tilesUnder({&tile}),
-    wieldedItem(nullptr),
+    equipment({{Head, nullptr}, {Torso, nullptr}, {Hand, nullptr}, {Legs, nullptr}}),
     currentHP(0),
     maxHP(0),
     currentAP(0),
@@ -55,8 +66,9 @@ void Creature::render() const
 {
     sprite.render(getPosition() * Tile::size);
 
-    if (wieldedItem)
-        wieldedItem->renderWielded(getPosition() * Tile::size);
+    for (auto slotAndItem : getEquipment())
+        if (slotAndItem.second)
+            slotAndItem.second->renderEquipped(getPosition() * Tile::size);
 }
 
 void Creature::generateAttributes(boost::string_ref id)
@@ -344,9 +356,9 @@ bool Creature::pickUpItem()
     return false;
 }
 
-void Creature::wield(Item* itemToWield)
+void Creature::equip(EquipmentSlot slot, Item* itemToEquip)
 {
-    wieldedItem = itemToWield;
+    equipment.at(slot) = itemToEquip;
 }
 
 bool Creature::use(Item& itemToUse, Game& game)
@@ -357,12 +369,14 @@ bool Creature::use(Item& itemToUse, Game& game)
 
 void Creature::drop(Item& itemToDrop)
 {
+    EquipmentSlot equipmentSlot = itemToDrop.getEquipmentSlot();
+
     for (auto it = inventory.begin(), end = inventory.end(); it != end; ++it)
     {
         if (it->get() == &itemToDrop)
         {
-            if (wieldedItem == &itemToDrop)
-                wield(nullptr);
+            if (getEquipment(equipmentSlot) == &itemToDrop)
+                equip(equipmentSlot, nullptr);
 
             getTileUnder(0).addItem(std::move(*it));
             inventory.erase(it);

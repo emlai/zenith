@@ -13,20 +13,22 @@ class Window;
 struct MenuItem
 {
     MenuItem(int id, boost::string_ref text, Key shortcut = NoKey, const Sprite* image = nullptr)
-    : id(id), mainText(text), shortcut(shortcut), image(image)
+    :   id(id), mainImage(image), mainText(text), secondaryImage(nullptr), shortcut(shortcut)
     {
     }
-    MenuItem(int id, boost::string_ref mainText, boost::string_ref secondaryText,
-             Key shortcut = NoKey, const Sprite* image = nullptr)
-    : id(id), mainText(mainText), secondaryText(secondaryText), shortcut(shortcut), image(image)
+    MenuItem(int id, boost::string_ref mainText, boost::string_ref secondaryText, Key shortcut = NoKey,
+             const Sprite* mainImage = nullptr, const Sprite* secondaryImage = nullptr)
+    :   id(id), mainImage(mainImage), mainText(mainText), secondaryImage(secondaryImage),
+        secondaryText(secondaryText), shortcut(shortcut)
     {
     }
 
     const int id;
+    const Sprite* const mainImage;
     const std::string mainText;
+    const Sprite* const secondaryImage;
     const std::string secondaryText;
     const Key shortcut;
-    const Sprite* const image;
 };
 
 class Menu
@@ -42,7 +44,8 @@ public:
         itemLayout(Vertical),
         itemSpacing(1),
         itemSize(boost::none),
-        imageSpacing(0),
+        columnSpacing(0),
+        secondaryColumnAlignment(LeftAlign),
         normalColor(defaultNormalColor),
         selectionColor(defaultSelectionColor),
         selectionOffset(defaultSelectionOffset),
@@ -50,9 +53,7 @@ public:
     {
     }
     void addTitle(boost::string_ref text);
-    void addItem(int id, boost::string_ref text, Key shortcut = NoKey, const Sprite* image = nullptr);
-    void addItem(int id, boost::string_ref text, boost::string_ref secondaryText,
-                 Key shortcut = NoKey, const Sprite* image = nullptr);
+    void addItem(MenuItem&& item);
     int getChoice(Window&, BitmapFont&);
     void setWrap(bool state) { wrapEnabled = state; }
     void setShowNumbers(bool state) { showNumbers = state; }
@@ -61,7 +62,8 @@ public:
     void setItemLayout(ItemLayout layout) { itemLayout = layout; }
     void setItemSpacing(int amount) { itemSpacing = amount; }
     void setItemSize(boost::optional<int> amount) { itemSize = amount; }
-    void setImageSpacing(int amount) { imageSpacing = amount; }
+    void setColumnSpacing(int amount) { columnSpacing = amount; }
+    void setSecondaryColumnAlignment(HorizontalAlignment alignment) { secondaryColumnAlignment = alignment; }
     void setNormalColor(Color32 color) { normalColor = color; }
     void setSelectionColor(Color32 color) { selectionColor = color; }
     void setSelectionOffset(Vector2 offset) { selectionOffset = offset; }
@@ -78,7 +80,7 @@ private:
     void select(std::vector<MenuItem>::iterator newSelection);
     void selectNext();
     void selectPrevious();
-    int calculateMaxTextSize();
+    int calculateMaxTextSize() const;
     void calculateSize();
     void calculateItemPositions();
     void render(BitmapFont& font) const;
@@ -94,7 +96,8 @@ private:
     ItemLayout itemLayout;
     int itemSpacing;
     boost::optional<int> itemSize;
-    int imageSpacing;
+    int columnSpacing;
+    HorizontalAlignment secondaryColumnAlignment;
     Color32 normalColor;
     Color32 selectionColor;
     Vector2 selectionOffset;

@@ -2,6 +2,7 @@
 #include "game.h"
 #include "gui.h"
 #include "tile.h"
+#include <iostream>
 
 static Color16 getMaterialColor(boost::string_ref materialId)
 {
@@ -45,7 +46,21 @@ bool Item::use(Creature& user, Game& game)
     return returnValue;
 }
 
-std::string Item::getNamePrefix() const
+EquipmentSlot Item::getEquipmentSlot() const
+{
+    auto slotString = getConfig().getOptional<std::string>(getId(), "EquipmentSlot").value_or("Hand");
+
+    if (slotString == "Head") return Head;
+    if (slotString == "Torso") return Torso;
+    if (slotString == "Hand") return Hand;
+    if (slotString == "Legs") return Legs;
+
+    std::cerr << "'" << getId() << "' has unknown EquipmentSlot '" << slotString << "'\n";
+    assert(false);
+    return Hand;
+}
+
+std::string Item::getNameAdjective() const
 {
     return pascalCaseToSentenceCase(materialId);
 }
@@ -55,7 +70,7 @@ void Item::render(Vector2 position) const
     sprite.render(position);
 }
 
-void Item::renderWielded(Vector2 position) const
+void Item::renderEquipped(Vector2 position) const
 {
     sprite.render(position, Vector2(0, Tile::size));
 }
@@ -75,7 +90,7 @@ Corpse::Corpse(boost::string_ref creatureId)
     sprite.setFrame(2);
 }
 
-void Corpse::renderWielded(Vector2 position) const
+void Corpse::renderEquipped(Vector2 position) const
 {
     render(position);
 }
