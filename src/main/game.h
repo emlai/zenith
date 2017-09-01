@@ -13,7 +13,9 @@
 class Game : public Engine
 {
 public:
-    Game(Window&);
+    Game(Window&, bool loadSavedGame);
+    void save();
+    void load();
     boost::optional<Dir8> askForDirection(std::string&& question);
 
     static const Config creatureConfig;
@@ -27,6 +29,8 @@ public:
     static boost::optional<const Texture> groundSpriteSheet;
     static boost::optional<const Texture> cursorTexture;
     static boost::optional<const Texture> fogOfWarTexture;
+
+    static constexpr auto saveFileName = "zenith.sav";
 
 private:
     int showInventory(boost::string_ref title, bool showNothingAsOption, Item* preselectedItem = nullptr,

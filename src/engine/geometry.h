@@ -212,6 +212,20 @@ namespace std
     };
 }
 
+namespace std
+{
+    template<>
+    struct hash<std::pair<Vector2, int>>
+    {
+        size_t operator()(std::pair<Vector2, int> vectorAndLevel) const
+        {
+            return (vectorAndLevel.first.x * 73856093)
+                ^ (vectorAndLevel.first.y * 19349663)
+                ^ (vectorAndLevel.second * 83492791);
+        }
+    };
+}
+
 struct Rect
 {
     Vector2 position; ///< Top-left corner

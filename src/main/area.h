@@ -4,6 +4,7 @@
 #include "engine/geometry.h"
 #include <vector>
 
+class SaveFile;
 class Tile;
 class Window;
 class World;
@@ -12,6 +13,8 @@ class Area
 {
 public:
     Area(World& world, Vector2 position, int level);
+    Area(const SaveFile& file, World& world, Vector2 position, int level);
+    void save(SaveFile& file) const;
 
 private:
     friend class World;

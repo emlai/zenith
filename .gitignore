@@ -20,3 +20,4 @@ MinSizeRel
 RelWithDebInfo
 /zenith
 prefs.cfg
+*.sav

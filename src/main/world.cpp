@@ -3,6 +3,32 @@
 #include "tile.h"
 #include "worldgen.h"
 #include "components/lightsource.h"
+#include "engine/savefile.h"
+
+void World::load(const SaveFile& file)
+{
+    auto areaCount = file.readInt32();
+    areas.reserve(size_t(areaCount));
+    for (int i = 0; i < areaCount; ++i)
+    {
+        Vector2 position = file.readVector2();
+        int level = file.readInt32();
+        areas.emplace(std::make_pair(position, level),
+                      std::make_unique<Area>(file, *this, position, level));
+    }
+}
+
+void World::save(SaveFile& file) const
+{
+    file.writeInt32(int32_t(areas.size()));
+
+    for (auto& positionAndArea : areas)
+    {
+        file.write(positionAndArea.first.first);
+        file.writeInt32(positionAndArea.first.second);
+        positionAndArea.second->save(file);
+    }
+}
 
 int World::getTurn() const
 {

@@ -14,6 +14,7 @@
 class Area;
 class LightSource;
 class Object;
+class SaveFile;
 class Window;
 class World;
 
@@ -21,6 +22,8 @@ class Tile
 {
 public:
     Tile(World& world, Vector2 position, int level, boost::string_ref groundId);
+    Tile(const SaveFile& file, World& world, Vector2 position, int level);
+    void save(SaveFile& file) const;
     void render(Window& window, int zIndex, bool fogOfWar) const;
     template<typename... Args>
     Creature* spawnCreature(Args&&...);
@@ -55,6 +58,7 @@ public:
     Vector2 getPosition() const { return position; }
     int getLevel() const { return level; }
     Vector2 getCenterPosition() const { return position * sizeVector + sizeVector / 2; }
+
     static const int size;
     static const Vector2 sizeVector;
 
@@ -68,14 +72,14 @@ private:
     World& world;
     Vector2 position;
     int level;
-    Sprite groundSprite;
     std::string groundId;
+    Sprite groundSprite;
     Color32 light;
 };
 
 template<typename... Args>
 Creature* Tile::spawnCreature(Args&&... creatureArgs)
 {
-    addCreature(std::make_unique<Creature>(*this, std::forward<Args>(creatureArgs)...));
+    addCreature(std::make_unique<Creature>(this, std::forward<Args>(creatureArgs)...));
     return creatures.back().get();
 }

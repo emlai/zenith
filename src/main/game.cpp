@@ -5,6 +5,8 @@
 #include "tile.h"
 #include "engine/math.h"
 #include "engine/menu.h"
+#include "engine/savefile.h"
+#include <fstream>
 
 const Config Game::creatureConfig("data/config/creature.cfg");
 const Config Game::objectConfig("data/config/object.cfg");
@@ -20,7 +22,7 @@ boost::optional<const Texture> Game::fogOfWarTexture;
 
 static const Color32 transparentColor(0x5A5268FF);
 
-Game::Game(Window& window)
+Game::Game(Window& window, bool loadSavedGame)
 :   Engine(window),
     world(*this)
 {
@@ -132,7 +134,13 @@ Game::Game(Window& window)
     mapKey(Tab, [this] { enterCommandMode(getWindow()); return false; });
 #endif
 
-    player = world.getOrCreateTile({0, 0}, 0)->spawnCreature("Human", std::make_unique<PlayerController>());
+    if (loadSavedGame)
+        load();
+    else
+    {
+        auto* tile = world.getOrCreateTile({0, 0}, 0);
+        player = tile->spawnCreature("Human", std::make_unique<PlayerController>());
+    }
 }
 
 int Game::showInventory(boost::string_ref title, bool showNothingAsOption, Item* preselectedItem,
@@ -348,7 +356,7 @@ void Game::enterCommandMode(Window& window)
 void Game::parseCommand(boost::string_ref command)
 {
     if (command == "respawn")
-        *player = Creature(player->getTileUnder(0), "Human", std::make_unique<PlayerController>());
+        *player = Creature(&player->getTileUnder(0), "Human", std::make_unique<PlayerController>());
     else if (command == "clear")
         MessageSystem::clearDebugMessageHistory();
     else if (command == "info")
@@ -360,3 +368,29 @@ void Game::parseCommand(boost::string_ref command)
 }
 
 #endif
+
+void Game::save()
+{
+    if (player->isDead())
+    {
+        std::remove(saveFileName);
+        return;
+    }
+
+    SaveFile file(saveFileName, true);
+    file.writeInt32(getTurn());
+    file.write(player->getPosition());
+    file.writeInt32(player->getLevel());
+    world.save(file);
+}
+
+void Game::load()
+{
+    SaveFile file(saveFileName, false);
+    setTurn(file.readInt32());
+    auto playerPosition = file.readVector2();
+    auto playerLevel = file.readInt32();
+    world.load(file);
+    player = &world.getTile(playerPosition, playerLevel)->getCreature(0);
+    player->setController(std::make_unique<PlayerController>());
+}

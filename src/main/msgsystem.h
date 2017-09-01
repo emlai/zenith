@@ -2,6 +2,7 @@
 
 #include "gui.h"
 #include "engine/font.h"
+#include "engine/savefile.h"
 #include <boost/utility/string_ref.hpp>
 #include <deque>
 #include <string>
@@ -14,6 +15,8 @@ public:
     Message(std::string&& text, int turn) : text(std::move(text)), turn(turn) {}
     boost::string_ref getText() const { return text; }
     int getTurn() const { return turn; }
+    void save(SaveFile& file) const;
+    static Message load(const SaveFile& file);
 
 private:
     std::string text;

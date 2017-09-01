@@ -15,6 +15,7 @@
 
 class Item;
 class Message;
+class SaveFile;
 class Tile;
 class Window;
 class World;
@@ -75,7 +76,9 @@ boost::string_ref toString(EquipmentSlot slot);
 class Creature final : public Entity
 {
 public:
-    Creature(Tile&, boost::string_ref id, std::unique_ptr<CreatureController> controller);
+    Creature(Tile*, boost::string_ref id, std::unique_ptr<CreatureController> controller);
+    Creature(const SaveFile& file, Tile* tile);
+    void save(SaveFile& file) const;
     void exist();
     void render() const;
 
@@ -97,6 +100,7 @@ public:
     const auto& getInventory() const { return inventory; }
     const auto& getEquipment() const { return equipment; }
     Item* getEquipment(EquipmentSlot slot) const { return equipment.at(slot); }
+    int getInventoryIndex(const Item& item) const;
     bool isDead() const { return currentHP <= 0; }
     double getHP() const { return currentHP; }
     double getAP() const { return currentAP; }
@@ -115,6 +119,7 @@ public:
     std::vector<Creature*> getCreaturesCurrentlySeenBy(int maxFieldOfVisionRadius) const;
     std::vector<Creature*> getCurrentlySeenCreatures() const;
     Creature* getNearestEnemy() const;
+    void setController(std::unique_ptr<CreatureController> controller);
 
 private:
     World& getWorld() const;
@@ -134,7 +139,7 @@ private:
     const auto& getAttributeIndices(int attribute) const { return attributeIndices[attribute]; }
 
     std::vector<Tile*> tilesUnder;
-    mutable std::unordered_set<const Tile*> seenTiles;
+    mutable std::unordered_set<std::pair<Vector2, int>> seenTilePositions;
     std::vector<std::unique_ptr<Item>> inventory;
     std::unordered_map<EquipmentSlot, Item*> equipment;
     double currentHP, maxHP, currentAP, maxAP, currentMP, maxMP;

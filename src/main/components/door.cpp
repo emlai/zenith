@@ -1,13 +1,12 @@
 #include "door.h"
 #include "../object.h"
+#include "engine/savefile.h"
 
 bool Door::reactToMovementAttempt()
 {
     if (!isOpen)
     {
-        isOpen = true;
-        // TODO: Add getSprite() to Entity to avoid casting here.
-        dynamic_cast<Object&>(getParent()).getSprite().setFrame(1);
+        setOpen(true);
         return true;
     }
 
@@ -18,11 +17,26 @@ bool Door::close()
 {
     if (isOpen)
     {
-        isOpen = false;
-        // TODO: Add getSprite() to Entity to avoid casting here.
-        dynamic_cast<Object&>(getParent()).getSprite().setFrame(0);
+        setOpen(false);
         return true;
     }
 
     return false;
+}
+
+void Door::setOpen(bool open)
+{
+    isOpen = open;
+    // TODO: Add getSprite() to Entity to avoid casting here.
+    dynamic_cast<Object&>(getParent()).getSprite().setFrame(isOpen ? 1 : 0);
+}
+
+void Door::save(SaveFile& file) const
+{
+    file.write(isOpen);
+}
+
+void Door::load(const SaveFile& file)
+{
+    setOpen(file.readBool());
 }

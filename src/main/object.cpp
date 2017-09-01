@@ -8,6 +8,22 @@ Object::Object(boost::string_ref id)
 {
 }
 
+Object::Object(const SaveFile& file)
+:   Entity(file.readString(), Game::objectConfig),
+    sprite(*Game::objectSpriteSheet, getSpriteTextureRegion(Game::objectConfig, getId()))
+{
+    for (auto& component : getComponents())
+        component->load(file);
+}
+
+void Object::save(SaveFile& file) const
+{
+    file.write(getId());
+
+    for (auto& component : getComponents())
+        component->save(file);
+}
+
 bool Object::close()
 {
     bool returnValue = false;

@@ -8,6 +8,7 @@ class Creature;
 class Entity;
 class Game;
 class Item;
+class SaveFile;
 
 class Component
 {
@@ -23,6 +24,8 @@ public:
     virtual bool blocksSight() const { return false; }
     virtual bool isUsable() const { return false; }
     virtual bool use(Creature&, Item&, Game&) { return false; }
+    virtual void save(SaveFile& file) const = 0;
+    virtual void load(const SaveFile& file) = 0;
 
 private:
     Entity* parent;

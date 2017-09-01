@@ -4,6 +4,7 @@
 #include "gui.h"
 #include "world.h"
 #include "components/lightsource.h"
+#include "engine/savefile.h"
 #include "engine/texture.h"
 #include <cassert>
 
@@ -14,10 +15,42 @@ Tile::Tile(World& world, Vector2 position, int level, boost::string_ref groundId
 :   world(world),
     position(position),
     level(level),
-    groundSprite(*Game::groundSpriteSheet, getSpriteTextureRegion(Game::groundConfig, groundId)),
     groundId(groundId),
+    groundSprite(*Game::groundSpriteSheet, getSpriteTextureRegion(Game::groundConfig, groundId)),
     light(Color32::black)
 {
+}
+
+Tile::Tile(const SaveFile& file, World& world, Vector2 position, int level)
+:   world(world),
+    position(position),
+    level(level),
+    groundId(file.readString()),
+    groundSprite(*Game::groundSpriteSheet, getSpriteTextureRegion(Game::groundConfig, groundId)),
+    light(Color32::black)
+{
+    auto creatureCount = file.readInt32();
+    creatures.reserve(size_t(creatureCount));
+    for (int i = 0; i < creatureCount; ++i)
+        creatures.push_back(std::make_unique<Creature>(file, this));
+
+    auto itemCount = file.readInt32();
+    items.reserve(size_t(itemCount));
+    for (int i = 0; i < itemCount; ++i)
+        items.push_back(Item::load(file));
+
+    if (file.readBool())
+        object = std::make_unique<Object>(file);
+}
+
+void Tile::save(SaveFile& file) const
+{
+    file.write(groundId);
+    file.write(creatures);
+    file.write(items);
+    file.write(object != nullptr);
+    if (object)
+        object->save(file);
 }
 
 void Tile::render(Window& window, int zIndex, bool fogOfWar) const

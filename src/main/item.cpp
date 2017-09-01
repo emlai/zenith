@@ -2,6 +2,9 @@
 #include "game.h"
 #include "gui.h"
 #include "tile.h"
+#include "engine/savefile.h"
+#include <boost/algorithm/string/erase.hpp>
+#include <boost/algorithm/string/predicate.hpp>
 #include <iostream>
 
 static Color16 getMaterialColor(boost::string_ref materialId)
@@ -35,6 +38,40 @@ Item::Item(boost::string_ref id, boost::string_ref materialId, Sprite&& sprite)
     materialId(materialId.to_string()),
     sprite(std::move(sprite))
 {
+}
+
+std::unique_ptr<Item> Item::load(const SaveFile& file)
+{
+    auto itemId = file.readString();
+    std::unique_ptr<Item> item;
+
+    if (boost::algorithm::ends_with(itemId, "Corpse"))
+    {
+        if (file.readBool())
+            item = std::make_unique<Corpse>(std::make_unique<Creature>(file, nullptr));
+        else
+            item = std::make_unique<Corpse>(boost::algorithm::erase_last_copy(itemId, "Corpse"));
+    }
+    else
+    {
+        auto materialId = file.readString();
+        item = std::make_unique<Item>(itemId, materialId);
+        item->sprite.setMaterialColor(Color32(file.readUint32()));
+    }
+
+    for (auto& component : item->getComponents())
+        component->load(file);
+
+    return item;
+}
+
+void Item::save(SaveFile& file) const
+{
+    file.write(getId());
+    file.write(materialId);
+    file.writeInt32(sprite.getMaterialColor().value);
+    for (auto& component : getComponents())
+        component->save(file);
 }
 
 bool Item::isUsable() const
@@ -111,4 +148,12 @@ Corpse::Corpse(boost::string_ref creatureId)
 void Corpse::renderEquipped(Vector2 position) const
 {
     render(position);
+}
+
+void Corpse::save(SaveFile& file) const
+{
+    file.write(getId());
+    file.write(creature != nullptr);
+    if (creature)
+        creature->save(file);
 }

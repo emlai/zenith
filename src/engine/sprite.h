@@ -14,6 +14,8 @@ public:
     int getWidth() const { return textureRegion.size.x; }
     int getHeight() const { return textureRegion.size.y; }
     void render(Vector2 position, Vector2 sourceOffset = Vector2(0, 0)) const;
+    Color32 getMaterialColor() const { return materialColor; }
+    void setMaterialColor(Color32 color) { materialColor = color; }
     void setFrame(int newFrame) { frame = newFrame; }
 
 private:

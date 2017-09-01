@@ -3,6 +3,7 @@
 #include "engine/menu.h"
 #include "engine/geometry.h"
 #include "engine/window.h"
+#include <boost/filesystem.hpp>
 #include <cassert>
 #include <iostream>
 
@@ -22,8 +23,12 @@ enum { NewGame, LoadGame, Preferences };
 static Menu initMainMenu(Vector2 size)
 {
     Menu menu;
-    menu.addItem(MenuItem(NewGame, "New game", 'n'));
-    menu.addItem(MenuItem(LoadGame, "Load game", 'l'));
+
+    if (boost::filesystem::exists(Game::saveFileName))
+        menu.addItem(MenuItem(LoadGame, "Load game", 'l'));
+    else
+        menu.addItem(MenuItem(NewGame, "New game", 'n'));
+
     menu.addItem(MenuItem(Preferences, "Preferences", 'p'));
     menu.addItem(MenuItem(Menu::Exit, "Quit", 'q'));
     menu.setItemLayout(Menu::Horizontal);
@@ -97,18 +102,29 @@ int main(int argc, const char** argv)
     for (bool exit = false; !exit && !window.shouldClose();)
     {
         Menu mainMenu = initMainMenu(window.getResolution());
+        auto choice = mainMenu.getChoice(window, font);
 
-        switch (mainMenu.getChoice(window, font))
+        switch (choice)
         {
             case NewGame:
+            case LoadGame:
             {
                 rng.seed();
-                Game game(window);
-                game.run();
+                Game game(window, choice == LoadGame);
+
+                try
+                {
+                    game.run();
+                }
+                catch (...)
+                {
+                    game.save();
+                    throw;
+                }
+
+                game.save();
                 break;
             }
-            case LoadGame:
-                break;
             case Preferences:
                 showPreferences(window);
                 break;

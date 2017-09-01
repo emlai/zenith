@@ -3,32 +3,22 @@
 #include "area.h"
 #include "engine/color.h"
 #include "engine/geometry.h"
+#include <fstream>
 #include <functional>
 #include <memory>
 #include <unordered_map>
 
 class Creature;
 class Game;
+class SaveFile;
 class Tile;
-
-namespace std
-{
-    template<>
-    struct hash<std::pair<Vector2, int>>
-    {
-        size_t operator()(std::pair<Vector2, int> vectorAndLevel) const
-        {
-            return (vectorAndLevel.first.x * 73856093)
-                ^ (vectorAndLevel.first.y * 19349663)
-                ^ (vectorAndLevel.second * 83492791);
-        }
-    };
-}
 
 class World
 {
 public:
     World(const Game& game) : game(game) {}
+    void load(const SaveFile& file);
+    void save(SaveFile& file) const;
     int getTurn() const;
     void exist(Rect region, int level);
     void render(Window&, Rect region, int level, const Creature& player);

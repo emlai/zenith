@@ -2,6 +2,7 @@
 #include "game.h"
 #include "msgsystem.h"
 #include "tile.h"
+#include "engine/savefile.h"
 #include <cctype>
 #include <iomanip>
 
@@ -31,9 +32,8 @@ std::vector<std::vector<int>> Creature::initAttributeIndices(boost::string_ref i
     return Game::creatureConfig.get<std::vector<std::vector<int>>>(id, "AttributeIndices");
 }
 
-Creature::Creature(Tile& tile, boost::string_ref id, std::unique_ptr<CreatureController> controller)
+Creature::Creature(Tile* tile, boost::string_ref id, std::unique_ptr<CreatureController> controller)
 :   Entity(id, Game::creatureConfig),
-    tilesUnder({&tile}),
     equipment({{Head, nullptr}, {Torso, nullptr}, {Hand, nullptr}, {Legs, nullptr}}),
     currentHP(0),
     maxHP(0),
@@ -46,6 +46,9 @@ Creature::Creature(Tile& tile, boost::string_ref id, std::unique_ptr<CreatureCon
     sprite(*Game::creatureSpriteSheet, getSpriteTextureRegion(Game::creatureConfig, id)),
     controller(std::move(controller))
 {
+    if (tile)
+        tilesUnder.push_back(tile);
+
     generateAttributes(id);
 
     if (auto initialEquipment = getConfig().getOptional<std::vector<std::string>>(getId(), "Equipment"))
@@ -56,6 +59,75 @@ Creature::Creature(Tile& tile, boost::string_ref id, std::unique_ptr<CreatureCon
             equip(inventory.back()->getEquipmentSlot(), &*inventory.back());
         }
     }
+}
+
+Creature::Creature(const SaveFile& file, Tile* tile)
+:   Entity(file.readString(), Game::creatureConfig),
+    equipment({{Head, nullptr}, {Torso, nullptr}, {Hand, nullptr}, {Legs, nullptr}}),
+    displayedAttributes(initDisplayedAttributes(getId())),
+    attributeIndices(initAttributeIndices(getId())),
+    sprite(*Game::creatureSpriteSheet, getSpriteTextureRegion(Game::creatureConfig, getId())),
+    controller(std::make_unique<AIController>())
+{
+    if (tile)
+        tilesUnder.push_back(tile);
+
+    for (auto& component : getComponents())
+        component->load(file);
+
+    auto seenTilePositionsCount = file.readInt32();
+    seenTilePositions.reserve(size_t(seenTilePositionsCount));
+    for (int i = 0; i < seenTilePositionsCount; ++i)
+    {
+        auto position = file.readVector2();
+        auto level = file.readInt32();
+        seenTilePositions.insert(std::make_pair(position, level));
+    }
+
+    auto inventorySize = file.readInt32();
+    inventory.reserve(size_t(inventorySize));
+    for (int i = 0; i < inventorySize; ++i)
+        inventory.push_back(Item::load(file));
+
+    for (auto& slotAndItem : equipment)
+    {
+        auto itemIndex = file.readInt16();
+
+        if (itemIndex != -1)
+            slotAndItem.second = &*inventory[size_t(itemIndex)];
+    }
+
+    file.read(attributeValues);
+    calculateDerivedStats();
+    currentHP = file.readDouble();
+    currentAP = file.readDouble();
+    currentMP = file.readDouble();
+    file.read(messages);
+}
+
+void Creature::save(SaveFile& file) const
+{
+    file.write(getId());
+    for (auto& component : getComponents())
+        component->save(file);
+
+    file.writeInt32(uint32_t(seenTilePositions.size()));
+    for (auto tilePositionAndLevel : seenTilePositions)
+    {
+        file.write(tilePositionAndLevel.first);
+        file.writeInt32(tilePositionAndLevel.second);
+    }
+
+    file.write(inventory);
+
+    for (auto slotAndItem : equipment)
+        file.writeInt16(int16_t(slotAndItem.second ? getInventoryIndex(*slotAndItem.second) : -1));
+
+    file.write(attributeValues);
+    file.write(currentHP);
+    file.write(currentAP);
+    file.write(currentMP);
+    file.write(messages);
 }
 
 void Creature::exist()
@@ -163,14 +235,14 @@ bool Creature::sees(const Tile& tile) const
         if (currentTile->getLight().getLuminance() < 0.3)
             return false;
 
-        seenTiles.insert(currentTile);
+        seenTilePositions.emplace(currentTile->getPosition(), currentTile->getLevel());
         return true;
     });
 }
 
 bool Creature::remembers(const Tile& tile) const
 {
-    return seenTiles.find(&tile) != seenTiles.end();
+    return seenTilePositions.find({tile.getPosition(), tile.getLevel()}) != seenTilePositions.end();
 }
 
 std::vector<Creature*> Creature::getCreaturesCurrentlySeenBy(int maxFieldOfVisionRadius) const
@@ -404,6 +476,15 @@ void Creature::drop(Item& itemToDrop)
     assert(false);
 }
 
+int Creature::getInventoryIndex(const Item& item) const
+{
+    for (int i = 0; i < int(inventory.size()); ++i)
+        if (&*inventory[i] == &item)
+            return i;
+
+    assert(false);
+}
+
 bool Creature::close(Dir8 direction)
 {
     Tile* destination = getTileUnder(0).getAdjacentTile(direction);
@@ -428,6 +509,11 @@ World& Creature::getWorld() const
 int Creature::getTurn() const
 {
     return getWorld().getTurn();
+}
+
+void Creature::setController(std::unique_ptr<CreatureController> controller)
+{
+    this->controller = std::move(controller);
 }
 
 Attribute stringToAttribute(boost::string_ref string)

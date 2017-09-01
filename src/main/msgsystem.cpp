@@ -2,6 +2,19 @@
 #include "gui.h"
 #include "engine/color.h"
 
+void Message::save(SaveFile& file) const
+{
+    file.write(text);
+    file.writeInt32(turn);
+}
+
+Message Message::load(const SaveFile& file)
+{
+    auto text = file.readString();
+    auto turn = file.readInt32();
+    return Message(std::move(text), turn);
+}
+
 namespace MessageSystem
 {
     static const int maxMessagesToPrint = 6;

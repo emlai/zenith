@@ -14,6 +14,7 @@ public:
 protected:
     Engine(Window& window) : window(window), turn(0), running(false) {}
     void advanceTurn() { ++turn; }
+    void setTurn(int turn) { this->turn = turn; }
     void stop() { running = false; }
     void mapKey(Key, const std::function<bool()>&);
     Window& getWindow() const { return window; }
