@@ -32,7 +32,9 @@ private:
     int showInventory(boost::string_ref title, bool showNothingAsOption, Item* preselectedItem = nullptr,
                       std::function<bool(const Item&)> itemFilter = nullptr);
     void showEquipmentMenu();
+    void lookMode();
     void render(Window&) override;
+    void renderAtPosition(Window&, Vector2 centerPosition);
     void updateLogic() override;
 
     void printPlayerInformation(BitmapFont&) const;

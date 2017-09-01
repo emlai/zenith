@@ -77,6 +77,12 @@ Game::Game(Window& window)
         return player->pickUpItem();
     }));
 
+    mapKey('l', [this]
+    {
+        lookMode();
+        return false;
+    });
+
     mapKey('i', [this]
     {
         showInventory("Inventory", false);
@@ -204,6 +210,29 @@ void Game::showEquipmentMenu()
     }
 }
 
+void Game::lookMode()
+{
+    Vector2 position = player->getPosition();
+
+    while (true)
+    {
+        renderAtPosition(getWindow(), position);
+        getWindow().getFont().setArea(GUI::getQuestionArea(getWindow()));
+        getWindow().getFont().print("Look mode (arrow keys to move around, esc to exit)");
+        getWindow().updateScreen();
+
+        switch (getWindow().waitForInput())
+        {
+            case UpArrow: position += North; break;
+            case RightArrow: position += East; break;
+            case DownArrow: position += South; break;
+            case LeftArrow: position += West; break;
+            case Esc: return;
+            default: break;
+        }
+    }
+}
+
 boost::optional<Dir8> Game::askForDirection(std::string&& question)
 {
     render(getWindow());
@@ -230,14 +259,19 @@ void Game::updateLogic()
 
 void Game::render(Window& window)
 {
+    renderAtPosition(window, player->getPosition());
+}
+
+void Game::renderAtPosition(Window& window, Vector2 centerPosition)
+{
     Rect worldViewport = GUI::getWorldViewport(getWindow());
 
-    Rect playerView(player->getPosition() * Tile::size + Tile::sizeVector / 2 - worldViewport.size / 2,
-                    worldViewport.size);
-    window.setView(&playerView);
+    Rect view(centerPosition * Tile::size + Tile::sizeVector / 2 - worldViewport.size / 2,
+              worldViewport.size);
+    window.setView(&view);
     window.setViewport(&worldViewport);
 
-    Rect visibleRegion(player->getPosition() - worldViewport.size / Tile::size / 2,
+    Rect visibleRegion(centerPosition - worldViewport.size / Tile::size / 2,
                        worldViewport.size / Tile::size);
     world.render(window, visibleRegion, player->getLevel(), *player);
 
