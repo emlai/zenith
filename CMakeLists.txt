@@ -28,6 +28,10 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
 target_include_directories(zenith PUBLIC "${PROJECT_SOURCE_DIR}/src")
 target_link_libraries(zenith zenithEngine)
 
+find_package(Boost REQUIRED)
+target_include_directories(zenith SYSTEM PUBLIC ${Boost_INCLUDE_DIR})
+target_include_directories(zenithEngine SYSTEM PUBLIC ${Boost_INCLUDE_DIR})
+
 set(CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR}/cmake-modules)
 
 if(NOT EXISTS "${CMAKE_BINARY_DIR}/cmake-modules/FindSDL2.cmake")
@@ -37,11 +41,3 @@ endif()
 find_package(SDL2 REQUIRED)
 target_include_directories(zenithEngine SYSTEM PUBLIC ${SDL2_INCLUDE_DIR})
 target_link_libraries(zenithEngine ${SDL2_LIBRARY})
-
-if(NOT EXISTS "${CMAKE_BINARY_DIR}/cmake-modules/FindConfig++.cmake")
-    file(DOWNLOAD "https://github.com/hyperrealm/libconfig/raw/master/contrib/cmake/cmake_work/FindConfig%2B%2B.cmake"
-         "${CMAKE_BINARY_DIR}/cmake-modules/FindConfig++.cmake")
-endif()
-find_package(Config++ REQUIRED)
-target_include_directories(zenithEngine SYSTEM PUBLIC ${CONFIG++_INCLUDE_DIR})
-target_link_libraries(zenithEngine ${CONFIG++_LIBRARY})
