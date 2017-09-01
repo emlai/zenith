@@ -138,9 +138,17 @@ void Creature::editAttribute(Attribute attribute, double amount)
         attributeValues[index] += amount;
 }
 
+int Creature::getFieldOfVisionRadius() const
+{
+    return int(getAttribute(Perception) * 2);
+}
+
 bool Creature::sees(const Tile& tile) const
 {
     assert(tile.getLevel() == getLevel());
+
+    if (getDistance(getPosition(), tile.getPosition()) > getFieldOfVisionRadius())
+        return false;
 
     return raycastIntegerBresenham(getPosition(), tile.getPosition(), [&](Vector2 vector)
     {
@@ -165,13 +173,13 @@ bool Creature::remembers(const Tile& tile) const
     return seenTiles.find(&tile) != seenTiles.end();
 }
 
-std::vector<Creature*> Creature::getCreaturesCurrentlySeenBy(int fieldOfVisionRadius) const
+std::vector<Creature*> Creature::getCreaturesCurrentlySeenBy(int maxFieldOfVisionRadius) const
 {
     std::vector<Creature*> creatures;
 
-    for (int x = -fieldOfVisionRadius; x <= fieldOfVisionRadius; ++x)
+    for (int x = -maxFieldOfVisionRadius; x <= maxFieldOfVisionRadius; ++x)
     {
-        for (int y = -fieldOfVisionRadius; y <= fieldOfVisionRadius; ++y)
+        for (int y = -maxFieldOfVisionRadius; y <= maxFieldOfVisionRadius; ++y)
         {
             auto* tile = getWorld().getTile(getPosition() + Vector2(x, y), getLevel());
 
@@ -189,9 +197,10 @@ std::vector<Creature*> Creature::getCreaturesCurrentlySeenBy(int fieldOfVisionRa
     return creatures;
 }
 
-std::vector<Creature*> Creature::getCurrentlySeenCreatures(int fieldOfVisionRadius) const
+std::vector<Creature*> Creature::getCurrentlySeenCreatures() const
 {
     std::vector<Creature*> currentlySeenCreatures;
+    auto fieldOfVisionRadius = getFieldOfVisionRadius();
 
     for (int x = -fieldOfVisionRadius; x <= fieldOfVisionRadius; ++x)
     {
@@ -217,11 +226,10 @@ Creature* Creature::getNearestEnemy() const
 {
     // TODO: Optimize by iterating in a spiral starting from this creature's position.
 
-    int fieldOfVisionRadius = 10;
     Creature* nearestEnemy = nullptr;
     int nearestEnemyDistance = INT_MAX;
 
-    for (auto* other : getCurrentlySeenCreatures(fieldOfVisionRadius))
+    for (auto* other : getCurrentlySeenCreatures())
     {
         if (other->getId() == getId())
             continue;

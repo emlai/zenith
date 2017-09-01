@@ -106,13 +106,14 @@ public:
     double getMaxMP() const { return maxMP; }
     double getAttribute(Attribute) const;
     const auto& getDisplayedAttributes() const { return displayedAttributes; }
+    int getFieldOfVisionRadius() const;
     template<typename... Args>
     void addMessage(Args&&...);
     const std::vector<Message>& getMessages() const { return messages; }
     bool sees(const Tile& tile) const;
     bool remembers(const Tile& tile) const;
-    std::vector<Creature*> getCreaturesCurrentlySeenBy(int fieldOfVisionRadius) const;
-    std::vector<Creature*> getCurrentlySeenCreatures(int fieldOfVisionRadius) const;
+    std::vector<Creature*> getCreaturesCurrentlySeenBy(int maxFieldOfVisionRadius) const;
+    std::vector<Creature*> getCurrentlySeenCreatures() const;
     Creature* getNearestEnemy() const;
 
 private:
