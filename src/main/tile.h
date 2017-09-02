@@ -56,6 +56,7 @@ public:
     Tile* getTileAbove() const;
     World& getWorld() const { return world; }
     Vector2 getPosition() const { return position; }
+    Vector3 getPosition3D() const { return Vector3(position) + Vector3(0, 0, level); }
     int getLevel() const { return level; }
     Vector2 getCenterPosition() const { return position * sizeVector + sizeVector / 2; }
 

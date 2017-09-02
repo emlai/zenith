@@ -139,7 +139,7 @@ private:
     const auto& getAttributeIndices(int attribute) const { return attributeIndices[attribute]; }
 
     std::vector<Tile*> tilesUnder;
-    mutable std::unordered_set<std::pair<Vector2, int>> seenTilePositions;
+    mutable std::unordered_set<Vector3> seenTilePositions;
     std::vector<std::unique_ptr<Item>> inventory;
     std::unordered_map<EquipmentSlot, Item*> equipment;
     double currentHP, maxHP, currentAP, maxAP, currentMP, maxMP;

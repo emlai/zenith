@@ -28,12 +28,12 @@ public:
     Color32 getSunlight() const { return sunlight; }
 
 private:
-    Area* getOrCreateArea(Vector2 position, int level);
-    Area* getArea(Vector2 position, int level) const;
-    static Vector2 globalPositionToAreaPosition(Vector2 position);
+    Area* getOrCreateArea(Vector3 position);
+    Area* getArea(Vector3 position) const;
+    static Vector3 globalPositionToAreaPosition(Vector2 position, int level);
     static Vector2 globalPositionToTilePosition(Vector2 position);
 
     const Game& game;
-    std::unordered_map<std::pair<Vector2, int>, std::unique_ptr<Area>> areas;
+    std::unordered_map<Vector3, std::unique_ptr<Area>> areas;
     Color32 sunlight = 0x888888FF;
 };

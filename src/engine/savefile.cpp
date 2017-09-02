@@ -111,3 +111,18 @@ Vector2 SaveFile::readVector2() const
     auto y = readInt32();
     return Vector2(x, y);
 }
+
+void SaveFile::write(Vector3 value)
+{
+    writeInt32(value.x);
+    writeInt32(value.y);
+    writeInt32(value.z);
+}
+
+Vector3 SaveFile::readVector3() const
+{
+    auto x = readInt32();
+    auto y = readInt32();
+    auto z = readInt32();
+    return Vector3(x, y, z);
+}

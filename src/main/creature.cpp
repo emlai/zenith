@@ -78,11 +78,7 @@ Creature::Creature(const SaveFile& file, Tile* tile)
     auto seenTilePositionsCount = file.readInt32();
     seenTilePositions.reserve(size_t(seenTilePositionsCount));
     for (int i = 0; i < seenTilePositionsCount; ++i)
-    {
-        auto position = file.readVector2();
-        auto level = file.readInt32();
-        seenTilePositions.insert(std::make_pair(position, level));
-    }
+        seenTilePositions.insert(file.readVector3());
 
     auto inventorySize = file.readInt32();
     inventory.reserve(size_t(inventorySize));
@@ -112,11 +108,8 @@ void Creature::save(SaveFile& file) const
         component->save(file);
 
     file.writeInt32(uint32_t(seenTilePositions.size()));
-    for (auto tilePositionAndLevel : seenTilePositions)
-    {
-        file.write(tilePositionAndLevel.first);
-        file.writeInt32(tilePositionAndLevel.second);
-    }
+    for (auto tilePosition : seenTilePositions)
+        file.write(tilePosition);
 
     file.write(inventory);
 
@@ -235,14 +228,14 @@ bool Creature::sees(const Tile& tile) const
         if (currentTile->getLight().getLuminance() < 0.3)
             return false;
 
-        seenTilePositions.emplace(currentTile->getPosition(), currentTile->getLevel());
+        seenTilePositions.emplace(currentTile->getPosition3D());
         return true;
     });
 }
 
 bool Creature::remembers(const Tile& tile) const
 {
-    return seenTilePositions.find({tile.getPosition(), tile.getLevel()}) != seenTilePositions.end();
+    return seenTilePositions.find(tile.getPosition3D()) != seenTilePositions.end();
 }
 
 std::vector<Creature*> Creature::getCreaturesCurrentlySeenBy(int maxFieldOfVisionRadius) const

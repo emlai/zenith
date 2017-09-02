@@ -38,9 +38,13 @@ inline Dir8 randomDir8()
 
 template<typename T>
 struct Vector2Base;
+template<typename T>
+struct Vector3Base;
 
 using Vector2 = Vector2Base<int>;
 using Vector2f = Vector2Base<double>;
+using Vector3 = Vector3Base<int>;
+using Vector3f = Vector3Base<double>;
 
 extern const Vector2 directionVectors[]; // Definition in math.cpp.
 
@@ -55,6 +59,7 @@ struct Vector2Base
     constexpr Vector2Base(Dir8 direction) : Vector2Base(directionVectors[direction]) {}
     template<typename U>
     explicit constexpr Vector2Base(Vector2Base<U> vector) : x(T(vector.x)), y(T(vector.y)) {}
+    explicit constexpr Vector2Base(Vector3Base<T> vector) : x(vector.x), y(vector.y) {}
 
     Vector2Base& operator+=(Vector2Base vector) { x += vector.x; y += vector.y; return *this; }
     Vector2Base& operator-=(Vector2Base vector) { x -= vector.x; y -= vector.y; return *this; }
@@ -212,16 +217,50 @@ namespace std
     };
 }
 
+/// 3D vector structure for representing values with x, y, and z components.
+template<typename T>
+struct Vector3Base
+{
+    T x, y, z;
+
+    Vector3Base() = default;
+    constexpr Vector3Base(T x, T y, T z) : x(x), y(y), z(z) {}
+    explicit constexpr Vector3Base(Vector2Base<T> vector) : x(vector.x), y(vector.y), z(0) {}
+
+    Vector3Base& operator+=(Vector3Base vector) { x += vector.x; y += vector.y; z += vector.z; return *this; }
+    Vector3Base& operator-=(Vector3Base vector) { x -= vector.x; y -= vector.y; z -= vector.z; return *this; }
+    Vector3Base& operator*=(Vector3Base vector) { x *= vector.x; y *= vector.y; z *= vector.z; return *this; }
+    Vector3Base& operator/=(Vector3Base vector) { x /= vector.x; y /= vector.y; z /= vector.z; return *this; }
+    Vector3Base& operator%=(Vector3Base vector) { x %= vector.x; y %= vector.y; z %= vector.z; return *this; }
+
+    Vector3Base operator+(Vector3Base vector) const { return Vector3Base(x + vector.x, y + vector.y, z + vector.z); }
+    Vector3Base operator-(Vector3Base vector) const { return Vector3Base(x - vector.x, y - vector.y, z - vector.z); }
+    Vector3Base operator*(Vector3Base vector) const { return Vector3Base(x * vector.x, y * vector.y, z * vector.z); }
+    Vector3Base operator/(Vector3Base vector) const { return Vector3Base(x / vector.x, y / vector.y, z / vector.z); }
+    Vector3Base operator%(Vector3Base vector) const { return Vector3Base(x % vector.x, y % vector.y, z % vector.z); }
+
+    Vector3Base operator+() const { return *this; }
+    Vector3Base operator-() const { return Vector3Base(-x, -y, -z); }
+
+    bool operator==(Vector3Base vector) const { return x == vector.x && y == vector.y && z == vector.z; }
+    bool operator!=(Vector3Base vector) const { return x != vector.x || y != vector.y || z != vector.z; }
+
+    Vector3Base divideRoundingDown(int divisor) const
+    {
+        return Vector3Base(::divideRoundingDown(x, divisor),
+                           ::divideRoundingDown(y, divisor),
+                           ::divideRoundingDown(z, divisor));
+    }
+};
+
 namespace std
 {
     template<>
-    struct hash<std::pair<Vector2, int>>
+    struct hash<Vector3>
     {
-        size_t operator()(std::pair<Vector2, int> vectorAndLevel) const
+        size_t operator()(Vector3 vector) const
         {
-            return (vectorAndLevel.first.x * 73856093)
-                ^ (vectorAndLevel.first.y * 19349663)
-                ^ (vectorAndLevel.second * 83492791);
+            return (vector.x * 73856093) ^ (vector.y * 19349663) ^ (vector.z * 83492791);
         }
     };
 }

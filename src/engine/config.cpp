@@ -155,7 +155,9 @@ std::vector<std::string> Config::getToplevelKeys() const
 
     for (auto& keyAndValue : data)
     {
-        if (auto it = get<Group>(keyAndValue.second)->getOptional("isAbstract"))
+        auto group = get<Group>(keyAndValue.second);
+
+        if (auto it = group->getOptional("isAbstract"))
             if (auto isAbstract = get<bool>(*it))
                 if (*isAbstract)
                     continue;

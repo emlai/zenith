@@ -11,10 +11,8 @@ void World::load(const SaveFile& file)
     areas.reserve(size_t(areaCount));
     for (int i = 0; i < areaCount; ++i)
     {
-        Vector2 position = file.readVector2();
-        int level = file.readInt32();
-        areas.emplace(std::make_pair(position, level),
-                      std::make_unique<Area>(file, *this, position, level));
+        auto position = file.readVector3();
+        areas.emplace(position, std::make_unique<Area>(file, *this, Vector2(position), position.z));
     }
 }
 
@@ -24,8 +22,7 @@ void World::save(SaveFile& file) const
 
     for (auto& positionAndArea : areas)
     {
-        file.write(positionAndArea.first.first);
-        file.writeInt32(positionAndArea.first.second);
+        file.write(positionAndArea.first);
         positionAndArea.second->save(file);
     }
 }
@@ -92,29 +89,29 @@ void World::render(Window& window, Rect region, int level, const Creature& playe
             tileAndFogOfWar.first->render(window, zIndex, tileAndFogOfWar.second);
 }
 
-Area* World::getOrCreateArea(Vector2 position, int level)
+Area* World::getOrCreateArea(Vector3 position)
 {
-    if (auto* area = getArea(position, level))
+    if (auto* area = getArea(position))
         return area;
 
-    auto& area = *areas.emplace(std::make_pair(position, level),
-                                std::make_unique<Area>(*this, position, level)).first->second;
+    auto& area = *areas.emplace(position,
+                                std::make_unique<Area>(*this, Vector2(position), position.z)).first->second;
     WorldGenerator generator(*this);
-    generator.generateRegion(Rect(position * Area::sizeVector, Area::sizeVector), level);
+    generator.generateRegion(Rect(Vector2(position) * Area::sizeVector, Area::sizeVector), position.z);
     return &area;
 }
 
-Area* World::getArea(Vector2 position, int level) const
+Area* World::getArea(Vector3 position) const
 {
-    auto it = areas.find({position, level});
+    auto it = areas.find(position);
     if (it != areas.end())
         return it->second.get();
     return nullptr;
 }
 
-Vector2 World::globalPositionToAreaPosition(Vector2 position)
+Vector3 World::globalPositionToAreaPosition(Vector2 position, int level)
 {
-    return position.divideRoundingDown(Area::size);
+    return Vector3(position.divideRoundingDown(Area::size)) + Vector3(0, 0, level);
 }
 
 Vector2 World::globalPositionToTilePosition(Vector2 position)
@@ -127,7 +124,7 @@ Vector2 World::globalPositionToTilePosition(Vector2 position)
 
 Tile* World::getOrCreateTile(Vector2 position, int level)
 {
-    if (auto* area = getOrCreateArea(globalPositionToAreaPosition(position), level))
+    if (auto* area = getOrCreateArea(globalPositionToAreaPosition(position, level)))
         return &area->getTileAt(globalPositionToTilePosition(position));
 
     return nullptr;
@@ -135,7 +132,7 @@ Tile* World::getOrCreateTile(Vector2 position, int level)
 
 Tile* World::getTile(Vector2 position, int level) const
 {
-    if (auto* area = getArea(globalPositionToAreaPosition(position), level))
+    if (auto* area = getArea(globalPositionToAreaPosition(position, level)))
         return &area->getTileAt(globalPositionToTilePosition(position));
 
     return nullptr;

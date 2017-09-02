@@ -23,6 +23,7 @@ public:
     void write(bool value);
     void write(double value);
     void write(Vector2 value);
+    void write(Vector3 value);
     void write(boost::string_ref value);
     void write(const std::string& value) { write(boost::string_ref(value)); }
     template<typename T>
@@ -40,6 +41,7 @@ public:
     double readDouble() const;
     std::string readString() const;
     Vector2 readVector2() const;
+    Vector3 readVector3() const;
     template<typename T>
     void read(std::vector<T>& vector) const;
 
