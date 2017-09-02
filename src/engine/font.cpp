@@ -6,7 +6,7 @@
 
 const Vector2 BitmapFont::dimensions = Vector2(16, 6);
 
-BitmapFont::BitmapFont(const Window& window, boost::string_ref fileName, Vector2 charSize)
+BitmapFont::BitmapFont(boost::string_ref fileName, Vector2 charSize)
 :   printArea(0, 0, 0, 0),
     lineContinuation(false),
     currentPosition(0, 0),
@@ -16,7 +16,7 @@ BitmapFont::BitmapFont(const Window& window, boost::string_ref fileName, Vector2
     shadowPosition(1, 1),
     charSize(charSize),
     moveVector(charSize),
-    texture(window, loadFromFile(fileName), SDL_PIXELFORMAT_RGBA8888, dimensions * charSize)
+    texture(loadFromFile(fileName), SDL_PIXELFORMAT_RGBA8888, dimensions * charSize)
 {
     texture.setBlendMode(true);
 }
@@ -44,7 +44,7 @@ std::vector<Color32> BitmapFont::loadFromFile(boost::string_ref fileName) const
     return pixelData;
 }
 
-void BitmapFont::print(boost::string_ref text, Color32 color)
+void BitmapFont::print(Window& window, boost::string_ref text, Color32 color)
 {
     if (!color)
         color = defaultColor;
@@ -52,35 +52,35 @@ void BitmapFont::print(boost::string_ref text, Color32 color)
     if (drawShadows)
     {
         texture.setColor(color * shadowColorMod);
-        printHelper(text, currentPosition + shadowPosition);
+        printHelper(window, text, currentPosition + shadowPosition);
     }
 
     texture.setColor(color);
-    currentPosition = printHelper(text, currentPosition);
+    currentPosition = printHelper(window, text, currentPosition);
     lineContinuation = true;
 }
 
-void BitmapFont::printLine(boost::string_ref text, Color32 color)
+void BitmapFont::printLine(Window& window, boost::string_ref text, Color32 color)
 {
     int startX = currentPosition.x;
-    print(text, color);
+    print(window, text, color);
     currentPosition.x = startX;
     currentPosition.y += moveVector.y;
 }
 
-void BitmapFont::printWithCursor(boost::string_ref text, const char* cursor,
+void BitmapFont::printWithCursor(Window& window, boost::string_ref text, const char* cursor,
                                  Color32 mainColor, Color32 cursorColor)
 {
     Vector2 cursorPosition = currentPosition + Vector2(int((cursor - text.begin()) * moveVector.x), 0);
-    print(text, mainColor);
+    print(window, text, mainColor);
 
     if (cursorColor)
         texture.setColor(cursorColor);
 
-    printHelper("_", cursorPosition);
+    printHelper(window, "_", cursorPosition);
 }
 
-Vector2 BitmapFont::printHelper(boost::string_ref text, Vector2 position) const
+Vector2 BitmapFont::printHelper(Window& window, boost::string_ref text, Vector2 position) const
 {
     Rect source;
     source.size = charSize;
@@ -99,7 +99,7 @@ Vector2 BitmapFont::printHelper(boost::string_ref text, Vector2 position) const
     {
         if (*character == '\n' || character == text.end())
         {
-            printLine(lineBegin, character, source, target);
+            printLine(window, lineBegin, character, source, target);
 
             if (character == text.end())
                 return target.position;
@@ -112,8 +112,8 @@ Vector2 BitmapFont::printHelper(boost::string_ref text, Vector2 position) const
     }
 }
 
-void BitmapFont::printLine(PrintIterator lineBegin, PrintIterator lineEnd, Rect& source,
-                           Rect& target) const
+void BitmapFont::printLine(Window& window, PrintIterator lineBegin, PrintIterator lineEnd,
+                           Rect& source, Rect& target) const
 {
     const int lineWidth = int((lineEnd - lineBegin) * moveVector.x);
 
@@ -133,7 +133,7 @@ void BitmapFont::printLine(PrintIterator lineBegin, PrintIterator lineEnd, Rect&
         {
             const auto index = *character - ' ';
             source.position = charSize * Vector2(index % dimensions.x, index / dimensions.x);
-            texture.render(source, target);
+            texture.render(window, source, target);
         }
 
         target.position.x += moveVector.x;

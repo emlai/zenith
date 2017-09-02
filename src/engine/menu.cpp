@@ -30,7 +30,7 @@ int Menu::getChoice(Window& window, BitmapFont& font)
 
     while (exitCode == -3)
     {
-        render(font);
+        render(window, font);
         window.updateScreen();
         const Key input = window.waitForInput();
 
@@ -183,7 +183,7 @@ void Menu::calculateItemPositions()
     }
 }
 
-void Menu::render(BitmapFont& font) const
+void Menu::render(Window& window, BitmapFont& font) const
 {
     int index = 1;
     auto position = itemPositions.begin();
@@ -191,7 +191,7 @@ void Menu::render(BitmapFont& font) const
     if (!title.empty())
     {
         font.setArea(*position);
-        font.print(title, normalColor);
+        font.print(window, title, normalColor);
         ++position;
     }
 
@@ -202,7 +202,7 @@ void Menu::render(BitmapFont& font) const
 
         if (item->mainImage)
         {
-            item->mainImage->render(itemPosition);
+            item->mainImage->render(window, itemPosition);
             itemPosition.x += item->mainImage->getWidth() + columnSpacing;
         }
 
@@ -210,12 +210,12 @@ void Menu::render(BitmapFont& font) const
             showNumbers ? std::to_string(index++) + numberSeparator + item->mainText : item->mainText;
 
         font.setArea(Rect(itemPosition, position->size));
-        font.print(text, selection == item ? selectionColor : normalColor);
+        font.print(window, text, selection == item ? selectionColor : normalColor);
         itemPosition.x += calculateMaxTextSize() * font.getColumnWidth() + columnSpacing;
 
         if (item->secondaryImage)
         {
-            item->secondaryImage->render(itemPosition);
+            item->secondaryImage->render(window, itemPosition);
             itemPosition.x += item->secondaryImage->getWidth() + columnSpacing;
         }
 
@@ -224,7 +224,7 @@ void Menu::render(BitmapFont& font) const
             auto oldLayout = font.getLayout();
             font.setLayout(TextLayout(secondaryColumnAlignment, font.getLayout().verticalAlignment));
             font.setArea(Rect(itemPosition, position->size - Vector2(itemPosition.x - initialPosition.x, 0)));
-            font.print(item->secondaryText, selection == item ? selectionColor : normalColor);
+            font.print(window, item->secondaryText, selection == item ? selectionColor : normalColor);
             font.setLayout(oldLayout);
         }
     }

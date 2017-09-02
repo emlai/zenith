@@ -136,13 +136,13 @@ void Creature::regenerate()
     editMP(0.1);
 }
 
-void Creature::render() const
+void Creature::render(Window& window) const
 {
-    sprite.render(getPosition() * Tile::size);
+    sprite.render(window, getPosition() * Tile::size);
 
     for (auto slotAndItem : getEquipment())
         if (slotAndItem.second)
-            slotAndItem.second->renderEquipped(getPosition() * Tile::size);
+            slotAndItem.second->renderEquipped(window, getPosition() * Tile::size);
 }
 
 void Creature::generateAttributes(boost::string_ref id)

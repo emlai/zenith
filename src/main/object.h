@@ -15,7 +15,7 @@ public:
     void save(SaveFile& file) const;
     bool close();
     bool blocksSight() const;
-    void render(Vector2 position) const;
+    void render(Window& window, Vector2 position) const;
     Sprite& getSprite() { return sprite; }
 
 private:

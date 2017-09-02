@@ -80,7 +80,7 @@ public:
     Creature(const SaveFile& file, Tile* tile);
     void save(SaveFile& file) const;
     void exist();
-    void render() const;
+    void render(Window& window) const;
 
     /// Returns true if the game should advance to the next turn.
     bool tryToMoveOrAttack(Dir8);

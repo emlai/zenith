@@ -10,7 +10,7 @@ GraphicsContext::GraphicsContext(const Window& window)
     renderer(SDL_CreateRenderer(window.windowHandle.get(), -1, 0), SDL_DestroyRenderer),
     framebuffer(SDL_CreateTexture(renderer.get(), SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING,
                                   window.getResolution().x, window.getResolution().y), SDL_DestroyTexture),
-    targetTexture(window, SDL_PIXELFORMAT_RGBA8888, window.getResolution()),
+    targetTexture(SDL_PIXELFORMAT_RGBA8888, window.getResolution()),
     animationFrameTime(10)
 {
     if (!renderer)
@@ -26,7 +26,7 @@ void GraphicsContext::setScale(double scale)
     SDL_RenderSetScale(renderer.get(), float(scale), float(scale));
     framebuffer.reset(SDL_CreateTexture(renderer.get(), SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING,
                                         window.getResolution().x, window.getResolution().y));
-    targetTexture = Texture(window, SDL_PIXELFORMAT_RGBA8888, window.getResolution());
+    targetTexture = Texture(SDL_PIXELFORMAT_RGBA8888, window.getResolution());
 }
 
 double GraphicsContext::getScale() const

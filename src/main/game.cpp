@@ -26,12 +26,12 @@ Game::Game(Window& window, bool loadSavedGame)
 :   Engine(window),
     world(*this)
 {
-    creatureSpriteSheet.emplace(getWindow(), "data/graphics/creature.bmp", transparentColor);
-    objectSpriteSheet.emplace(getWindow(), "data/graphics/object.bmp", transparentColor);
-    itemSpriteSheet.emplace(getWindow(), "data/graphics/item.bmp", transparentColor);
-    groundSpriteSheet.emplace(getWindow(), "data/graphics/ground.bmp");
-    cursorTexture.emplace(getWindow(), "data/graphics/cursor.bmp", transparentColor);
-    fogOfWarTexture.emplace(getWindow(), "data/graphics/fow.bmp", transparentColor);
+    creatureSpriteSheet.emplace("data/graphics/creature.bmp", transparentColor);
+    objectSpriteSheet.emplace("data/graphics/object.bmp", transparentColor);
+    itemSpriteSheet.emplace("data/graphics/item.bmp", transparentColor);
+    groundSpriteSheet.emplace("data/graphics/ground.bmp");
+    cursorTexture.emplace("data/graphics/cursor.bmp", transparentColor);
+    fogOfWarTexture.emplace("data/graphics/fow.bmp", transparentColor);
 
     mapKey(Esc, [this] { stop(); return false; });
     mapKey('q', [this] { stop(); return false; });
@@ -226,7 +226,7 @@ void Game::lookMode()
     {
         renderAtPosition(getWindow(), position);
         getWindow().getFont().setArea(GUI::getQuestionArea(getWindow()));
-        getWindow().getFont().print("Look mode (arrow keys to move around, esc to exit)");
+        getWindow().getFont().print(getWindow(), "Look mode (arrow keys to move around, esc to exit)");
         getWindow().updateScreen();
 
         switch (getWindow().waitForInput())
@@ -245,7 +245,7 @@ boost::optional<Dir8> Game::askForDirection(std::string&& question)
 {
     render(getWindow());
     getWindow().getFont().setArea(GUI::getQuestionArea(getWindow()));
-    getWindow().getFont().print(question);
+    getWindow().getFont().print(getWindow(), question);
     getWindow().updateScreen();
 
     switch (getWindow().waitForInput())
@@ -303,27 +303,28 @@ void Game::printPlayerInformation(BitmapFont& font) const
 #ifdef DEBUG
     if (showExtraInfo)
     {
-        font.printLine("");
-        font.printLine("x: " + std::to_string(player->getPosition().x));
-        font.printLine("y: " + std::to_string(player->getPosition().y));
-        font.printLine("z: " + std::to_string(player->getLevel()));
-        font.printLine("Turn " + std::to_string(getTurn()));
+        font.printLine(getWindow(), "");
+        font.printLine(getWindow(), "x: " + std::to_string(player->getPosition().x));
+        font.printLine(getWindow(), "y: " + std::to_string(player->getPosition().y));
+        font.printLine(getWindow(), "z: " + std::to_string(player->getLevel()));
+        font.printLine(getWindow(), "Turn " + std::to_string(getTurn()));
     }
 #endif
 }
 
 void Game::printStat(BitmapFont& font, boost::string_ref statName, double currentValue,
-                     double maximumValue, Color16 color)
+                     double maximumValue, Color16 color) const
 {
     std::string currentValueString = std::to_string(int(currentValue));
     std::string padding(std::max(0, 4 - int(currentValueString.size())), ' ');
-    font.printLine(statName + padding + currentValueString + '/' + std::to_string(int(maximumValue)), color);
+    font.printLine(getWindow(), statName + padding + currentValueString + '/' +
+                   std::to_string(int(maximumValue)), color);
 }
 
-void Game::printAttribute(BitmapFont& font, boost::string_ref attributeName, double attributeValue)
+void Game::printAttribute(BitmapFont& font, boost::string_ref attributeName, double attributeValue) const
 {
     std::string padding(5 - attributeName.size(), ' ');
-    font.printLine(attributeName + padding + std::to_string(int(attributeValue)));
+    font.printLine(getWindow(), attributeName + padding + std::to_string(int(attributeValue)));
 }
 
 #ifdef DEBUG

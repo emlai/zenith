@@ -21,8 +21,8 @@ public:
     bool use(Creature& user, Game& game);
     EquipmentSlot getEquipmentSlot() const;
     virtual std::string getNameAdjective() const override;
-    void render(Vector2 position) const;
-    virtual void renderEquipped(Vector2 position) const;
+    void render(Window& window, Vector2 position) const;
+    virtual void renderEquipped(Window& window, Vector2 position) const;
     const Sprite& getSprite() const { return sprite; }
 
 protected:
@@ -39,7 +39,7 @@ class Corpse final : public Item
 public:
     Corpse(std::unique_ptr<Creature> creature);
     Corpse(boost::string_ref creatureId);
-    void renderEquipped(Vector2 position) const override;
+    void renderEquipped(Window& window, Vector2 position) const override;
     void save(SaveFile& file) const override;
 
 private:

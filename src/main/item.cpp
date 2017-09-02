@@ -114,14 +114,14 @@ std::string Item::getNameAdjective() const
     return pascalCaseToSentenceCase(materialId);
 }
 
-void Item::render(Vector2 position) const
+void Item::render(Window& window, Vector2 position) const
 {
-    sprite.render(position);
+    sprite.render(window, position);
 }
 
-void Item::renderEquipped(Vector2 position) const
+void Item::renderEquipped(Window& window, Vector2 position) const
 {
-    sprite.render(position, Vector2(0, Tile::size));
+    sprite.render(window, position, Vector2(0, Tile::size));
 }
 
 std::string getRandomMaterialId(boost::string_ref itemId)
@@ -145,9 +145,9 @@ Corpse::Corpse(boost::string_ref creatureId)
     sprite.setFrame(2);
 }
 
-void Corpse::renderEquipped(Vector2 position) const
+void Corpse::renderEquipped(Window& window, Vector2 position) const
 {
-    render(position);
+    render(window, position);
 }
 
 void Corpse::save(SaveFile& file) const

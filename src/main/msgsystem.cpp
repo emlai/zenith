@@ -38,20 +38,20 @@ namespace MessageSystem
 #endif
 }
 
-void MessageSystem::drawMessages(const Window& window, BitmapFont& font,
+void MessageSystem::drawMessages(Window& window, BitmapFont& font,
                                  const std::vector<Message>& messages, int currentTurn)
 {
     font.setArea(GUI::getMessageArea(window));
     for (int end = int(messages.size()), i = std::max(0, end - maxMessagesToPrint); i < end; ++i)
     {
         bool isNewMessage = messages[i].getTurn() >= currentTurn - 1;
-        font.printLine(messages[i].getText(), isNewMessage ? TextColor::White : TextColor::Gray);
+        font.printLine(window, messages[i].getText(), isNewMessage ? TextColor::White : TextColor::Gray);
     }
 
 #ifdef DEBUG
     font.setArea(GUI::getDebugMessageArea(window));
     for (const DebugMessage& message : debugMessages)
-        font.printLine(message.content, messageColors[message.type]);
+        font.printLine(window, message.content, messageColors[message.type]);
 #endif
 }
 

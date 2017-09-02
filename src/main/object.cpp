@@ -44,7 +44,7 @@ bool Object::blocksSight() const
     return Game::objectConfig.get<bool>(getId(), "blocksSight");
 }
 
-void Object::render(Vector2 position) const
+void Object::render(Window& window, Vector2 position) const
 {
-    sprite.render(position);
+    sprite.render(window, position);
 }

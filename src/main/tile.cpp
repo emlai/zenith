@@ -58,22 +58,22 @@ void Tile::render(Window& window, int zIndex, bool fogOfWar) const
     switch (zIndex)
     {
         case 0:
-            groundSprite.render(position * sizeVector);
+            groundSprite.render(window, position * sizeVector);
             break;
         case 1:
             for (const auto& item : items)
-                item->render(position * sizeVector);
+                item->render(window, position * sizeVector);
             break;
         case 2:
             if (object)
-                object->render(position * sizeVector);
+                object->render(window, position * sizeVector);
             break;
         case 3:
             if (fogOfWar)
                 break;
 
             for (const auto& creature : creatures)
-                creature->render();
+                creature->render(window);
             break;
         case 4:
             if (fogOfWar)
@@ -84,7 +84,7 @@ void Tile::render(Window& window, int zIndex, bool fogOfWar) const
             break;
         case 5:
             if (fogOfWar)
-                Game::fogOfWarTexture->render(position * sizeVector);
+                Game::fogOfWarTexture->render(window, position * sizeVector);
             break;
         case 6:
         {

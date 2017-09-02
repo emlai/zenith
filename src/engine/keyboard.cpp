@@ -53,8 +53,8 @@ int keyboard::readLine(Window& window, std::string& line, Vector2 position, Rend
     {
         render(window);
         font.setArea(Rect(position, window.getResolution() - position));
-        font.print(prefix);
-        font.printWithCursor(line, &*cursor);
+        font.print(window, prefix);
+        font.printWithCursor(window, line, &*cursor);
         window.updateScreen();
         SDL_WaitEvent(&event);
         exitCode = readLineProcessKey(event, line, cursor);

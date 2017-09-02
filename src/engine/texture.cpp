@@ -4,10 +4,9 @@
 #include <SDL.h>
 #include <stdexcept>
 
-Texture::Texture(const Window& window, std::vector<Color32>&& pixelData, uint32_t pixelFormat,
+Texture::Texture(std::vector<Color32>&& pixelData, uint32_t pixelFormat,
                  Vector2 size)
-:   window(&window),
-    surface(SDL_CreateRGBSurfaceWithFormatFrom(pixelData.data(), size.x, size.y,
+:   surface(SDL_CreateRGBSurfaceWithFormatFrom(pixelData.data(), size.x, size.y,
                                                SDL_BITSPERPIXEL(pixelFormat),
                                                size.x * SDL_BYTESPERPIXEL(pixelFormat), pixelFormat),
             SDL_FreeSurface),
@@ -16,8 +15,8 @@ Texture::Texture(const Window& window, std::vector<Color32>&& pixelData, uint32_
     setBlendMode(true);
 }
 
-Texture::Texture(const Window& window, boost::string_ref fileName, Color32 transparentColor)
-:   window(&window), surface(SDL_LoadBMP(fileName.to_string().c_str()), SDL_FreeSurface)
+Texture::Texture(boost::string_ref fileName, Color32 transparentColor)
+:   surface(SDL_LoadBMP(fileName.to_string().c_str()), SDL_FreeSurface)
 {
     if (!surface)
         throw std::runtime_error("Unable to load " + fileName + ": " + SDL_GetError());
@@ -35,9 +34,8 @@ Texture::Texture(const Window& window, boost::string_ref fileName, Color32 trans
     }
 }
 
-Texture::Texture(const Window& window, uint32_t pixelFormat, Vector2 size)
-:   window(&window),
-    surface(SDL_CreateRGBSurfaceWithFormat(0, size.x, size.y, 32, pixelFormat), SDL_FreeSurface)
+Texture::Texture(uint32_t pixelFormat, Vector2 size)
+:   surface(SDL_CreateRGBSurfaceWithFormat(0, size.x, size.y, 32, pixelFormat), SDL_FreeSurface)
 {
 }
 
@@ -46,32 +44,32 @@ void Texture::setBlendMode(bool state)
     SDL_SetSurfaceBlendMode(surface.get(), state ? SDL_BLENDMODE_BLEND : SDL_BLENDMODE_NONE);
 }
 
-void Texture::render(Vector2 position) const
+void Texture::render(Window& window, Vector2 position) const
 {
-    render(Rect(Vector2::zeroVector, getSize()), Rect(position, getSize()));
+    render(window, Rect(Vector2::zeroVector, getSize()), Rect(position, getSize()));
 }
 
-void Texture::render(Rect target) const
+void Texture::render(Window& window, Rect target) const
 {
-    render(Rect(Vector2::zeroVector, getSize()), target);
+    render(window, Rect(Vector2::zeroVector, getSize()), target);
 }
 
-void Texture::render(Rect source, Rect target) const
+void Texture::render(Window& window, Rect source, Rect target) const
 {
-    target = window->context.mapToTargetCoordinates(target);
+    target = window.context.mapToTargetCoordinates(target);
 
     SDL_BlitSurface(surface.get(),
                     reinterpret_cast<SDL_Rect*>(&source),
-                    window->context.targetTexture.getSurface(),
+                    window.context.targetTexture.getSurface(),
                     reinterpret_cast<SDL_Rect*>(&target));
 }
 
 // TODO: Move this functionality out of the engine to the game.
-void Texture::render(Rect source, Rect target, Color32 materialColor) const
+void Texture::render(Window& window, Rect source, Rect target, Color32 materialColor) const
 {
-    target = window->context.mapToTargetCoordinates(target);
+    target = window.context.mapToTargetCoordinates(target);
 
-    SDL_Surface* targetSurface = window->context.targetTexture.getSurface();
+    SDL_Surface* targetSurface = window.context.targetTexture.getSurface();
     const uint32_t* sourcePixels = static_cast<const uint32_t*>(surface->pixels);
     uint32_t* targetPixels = static_cast<uint32_t*>(targetSurface->pixels);
     auto sourceWidth = surface->w;

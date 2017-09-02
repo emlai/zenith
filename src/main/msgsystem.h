@@ -25,7 +25,7 @@ private:
 
 namespace MessageSystem
 {
-    void drawMessages(const Window& window, BitmapFont&, const std::vector<Message>& messages,
+    void drawMessages(Window& window, BitmapFont&, const std::vector<Message>& messages,
                       int currentTurn);
 
 #ifdef DEBUG
