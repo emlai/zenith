@@ -27,12 +27,9 @@ public:
     Vector2 getSize() const;
     int getWidth() const;
     int getHeight() const;
-
-private:
-    friend class GraphicsContext;
-
     SDL_Surface* getSurface() const { return surface.get(); }
 
+private:
     std::unique_ptr<SDL_Surface, void (*)(SDL_Surface*)> surface;
     std::vector<Color32> pixelData;
 };

@@ -3,6 +3,7 @@
 #include "entity.h"
 #include "creature.h"
 #include "item.h"
+#include "liquid.h"
 #include "object.h"
 #include "engine/color.h"
 #include "engine/geometry.h"
@@ -24,6 +25,7 @@ public:
     Tile(World& world, Vector2 position, int level, boost::string_ref groundId);
     Tile(const SaveFile& file, World& world, Vector2 position, int level);
     void save(SaveFile& file) const;
+    void exist();
     void render(Window& window, int zIndex, bool fogOfWar) const;
     template<typename... Args>
     Creature* spawnCreature(Args&&...);
@@ -37,6 +39,7 @@ public:
     const std::vector<std::unique_ptr<Item>>& getItems() const { return items; }
     std::unique_ptr<Item> removeTopmostItem();
     void addItem(std::unique_ptr<Item> item);
+    void addLiquid(boost::string_ref materialId);
     bool hasObject() const { return bool(object); }
     Object* getObject() { return object.get(); }
     const Object* getObject() const { return object.get(); }
@@ -69,6 +72,7 @@ private:
 
     std::vector<std::unique_ptr<Creature>> creatures;
     std::vector<std::unique_ptr<Item>> items;
+    std::vector<Liquid> liquids;
     std::unique_ptr<Object> object;
     World& world;
     Vector2 position;

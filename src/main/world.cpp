@@ -39,6 +39,8 @@ void World::exist(Rect region, int level)
 
     forEachTile(region, level, [&](Tile& tile)
     {
+        tile.exist();
+
         for (auto& creature : tile.getCreatures())
             creaturesToUpdate.push_back(creature.get());
     });

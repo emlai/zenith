@@ -87,6 +87,7 @@ public:
     bool tryToMoveTowardsOrAttack(Creature& target);
     bool enter();
     void takeDamage(double amount);
+    void bleed();
     bool pickUpItem();
     void equip(EquipmentSlot slot, Item* itemToEquip);
     bool use(Item&, Game& game);

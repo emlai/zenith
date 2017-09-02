@@ -134,6 +134,18 @@ struct Config::ConversionTraits<unsigned>
 };
 
 template<>
+struct Config::ConversionTraits<unsigned short>
+{
+    boost::optional<unsigned short> operator()(const Value& value)
+    {
+        if (auto intValue = get<long long>(value))
+            return boost::numeric_cast<unsigned short>(*intValue);
+
+        return boost::none;
+    }
+};
+
+template<>
 struct Config::ConversionTraits<double>
 {
     boost::optional<double> operator()(const Value& value)

@@ -39,6 +39,11 @@ Tile::Tile(const SaveFile& file, World& world, Vector2 position, int level)
     for (int i = 0; i < itemCount; ++i)
         items.push_back(Item::load(file));
 
+    auto liquidCount = file.readInt32();
+    liquids.reserve(size_t(liquidCount));
+    for (int i = 0; i < liquidCount; ++i)
+        liquids.push_back(Liquid(file));
+
     if (file.readBool())
         object = std::make_unique<Object>(file);
 }
@@ -48,9 +53,24 @@ void Tile::save(SaveFile& file) const
     file.write(groundId);
     file.write(creatures);
     file.write(items);
+    file.write(liquids);
     file.write(object != nullptr);
     if (object)
         object->save(file);
+}
+
+void Tile::exist()
+{
+    for (auto it = liquids.begin(); it != liquids.end();)
+    {
+        if (it->exists())
+        {
+            it->exist();
+            ++it;
+        }
+        else
+            it = liquids.erase(it);
+    }
 }
 
 void Tile::render(Window& window, int zIndex, bool fogOfWar) const
@@ -59,6 +79,9 @@ void Tile::render(Window& window, int zIndex, bool fogOfWar) const
     {
         case 0:
             groundSprite.render(window, position * sizeVector);
+
+            for (auto& liquid : liquids)
+                liquid.render(window, position * sizeVector);
             break;
         case 1:
             for (const auto& item : items)
@@ -182,6 +205,11 @@ std::unique_ptr<Item> Tile::removeTopmostItem()
 void Tile::addItem(std::unique_ptr<Item> item)
 {
     items.push_back(std::move(item));
+}
+
+void Tile::addLiquid(boost::string_ref materialId)
+{
+    liquids.push_back(Liquid(materialId));
 }
 
 void Tile::setObject(std::unique_ptr<Object> newObject)

@@ -125,6 +125,7 @@ void Creature::save(SaveFile& file) const
 
 void Creature::exist()
 {
+    bleed();
     regenerate();
     controller->control(*this);
 }
@@ -421,6 +422,22 @@ void Creature::takeDamage(double amount)
             for (auto* observer : getCreaturesCurrentlySeenBy(20))
                 observer->addMessage("The ", getName(), " dies.");
         }
+    }
+}
+
+void Creature::bleed()
+{
+    auto chance = 1.0 - std::max(0.0, currentHP / maxHP);
+
+    while (true)
+    {
+        chance -= randFloat();
+
+        if (chance <= 0)
+            break;
+
+        for (auto* tile : getTilesUnder())
+            tile->addLiquid("Blood");
     }
 }
 
