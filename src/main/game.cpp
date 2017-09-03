@@ -47,7 +47,7 @@ int Game::showInventory(boost::string_ref title, bool showNothingAsOption, Item*
 {
     Menu menu;
     menu.addTitle(title);
-    menu.setArea(GUI::getWorldViewport(getWindow()));
+    menu.setArea(GUI::getInventoryArea(getWindow()));
     menu.setItemSize(Tile::size);
     menu.setTextLayout(TextLayout(LeftAlign, VerticalCenter));
     menu.setColumnSpacing(Tile::size / 2);
@@ -83,7 +83,7 @@ void Game::showEquipmentMenu()
     {
         Menu menu;
         menu.addTitle("Equipment");
-        menu.setArea(GUI::getWorldViewport(getWindow()));
+        menu.setArea(GUI::getInventoryArea(getWindow()));
         menu.setItemSize(Tile::size);
         menu.setTextLayout(TextLayout(LeftAlign, VerticalCenter));
         menu.setColumnSpacing(Tile::size / 2);
@@ -187,6 +187,18 @@ void Game::renderAtPosition(Window& window, Vector2 centerPosition)
 
     printPlayerInformation(window.getFont());
     MessageSystem::drawMessages(window, window.getFont(), player->getMessages(), getTurn());
+
+    bool enableGUIDebugRectangles = false;
+    if (enableGUIDebugRectangles)
+    {
+        window.getGraphicsContext().renderRectangle(GUI::getWorldViewport(window), GUIColor::Gray);
+        window.getGraphicsContext().renderRectangle(GUI::getMessageArea(window), GUIColor::Gray);
+        window.getGraphicsContext().renderRectangle(GUI::getSidebarArea(window), GUIColor::Gray);
+        window.getGraphicsContext().renderRectangle(GUI::getQuestionArea(window), GUIColor::Gray);
+        window.getGraphicsContext().renderRectangle(GUI::getInventoryArea(window), GUIColor::Gray);
+        window.getGraphicsContext().renderRectangle(GUI::getCommandLineArea(window), GUIColor::Gray);
+        window.getGraphicsContext().renderRectangle(GUI::getDebugMessageArea(window), GUIColor::Gray);
+    }
 }
 
 void Game::printPlayerInformation(BitmapFont& font) const
@@ -203,9 +215,10 @@ void Game::printPlayerInformation(BitmapFont& font) const
     if (showExtraInfo)
     {
         font.printLine(getWindow(), "");
-        font.printLine(getWindow(), "x: " + std::to_string(player->getPosition().x));
-        font.printLine(getWindow(), "y: " + std::to_string(player->getPosition().y));
-        font.printLine(getWindow(), "z: " + std::to_string(player->getLevel()));
+        font.printLine(getWindow(), "Pos " +
+                       std::to_string(player->getPosition().x) + ", " +
+                       std::to_string(player->getPosition().y) + ", " +
+                       std::to_string(player->getLevel()));
         font.printLine(getWindow(), "Turn " + std::to_string(getTurn()));
     }
 #endif
@@ -232,7 +245,7 @@ void Game::enterCommandMode(Window& window)
 {
     for (std::string command;;)
     {
-        int result = keyboard::readLine(window, command, GUI::commandLinePosition,
+        int result = keyboard::readLine(window, command, GUI::getCommandLineArea(window).position,
                                         std::bind(&Game::render, this, std::placeholders::_1), ">> ");
 
         if (result == Enter && !command.empty())

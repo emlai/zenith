@@ -29,33 +29,55 @@ namespace TextColor
 namespace GUI
 {
     const Vector2 windowSize = Vector2(640, 480);
-
-    inline Rect getWorldViewport(const Window& window)
-    {
-        return Rect(24, 36, window.getResolution().x - 160, window.getResolution().y - 132);
-    }
+    const Vector2 spacing(12, 12);
+    const int fontHeight = 12;
+    const int questionAreaHeight = spacing.y + fontHeight + spacing.y;
 
     inline Rect getSidebarArea(const Window& window)
     {
-        return Rect(window.getResolution().x - 84, 48, 84, window.getResolution().y - 24);
-    }
-
-    inline Rect getMessageArea(const Window& window)
-    {
-        return Rect(36, window.getResolution().y - 85, window.getResolution().x - 136, 60);
+        auto height = (window.getResolution().y - questionAreaHeight) / 2 - spacing.y / 2;
+        auto width = height * 3 / 4;
+        return Rect(window.getResolution().x - width - spacing.x, questionAreaHeight, width, height);
     }
 
     inline Rect getQuestionArea(const Window& window)
     {
-        return Rect(36, 12, window.getResolution().x - 136, 12);
+        return Rect(spacing.x, spacing.y, window.getResolution().x - spacing.x * 2, fontHeight);
+    }
+
+    inline Rect getWorldViewport(const Window& window)
+    {
+        auto top = questionAreaHeight;
+        return Rect(0, top, window.getResolution().x - getSidebarArea(window).getWidth() - spacing.x * 2,
+                    window.getResolution().y - top);
+    }
+
+    inline Rect getMessageArea(const Window& window)
+    {
+        auto sidebarArea = getSidebarArea(window);
+        return Rect(sidebarArea.getLeft(), sidebarArea.getBottom() + spacing.y,
+                    sidebarArea.getWidth(), sidebarArea.getHeight());
+    }
+
+    inline Rect getInventoryArea(const Window& window)
+    {
+        return getWorldViewport(window).inset(spacing);
     }
 
 #ifdef DEBUG
-    const Vector2 commandLinePosition = Vector2(36, 36);
+    inline Rect getCommandLineArea(const Window& window)
+    {
+        auto worldViewport = getWorldViewport(window);
+        auto questionArea = getQuestionArea(window);
+        return Rect(worldViewport.getLeft() + spacing.x, worldViewport.getTop() + spacing.y,
+                    worldViewport.getWidth() - spacing.x * 2, questionArea.getHeight());
+    }
 
     inline Rect getDebugMessageArea(const Window& window)
     {
-        return Rect(36, 48, window.getResolution().x - 124, 60);
+        auto commandLineArea = getCommandLineArea(window);
+        return Rect(commandLineArea.getLeft(), commandLineArea.getBottom() + spacing.y,
+                    commandLineArea.getWidth(), 60);
     }
 #endif
 }
