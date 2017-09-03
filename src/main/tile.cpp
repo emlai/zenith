@@ -105,8 +105,8 @@ void Tile::render(Window& window, int zIndex, bool fogOfWar) const
             if (fogOfWar)
                 break;
 
-            window.getGraphicsContext().renderRectangle(Rect(position * sizeVector, sizeVector),
-                                                        light, BlendMode::LinearLight);
+            window.getGraphicsContext().renderFilledRectangle(Rect(position * sizeVector, sizeVector),
+                                                              light, BlendMode::LinearLight);
             break;
         case 5:
             if (fogOfWar)
