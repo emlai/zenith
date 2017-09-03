@@ -162,7 +162,11 @@ void Creature::addMessage(Args&&... messageParts)
     (void) expansion;
     std::string message = stream.str();
     message[0] = char(std::toupper(message[0]));
-    messages.emplace_back(std::move(message), getTurn());
+
+    if (!messages.empty() && messages.back().getText() == message)
+        messages.back().increaseCount(getTurn());
+    else
+        messages.emplace_back(std::move(message), getTurn());
 }
 
 Attribute stringToAttribute(boost::string_ref);
