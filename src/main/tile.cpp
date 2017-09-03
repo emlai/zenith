@@ -71,6 +71,9 @@ void Tile::exist()
         else
             it = liquids.erase(it);
     }
+
+    for (auto& item : items)
+        item->exist();
 }
 
 void Tile::render(Window& window, int zIndex, bool fogOfWar) const

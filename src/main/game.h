@@ -16,7 +16,15 @@ public:
     Game(Window&, bool loadSavedGame);
     void save();
     void load();
+    int showInventory(boost::string_ref title, bool showNothingAsOption, Item* preselectedItem = nullptr,
+                      std::function<bool(const Item&)> itemFilter = nullptr);
+    void showEquipmentMenu();
+    void lookMode();
     boost::optional<Dir8> askForDirection(std::string&& question);
+    void render(Window&) override;
+#ifdef DEBUG
+    void enterCommandMode(Window&);
+#endif
 
     static const Config creatureConfig;
     static const Config objectConfig;
@@ -33,11 +41,6 @@ public:
     static constexpr auto saveFileName = "zenith.sav";
 
 private:
-    int showInventory(boost::string_ref title, bool showNothingAsOption, Item* preselectedItem = nullptr,
-                      std::function<bool(const Item&)> itemFilter = nullptr);
-    void showEquipmentMenu();
-    void lookMode();
-    void render(Window&) override;
     void renderAtPosition(Window&, Vector2 centerPosition);
     void updateLogic() override;
 
@@ -49,7 +52,6 @@ private:
     Creature* player;
 
 #ifdef DEBUG
-    void enterCommandMode(Window&);
     void parseCommand(boost::string_ref);
 
     bool showExtraInfo = true;

@@ -1,6 +1,7 @@
 #pragma once
 
 class Creature;
+class Game;
 
 class CreatureController
 {
@@ -16,5 +17,11 @@ class AIController : public CreatureController
 
 class PlayerController : public CreatureController
 {
+public:
+    PlayerController(Game& game) : game(game) {}
+
+private:
     void control(Creature& creature) override;
+
+    Game& game;
 };

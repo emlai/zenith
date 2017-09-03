@@ -45,28 +45,13 @@ void World::exist(Rect region, int level)
             creaturesToUpdate.push_back(creature.get());
     });
 
+    // Sort the creatures according to their memory addresses to update them in a consistent order.
+    std::sort(creaturesToUpdate.begin(), creaturesToUpdate.end());
     creaturesToUpdate.erase(std::unique(creaturesToUpdate.begin(), creaturesToUpdate.end()),
                             creaturesToUpdate.end());
 
     for (auto* creature : creaturesToUpdate)
-        if (!creature->isDead())
-            creature->exist();
-
-    for (auto* creature : creaturesToUpdate)
-        if (creature->isDead())
-        {
-            if (creature->getTilesUnder().size() == 1)
-            {
-                auto dead = creature->getTileUnder(0).removeSingleTileCreature(*creature);
-                creature->getTileUnder(0).addItem(std::make_unique<Corpse>(std::move(dead)));
-            }
-            else
-            {
-                // TODO: Implement multi-tile creature corpses.
-                for (auto* tile : creature->getTilesUnder())
-                    tile->removeCreature(*creature);
-            }
-        }
+        creature->exist();
 }
 
 void World::render(Window& window, Rect region, int level, const Creature& player)

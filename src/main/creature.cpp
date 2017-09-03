@@ -125,8 +125,12 @@ void Creature::save(SaveFile& file) const
 
 void Creature::exist()
 {
-    bleed();
-    regenerate();
+    if (!isDead())
+    {
+        bleed();
+        regenerate();
+    }
+
     controller->control(*this);
 }
 
@@ -411,17 +415,34 @@ void Creature::attack(Creature& target)
 
 void Creature::takeDamage(double amount)
 {
+    assert(!isDead());
+
     if (amount > 0)
     {
         currentHP -= amount;
 
         if (isDead())
-        {
-            addMessage("You die.");
+            onDeath();
+    }
+}
 
-            for (auto* observer : getCreaturesCurrentlySeenBy(20))
-                observer->addMessage("The ", getName(), " dies.");
-        }
+void Creature::onDeath()
+{
+    addMessage("You die.");
+
+    for (auto* observer : getCreaturesCurrentlySeenBy(20))
+        observer->addMessage("The ", getName(), " dies.");
+
+    if (getTilesUnder().size() == 1)
+    {
+        std::unique_ptr<Creature> self = getTileUnder(0).removeSingleTileCreature(*this);
+        getTileUnder(0).addItem(std::make_unique<Corpse>(std::move(self)));
+    }
+    else
+    {
+        // TODO: Implement multi-tile creature corpses.
+        for (auto* tile : getTilesUnder())
+            tile->removeCreature(*this);
     }
 }
 

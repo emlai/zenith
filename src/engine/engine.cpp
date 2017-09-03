@@ -5,23 +5,12 @@
 
 void Engine::run()
 {
-    for (running = true; running && !window.shouldClose();)
-    {
-        while (true)
-        {
-            render(window);
-            window.updateScreen();
+    running = true;
 
-            if (processInput(window))
-            {
-                updateLogic();
-                advanceTurn();
-            }
+    while (running && !window.shouldClose())
+        updateLogic();
 
-            if (!running || window.shouldClose())
-                return;
-        }
-    }
+    running = false;
 }
 
 void Engine::mapKey(Key key, const std::function<bool()>& function)

@@ -17,6 +17,7 @@ public:
     Item(boost::string_ref id, boost::string_ref materialId);
     static std::unique_ptr<Item> load(const SaveFile& file);
     virtual void save(SaveFile& file) const;
+    virtual void exist() {}
     bool isUsable() const;
     bool use(Creature& user, Game& game);
     EquipmentSlot getEquipmentSlot() const;
@@ -39,6 +40,7 @@ class Corpse final : public Item
 public:
     Corpse(std::unique_ptr<Creature> creature);
     Corpse(boost::string_ref creatureId);
+    void exist() override;
     void renderEquipped(Window& window, Vector2 position) const override;
     void save(SaveFile& file) const override;
 

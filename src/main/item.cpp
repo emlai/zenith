@@ -1,4 +1,5 @@
 #include "item.h"
+#include "creature.h"
 #include "game.h"
 #include "gui.h"
 #include "tile.h"
@@ -143,6 +144,12 @@ Corpse::Corpse(boost::string_ref creatureId)
          Sprite(*Game::creatureSpriteSheet, getSpriteTextureRegion(Game::creatureConfig, creatureId)))
 {
     sprite.setFrame(2);
+}
+
+void Corpse::exist()
+{
+    if (creature)
+        creature->exist();
 }
 
 void Corpse::renderEquipped(Window& window, Vector2 position) const

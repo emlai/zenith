@@ -33,113 +33,12 @@ Game::Game(Window& window, bool loadSavedGame)
     cursorTexture.emplace("data/graphics/cursor.bmp", transparentColor);
     fogOfWarTexture.emplace("data/graphics/fow.bmp", transparentColor);
 
-    mapKey(Esc, [this] { stop(); return false; });
-    mapKey('q', [this] { stop(); return false; });
-
-    auto ifAlive = [&](auto action)
-    {
-        return [=]
-        {
-            return !player->isDead() && action();
-        };
-    };
-
-    mapKey(RightArrow, ifAlive([this]
-    {
-        return player->tryToMoveOrAttack(East);
-    }));
-
-    mapKey(LeftArrow, ifAlive([this]
-    {
-        return player->tryToMoveOrAttack(West);
-    }));
-
-    mapKey(DownArrow, ifAlive([this]
-    {
-        return player->tryToMoveOrAttack(South);
-    }));
-
-    mapKey(UpArrow, ifAlive([this]
-    {
-        return player->tryToMoveOrAttack(North);
-    }));
-
-    mapKey(Enter, ifAlive([this]
-    {
-        return player->enter();
-    }));
-
-    mapKey('.', [this]
-    {
-        return true;
-    });
-
-    mapKey(',', ifAlive([this]
-    {
-        return player->pickUpItem();
-    }));
-
-    mapKey('l', [this]
-    {
-        lookMode();
-        return false;
-    });
-
-    mapKey('i', [this]
-    {
-        showInventory("Inventory", false);
-        return false;
-    });
-
-    mapKey('e', ifAlive([this]
-    {
-        showEquipmentMenu();
-        return false;
-    }));
-
-    mapKey('u', ifAlive([this]
-    {
-        int selectedItemIndex = showInventory("What do you want to use?", false, nullptr, [](auto& item)
-        {
-            return item.isUsable();
-        });
-
-        if (selectedItemIndex != Menu::Exit)
-            return player->use(*player->getInventory()[selectedItemIndex], *this);
-
-        return false;
-    }));
-
-    mapKey('d', ifAlive([this]
-    {
-        int selectedItemIndex = showInventory("What do you want to drop?", false);
-
-        if (selectedItemIndex != Menu::Exit)
-        {
-            player->drop(*player->getInventory()[selectedItemIndex]);
-            return true;
-        }
-
-        return false;
-    }));
-
-    mapKey('c', ifAlive([this]
-    {
-        boost::optional<Dir8> direction = askForDirection("What do you want to close?");
-
-        return direction && player->close(*direction);
-    }));
-
-#ifdef DEBUG
-    mapKey(Tab, [this] { enterCommandMode(getWindow()); return false; });
-#endif
-
     if (loadSavedGame)
         load();
     else
     {
         auto* tile = world.getOrCreateTile({0, 0}, 0);
-        player = tile->spawnCreature("Human", std::make_unique<PlayerController>());
+        player = tile->spawnCreature("Human", std::make_unique<PlayerController>(*this));
     }
 }
 
@@ -357,7 +256,7 @@ void Game::enterCommandMode(Window& window)
 void Game::parseCommand(boost::string_ref command)
 {
     if (command == "respawn")
-        *player = Creature(&player->getTileUnder(0), "Human", std::make_unique<PlayerController>());
+        *player = Creature(&player->getTileUnder(0), "Human", std::make_unique<PlayerController>(*this));
     else if (command == "clear")
         MessageSystem::clearDebugMessageHistory();
     else if (command == "info")
@@ -393,5 +292,5 @@ void Game::load()
     auto playerLevel = file.readInt32();
     world.load(file);
     player = &world.getTile(playerPosition, playerLevel)->getCreature(0);
-    player->setController(std::make_unique<PlayerController>());
+    player->setController(std::make_unique<PlayerController>(*this));
 }

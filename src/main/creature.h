@@ -135,6 +135,7 @@ private:
     void editAP(double amount) { currentAP = std::min(currentAP + amount, maxAP); }
     void editMP(double amount) { currentMP = std::min(currentMP + amount, maxMP); }
     void regenerate();
+    void onDeath();
     static std::vector<Attribute> initDisplayedAttributes(boost::string_ref);
     static std::vector<std::vector<int>> initAttributeIndices(boost::string_ref);
     const auto& getAttributeIndices(int attribute) const { return attributeIndices[attribute]; }
