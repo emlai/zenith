@@ -45,7 +45,9 @@ void MessageSystem::drawMessages(Window& window, BitmapFont& font,
     for (int end = int(messages.size()), i = std::max(0, end - maxMessagesToPrint); i < end; ++i)
     {
         bool isNewMessage = messages[i].getTurn() >= currentTurn - 1;
-        font.printLine(window, messages[i].getText(), isNewMessage ? TextColor::White : TextColor::Gray);
+        auto color = isNewMessage ? TextColor::White : TextColor::Gray;
+        font.print(window, "- ", color);
+        font.printLine(window, messages[i].getText(), color);
     }
 
 #ifdef DEBUG

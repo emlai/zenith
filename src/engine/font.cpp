@@ -2,6 +2,7 @@
 #include "geometry.h"
 #include <algorithm>
 #include <fstream>
+#include <sstream>
 #include <stdexcept>
 
 const Vector2 BitmapFont::dimensions = Vector2(16, 6);
@@ -62,9 +63,8 @@ void BitmapFont::print(Window& window, boost::string_ref text, Color32 color)
 
 void BitmapFont::printLine(Window& window, boost::string_ref text, Color32 color)
 {
-    int startX = currentPosition.x;
     print(window, text, color);
-    currentPosition.x = startX;
+    currentPosition.x = printArea.position.x;
     currentPosition.y += moveVector.y;
 }
 
@@ -85,6 +85,28 @@ Vector2 BitmapFont::printHelper(Window& window, boost::string_ref text, Vector2 
     Rect source;
     source.size = charSize;
     Rect target(position, charSize);
+
+    std::istringstream stream(text.to_string());
+    std::string splitText;
+    int currentLineSize = 0;
+    int maxLineSize = printArea.getRight() - position.x;
+
+    for (std::string word; stream >> word;)
+    {
+        if ((currentLineSize + int(word.size())) * moveVector.x > maxLineSize)
+        {
+            assert(splitText.back() == ' ');
+            splitText.back() = '\n';
+            currentLineSize = 0;
+        }
+
+        splitText += word;
+        splitText += ' ';
+        currentLineSize += word.size() + 1;
+    }
+
+    text = splitText;
+
     const auto lineCount = 1 + std::count(text.begin(), text.end(), '\n');
     const auto textHeight = lineCount * moveVector.y;
 
@@ -105,6 +127,7 @@ Vector2 BitmapFont::printHelper(Window& window, boost::string_ref text, Vector2 
                 return target.position;
             else
             {
+                target.position.x = position.x;
                 target.position.y += moveVector.y;
                 lineBegin = character + 1;
             }
