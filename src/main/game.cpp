@@ -201,8 +201,10 @@ void Game::renderAtPosition(Window& window, Vector2 centerPosition)
         window.getGraphicsContext().renderRectangle(GUI::getSidebarArea(window), GUIColor::Gray);
         window.getGraphicsContext().renderRectangle(GUI::getQuestionArea(window), GUIColor::Gray);
         window.getGraphicsContext().renderRectangle(GUI::getInventoryArea(window), GUIColor::Gray);
+#ifdef DEBUG
         window.getGraphicsContext().renderRectangle(GUI::getCommandLineArea(window), GUIColor::Gray);
         window.getGraphicsContext().renderRectangle(GUI::getDebugMessageArea(window), GUIColor::Gray);
+#endif
     }
 }
 
