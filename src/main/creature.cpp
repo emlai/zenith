@@ -420,8 +420,12 @@ void Creature::attack(Creature& target)
     targetMessage << ".";
 
 #ifdef DEBUG
-    attackerMessage << std::fixed << std::setprecision(1) << " (" << damage << ")";
-    targetMessage << std::fixed << std::setprecision(1) << " (" << damage << ")";
+    bool showDamageNumbers = false;
+    if (showDamageNumbers)
+    {
+        attackerMessage << std::fixed << std::setprecision(1) << " (" << damage << ")";
+        targetMessage << std::fixed << std::setprecision(1) << " (" << damage << ")";
+    }
 #endif
 
     addMessage(attackerMessage.str());
