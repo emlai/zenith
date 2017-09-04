@@ -19,6 +19,7 @@ class SaveFile;
 class Tile;
 class Window;
 class World;
+enum Action : int;
 
 enum Attribute
 {
@@ -82,9 +83,8 @@ public:
     void exist();
     void render(Window& window) const;
 
-    /// Returns true if the game should advance to the next turn.
-    bool tryToMoveOrAttack(Dir8);
-    bool tryToMoveTowardsOrAttack(Creature& target);
+    Action tryToMoveOrAttack(Dir8);
+    Action tryToMoveTowardsOrAttack(Creature& target);
     bool enter();
     void takeDamage(double amount);
     void bleed();
@@ -102,12 +102,13 @@ public:
     const auto& getEquipment() const { return equipment; }
     Item* getEquipment(EquipmentSlot slot) const { return equipment.at(slot); }
     int getInventoryIndex(const Item& item) const;
+    bool isRunning() const { return running; }
+    void setRunning(bool running) { this->running = running; }
     bool isDead() const { return currentHP <= 0; }
     double getHP() const { return currentHP; }
     double getAP() const { return currentAP; }
     double getMP() const { return currentMP; }
     double getMaxHP() const { return maxHP; }
-    double getMaxAP() const { return maxAP; }
     double getMaxMP() const { return maxMP; }
     double getAttribute(Attribute) const;
     const auto& getDisplayedAttributes() const { return displayedAttributes; }
@@ -132,7 +133,7 @@ private:
     void generateAttributes(boost::string_ref);
     void calculateDerivedStats();
     void editHP(double amount) { currentHP = std::min(currentHP + amount, maxHP); }
-    void editAP(double amount) { currentAP = std::min(currentAP + amount, maxAP); }
+    void editAP(double amount) { currentAP += amount; }
     void editMP(double amount) { currentMP = std::min(currentMP + amount, maxMP); }
     void regenerate();
     void onDeath();
@@ -144,13 +145,16 @@ private:
     mutable std::unordered_set<Vector3> seenTilePositions;
     std::vector<std::unique_ptr<Item>> inventory;
     std::unordered_map<EquipmentSlot, Item*> equipment;
-    double currentHP, maxHP, currentAP, maxAP, currentMP, maxMP;
+    double currentHP, maxHP, currentAP, currentMP, maxMP;
+    bool running;
     std::vector<double> attributeValues;
     std::vector<Attribute> displayedAttributes;
     std::vector<std::vector<int>> attributeIndices;
     Sprite sprite;
     std::unique_ptr<CreatureController> controller;
     std::vector<Message> messages;
+
+    static constexpr double fullAP = 1.0;
     static const int configAttributes[8];
 };
 

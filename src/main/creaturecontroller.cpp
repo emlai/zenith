@@ -1,4 +1,5 @@
 #include "creaturecontroller.h"
+#include "action.h"
 #include "creature.h"
 #include "game.h"
 #include "engine/menu.h"
@@ -6,18 +7,18 @@
 
 CreatureController::~CreatureController() {}
 
-void AIController::control(Creature& creature)
+Action AIController::control(Creature& creature)
 {
     if (creature.isDead())
-        return;
+        return Wait;
 
     if (auto* nearestEnemy = creature.getNearestEnemy())
-        creature.tryToMoveTowardsOrAttack(*nearestEnemy);
+        return creature.tryToMoveTowardsOrAttack(*nearestEnemy);
     else
-        creature.tryToMoveOrAttack(randomDir8());
+        return creature.tryToMoveOrAttack(randomDir8());
 }
 
-void PlayerController::control(Creature& creature)
+Action PlayerController::control(Creature& creature)
 {
     game.advanceTurn();
 
@@ -29,36 +30,40 @@ void PlayerController::control(Creature& creature)
         switch (game.getWindow().waitForInput())
         {
             case RightArrow:
-                if (!creature.isDead() && creature.tryToMoveOrAttack(East))
-                    return;
+                if (!creature.isDead())
+                    if (auto action = creature.tryToMoveOrAttack(East))
+                        return action;
                 break;
 
             case LeftArrow:
-                if (!creature.isDead() && creature.tryToMoveOrAttack(West))
-                    return;
+                if (!creature.isDead())
+                    if (auto action = creature.tryToMoveOrAttack(West))
+                        return action;
                 break;
 
             case DownArrow:
-                if (!creature.isDead() && creature.tryToMoveOrAttack(South))
-                    return;
+                if (!creature.isDead())
+                    if (auto action = creature.tryToMoveOrAttack(South))
+                        return action;
                 break;
 
             case UpArrow:
-                if (!creature.isDead() && creature.tryToMoveOrAttack(North))
-                    return;
+                if (!creature.isDead())
+                    if (auto action = creature.tryToMoveOrAttack(North))
+                        return action;
                 break;
 
             case Enter:
                 if (!creature.isDead() && creature.enter())
-                    return;
+                    return Move;
                 break;
 
             case '.':
-                return;
+                return Wait;
 
             case ',':
                 if (!creature.isDead() && creature.pickUpItem())
-                    return;
+                    return PickUpItems;
                 break;
 
             case 'l':
@@ -87,7 +92,7 @@ void PlayerController::control(Creature& creature)
         
                 if (selectedItemIndex != Menu::Exit)
                     if (creature.use(*creature.getInventory()[selectedItemIndex], game))
-                        return;
+                        return UseItem;
                 break;
             }
 
@@ -101,7 +106,7 @@ void PlayerController::control(Creature& creature)
                 if (selectedItemIndex != Menu::Exit)
                 {
                     creature.drop(*creature.getInventory()[selectedItemIndex]);
-                    return;
+                    return DropItem;
                 }
         
                 break;
@@ -115,23 +120,27 @@ void PlayerController::control(Creature& creature)
                 boost::optional<Dir8> direction = game.askForDirection("What do you want to close?");
 
                 if (direction && creature.close(*direction))
-                    return;
+                    return Close;
                 break;
             }
+
+            case 'r':
+                creature.setRunning(!creature.isRunning());
+                break;
 
             case Esc:
             case 'q':
                 game.stop();
-                return;
+                return NoAction;
 
 #ifdef DEBUG
             case Tab:
                 game.enterCommandMode(game.getWindow());
-                return;
+                return NoAction;
 #endif
 
             case NoKey:
-                return;
+                return NoAction;
         }
     }
 }

@@ -1,4 +1,5 @@
 #include "creature.h"
+#include "action.h"
 #include "game.h"
 #include "msgsystem.h"
 #include "tile.h"
@@ -39,9 +40,9 @@ Creature::Creature(Tile* tile, boost::string_ref id, std::unique_ptr<CreatureCon
     currentHP(0),
     maxHP(0),
     currentAP(0),
-    maxAP(0),
     currentMP(0),
     maxMP(0),
+    running(false),
     displayedAttributes(initDisplayedAttributes(id)),
     attributeIndices(initAttributeIndices(id)),
     sprite(*Game::creatureSpriteSheet, getSpriteTextureRegion(Game::creatureConfig, id)),
@@ -99,6 +100,7 @@ Creature::Creature(const SaveFile& file, Tile* tile)
     currentHP = file.readDouble();
     currentAP = file.readDouble();
     currentMP = file.readDouble();
+    running = file.readBool();
     file.read(messages);
 }
 
@@ -121,6 +123,7 @@ void Creature::save(SaveFile& file) const
     file.write(currentHP);
     file.write(currentAP);
     file.write(currentMP);
+    file.write(running);
     file.write(messages);
 }
 
@@ -132,13 +135,21 @@ void Creature::exist()
         regenerate();
     }
 
-    controller->control(*this);
+    while (currentAP >= fullAP || isDead())
+    {
+        Action action = controller->control(*this);
+
+        if (!action || isDead())
+            break;
+
+        currentAP -= getAPCost(action, *this);
+    }
 }
 
 void Creature::regenerate()
 {
     editHP(0.1);
-    editAP(0.1);
+    editAP(1);
     editMP(0.1);
 }
 
@@ -170,22 +181,18 @@ void Creature::generateAttributes(boost::string_ref id)
     calculateDerivedStats();
 
     currentHP = maxHP;
-    currentAP = maxAP;
     currentMP = maxMP;
 }
 
 void Creature::calculateDerivedStats()
 {
     double hpRatio = currentHP / maxHP;
-    double apRatio = currentAP / maxAP;
     double mpRatio = currentMP / maxMP;
 
     maxHP = 2 * getAttribute(Endurance) + getAttribute(Strength) / 2;
-    maxAP = 2 * getAttribute(Agility) + getAttribute(Dexterity) / 2;
     maxMP = 2 * getAttribute(Psyche) + getAttribute(Intelligence) / 2;
 
     currentHP = hpRatio * maxHP;
-    currentAP = apRatio * maxAP;
     currentMP = mpRatio * maxMP;
 }
 
@@ -319,17 +326,17 @@ Creature* Creature::getNearestEnemy() const
     return nearestEnemy;
 }
 
-bool Creature::tryToMoveOrAttack(Dir8 direction)
+Action Creature::tryToMoveOrAttack(Dir8 direction)
 {
     Tile* destination = getTileUnder(0).getAdjacentTile(direction);
 
     if (!destination)
-        return false;
+        return NoAction;
 
     if (!destination->getCreatures().empty())
     {
         attack(destination->getCreature(0));
-        return true;
+        return Attack;
     }
 
     if (destination->hasObject())
@@ -338,14 +345,14 @@ bool Creature::tryToMoveOrAttack(Dir8 direction)
         bool didReactToMovementAttempt = destination->getObject()->reactToMovementAttempt();
 
         if (preventsMovement)
-            return didReactToMovementAttempt;
+            return didReactToMovementAttempt ? Wait : NoAction;
     }
 
     moveTo(*destination);
-    return true;
+    return Move;
 }
 
-bool Creature::tryToMoveTowardsOrAttack(Creature& target)
+Action Creature::tryToMoveTowardsOrAttack(Creature& target)
 {
     auto directionVector = target.getPosition() - getPosition();
     return tryToMoveOrAttack(directionVector.getDir8());

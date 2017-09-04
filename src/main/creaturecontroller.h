@@ -2,17 +2,18 @@
 
 class Creature;
 class Game;
+enum Action : int;
 
 class CreatureController
 {
 public:
     virtual ~CreatureController() = 0;
-    virtual void control(Creature& creature) = 0;
+    virtual Action control(Creature& creature) = 0;
 };
 
 class AIController : public CreatureController
 {
-    void control(Creature& creature) override;
+    Action control(Creature& creature) override;
 };
 
 class PlayerController : public CreatureController
@@ -21,7 +22,7 @@ public:
     PlayerController(Game& game) : game(game) {}
 
 private:
-    void control(Creature& creature) override;
+    Action control(Creature& creature) override;
 
     Game& game;
 };

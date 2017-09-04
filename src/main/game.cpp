@@ -205,11 +205,16 @@ void Game::printPlayerInformation(BitmapFont& font) const
 {
     font.setArea(GUI::getSidebarArea(getWindow()));
     printStat(font, "HP", player->getHP(), player->getMaxHP(), TextColor::Red);
-    printStat(font, "AP", player->getAP(), player->getMaxAP(), TextColor::Green);
     printStat(font, "MP", player->getMP(), player->getMaxMP(), TextColor::Blue);
 
     for (auto attribute : player->getDisplayedAttributes())
         printAttribute(font, attributeAbbreviations[attribute], player->getAttribute(attribute));
+
+    if (player->isRunning())
+    {
+        font.printLine(getWindow(), "");
+        font.printLine(getWindow(), "Running");
+    }
 
 #ifdef DEBUG
     if (showExtraInfo)
