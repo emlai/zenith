@@ -145,9 +145,11 @@ void Creature::render(Window& window) const
 {
     sprite.render(window, getPosition() * Tile::size);
 
-    for (auto slotAndItem : getEquipment())
-        if (slotAndItem.second)
-            slotAndItem.second->renderEquipped(window, getPosition() * Tile::size);
+    for (int slot = equipmentSlots - 1; slot >= 0; --slot)
+    {
+        if (auto* equipment = getEquipment(static_cast<EquipmentSlot>(slot)))
+            equipment->renderEquipped(window, getPosition() * Tile::size);
+    }
 }
 
 void Creature::generateAttributes(boost::string_ref id)
