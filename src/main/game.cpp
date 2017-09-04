@@ -6,6 +6,7 @@
 #include "engine/math.h"
 #include "engine/menu.h"
 #include "engine/savefile.h"
+#include <cmath>
 #include <fstream>
 
 const Config Game::creatureConfig("data/config/creature.cfg");
@@ -232,10 +233,10 @@ void Game::printPlayerInformation(BitmapFont& font) const
 void Game::printStat(BitmapFont& font, boost::string_ref statName, double currentValue,
                      double maximumValue, Color16 color) const
 {
-    std::string currentValueString = std::to_string(int(currentValue));
+    std::string currentValueString = std::to_string(int(std::ceil(currentValue)));
     std::string padding(std::max(0, 4 - int(currentValueString.size())), ' ');
     font.printLine(getWindow(), statName + padding + currentValueString + '/' +
-                   std::to_string(int(maximumValue)), color);
+                   std::to_string(int(std::ceil(maximumValue))), color);
 }
 
 void Game::printAttribute(BitmapFont& font, boost::string_ref attributeName, double attributeValue) const
