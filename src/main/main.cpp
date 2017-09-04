@@ -87,11 +87,15 @@ int main(int argc, const char** argv)
         return 0;
     }
 
-    Config preferences(preferencesFileName);
-
     Window window(GUI::windowSize, PROJECT_NAME, true);
-    window.getGraphicsContext().setScale(preferences.getOptional<double>("GraphicsScale").value_or(1));
     window.setAnimationFrameRate(4);
+
+    if (boost::filesystem::exists(preferencesFileName))
+    {
+        Config preferences(preferencesFileName);
+        window.getGraphicsContext().setScale(preferences.getOptional<double>("GraphicsScale").value_or(1));
+    }
+
     BitmapFont font = initFont(window);
     Menu::setDefaultNormalColor(TextColor::Gray);
     Menu::setDefaultSelectionColor(TextColor::White);
