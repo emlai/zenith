@@ -12,7 +12,7 @@ void World::load(const SaveFile& file)
     for (int i = 0; i < areaCount; ++i)
     {
         auto position = file.readVector3();
-        areas.emplace(position, std::make_unique<Area>(file, *this, Vector2(position), position.z));
+        areas.emplace(position, Area(file, *this, Vector2(position), position.z));
     }
 }
 
@@ -23,7 +23,7 @@ void World::save(SaveFile& file) const
     for (auto& positionAndArea : areas)
     {
         file.write(positionAndArea.first);
-        positionAndArea.second->save(file);
+        positionAndArea.second.save(file);
     }
 }
 
@@ -81,18 +81,17 @@ Area* World::getOrCreateArea(Vector3 position)
     if (auto* area = getArea(position))
         return area;
 
-    auto& area = *areas.emplace(position,
-                                std::make_unique<Area>(*this, Vector2(position), position.z)).first->second;
+    auto& area = areas.emplace(position, Area(*this, Vector2(position), position.z)).first->second;
     WorldGenerator generator(*this);
     generator.generateRegion(Rect(Vector2(position) * Area::sizeVector, Area::sizeVector), position.z);
     return &area;
 }
 
-Area* World::getArea(Vector3 position) const
+Area* World::getArea(Vector3 position)
 {
     auto it = areas.find(position);
     if (it != areas.end())
-        return it->second.get();
+        return &it->second;
     return nullptr;
 }
 
@@ -117,7 +116,7 @@ Tile* World::getOrCreateTile(Vector2 position, int level)
     return nullptr;
 }
 
-Tile* World::getTile(Vector2 position, int level) const
+Tile* World::getTile(Vector2 position, int level)
 {
     if (auto* area = getArea(globalPositionToAreaPosition(position, level)))
         return &area->getTileAt(globalPositionToTilePosition(position));
