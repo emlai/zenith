@@ -143,18 +143,22 @@ void Game::lookMode()
 
 boost::optional<Dir8> Game::askForDirection(std::string&& question)
 {
-    render(getWindow());
-    getWindow().getFont().setArea(GUI::getQuestionArea(getWindow()));
-    getWindow().getFont().print(getWindow(), question);
-    getWindow().updateScreen();
-
-    switch (getWindow().waitForInput())
+    while (true)
     {
-        case UpArrow: return North;
-        case RightArrow: return East;
-        case DownArrow: return South;
-        case LeftArrow: return West;
-        default: return boost::none;
+        render(getWindow());
+        getWindow().getFont().setArea(GUI::getQuestionArea(getWindow()));
+        getWindow().getFont().print(getWindow(), question);
+        getWindow().updateScreen();
+
+        switch (getWindow().waitForInput())
+        {
+            case NoKey: continue; // timeout
+            case UpArrow: return North;
+            case RightArrow: return East;
+            case DownArrow: return South;
+            case LeftArrow: return West;
+            default: return boost::none;
+        }
     }
 }
 

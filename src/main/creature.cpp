@@ -45,7 +45,7 @@ Creature::Creature(Tile* tile, boost::string_ref id, std::unique_ptr<CreatureCon
     running(false),
     displayedAttributes(initDisplayedAttributes(id)),
     attributeIndices(initAttributeIndices(id)),
-    sprite(*Game::creatureSpriteSheet, getSpriteTextureRegion(Game::creatureConfig, id)),
+    sprite(getSprite(*Game::creatureSpriteSheet, Game::creatureConfig, id)),
     controller(std::move(controller))
 {
     if (tile)
@@ -68,7 +68,7 @@ Creature::Creature(const SaveFile& file, Tile* tile)
     equipment({{Head, nullptr}, {Torso, nullptr}, {Hand, nullptr}, {Legs, nullptr}}),
     displayedAttributes(initDisplayedAttributes(getId())),
     attributeIndices(initAttributeIndices(getId())),
-    sprite(*Game::creatureSpriteSheet, getSpriteTextureRegion(Game::creatureConfig, getId())),
+    sprite(getSprite(*Game::creatureSpriteSheet, Game::creatureConfig, getId())),
     controller(std::make_unique<AIController>())
 {
     if (tile)

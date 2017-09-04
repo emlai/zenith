@@ -7,6 +7,7 @@
 #include <vector>
 
 class Config;
+class Sprite;
 
 namespace GUIColor
 {
@@ -82,4 +83,5 @@ namespace GUI
 #endif
 }
 
+Sprite getSprite(const Texture& spriteSheet, const Config& config, boost::string_ref id);
 Rect getSpriteTextureRegion(const Config& config, boost::string_ref id);

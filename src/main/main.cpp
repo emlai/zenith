@@ -91,7 +91,7 @@ int main(int argc, const char** argv)
 
     Window window(GUI::windowSize, PROJECT_NAME, true);
     window.getGraphicsContext().setScale(preferences.getOptional<double>("GraphicsScale").value_or(1));
-    window.setAnimationFrameRate(24);
+    window.setAnimationFrameRate(4);
     BitmapFont font = initFont(window);
     Menu::setDefaultNormalColor(TextColor::Gray);
     Menu::setDefaultSelectionColor(TextColor::White);

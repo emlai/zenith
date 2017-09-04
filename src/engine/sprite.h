@@ -9,7 +9,8 @@ class Window;
 class Sprite
 {
 public:
-    Sprite(const Texture& texture, Rect textureRegion, Color32 materialColor = Color32::none);
+    Sprite(const Texture& texture, Rect textureRegion, Color32 materialColor = Color32::none,
+           int animationFrames = 1);
     Vector2 getSize() const { return textureRegion.size; }
     int getWidth() const { return textureRegion.size.x; }
     int getHeight() const { return textureRegion.size.y; }
@@ -22,5 +23,6 @@ private:
     const Texture* texture;
     Rect textureRegion;
     Color32 materialColor;
+    int animationFrames;
     int frame;
 };

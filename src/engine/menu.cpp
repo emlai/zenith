@@ -39,6 +39,9 @@ int Menu::getChoice(Window& window, BitmapFont& font)
 
         switch (input)
         {
+            case NoKey: // timeout
+                continue;
+
             case DownArrow:
                 if (itemLayout == Vertical)
                     selectNext();

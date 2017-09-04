@@ -12,6 +12,8 @@ class Window
 public:
     Window(Vector2 size, boost::string_ref title = "", bool fullscreen = true);
     ~Window();
+    /// Returns NoKey on animation frame change, in which case the caller should
+    /// redraw and then call this function again.
     Key waitForInput();
     Vector2 getMousePosition() const;
     void setShowCursor(bool show);

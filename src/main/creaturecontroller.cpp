@@ -29,6 +29,9 @@ Action PlayerController::control(Creature& creature)
 
         switch (game.getWindow().waitForInput())
         {
+            case NoKey: // timeout
+                continue;
+
             case RightArrow:
                 if (!creature.isDead())
                     if (auto action = creature.tryToMoveOrAttack(East))
@@ -138,9 +141,6 @@ Action PlayerController::control(Creature& creature)
                 game.enterCommandMode(game.getWindow());
                 return NoAction;
 #endif
-
-            case NoKey:
-                return NoAction;
         }
     }
 }

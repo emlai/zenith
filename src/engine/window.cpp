@@ -69,9 +69,15 @@ void Window::toggleFullscreen()
 Key Window::waitForInput()
 {
     SDL_Event event;
+    int msPerAnimationFrame = getAnimationFrameTime();
 
-    while (SDL_WaitEvent(&event))
+    while (true)
     {
+        auto msUntilNextFrame = msPerAnimationFrame - (SDL_GetTicks() % msPerAnimationFrame);
+
+        if (!SDL_WaitEventTimeout(&event, msUntilNextFrame))
+            return NoKey;
+
         switch (event.type)
         {
             case SDL_KEYDOWN:
@@ -82,8 +88,6 @@ Key Window::waitForInput()
                 break;
         }
     }
-
-    throw std::runtime_error(SDL_GetError());
 }
 
 bool Window::handleWindowEvent(int eventType)
