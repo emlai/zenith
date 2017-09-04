@@ -22,7 +22,6 @@ protected:
 private:
     virtual void render(Window&) = 0;
     virtual void updateLogic() = 0;
-    bool processInput(Window&);
 
     Window& window;
     int turn;

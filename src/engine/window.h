@@ -12,9 +12,7 @@ class Window
 public:
     Window(Vector2 size, boost::string_ref title = "", bool fullscreen = true);
     ~Window();
-    void processInput(KeyDownCallback);
     Key waitForInput();
-    Key waitForInputWithTimeout(int timeoutMS);
     Vector2 getMousePosition() const;
     void setShowCursor(bool show);
     void toggleFullscreen();

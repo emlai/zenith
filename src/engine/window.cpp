@@ -66,24 +66,6 @@ void Window::toggleFullscreen()
     SDL_ShowCursor(isFullscreen);
 }
 
-void Window::processInput(KeyDownCallback callback)
-{
-    SDL_Event event;
-
-    while (SDL_PollEvent(&event))
-    {
-        switch (event.type)
-        {
-            case SDL_KEYDOWN:
-                callback(*this, event.key.keysym.sym, event.key.keysym.mod);
-                break;
-            case SDL_WINDOWEVENT:
-                handleWindowEvent(event.window.event);
-                break;
-        }
-    }
-}
-
 Key Window::waitForInput()
 {
     SDL_Event event;
@@ -102,33 +84,6 @@ Key Window::waitForInput()
     }
 
     throw std::runtime_error(SDL_GetError());
-}
-
-Key Window::waitForInputWithTimeout(int timeoutMS)
-{
-    SDL_Event event;
-
-    while (true)
-    {
-        auto startTime = SDL_GetTicks();
-
-        if (!SDL_WaitEventTimeout(&event, std::max(0, timeoutMS)))
-            return NoKey;
-
-        auto endTime = SDL_GetTicks();
-
-        switch (event.type)
-        {
-            case SDL_KEYDOWN:
-                return event.key.keysym.sym;
-            case SDL_WINDOWEVENT:
-                if (handleWindowEvent(event.window.event))
-                    return NoKey;
-                break;
-        }
-
-        timeoutMS -= endTime - startTime;
-    }
 }
 
 bool Window::handleWindowEvent(int eventType)
