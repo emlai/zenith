@@ -11,9 +11,7 @@ static BitmapFont initFont(Window& window)
 {
     BitmapFont font("data/graphics/font.dat", Vector2(8, 10));
     font.setDefaultColor(TextColor::White);
-    font.setDrawShadows(true);
-    font.setShadowColorMod(0.3);
-    font.setLineSpacing(2);
+    font.setLineSpacing(1);
     window.setFont(font);
     return font;
 }
