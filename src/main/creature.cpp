@@ -5,6 +5,7 @@
 #include "engine/savefile.h"
 #include <cctype>
 #include <iomanip>
+#include <sstream>
 
 boost::string_ref toString(EquipmentSlot slot)
 {
@@ -404,13 +405,27 @@ void Creature::attack(Creature& target)
 {
     double damage = std::max(0.0, getAttribute(ArmStrength) / 2 + randNormal());
 
+    std::ostringstream attackerMessage, targetMessage;
+
+    attackerMessage << "You hit the " << target.getName();
+    targetMessage << "The " << getName() << " hits you";
+
+    if (auto* weapon = getEquipment(Hand))
+    {
+        attackerMessage << " with the " << weapon->getName();
+        targetMessage << " with the " << weapon->getName();
+    }
+
+    attackerMessage << ".";
+    targetMessage << ".";
+
 #ifdef DEBUG
-    addMessage("You hit the ", target.getName(), ". (", std::fixed, std::setprecision(1), damage, ")");
-    target.addMessage("The ", getName(), " hits you. (", std::fixed, std::setprecision(1), damage, ")");
-#else
-    addMessage("You hit the ", target.getName(), ".");
-    target.addMessage("The ", getName(), " hits you.");
+    attackerMessage << std::fixed << std::setprecision(1) << " (" << damage << ")";
+    targetMessage << std::fixed << std::setprecision(1) << " (" << damage << ")";
 #endif
+
+    addMessage(attackerMessage.str());
+    target.addMessage(targetMessage.str());
 
     target.takeDamage(damage);
 }
