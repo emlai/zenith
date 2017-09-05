@@ -69,6 +69,15 @@ void Window::toggleFullscreen()
     SDL_ShowCursor(isFullscreen);
 }
 
+static int filterKeyRepeatEvents(void* userdata, SDL_Event* event)
+{
+    if (event->type == SDL_KEYDOWN && event->key.repeat
+        && event->key.keysym.sym == static_cast<const SDL_Event*>(userdata)->key.keysym.sym)
+        return 0;
+
+    return 1;
+}
+
 Key Window::waitForInput()
 {
     SDL_Event event;
@@ -84,6 +93,7 @@ Key Window::waitForInput()
         switch (event.type)
         {
             case SDL_KEYDOWN:
+                SDL_FilterEvents(filterKeyRepeatEvents, &event);
                 return event.key.keysym.sym;
             case SDL_WINDOWEVENT:
                 if (handleWindowEvent(event.window.event))
