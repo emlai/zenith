@@ -12,10 +12,17 @@ Action AIController::control(Creature& creature)
     if (creature.isDead())
         return Wait;
 
+    Action action;
+
     if (auto* nearestEnemy = creature.getNearestEnemy())
-        return creature.tryToMoveTowardsOrAttack(*nearestEnemy);
+        action = creature.tryToMoveTowardsOrAttack(*nearestEnemy);
     else
-        return creature.tryToMoveOrAttack(randomDir8());
+        action = creature.tryToMoveOrAttack(randomDir8());
+
+    if (!action) // TODO: Implement proper AI so action is never NoAction.
+        return Wait;
+
+    return action;
 }
 
 Action PlayerController::control(Creature& creature)
