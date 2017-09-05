@@ -76,7 +76,7 @@ void Tile::exist()
         item->exist();
 }
 
-void Tile::render(Window& window, int zIndex, bool fogOfWar) const
+void Tile::render(Window& window, int zIndex, bool fogOfWar, bool renderLight) const
 {
     switch (zIndex)
     {
@@ -102,7 +102,7 @@ void Tile::render(Window& window, int zIndex, bool fogOfWar) const
                 creature->render(window);
             break;
         case 4:
-            if (fogOfWar)
+            if (fogOfWar || !renderLight)
                 break;
 
             window.getGraphicsContext().renderFilledRectangle(Rect(position * sizeVector, sizeVector),

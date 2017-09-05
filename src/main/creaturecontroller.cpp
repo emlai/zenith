@@ -137,6 +137,10 @@ Action PlayerController::control(Creature& creature)
                 return NoAction;
 
 #ifdef DEBUG
+            case F2:
+                game.playerSeesEverything = !game.playerSeesEverything;
+                break;
+
             case Tab:
                 game.enterCommandMode(game.getWindow());
                 return NoAction;

@@ -25,6 +25,7 @@ static const Color32 transparentColor(0x5A5268FF);
 
 Game::Game(Window& window, bool loadSavedGame)
 :   Engine(window),
+    playerSeesEverything(false),
     world(*this)
 {
     creatureSpriteSheet.emplace("data/graphics/creature.bmp", transparentColor);

@@ -25,6 +25,7 @@ public:
 #ifdef DEBUG
     void enterCommandMode(Window&);
 #endif
+    bool playerSeesEverything;
 
     static const Config creatureConfig;
     static const Config objectConfig;

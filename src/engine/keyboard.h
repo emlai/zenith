@@ -21,7 +21,8 @@ enum : Key
     RightArrow = SDLK_RIGHT,
     LeftArrow = SDLK_LEFT,
     DownArrow = SDLK_DOWN,
-    UpArrow = SDLK_UP
+    UpArrow = SDLK_UP,
+    F2 = SDLK_F2
 };
 
 enum : Mod

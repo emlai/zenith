@@ -65,7 +65,7 @@ void World::render(Window& window, Rect region, int level, const Creature& playe
 
     forEachTile(region, level, [&](const Tile& tile)
     {
-        if (player.sees(tile))
+        if (game.playerSeesEverything || player.sees(tile))
             tilesToRender.emplace_back(&tile, false);
         else if (player.remembers(tile))
             tilesToRender.emplace_back(&tile, true);
@@ -73,7 +73,7 @@ void World::render(Window& window, Rect region, int level, const Creature& playe
 
     for (int zIndex = 0; zIndex < 7; ++zIndex)
         for (auto tileAndFogOfWar : tilesToRender)
-            tileAndFogOfWar.first->render(window, zIndex, tileAndFogOfWar.second);
+            tileAndFogOfWar.first->render(window, zIndex, tileAndFogOfWar.second, !game.playerSeesEverything);
 }
 
 Area* World::getOrCreateArea(Vector3 position)
