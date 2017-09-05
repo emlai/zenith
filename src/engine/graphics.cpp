@@ -17,7 +17,6 @@ GraphicsContext::GraphicsContext(const Window& window)
         throw std::runtime_error(SDL_GetError());
 
     SDL_SetRenderDrawColor(renderer.get(), 0x0, 0x0, 0x0, 0xFF);
-    SDL_RenderSetLogicalSize(renderer.get(), window.getResolution().x, window.getResolution().y);
     SDL_RenderClear(renderer.get());
 }
 
