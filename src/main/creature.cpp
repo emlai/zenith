@@ -4,6 +4,7 @@
 #include "msgsystem.h"
 #include "tile.h"
 #include "engine/savefile.h"
+#include <cassert>
 #include <cctype>
 #include <iomanip>
 #include <sstream>
@@ -17,6 +18,8 @@ boost::string_ref toString(EquipmentSlot slot)
         case Hand: return "hand";
         case Legs: return "legs";
     }
+
+    assert(false);
 }
 
 std::vector<Attribute> Creature::initDisplayedAttributes(boost::string_ref id)
