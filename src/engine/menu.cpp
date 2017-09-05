@@ -209,7 +209,7 @@ void Menu::render(Window& window, BitmapFont& font) const
             itemPosition.x += item->mainImage->getWidth() + columnSpacing;
         }
 
-        boost::string_ref text =
+        std::string text =
             showNumbers ? std::to_string(index++) + numberSeparator + item->mainText : item->mainText;
 
         font.setArea(Rect(itemPosition, position->size));
