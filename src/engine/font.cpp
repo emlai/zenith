@@ -39,7 +39,7 @@ std::vector<Color32> BitmapFont::loadFromFile(boost::string_ref fileName) const
         inputFile.read(&input, 1);
 
         for (int bit = 0; bit < CHAR_BIT; ++bit)
-            pixelData.push_back(input >> bit & 1 ? UINT32_MAX : 0);
+            pixelData.push_back(Color32(input >> bit & 1 ? UINT32_MAX : 0));
     }
 
     return pixelData;

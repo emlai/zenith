@@ -28,7 +28,7 @@ struct Color
     T value;
 
     Color() = default;
-    Color(T value) : value(value) {}
+    explicit Color(T value) : value(value) {}
     Color(int red, int green, int blue, int alpha = max) : value(createValue(red, green, blue, alpha)) {}
 
     int get(Channel channel) const { return value >> bit[channel] & max; }
@@ -65,7 +65,7 @@ struct Color
 
     Color operator*(double mod) const { return Color(*this) *= mod; }
 
-    operator bool() const { return value != 0; }
+    explicit operator bool() const { return value != 0; }
 
     template<typename U>
     operator Color<U>() const

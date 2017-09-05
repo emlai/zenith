@@ -11,20 +11,20 @@ class Sprite;
 
 namespace GUIColor
 {
-    const Color16 White = 0xFEEF;
-    const Color16 Gray = 0x778F;
-    const Color16 Black = 0x001F;
+    const Color16 White(0xFEEF);
+    const Color16 Gray(0x778F);
+    const Color16 Black(0x001F);
 }
 
 namespace TextColor
 {
-    const Color16 White = GUIColor::White;
-    const Color16 Gray = GUIColor::Gray;
-    const Color16 Red = 0xF14F;
-    const Color16 Green = 0x2C2F;
-    const Color16 Blue = 0x66FF;
-    const Color16 Yellow = 0xFD1F;
-    const Color16 Brown = 0xE71F;
+    const Color16 White(GUIColor::White);
+    const Color16 Gray(GUIColor::Gray);
+    const Color16 Red(0xF14F);
+    const Color16 Green(0x2C2F);
+    const Color16 Blue(0x66FF);
+    const Color16 Yellow(0xFD1F);
+    const Color16 Brown(0xE71F);
 }
 
 namespace GUI

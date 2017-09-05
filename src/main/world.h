@@ -16,7 +16,7 @@ class Tile;
 class World
 {
 public:
-    World(const Game& game) : game(game) {}
+    World(const Game& game) : game(game), sunlight(0x888888FF) {}
     void load(const SaveFile& file);
     void save(SaveFile& file) const;
     int getTurn() const;
@@ -35,5 +35,5 @@ private:
 
     const Game& game;
     std::unordered_map<Vector3, Area> areas;
-    Color32 sunlight = 0x888888FF;
+    Color32 sunlight;
 };
