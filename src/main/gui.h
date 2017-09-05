@@ -29,7 +29,6 @@ namespace TextColor
 
 namespace GUI
 {
-    const Vector2 windowSize = Vector2(640, 480);
     const Vector2 spacing(12, 12);
     const int fontHeight = 12;
     const int questionAreaHeight = spacing.y + fontHeight + spacing.y;

@@ -87,7 +87,7 @@ int main(int argc, const char** argv)
         return 0;
     }
 
-    Window window(GUI::windowSize, PROJECT_NAME, true);
+    Window window(Window::getScreenResolution(), PROJECT_NAME, true);
     window.setAnimationFrameRate(4);
 
     if (boost::filesystem::exists(preferencesFileName))

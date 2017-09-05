@@ -9,13 +9,16 @@ int Window::windowCount = 0;
 bool Window::sdlVideoInitialized = false;
 const int Window::fullscreenFlag = SDL_WINDOW_FULLSCREEN_DESKTOP;
 
+void Window::initializeSDLVideoSubsystem()
+{
+    SDL_Init(SDL_INIT_VIDEO);
+    sdlVideoInitialized = true;
+}
+
 SDL_Window* Window::initWindowHandle(Vector2 size, const char* title, bool fullscreen)
 {
     if (!sdlVideoInitialized)
-    {
-        SDL_Init(SDL_INIT_VIDEO);
-        sdlVideoInitialized = true;
-    }
+        initializeSDLVideoSubsystem();
 
     uint32_t windowFlags = SDL_WINDOW_ALLOW_HIGHDPI;
 
@@ -150,4 +153,17 @@ int Window::getHeight() const
     int height;
     SDL_GetWindowSize(windowHandle.get(), nullptr, &height);
     return height;
+}
+
+Vector2 Window::getScreenResolution()
+{
+    if (!sdlVideoInitialized)
+        initializeSDLVideoSubsystem();
+
+    SDL_DisplayMode mode;
+
+    if (SDL_GetDesktopDisplayMode(0, &mode) != 0)
+        throw std::runtime_error(SDL_GetError());
+
+    return Vector2(mode.w, mode.h);
 }

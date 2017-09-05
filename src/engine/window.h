@@ -32,6 +32,7 @@ public:
     int getWidth() const;
     int getHeight() const;
     GraphicsContext& getGraphicsContext() { return context; }
+    static Vector2 getScreenResolution();
 
     enum { CloseRequest = -2 };
 
@@ -39,6 +40,7 @@ private:
     friend class GraphicsContext;
     friend class Texture;
 
+    static void initializeSDLVideoSubsystem();
     static SDL_Window* initWindowHandle(Vector2 size, const char* title, bool fullscreen);
     bool handleWindowEvent(int eventType);
 
