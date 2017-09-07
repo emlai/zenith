@@ -3,6 +3,7 @@
 #include "item.h"
 #include "msgsystem.h"
 #include "tile.h"
+#include "engine/engine.h"
 #include "engine/math.h"
 #include "engine/menu.h"
 #include "engine/savefile.h"
@@ -23,9 +24,9 @@ boost::optional<const Texture> Game::fogOfWarTexture;
 
 static const Color32 transparentColor(0x5A5268FF);
 
-Game::Game(Window& window, bool loadSavedGame)
-:   Engine(window),
-    playerSeesEverything(false),
+Game::Game(bool loadSavedGame)
+:   playerSeesEverything(false),
+    turn(0),
     world(*this)
 {
     creatureSpriteSheet.emplace("data/graphics/creature.bmp", transparentColor);
@@ -44,27 +45,40 @@ Game::Game(Window& window, bool loadSavedGame)
     }
 }
 
-int Game::showInventory(boost::string_ref title, bool showNothingAsOption, Item* preselectedItem,
-                        std::function<bool(const Item&)> itemFilter)
+Window& Game::getWindow() const
 {
-    Menu menu;
-    menu.addTitle(title);
-    menu.setArea(GUI::getInventoryArea(getWindow()));
-    menu.setItemSize(Tile::size);
-    menu.setTextLayout(TextLayout(LeftAlign, VerticalCenter));
-    menu.setColumnSpacing(Tile::size / 2);
+    return getEngine().getWindow();
+}
+
+class InventoryMenu : public Menu
+{
+public:
+    InventoryMenu(Window& window, const Creature& player, boost::string_ref title,
+                  bool showNothingAsOption, Item* preselectedItem,
+                  std::function<bool(const Item&)> itemFilter);
+};
+
+InventoryMenu::InventoryMenu(Window& window, const Creature& player, boost::string_ref title,
+                             bool showNothingAsOption, Item* preselectedItem,
+                             std::function<bool(const Item&)> itemFilter)
+{
+    addTitle(title);
+    setArea(GUI::getInventoryArea(window));
+    setItemSize(Tile::size);
+    setTextLayout(TextLayout(LeftAlign, VerticalCenter));
+    setColumnSpacing(Tile::size / 2);
 
     if (showNothingAsOption)
-        menu.addItem(MenuItem(-1, "nothing"));
+        addItem(MenuItem(-1, "nothing"));
 
     int id = 0;
     int preselectedIndex = 0;
 
-    for (auto& item : player->getInventory())
+    for (auto& item : player.getInventory())
     {
         if (!itemFilter || itemFilter(*item))
         {
-            int index = menu.addItem(MenuItem(id, item->getName(), NoKey, &item->getSprite()));
+            int index = addItem(MenuItem(id, item->getName(), NoKey, &item->getSprite()));
 
             if (&*item == preselectedItem)
                 preselectedIndex = index;
@@ -73,44 +87,64 @@ int Game::showInventory(boost::string_ref title, bool showNothingAsOption, Item*
         ++id;
     }
 
-    menu.select(preselectedIndex);
-    return menu.getChoice(getWindow(), getWindow().getFont());
+    select(preselectedIndex);
 }
 
-void Game::showEquipmentMenu()
+int Game::showInventory(boost::string_ref title, bool showNothingAsOption, Item* preselectedItem,
+                        std::function<bool(const Item&)> itemFilter)
+{
+    InventoryMenu inventoryMenu(getWindow(), *player, title, showNothingAsOption,
+                                preselectedItem, std::move(itemFilter));
+    return getEngine().execute(inventoryMenu);
+}
+
+class EquipmentMenu : public Menu
+{
+public:
+    EquipmentMenu(Creature& player) : player(&player) {}
+    void execute();
+
+private:
+    Creature* player;
+};
+
+void EquipmentMenu::execute()
 {
     int selectedMenuItem = 0;
 
     while (true)
     {
-        Menu menu;
-        menu.addTitle("Equipment");
-        menu.setArea(GUI::getInventoryArea(getWindow()));
-        menu.setItemSize(Tile::size);
-        menu.setTextLayout(TextLayout(LeftAlign, VerticalCenter));
-        menu.setColumnSpacing(Tile::size / 2);
+        clear();
+        addTitle("Equipment");
+        setArea(GUI::getInventoryArea(getEngine().getWindow()));
+        setItemSize(Tile::size);
+        setTextLayout(TextLayout(LeftAlign, VerticalCenter));
+        setColumnSpacing(Tile::size / 2);
 
         for (int i = 0; i < equipmentSlots; ++i)
         {
             auto slot = static_cast<EquipmentSlot>(i);
             auto* image = player->getEquipment(slot) ? &player->getEquipment(slot)->getSprite() : nullptr;
             auto itemName = player->getEquipment(slot) ? player->getEquipment(slot)->getName() : "-";
-            menu.addItem(MenuItem(i, toString(slot) + ":", itemName, NoKey, nullptr, image));
+            addItem(MenuItem(i, toString(slot) + ":", itemName, NoKey, nullptr, image));
         }
 
-        menu.select(selectedMenuItem);
+        select(selectedMenuItem);
 
-        auto choice = menu.getChoice(getWindow(), getWindow().getFont());
+        auto choice = Menu::execute();
         if (choice == Menu::Exit)
             break;
 
-        selectedMenuItem = menu.getSelectedIndex();
-
+        selectedMenuItem = getSelectedIndex();
         auto selectedSlot = static_cast<EquipmentSlot>(choice);
-        auto selectedItemIndex = showInventory("", true, player->getEquipment(selectedSlot), [&](auto& item)
+
+        InventoryMenu inventoryMenu(getEngine().getWindow(), *player, "", true,
+                                    player->getEquipment(selectedSlot), [&](auto& item)
         {
             return item.getEquipmentSlot() == selectedSlot;
         });
+
+        auto selectedItemIndex = getEngine().execute(inventoryMenu);
 
         if (selectedItemIndex == -1)
             player->equip(selectedSlot, nullptr);
@@ -119,18 +153,30 @@ void Game::showEquipmentMenu()
     }
 }
 
-void Game::lookMode()
+void Game::showEquipmentMenu()
 {
-    Vector2 position = player->getPosition();
+    EquipmentMenu equipmentMenu(*player);
+    getEngine().execute(equipmentMenu);
+}
 
+class LookMode : public State
+{
+public:
+    LookMode(Game& game) : game(&game), position(game.player->getPosition()) {}
+    void execute();
+
+private:
+    void render(Window& window) override;
+
+    Game* game;
+    Vector2 position;
+};
+
+void LookMode::execute()
+{
     while (true)
     {
-        renderAtPosition(getWindow(), position);
-        getWindow().getFont().setArea(GUI::getQuestionArea(getWindow()));
-        getWindow().getFont().print(getWindow(), "Look mode (arrow keys to move around, esc to exit)");
-        getWindow().updateScreen();
-
-        switch (getWindow().waitForInput())
+        switch (getEngine().getWindow().waitForInput())
         {
             case UpArrow: position += North; break;
             case RightArrow: position += East; break;
@@ -142,32 +188,66 @@ void Game::lookMode()
     }
 }
 
-boost::optional<Dir8> Game::askForDirection(std::string&& question)
+void LookMode::render(Window& window)
 {
-    while (true)
-    {
-        render(getWindow());
-        getWindow().getFont().setArea(GUI::getQuestionArea(getWindow()));
-        getWindow().getFont().print(getWindow(), question);
-        getWindow().updateScreen();
+    game->renderAtPosition(window, position);
+    window.getFont().setArea(GUI::getQuestionArea(window));
+    window.getFont().print(window, "Look mode (arrow keys to move around, esc to exit)");
+}
 
-        switch (getWindow().waitForInput())
-        {
-            case NoKey: continue; // timeout
-            case UpArrow: return North;
-            case RightArrow: return East;
-            case DownArrow: return South;
-            case LeftArrow: return West;
-            default: return boost::none;
-        }
+void Game::lookMode()
+{
+    LookMode lookMode(*this);
+    getEngine().execute(lookMode);
+}
+
+class DirectionQuestion : public State
+{
+public:
+    DirectionQuestion(std::string question) : question(std::move(question)) {}
+    boost::optional<Dir8> execute();
+
+private:
+    void render(Window& window) override;
+    bool renderPreviousState() const override { return true; }
+
+    std::string question;
+};
+
+boost::optional<Dir8> DirectionQuestion::execute()
+{
+    switch (getEngine().getWindow().waitForInput())
+    {
+        case UpArrow: return North;
+        case RightArrow: return East;
+        case DownArrow: return South;
+        case LeftArrow: return West;
+        default: return boost::none;
     }
 }
 
-void Game::updateLogic()
+void DirectionQuestion::render(Window& window)
 {
-    Vector2 updateDistance(64, 64);
-    Rect regionToUpdate(player->getPosition() - updateDistance, updateDistance * 2);
-    world.exist(regionToUpdate, player->getLevel());
+    window.getFont().setArea(GUI::getQuestionArea(window));
+    window.getFont().print(window, question);
+}
+
+boost::optional<Dir8> Game::askForDirection(std::string&& question)
+{
+    DirectionQuestion directionQuestion(question);
+    return getEngine().execute(directionQuestion);
+}
+
+void Game::execute()
+{
+    gameIsRunning = true;
+
+    while (gameIsRunning)
+    {
+        Vector2 updateDistance(64, 64);
+        Rect regionToUpdate(player->getPosition() - updateDistance, updateDistance * 2);
+        world.exist(regionToUpdate, player->getLevel());
+    }
 }
 
 void Game::render(Window& window)
@@ -313,7 +393,7 @@ void Game::save()
 void Game::load()
 {
     SaveFile file(saveFileName, false);
-    setTurn(file.readInt32());
+    turn = file.readInt32();
     auto playerPosition = file.readVector2();
     auto playerLevel = file.readInt32();
     world.load(file);

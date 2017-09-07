@@ -1,5 +1,6 @@
 #pragma once
 
+#include <boost/preprocessor/cat.hpp>
 #include <boost/utility/string_ref.hpp>
 #include <ostream>
 #include <string>
@@ -34,3 +35,22 @@ std::string operator+(boost::string_ref a, boost::string_ref b);
 std::string pascalCaseToSentenceCase(boost::string_ref pascalCaseString);
 
 bool isVowel(char);
+
+template<typename T>
+struct Deferrer
+{
+    T deferred;
+
+    Deferrer(Deferrer&&) = default;
+    ~Deferrer() { deferred(); }
+};
+
+struct DeferHelper {};
+
+template<typename T>
+Deferrer<T> operator+(DeferHelper, T deferred)
+{
+    return Deferrer<T> { std::move(deferred) };
+}
+
+#define DEFER auto BOOST_PP_CAT(defer, __LINE__) = DeferHelper() + [&]

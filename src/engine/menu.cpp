@@ -1,4 +1,5 @@
 #include "menu.h"
+#include "engine.h"
 #include "font.h"
 #include "window.h"
 #include "sprite.h"
@@ -20,8 +21,27 @@ int Menu::addItem(MenuItem&& item)
     return int(menuItems.size() - 1);
 }
 
-int Menu::getChoice(Window& window, BitmapFont& font)
+void Menu::clear()
 {
+    menuItems.clear();
+    wrapEnabled = true;
+    showNumbers = false;
+    numberSeparator = ". ";
+    itemLayout = Vertical;
+    itemSpacing = 1;
+    itemSize = boost::none;
+    columnSpacing = 0;
+    secondaryColumnAlignment = LeftAlign;
+    normalColor = defaultNormalColor;
+    selectionColor = defaultSelectionColor;
+    selectionOffset = defaultSelectionOffset;
+    area = Rect(0, 0, 0, 0);
+}
+
+int Menu::execute()
+{
+    auto& window = getEngine().getWindow();
+    auto& font = window.getFont();
     TextLayout oldLayout = font.getLayout();
     font.setLayout(textLayout);
     calculateSize();
@@ -30,8 +50,6 @@ int Menu::getChoice(Window& window, BitmapFont& font)
 
     while (exitCode == -3)
     {
-        render(window, font);
-        window.updateScreen();
         const Key input = window.waitForInput();
 
         if (window.shouldClose())
@@ -39,9 +57,6 @@ int Menu::getChoice(Window& window, BitmapFont& font)
 
         switch (input)
         {
-            case NoKey: // timeout
-                continue;
-
             case DownArrow:
                 if (itemLayout == Vertical)
                     selectNext();
@@ -119,7 +134,6 @@ void Menu::selectPrevious()
 }
 
 int Menu::calculateMaxTextSize() const
-
 {
     int maxSize = 0;
     int indexOfMax = 0;
@@ -186,8 +200,9 @@ void Menu::calculateItemPositions()
     }
 }
 
-void Menu::render(Window& window, BitmapFont& font) const
+void Menu::render(Window& window)
 {
+    auto& font = window.getFont();
     int index = 1;
     auto position = itemPositions.begin();
 

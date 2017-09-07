@@ -1,7 +1,8 @@
 #include "window.h"
-#include "texture.h"
+#include "engine.h"
 #include "geometry.h"
 #include "keyboard.h"
+#include "texture.h"
 #include <SDL.h>
 #include <stdexcept>
 
@@ -36,8 +37,9 @@ SDL_Window* Window::initWindowHandle(Vector2 size, const char* title, bool fulls
     return windowHandle;
 }
 
-Window::Window(Vector2 size, boost::string_ref title, bool fullscreen)
-:   closeRequestReceived(false),
+Window::Window(Engine& engine, Vector2 size, boost::string_ref title, bool fullscreen)
+:   engine(&engine),
+    closeRequestReceived(false),
     windowHandle(initWindowHandle(size, title.to_string().c_str(), fullscreen), SDL_DestroyWindow),
     context(*this)
 {
@@ -85,10 +87,13 @@ Key Window::waitForInput()
 
     while (true)
     {
+        engine->render(*this);
+        updateScreen();
+
         auto msUntilNextFrame = msPerAnimationFrame - (SDL_GetTicks() % msPerAnimationFrame);
 
         if (!SDL_WaitEventTimeout(&event, msUntilNextFrame))
-            return NoKey;
+            continue;
 
         switch (event.type)
         {

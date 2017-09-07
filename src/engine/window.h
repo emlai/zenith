@@ -5,15 +5,15 @@
 #include "keyboard.h"
 #include <memory>
 
+class Engine;
 struct SDL_Window;
 
 class Window
 {
 public:
-    Window(Vector2 size, boost::string_ref title = "", bool fullscreen = true);
+    Window(Engine& engine, Vector2 size, boost::string_ref title = "", bool fullscreen = true);
+    Window(Window&& window) = default;
     ~Window();
-    /// Returns NoKey on animation frame change, in which case the caller should
-    /// redraw and then call this function again.
     Key waitForInput();
     Vector2 getMousePosition() const;
     void setShowCursor(bool show);
@@ -44,6 +44,7 @@ private:
     static SDL_Window* initWindowHandle(Vector2 size, const char* title, bool fullscreen);
     bool handleWindowEvent(int eventType);
 
+    Engine* engine;
     bool closeRequestReceived;
     std::unique_ptr<SDL_Window, void (&)(SDL_Window*)> windowHandle;
     GraphicsContext context;

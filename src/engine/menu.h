@@ -3,6 +3,7 @@
 #include "color.h"
 #include "keyboard.h"
 #include "geometry.h"
+#include "state.h"
 #include <boost/optional.hpp>
 #include <vector>
 
@@ -31,31 +32,19 @@ struct MenuItem
     const Key shortcut;
 };
 
-class Menu
+class Menu : public State
 {
 public:
     enum ItemLayout { Vertical, Horizontal };
     enum { Exit = INT_MIN };
 
-    Menu()
-    :   wrapEnabled(true),
-        showNumbers(false),
-        numberSeparator(". "),
-        itemLayout(Vertical),
-        itemSpacing(1),
-        itemSize(boost::none),
-        columnSpacing(0),
-        secondaryColumnAlignment(LeftAlign),
-        normalColor(defaultNormalColor),
-        selectionColor(defaultSelectionColor),
-        selectionOffset(defaultSelectionOffset),
-        area(0, 0, 0, 0)
-    {
-    }
+    Menu() { clear(); }
     void addTitle(boost::string_ref text);
     /// Returns the index of the added menu item.
     int addItem(MenuItem&& item);
-    int getChoice(Window&, BitmapFont&);
+    void clear();
+    int execute();
+    void render(Window& window) override;
     void setWrap(bool state) { wrapEnabled = state; }
     void setShowNumbers(bool state) { showNumbers = state; }
     void setNumberSeparator(std::string&& string) { numberSeparator = std::move(string); }
@@ -85,7 +74,6 @@ private:
     int calculateMaxTextSize() const;
     void calculateSize();
     void calculateItemPositions();
-    void render(Window& window, BitmapFont& font) const;
 
     std::string title;
     std::vector<MenuItem> menuItems;
