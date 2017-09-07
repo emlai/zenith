@@ -1,13 +1,13 @@
 #pragma once
 
 #include "color.h"
+#include "font.h"
 #include "keyboard.h"
 #include "geometry.h"
 #include "state.h"
 #include <boost/optional.hpp>
 #include <vector>
 
-class BitmapFont;
 class Sprite;
 class Window;
 

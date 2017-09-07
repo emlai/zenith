@@ -18,9 +18,6 @@ public:
     template<typename StateType>
     auto execute(StateType& state);
 
-protected:
-    void mapKey(Key, const std::function<bool()>&);
-
 private:
     friend class Window;
     State& getCurrentState() { return *states.end()[-1]; }

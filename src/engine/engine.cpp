@@ -10,11 +10,6 @@ Window& Engine::createWindow(Vector2 size, boost::string_ref title, bool fullscr
     return windows.back();
 }
 
-void Engine::mapKey(Key key, const std::function<bool()>& function)
-{
-    keyboard::mapKey(key, NoMod, function);
-}
-
 void Engine::render(Window& window)
 {
     if (getCurrentState().renderPreviousState())

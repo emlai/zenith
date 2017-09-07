@@ -1,4 +1,5 @@
 #include "keyboard.h"
+#include "font.h"
 #include "geometry.h"
 #include "window.h"
 #include <SDL.h>
@@ -8,36 +9,6 @@
 namespace keyboard
 {
     int readLineProcessKey(const SDL_Event&, std::string& line, std::string::iterator& cursor);
-    static CommandFunction keyMap[128][4];
-    static CommandFunction specialKeyMap[226][4];
-}
-
-void keyboard::mapKey(Key key, Mod mod, CommandFunction callback)
-{
-    if (isupper(key))
-    {
-        key = tolower(key);
-        mod |= Shift;
-    }
-
-    switch (mod)
-    {
-        case NoMod: break;
-        case Shift: mod = 1; break;
-        case Ctrl: mod = 2; break;
-        case Alt: mod = 3; break;
-        default: assert(false);
-    }
-
-    getMappedCommand(key, mod) = callback;
-}
-
-CommandFunction& keyboard::getMappedCommand(Key key, Mod mod)
-{
-    if (!(key & SDLK_SCANCODE_MASK))
-        return keyMap[key][mod];
-    else
-        return specialKeyMap[key - SDLK_SCANCODE_MASK - SDL_SCANCODE_CAPSLOCK][mod];
 }
 
 int keyboard::readLine(Window& window, std::string& line, Vector2 position, RenderFunction render,

@@ -1,14 +1,16 @@
 #pragma once
 
-#include "font.h"
+#include "geometry.h"
 #include <SDL.h>
+#include <boost/utility/string_ref.hpp>
 #include <functional>
+#include <string>
+
+class Window;
 
 using Key = decltype(SDL_Keysym::sym);
 using Mod = decltype(SDL_Keysym::mod);
-using KeyDownCallback = std::function<void(Window&, Key, Mod)>;
 using RenderFunction = std::function<void(Window&)>;
-using CommandFunction = std::function<bool()>;
 
 enum : Key
 {
@@ -49,6 +51,4 @@ namespace keyboard
 {
     int readLine(Window&, std::string& lineContent, Vector2 position, RenderFunction,
                  boost::string_ref prefix = "");
-    void mapKey(Key, Mod, CommandFunction);
-    CommandFunction& getMappedCommand(Key, Mod);
 }
