@@ -1,0 +1,28 @@
+sudo: false
+dist: trusty
+
+language: cpp
+
+compiler:
+  - clang
+  - gcc
+
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-5
+      - libboost-filesystem-dev
+      - libsdl2-dev
+
+before_install:
+  - if [ $CXX == g++ ]; then export CXX=g++-5; fi
+
+before_script:
+  - mkdir build
+  - cd build
+
+script:
+  - cmake ..
+  - make VERBOSE=1
