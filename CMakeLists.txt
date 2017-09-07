@@ -12,7 +12,7 @@ check_cxx_compiler_flag(-Weverything HAS_WEVERYTHING)
 if(HAS_WEVERYTHING)
     set(CMAKE_CXX_FLAGS "-Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic \
         -Wno-padded -Wno-global-constructors -Wno-exit-time-destructors -Wno-weak-vtables \
-        ${CMAKE_CXX_FLAGS}")
+        -Wno-shadow -Wno-sign-conversion ${CMAKE_CXX_FLAGS}")
 else()
     set(CMAKE_CXX_FLAGS "-Wall -Wextra -pedantic -Wold-style-cast ${CMAKE_CXX_FLAGS}")
 endif()
