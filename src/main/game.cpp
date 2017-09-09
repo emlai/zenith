@@ -15,12 +15,12 @@ const Config Game::objectConfig("data/config/object.cfg");
 const Config Game::itemConfig("data/config/item.cfg");
 const Config Game::groundConfig("data/config/ground.cfg");
 const Config Game::materialConfig("data/config/material.cfg");
-boost::optional<const Texture> Game::creatureSpriteSheet;
-boost::optional<const Texture> Game::objectSpriteSheet;
-boost::optional<const Texture> Game::itemSpriteSheet;
-boost::optional<const Texture> Game::groundSpriteSheet;
-boost::optional<const Texture> Game::cursorTexture;
-boost::optional<const Texture> Game::fogOfWarTexture;
+std::unique_ptr<Texture> Game::creatureSpriteSheet;
+std::unique_ptr<Texture> Game::objectSpriteSheet;
+std::unique_ptr<Texture> Game::itemSpriteSheet;
+std::unique_ptr<Texture> Game::groundSpriteSheet;
+std::unique_ptr<Texture> Game::cursorTexture;
+std::unique_ptr<Texture> Game::fogOfWarTexture;
 
 static const Color32 transparentColor(0x5A5268FF);
 
@@ -29,12 +29,12 @@ Game::Game(bool loadSavedGame)
     turn(0),
     world(*this)
 {
-    creatureSpriteSheet.emplace("data/graphics/creature.bmp", transparentColor);
-    objectSpriteSheet.emplace("data/graphics/object.bmp", transparentColor);
-    itemSpriteSheet.emplace("data/graphics/item.bmp", transparentColor);
-    groundSpriteSheet.emplace("data/graphics/ground.bmp");
-    cursorTexture.emplace("data/graphics/cursor.bmp", transparentColor);
-    fogOfWarTexture.emplace("data/graphics/fow.bmp", transparentColor);
+    creatureSpriteSheet = std::make_unique<Texture>("data/graphics/creature.bmp", transparentColor);
+    objectSpriteSheet = std::make_unique<Texture>("data/graphics/object.bmp", transparentColor);
+    itemSpriteSheet = std::make_unique<Texture>("data/graphics/item.bmp", transparentColor);
+    groundSpriteSheet = std::make_unique<Texture>("data/graphics/ground.bmp");
+    cursorTexture = std::make_unique<Texture>("data/graphics/cursor.bmp", transparentColor);
+    fogOfWarTexture = std::make_unique<Texture>("data/graphics/fow.bmp", transparentColor);
 
     if (loadSavedGame)
         load();

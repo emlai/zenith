@@ -146,7 +146,7 @@ int main(int argc, const char** argv)
     if (boost::filesystem::exists(preferencesFileName))
     {
         Config preferences(preferencesFileName);
-        window.getGraphicsContext().setScale(preferences.getOptional<double>("GraphicsScale").value_or(1));
+        window.getGraphicsContext().setScale(preferences.getOptional<double>("GraphicsScale").get_value_or(1));
     }
 
     BitmapFont font = initFont();

@@ -28,7 +28,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
 target_include_directories(zenith PUBLIC "${PROJECT_SOURCE_DIR}/src")
 target_link_libraries(zenith zenithEngine)
 
-find_package(Boost REQUIRED COMPONENTS filesystem)
+find_package(Boost REQUIRED COMPONENTS filesystem system)
 target_include_directories(zenith SYSTEM PUBLIC ${Boost_INCLUDE_DIR})
 target_include_directories(zenithEngine SYSTEM PUBLIC ${Boost_INCLUDE_DIR})
 target_link_libraries(zenithEngine ${Boost_LIBRARIES})

@@ -36,12 +36,12 @@ public:
     static const Config itemConfig;
     static const Config groundConfig;
     static const Config materialConfig;
-    static boost::optional<const Texture> creatureSpriteSheet;
-    static boost::optional<const Texture> objectSpriteSheet;
-    static boost::optional<const Texture> itemSpriteSheet;
-    static boost::optional<const Texture> groundSpriteSheet;
-    static boost::optional<const Texture> cursorTexture;
-    static boost::optional<const Texture> fogOfWarTexture;
+    static std::unique_ptr<Texture> creatureSpriteSheet;
+    static std::unique_ptr<Texture> objectSpriteSheet;
+    static std::unique_ptr<Texture> itemSpriteSheet;
+    static std::unique_ptr<Texture> groundSpriteSheet;
+    static std::unique_ptr<Texture> cursorTexture;
+    static std::unique_ptr<Texture> fogOfWarTexture;
 
     static constexpr auto saveFileName = "zenith.sav";
 

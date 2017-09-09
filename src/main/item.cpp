@@ -98,7 +98,7 @@ bool Item::use(Creature& user, Game& game)
 
 EquipmentSlot Item::getEquipmentSlot() const
 {
-    auto slotString = getConfig().getOptional<std::string>(getId(), "EquipmentSlot").value_or("Hand");
+    auto slotString = getConfig().getOptional<std::string>(getId(), "EquipmentSlot").get_value_or("Hand");
 
     if (slotString == "Head") return Head;
     if (slotString == "Torso") return Torso;
