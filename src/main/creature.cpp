@@ -522,20 +522,30 @@ void Creature::drop(Item& itemToDrop)
 {
     EquipmentSlot equipmentSlot = itemToDrop.getEquipmentSlot();
 
-    for (auto it = inventory.begin(), end = inventory.end(); it != end; ++it)
-    {
-        if (it->get() == &itemToDrop)
-        {
-            if (getEquipment(equipmentSlot) == &itemToDrop)
-                equip(equipmentSlot, nullptr);
+    if (getEquipment(equipmentSlot) == &itemToDrop)
+        equip(equipmentSlot, nullptr);
 
-            getTileUnder(0).addItem(std::move(*it));
-            inventory.erase(it);
-            return;
-        }
-    }
+    getTileUnder(0).addItem(removeItem(itemToDrop));
+}
 
-    assert(false);
+bool Creature::eat(Item& itemToEat)
+{
+    assert(itemToEat.isEdible());
+
+    if (auto leftoverItemId = Game::itemConfig.getOptional<std::string>(itemToEat.getId(), "leftoverItem"))
+        getTileUnder(0).addItem(std::make_unique<Item>(*leftoverItemId, ""));
+
+    addMessage("You eat the ", itemToEat.getName(), ".");
+    removeItem(itemToEat);
+    return true;
+}
+
+std::unique_ptr<Item> Creature::removeItem(Item& itemToRemove)
+{
+    auto index = getInventoryIndex(itemToRemove);
+    auto removedItem = std::move(inventory[index]);
+    inventory.erase(inventory.begin() + index);
+    return removedItem;
 }
 
 int Creature::getInventoryIndex(const Item& item) const

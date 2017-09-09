@@ -20,6 +20,7 @@ public:
     virtual void exist() {}
     bool isUsable() const;
     bool use(Creature& user, Game& game);
+    bool isEdible() const;
     EquipmentSlot getEquipmentSlot() const;
     virtual std::string getNameAdjective() const override;
     void render(Window& window, Vector2 position) const;

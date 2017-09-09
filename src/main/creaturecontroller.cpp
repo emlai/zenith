@@ -100,13 +100,30 @@ Action PlayerController::control(Creature& creature)
                 break;
             }
 
+            case 'E':
+            {
+                if (creature.isDead())
+                    break;
+
+                int selectedItemIndex = game.showInventory("What do you want to eat?", false,
+                                                           nullptr, [](auto& item)
+                {
+                    return item.isEdible();
+                });
+        
+                if (selectedItemIndex != Menu::Exit)
+                    if (creature.eat(*creature.getInventory()[selectedItemIndex]))
+                        return EatItem;
+                break;
+            }
+
             case 'd':
             {
                 if (creature.isDead())
                     break;
 
                 int selectedItemIndex = game.showInventory("What do you want to drop?", false);
-        
+
                 if (selectedItemIndex != Menu::Exit)
                 {
                     creature.drop(*creature.getInventory()[selectedItemIndex]);

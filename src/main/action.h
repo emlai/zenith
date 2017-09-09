@@ -11,6 +11,7 @@ enum Action : int
     PickUpItems,
     DropItem,
     UseItem,
+    EatItem,
     Close
 };
 

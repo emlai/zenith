@@ -96,6 +96,11 @@ bool Item::use(Creature& user, Game& game)
     return returnValue;
 }
 
+bool Item::isEdible() const
+{
+    return Game::itemConfig.getOptional<bool>(getId(), "isEdible").get_value_or(false);
+}
+
 EquipmentSlot Item::getEquipmentSlot() const
 {
     auto slotString = getConfig().getOptional<std::string>(getId(), "EquipmentSlot").get_value_or("Hand");

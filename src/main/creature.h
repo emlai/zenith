@@ -101,6 +101,7 @@ public:
     void equip(EquipmentSlot slot, Item* itemToEquip);
     bool use(Item&, Game& game);
     void drop(Item&);
+    bool eat(Item&);
     bool close(Dir8);
 
     const auto& getTilesUnder() const { return tilesUnder; }
@@ -109,6 +110,7 @@ public:
     int getLevel() const;
     const auto& getInventory() const { return inventory; }
     const auto& getEquipment() const { return equipment; }
+    std::unique_ptr<Item> removeItem(Item& item);
     Item* getEquipment(EquipmentSlot slot) const { return equipment.at(slot); }
     int getInventoryIndex(const Item& item) const;
     bool isRunning() const { return running; }
