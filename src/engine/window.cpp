@@ -99,7 +99,12 @@ Key Window::waitForInput()
         {
             case SDL_KEYDOWN:
                 SDL_FilterEvents(filterKeyRepeatEvents, &event);
-                return event.key.keysym.sym;
+
+                if ((event.key.keysym.mod & Shift) && std::isalpha(event.key.keysym.sym))
+                    return std::toupper(event.key.keysym.sym);
+                else
+                    return event.key.keysym.sym;
+
             case SDL_WINDOWEVENT:
                 if (handleWindowEvent(event.window.event))
                     return NoKey;
