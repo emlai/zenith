@@ -21,8 +21,7 @@ void RNG::seed(RNG::result_type seed)
     currentSeed = seed;
 
     Xorshift64Star seedGenerator({seed});
-    auto& rngState = algorithm.target<Xorshift1024Star>()->state;
-    std::generate(std::begin(rngState), std::end(rngState), seedGenerator);
+    std::generate(std::begin(algorithm.state), std::end(algorithm.state), seedGenerator);
 }
 
 uint64_t Xorshift1024Star::operator()()

@@ -74,6 +74,15 @@ const int equipmentSlots = 4;
 
 boost::string_ref toString(EquipmentSlot slot);
 
+namespace std
+{
+    template<>
+    struct hash<EquipmentSlot>
+    {
+        size_t operator()(EquipmentSlot slot) const { return size_t(slot); }
+    };
+}
+
 class Creature final : public Entity
 {
 public:

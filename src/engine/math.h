@@ -42,8 +42,10 @@ struct Xorshift64Star
 class RNG
 {
 public:
+    using Generator = Xorshift1024Star;
     using result_type = uint64_t;
-    RNG(std::function<result_type()> algorithm) : algorithm(std::move(algorithm)) {}
+
+    RNG(Generator algorithm) : algorithm(std::move(algorithm)) {}
     void seed();
     void seed(RNG::result_type);
     auto getSeed() const { return currentSeed; }
@@ -52,7 +54,7 @@ public:
     static constexpr result_type min() { return std::numeric_limits<result_type>::min(); }
 
 private:
-    std::function<result_type()> algorithm;
+    Generator algorithm;
     result_type currentSeed;
 };
 

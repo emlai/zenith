@@ -83,7 +83,8 @@ int keyboard::readLineProcessKey(const SDL_Event& event, std::string& line, std:
                 auto maxToAdd = maxBufferSize - line.size();
                 char* endPosition = std::min(clipboardText.get() + maxToAdd,
                                              clipboardText.get() + clipboardTextSize);
-                cursor = clipboardTextSize + line.insert(cursor, clipboardText.get(), endPosition);
+                line.insert(cursor, clipboardText.get(), endPosition);
+                cursor = line.end();
             }
             break;
         case 'c':
