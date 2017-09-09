@@ -4,12 +4,39 @@
 #include <SDL.h>
 #include <stdexcept>
 
-Texture::Texture(std::vector<Color32>&& pixelData, uint32_t pixelFormat,
-                 Vector2 size)
-:   surface(SDL_CreateRGBSurfaceWithFormatFrom(pixelData.data(), size.x, size.y,
-                                               SDL_BITSPERPIXEL(pixelFormat),
-                                               size.x * SDL_BYTESPERPIXEL(pixelFormat), pixelFormat),
-            SDL_FreeSurface),
+struct PixelFormatMasks
+{
+    uint32_t red, green, blue, alpha;
+};
+
+static PixelFormatMasks pixelFormatEnumToMasks(uint32_t pixelFormat)
+{
+    int bpp;
+    PixelFormatMasks masks;
+
+    if (!SDL_PixelFormatEnumToMasks(pixelFormat, &bpp, &masks.red, &masks.green, &masks.blue, &masks.alpha))
+        throw std::runtime_error("SDL_PixelFormatEnumToMasks: invalid pixel format");
+
+    return masks;
+}
+
+static SDL_Surface* createSurfaceFromPixels(std::vector<Color32>& pixels, uint32_t pixelFormat, Vector2 size)
+{
+    PixelFormatMasks masks = pixelFormatEnumToMasks(pixelFormat);
+    return SDL_CreateRGBSurfaceFrom(pixels.data(), size.x, size.y, SDL_BITSPERPIXEL(pixelFormat),
+                                    size.x * SDL_BYTESPERPIXEL(pixelFormat),
+                                    masks.red, masks.green, masks.blue, masks.alpha);
+}
+
+static SDL_Surface* createSurfaceWithFormat(uint32_t pixelFormat, Vector2 size)
+{
+    PixelFormatMasks masks = pixelFormatEnumToMasks(pixelFormat);
+    return SDL_CreateRGBSurface(0, size.x, size.y, SDL_BITSPERPIXEL(pixelFormat),
+                                masks.red, masks.green, masks.blue, masks.alpha);
+}
+
+Texture::Texture(std::vector<Color32>&& pixelData, uint32_t pixelFormat, Vector2 size)
+:   surface(createSurfaceFromPixels(pixelData, pixelFormat, size), SDL_FreeSurface),
     pixelData(std::move(pixelData))
 {
     setBlendMode(true);
@@ -35,7 +62,7 @@ Texture::Texture(boost::string_ref fileName, Color32 transparentColor)
 }
 
 Texture::Texture(uint32_t pixelFormat, Vector2 size)
-:   surface(SDL_CreateRGBSurfaceWithFormat(0, size.x, size.y, 32, pixelFormat), SDL_FreeSurface)
+:   surface(createSurfaceWithFormat(pixelFormat, size), SDL_FreeSurface)
 {
 }
 
