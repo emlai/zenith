@@ -12,12 +12,12 @@ build.ninja
 rules.ninja
 *.xcodeproj
 
-build
-*.build
+*build
 Debug
 Release
 MinSizeRel
 RelWithDebInfo
 /zenith
+*.a
 prefs.cfg
 *.sav
