@@ -342,6 +342,6 @@ void WorldGenerator::generateCreatures(Rect region, int level)
         while (!tile || tile->hasObject())
             tile = world.getTile(makeRandomVectorInside(region), level);
 
-        tile->spawnCreature("Bat", std::make_unique<AIController>());
+        tile->spawnCreature("Bat");
     }
 }

@@ -86,6 +86,7 @@ namespace std
 class Creature final : public Entity
 {
 public:
+    Creature(Tile*, boost::string_ref id);
     Creature(Tile*, boost::string_ref id, std::unique_ptr<CreatureController> controller);
     Creature(const SaveFile& file, Tile* tile);
     void save(SaveFile& file) const;

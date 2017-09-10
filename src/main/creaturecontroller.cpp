@@ -7,21 +7,19 @@
 
 CreatureController::~CreatureController() {}
 
+std::unique_ptr<AIController> AIController::get(boost::string_ref id, Creature& creature)
+{
+    auto ai = AI::get(Game::creatureConfig.get<std::string>(id, "ai"), creature);
+    return std::make_unique<AIController>(std::move(ai));
+}
+
 Action AIController::control(Creature& creature)
 {
     if (creature.isDead())
         return Wait;
 
-    Action action;
-
-    if (auto* nearestEnemy = creature.getNearestEnemy())
-        action = creature.tryToMoveTowardsOrAttack(*nearestEnemy);
-    else
-        action = creature.tryToMoveOrAttack(randomDir8());
-
-    if (!action) // TODO: Implement proper AI so action is never NoAction.
-        return Wait;
-
+    auto action = ai->control();
+    assert(action != NoAction);
     return action;
 }
 

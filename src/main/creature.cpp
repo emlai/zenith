@@ -1,5 +1,6 @@
 #include "creature.h"
 #include "action.h"
+#include "creaturecontroller.h"
 #include "game.h"
 #include "msgsystem.h"
 #include "tile.h"
@@ -37,6 +38,11 @@ std::vector<std::vector<int>> Creature::initAttributeIndices(boost::string_ref i
     return Game::creatureConfig.get<std::vector<std::vector<int>>>(id, "AttributeIndices");
 }
 
+Creature::Creature(Tile* tile, boost::string_ref id)
+:   Creature(tile, id, AIController::get(id, *this))
+{
+}
+
 Creature::Creature(Tile* tile, boost::string_ref id, std::unique_ptr<CreatureController> controller)
 :   Entity(id, Game::creatureConfig),
     equipment({{Head, nullptr}, {Torso, nullptr}, {Hand, nullptr}, {Legs, nullptr}}),
@@ -72,7 +78,7 @@ Creature::Creature(const SaveFile& file, Tile* tile)
     displayedAttributes(initDisplayedAttributes(getId())),
     attributeIndices(initAttributeIndices(getId())),
     sprite(getSprite(*Game::creatureSpriteSheet, Game::creatureConfig, getId())),
-    controller(std::make_unique<AIController>())
+    controller(AIController::get(getId(), *this))
 {
     if (tile)
         tilesUnder.push_back(tile);
