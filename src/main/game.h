@@ -14,6 +14,10 @@ class Game : public State
 {
 public:
     Game(bool loadSavedGame);
+    Game(const Game&) = delete;
+    Game(Game&&) = default;
+    Game& operator=(const Game&) = delete;
+    Game& operator=(Game&&) = default;
     void save();
     void load();
     void execute();
@@ -25,6 +29,7 @@ public:
     void showEquipmentMenu();
     void lookMode();
     boost::optional<Dir8> askForDirection(std::string&& question);
+    Creature* getPlayer() const { return player; }
     Window& getWindow() const;
 #ifdef DEBUG
     void enterCommandMode(Window&);

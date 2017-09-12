@@ -16,7 +16,11 @@ class Tile;
 class World
 {
 public:
-    World(const Game& game) : game(game), sunlight(0x888888FF) {}
+    World(const Game& game) : game(&game), sunlight(0x888888FF) {}
+    World(const World&) = delete;
+    World(World&&) = default;
+    World& operator=(const World&) = delete;
+    World& operator=(World&&) = default;
     void load(const SaveFile& file);
     void save(SaveFile& file) const;
     int getTurn() const;
@@ -33,7 +37,7 @@ private:
     static Vector3 globalPositionToAreaPosition(Vector2 position, int level);
     static Vector2 globalPositionToTilePosition(Vector2 position);
 
-    const Game& game;
+    const Game* game;
     std::unordered_map<Vector3, Area> areas;
     Color32 sunlight;
 };

@@ -6,6 +6,7 @@
 #include "engine/window.h"
 #include <boost/filesystem.hpp>
 #include <cassert>
+#include <cstdio>
 #include <iostream>
 #include <memory>
 
@@ -77,11 +78,13 @@ void MainMenu::execute()
 {
     enum { NewGame, LoadGame, Preferences };
 
+    std::unique_ptr<Game> game;
+
     while (true)
     {
         clear();
 
-        if (boost::filesystem::exists(Game::saveFileName))
+        if (game || boost::filesystem::exists(Game::saveFileName))
             addItem(MenuItem(LoadGame, "Load game", 'l'));
         else
             addItem(MenuItem(NewGame, "New game", 'n'));
@@ -99,23 +102,28 @@ void MainMenu::execute()
         {
             case NewGame:
             case LoadGame:
-            {
-                rng.seed();
-                Game game(selection == LoadGame);
+                if (!game)
+                {
+                    rng.seed();
+                    game = std::make_unique<Game>(selection == LoadGame);
+                }
 
                 try
                 {
-                    getEngine().execute(game);
+                    getEngine().execute(*game);
                 }
                 catch (...)
                 {
-                    game.save();
+                    game->save();
                     throw;
                 }
 
-                game.save();
+                if (game->getPlayer()->isDead())
+                {
+                    std::remove(Game::saveFileName);
+                    game = nullptr;
+                }
                 break;
-            }
 
             case Preferences:
             {
@@ -126,6 +134,7 @@ void MainMenu::execute()
 
             case Menu::Exit:
             case Window::CloseRequest:
+                if (game) game->save();
                 return;
         }
     }

@@ -377,12 +377,6 @@ void Game::parseCommand(boost::string_ref command)
 
 void Game::save()
 {
-    if (player->isDead())
-    {
-        std::remove(saveFileName);
-        return;
-    }
-
     SaveFile file(saveFileName, true);
     file.writeInt32(getTurn());
     file.write(player->getPosition());
