@@ -4,11 +4,13 @@
 #include "msgsystem.h"
 #include "tile.h"
 #include "engine/engine.h"
+#include "engine/keyboard.h"
 #include "engine/math.h"
 #include "engine/menu.h"
 #include "engine/savefile.h"
 #include <cmath>
 #include <fstream>
+#include <functional>
 
 const Config Game::creatureConfig("data/config/creature.cfg");
 const Config Game::objectConfig("data/config/object.cfg");
@@ -199,6 +201,39 @@ void Game::lookMode()
 {
     LookMode lookMode(*this);
     getEngine().execute(lookMode);
+}
+
+class StringQuestion : public State
+{
+public:
+    StringQuestion(std::string question) : question(std::move(question)) {}
+    std::string execute();
+
+private:
+    void render(Window&) override {} // Rendered by keyboard::readLine() in execute().
+    bool renderPreviousState() const override { return true; }
+
+    std::string question;
+};
+
+std::string StringQuestion::execute()
+{
+    auto& window = getEngine().getWindow();
+    std::string input;
+
+    int result = keyboard::readLine(window, input, GUI::getQuestionArea(window).position,
+                                    std::bind(&Engine::render, &getEngine(), std::placeholders::_1),
+                                    question);
+    if (result == Esc)
+        return "";
+
+    return input;
+}
+
+std::string Game::askForString(std::string&& question)
+{
+    StringQuestion stringQuestion(question);
+    return getEngine().execute(stringQuestion);
 }
 
 class DirectionQuestion : public State

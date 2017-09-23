@@ -158,6 +158,18 @@ Action PlayerController::control(Creature& creature)
                 game.playerSeesEverything = !game.playerSeesEverything;
                 break;
 
+            case F3:
+            {
+                auto itemName = game.askForString("Which item do you want to spawn?");
+
+                if (itemName.empty())
+                    break;
+
+                auto materialName = game.askForString("Which material do you want to use for the item?");
+                creature.getTileUnder(0).addItem(std::make_unique<Item>(itemName, materialName));
+                break;
+            }
+
             case Tab:
                 game.enterCommandMode(game.getWindow());
                 return NoAction;

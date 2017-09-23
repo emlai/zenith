@@ -17,12 +17,12 @@ public:
     const Window& getWindow(unsigned index = 0) const { return windows[index]; }
     template<typename StateType>
     auto execute(StateType& state);
+    void render(Window& window);
 
 private:
     friend class Window;
     State& getCurrentState() { return *states.end()[-1]; }
     State& getPreviousState() { return *states.end()[-2]; }
-    void render(Window& window);
 
     std::vector<Window> windows;
     std::vector<State*> states;

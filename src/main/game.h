@@ -28,6 +28,7 @@ public:
                       std::function<bool(const Item&)> itemFilter = nullptr);
     void showEquipmentMenu();
     void lookMode();
+    std::string askForString(std::string&& question);
     boost::optional<Dir8> askForDirection(std::string&& question);
     Creature* getPlayer() const { return player; }
     Window& getWindow() const;
