@@ -29,12 +29,12 @@ static Color16 getMaterialColor(boost::string_ref materialId)
 }
 
 Item::Item(boost::string_ref id, boost::string_ref materialId)
-:   Item(id, materialId, Sprite(*Game::itemSpriteSheet, getSpriteTextureRegion(Game::itemConfig, id),
-                                getMaterialColor(materialId)))
+:   Item(id, materialId,
+         ::getSprite(*Game::itemSpriteSheet, Game::itemConfig, id, 0, getMaterialColor(materialId)))
 {
 }
 
-Item::Item(boost::string_ref id, boost::string_ref materialId, Sprite&& sprite)
+Item::Item(boost::string_ref id, boost::string_ref materialId, Sprite sprite)
 :   Entity(id, Game::itemConfig),
     materialId(materialId.to_string()),
     sprite(std::move(sprite))
@@ -127,7 +127,8 @@ void Item::render(Window& window, Vector2 position) const
 
 void Item::renderEquipped(Window& window, Vector2 position) const
 {
-    sprite.render(window, position, Vector2(0, Tile::size));
+    Vector2 equippedSourceOffset(0, Tile::getSize().y);
+    sprite.render(window, position, equippedSourceOffset);
 }
 
 std::string getRandomMaterialId(boost::string_ref itemId)
@@ -137,18 +138,18 @@ std::string getRandomMaterialId(boost::string_ref itemId)
 }
 
 Corpse::Corpse(std::unique_ptr<Creature> creature)
-:   Item(creature->getId() + "Corpse", "",
-         Sprite(*Game::creatureSpriteSheet, getSpriteTextureRegion(Game::creatureConfig, creature->getId()))),
+:   Item(creature->getId() + "Corpse", "", ::getSprite(*Game::creatureSpriteSheet, Game::creatureConfig,
+                                                       creature->getId(), corpseFrame, Color32::none)),
     creature(std::move(creature))
 {
-    sprite.setFrame(2);
+    sprite.setAsciiGlyph(corpseGlyph);
 }
 
 Corpse::Corpse(boost::string_ref creatureId)
-:   Item(creatureId + "Corpse", "",
-         Sprite(*Game::creatureSpriteSheet, getSpriteTextureRegion(Game::creatureConfig, creatureId)))
+:   Item(creatureId + "Corpse", "", ::getSprite(*Game::creatureSpriteSheet, Game::creatureConfig,
+                                                creatureId, corpseFrame, Color32::none))
 {
-    sprite.setFrame(2);
+    sprite.setAsciiGlyph(corpseGlyph);
 }
 
 void Corpse::exist()

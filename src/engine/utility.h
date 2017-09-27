@@ -28,6 +28,7 @@ inline int divideRoundingDown(int dividend, int divisor)
         return quotient;
 }
 
+std::string toOnOffString(bool value);
 std::string toStringAvoidingDecimalPlaces(double value);
 
 std::string operator+(boost::string_ref a, boost::string_ref b);

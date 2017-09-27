@@ -51,8 +51,8 @@ public:
     void setTextLayout(TextLayout layout) { textLayout = layout; }
     void setItemLayout(ItemLayout layout) { itemLayout = layout; }
     void setItemSpacing(int amount) { itemSpacing = amount; }
-    void setItemSize(boost::optional<int> amount) { itemSize = amount; }
-    void setColumnSpacing(int amount) { columnSpacing = amount; }
+    void setItemSize(boost::optional<Vector2> size) { itemSize = size; }
+    void setTableCellSpacing(Vector2 spacing) { tableCellSpacing = spacing; }
     void setSecondaryColumnAlignment(HorizontalAlignment alignment) { secondaryColumnAlignment = alignment; }
     void setNormalColor(Color32 color) { normalColor = color; }
     void setSelectionColor(Color32 color) { selectionColor = color; }
@@ -85,8 +85,8 @@ private:
     TextLayout textLayout;
     ItemLayout itemLayout;
     int itemSpacing;
-    boost::optional<int> itemSize;
-    int columnSpacing;
+    boost::optional<Vector2> itemSize;
+    Vector2 tableCellSpacing;
     HorizontalAlignment secondaryColumnAlignment;
     Color32 normalColor;
     Color32 selectionColor;

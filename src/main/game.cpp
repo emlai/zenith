@@ -66,9 +66,9 @@ InventoryMenu::InventoryMenu(Window& window, const Creature& player, boost::stri
 {
     addTitle(title);
     setArea(GUI::getInventoryArea(window));
-    setItemSize(Tile::size);
-    setTextLayout(TextLayout(LeftAlign, VerticalCenter));
-    setColumnSpacing(Tile::size / 2);
+    setItemSize(Tile::getMaxSize());
+    setTextLayout(TextLayout(LeftAlign, Sprite::useAsciiGraphics() ? TopAlign : VerticalCenter));
+    setTableCellSpacing(Vector2(window.getFont().getColumnWidth(), 0));
 
     if (showNothingAsOption)
         addItem(MenuItem(-1, "nothing"));
@@ -119,9 +119,9 @@ void EquipmentMenu::execute()
         clear();
         addTitle("Equipment");
         setArea(GUI::getInventoryArea(getEngine().getWindow()));
-        setItemSize(Tile::size);
-        setTextLayout(TextLayout(LeftAlign, VerticalCenter));
-        setColumnSpacing(Tile::size / 2);
+        setItemSize(Tile::getMaxSize());
+        setTextLayout(TextLayout(LeftAlign, Sprite::useAsciiGraphics() ? TopAlign : VerticalCenter));
+        setTableCellSpacing(Vector2(getEngine().getWindow().getFont().getColumnWidth(), 0));
 
         for (int i = 0; i < equipmentSlots; ++i)
         {
@@ -294,13 +294,13 @@ void Game::renderAtPosition(Window& window, Vector2 centerPosition)
 {
     Rect worldViewport = GUI::getWorldViewport(getWindow());
 
-    Rect view(centerPosition * Tile::size + Tile::sizeVector / 2 - worldViewport.size / 2,
+    Rect view(centerPosition * Tile::getSize() + Tile::getSize() / 2 - worldViewport.size / 2,
               worldViewport.size);
     window.setView(&view);
     window.setViewport(&worldViewport);
 
-    Rect visibleRegion(centerPosition - worldViewport.size / Tile::size / 2,
-                       worldViewport.size / Tile::size);
+    Rect visibleRegion(centerPosition - worldViewport.size / Tile::getSize() / 2,
+                       worldViewport.size / Tile::getSize());
     world.render(window, visibleRegion, player->getLevel(), *player);
 
     window.setView(nullptr);

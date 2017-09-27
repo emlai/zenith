@@ -162,14 +162,17 @@ void Creature::regenerate()
     editMP(0.1);
 }
 
-void Creature::render(Window& window) const
+void Creature::render(Window& window, Vector2 position) const
 {
-    sprite.render(window, getPosition() * Tile::size);
+    sprite.render(window, position);
 
-    for (int slot = equipmentSlots - 1; slot >= 0; --slot)
+    if (!Sprite::useAsciiGraphics())
     {
-        if (auto* equipment = getEquipment(static_cast<EquipmentSlot>(slot)))
-            equipment->renderEquipped(window, getPosition() * Tile::size);
+        for (int slot = equipmentSlots - 1; slot >= 0; --slot)
+        {
+            if (auto* equipment = getEquipment(static_cast<EquipmentSlot>(slot)))
+                equipment->renderEquipped(window, position);
+        }
     }
 }
 

@@ -4,13 +4,13 @@
 
 Object::Object(boost::string_ref id)
 :   Entity(id, Game::objectConfig),
-    sprite(*Game::objectSpriteSheet, getSpriteTextureRegion(Game::objectConfig, id))
+    sprite(::getSprite(*Game::objectSpriteSheet, Game::objectConfig, id))
 {
 }
 
 Object::Object(const SaveFile& file)
 :   Entity(file.readString(), Game::objectConfig),
-    sprite(*Game::objectSpriteSheet, getSpriteTextureRegion(Game::objectConfig, getId()))
+    sprite(::getSprite(*Game::objectSpriteSheet, Game::objectConfig, getId()))
 {
     for (auto& component : getComponents())
         component->load(file);

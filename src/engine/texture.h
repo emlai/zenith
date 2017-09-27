@@ -20,7 +20,7 @@ public:
     Texture(uint32_t pixelFormat, Vector2 size);
     void setBlendMode(bool);
     void setColor(Color32) const;
-    void render(Window& window, Vector2 position) const;
+    void render(Window& window, Vector2 position, Vector2 size = Vector2::zeroVector) const;
     void render(Window& window, Rect target) const;
     void render(Window& window, Rect source, Rect target) const;
     void render(Window& window, Rect source, Rect target, Color32 materialColor) const;

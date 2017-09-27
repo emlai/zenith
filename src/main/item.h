@@ -28,7 +28,7 @@ public:
     const Sprite& getSprite() const { return sprite; }
 
 protected:
-    Item(boost::string_ref id, boost::string_ref materialId, Sprite&& sprite);
+    Item(boost::string_ref id, boost::string_ref materialId, Sprite sprite);
 
     std::string materialId;
     Sprite sprite;
@@ -46,5 +46,8 @@ public:
     void save(SaveFile& file) const override;
 
 private:
+    static const int corpseFrame = 2;
+    static const char corpseGlyph = ',';
+
     std::unique_ptr<Creature> creature;
 };

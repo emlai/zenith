@@ -19,7 +19,6 @@ BitmapFont::BitmapFont(boost::string_ref fileName, Vector2 charSize)
     moveVector(charSize),
     texture(loadFromFile(fileName), SDL_PIXELFORMAT_RGBA8888, dimensions * charSize)
 {
-    texture.setBlendMode(true);
 }
 
 std::vector<Color32> BitmapFont::loadFromFile(boost::string_ref fileName) const
@@ -45,10 +44,12 @@ std::vector<Color32> BitmapFont::loadFromFile(boost::string_ref fileName) const
     return pixelData;
 }
 
-void BitmapFont::print(Window& window, boost::string_ref text, Color32 color)
+void BitmapFont::print(Window& window, boost::string_ref text, Color32 color, bool blend)
 {
     if (!color)
         color = defaultColor;
+
+    texture.setBlendMode(blend);
 
     if (drawShadows)
     {
@@ -95,6 +96,12 @@ Vector2 BitmapFont::printHelper(Window& window, boost::string_ref text, Vector2 
     {
         if ((currentLineSize + int(word.size())) * moveVector.x > maxLineSize)
         {
+            if (splitText.empty())
+            {
+                splitText = text.to_string();
+                break;
+            }
+
             assert(splitText.back() == ' ');
             splitText.back() = '\n';
             currentLineSize = 0;

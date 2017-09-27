@@ -27,7 +27,7 @@ class BitmapFont
 {
 public:
     BitmapFont(boost::string_ref fileName, Vector2 charSize);
-    void print(Window& window, boost::string_ref, Color32 = Color32::none);
+    void print(Window& window, boost::string_ref, Color32 = Color32::none, bool blend = true);
     void printLine(Window& window, boost::string_ref, Color32 = Color32::none);
     void printWithCursor(Window& window, boost::string_ref, const char* cursorPosition,
                          Color32 mainColor = Color32::none, Color32 cursorColor = Color32::none);
@@ -45,6 +45,7 @@ public:
     int getCharSpacing() const { return moveVector.x - charSize.x; }
     int getLineSpacing() const { return moveVector.y - charSize.y; }
     int getColumnWidth() const { return moveVector.x; }
+    int getRowHeight() const { return moveVector.y; }
     TextLayout getLayout() const { return layout; }
 
 private:

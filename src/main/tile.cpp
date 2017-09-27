@@ -8,15 +8,14 @@
 #include "engine/texture.h"
 #include <cassert>
 
-const int Tile::size = 20;
-const Vector2 Tile::sizeVector = Vector2(Tile::size, Tile::size);
+const Vector2 Tile::spriteSize(20, 20);
 
 Tile::Tile(World& world, Vector2 position, int level, boost::string_ref groundId)
 :   world(world),
     position(position),
     level(level),
     groundId(groundId),
-    groundSprite(*Game::groundSpriteSheet, getSpriteTextureRegion(Game::groundConfig, groundId)),
+    groundSprite(getSprite(*Game::groundSpriteSheet, Game::groundConfig, groundId)),
     light(Color32::black)
 {
 }
@@ -26,7 +25,7 @@ Tile::Tile(const SaveFile& file, World& world, Vector2 position, int level)
     position(position),
     level(level),
     groundId(file.readString()),
-    groundSprite(*Game::groundSpriteSheet, getSpriteTextureRegion(Game::groundConfig, groundId)),
+    groundSprite(getSprite(*Game::groundSpriteSheet, Game::groundConfig, groundId)),
     light(Color32::black)
 {
     auto creatureCount = file.readInt32();
@@ -78,44 +77,46 @@ void Tile::exist()
 
 void Tile::render(Window& window, int zIndex, bool fogOfWar, bool renderLight) const
 {
+    Vector2 renderPosition = position * getSize();
+
     switch (zIndex)
     {
         case 0:
-            groundSprite.render(window, position * sizeVector);
+            groundSprite.render(window, renderPosition);
 
             for (auto& liquid : liquids)
-                liquid.render(window, position * sizeVector);
+                liquid.render(window, renderPosition);
             break;
         case 1:
             for (const auto& item : items)
-                item->render(window, position * sizeVector);
+                item->render(window, renderPosition);
             break;
         case 2:
             if (object)
-                object->render(window, position * sizeVector);
+                object->render(window, renderPosition);
             break;
         case 3:
             if (fogOfWar)
                 break;
 
             for (const auto& creature : creatures)
-                creature->render(window);
+                creature->render(window, renderPosition);
             break;
         case 4:
             if (fogOfWar || !renderLight)
                 break;
 
-            window.getGraphicsContext().renderFilledRectangle(Rect(position * sizeVector, sizeVector),
+            window.getGraphicsContext().renderFilledRectangle(Rect(renderPosition, getSize()),
                                                               light, BlendMode::LinearLight);
             break;
         case 5:
             if (fogOfWar)
-                Game::fogOfWarTexture->render(window, position * sizeVector);
+                Game::fogOfWarTexture->render(window, renderPosition, getSize());
             break;
         case 6:
         {
 #ifdef TOOLTIP
-            Rect tileRect(position * sizeVector, sizeVector);
+            Rect tileRect(renderPosition, sizeVector);
 
             if (window.getMousePosition().isWithin(tileRect))
             {
@@ -223,7 +224,7 @@ void Tile::setObject(std::unique_ptr<Object> newObject)
 void Tile::setGround(boost::string_ref groundId)
 {
     this->groundId = groundId.to_string();
-    groundSprite = Sprite(*Game::groundSpriteSheet, getSpriteTextureRegion(Game::groundConfig, groundId));
+    groundSprite = getSprite(*Game::groundSpriteSheet, Game::groundConfig, groundId);
 }
 
 std::vector<Entity*> Tile::getEntities() const
@@ -296,4 +297,18 @@ Tile* Tile::getTileBelow() const
 Tile* Tile::getTileAbove() const
 {
     return getWorld().getOrCreateTile(getPosition(), level + 1);
+}
+
+Vector2 Tile::getSize()
+{
+    if (Sprite::useAsciiGraphics())
+        return Sprite::getAsciiGraphicsFont()->getCharSize();
+    else
+        return spriteSize;
+}
+
+Vector2 Tile::getMaxSize()
+{
+    return Vector2(std::max(Sprite::getAsciiGraphicsFont()->getCharSize().x, spriteSize.x),
+                   std::max(Sprite::getAsciiGraphicsFont()->getCharSize().y, spriteSize.y));
 }

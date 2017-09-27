@@ -5,11 +5,11 @@
 Liquid::Liquid(boost::string_ref materialId)
 :   materialId(materialId),
     fadeLevel(1.0),
-    texture(SDL_PIXELFORMAT_RGBA8888, Tile::sizeVector)
+    texture(SDL_PIXELFORMAT_RGBA8888, Tile::getSize())
 {
     int width = 3;
     int height = 3;
-    Vector2 position(randInt(Tile::size - width), randInt(Tile::size - height));
+    Vector2 position(randInt(Tile::getSize().x - width), randInt(Tile::getSize().y - height));
     SDL_Rect liquidRectangle = { position.x, position.y, width, height };
     Color32 color = Color16(Game::materialConfig.get<uint16_t>(materialId, "Color"));
     SDL_FillRect(texture.getSurface(), &liquidRectangle, color.value);

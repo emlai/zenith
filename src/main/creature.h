@@ -91,7 +91,7 @@ public:
     Creature(const SaveFile& file, Tile* tile);
     void save(SaveFile& file) const;
     void exist();
-    void render(Window& window) const;
+    void render(Window& window, Vector2 position) const;
 
     Action tryToMoveOrAttack(Dir8);
     Action tryToMoveTowardsOrAttack(Creature& target);

@@ -30,7 +30,7 @@ void Menu::clear()
     itemLayout = Vertical;
     itemSpacing = 1;
     itemSize = boost::none;
-    columnSpacing = 0;
+    tableCellSpacing = Vector2(0, 0);
     secondaryColumnAlignment = LeftAlign;
     normalColor = defaultNormalColor;
     selectionColor = defaultSelectionColor;
@@ -183,9 +183,9 @@ void Menu::calculateItemPositions()
     Vector2 size;
 
     if (itemLayout == Vertical)
-        size = Vector2(area.size.x, itemSize ? *itemSize : area.size.y / menuItems.size());
+        size = Vector2(area.size.x, itemSize ? itemSize->y : area.size.y / menuItems.size());
     else
-        size = Vector2(itemSize ? *itemSize : area.size.x / menuItems.size(), area.size.y);
+        size = Vector2(itemSize ? itemSize->x : area.size.x / menuItems.size(), area.size.y);
 
     Vector2 position = area.position;
 
@@ -221,7 +221,7 @@ void Menu::render(Window& window)
         if (item->mainImage)
         {
             item->mainImage->render(window, itemPosition);
-            itemPosition.x += item->mainImage->getWidth() + columnSpacing;
+            itemPosition.x += item->mainImage->getWidth() + tableCellSpacing.x;
         }
 
         std::string text =
@@ -229,12 +229,12 @@ void Menu::render(Window& window)
 
         font.setArea(Rect(itemPosition, position->size));
         font.print(window, text, selection == item ? selectionColor : normalColor);
-        itemPosition.x += calculateMaxTextSize() * font.getColumnWidth() + columnSpacing;
+        itemPosition.x += calculateMaxTextSize() * font.getColumnWidth() + tableCellSpacing.x;
 
         if (item->secondaryImage)
         {
             item->secondaryImage->render(window, itemPosition);
-            itemPosition.x += item->secondaryImage->getWidth() + columnSpacing;
+            itemPosition.x += item->secondaryImage->getWidth() + tableCellSpacing.x;
         }
 
         if (!item->secondaryText.empty())

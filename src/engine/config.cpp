@@ -349,7 +349,7 @@ void Config::printValue(std::ostream& stream, const Config::Value& value) const
     switch (value.which())
     {
         case 0:
-            stream << boost::get<bool>(value);
+            stream << (boost::get<bool>(value) ? "true" : "false");
             break;
         case 1:
             stream << boost::get<long long>(value);

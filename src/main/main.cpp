@@ -3,6 +3,7 @@
 #include "engine/engine.h"
 #include "engine/menu.h"
 #include "engine/geometry.h"
+#include "engine/utility.h"
 #include "engine/window.h"
 #include <boost/filesystem.hpp>
 #include <cassert>
@@ -20,9 +21,10 @@ static BitmapFont initFont()
 
 static const auto preferencesFileName = "prefs.cfg";
 
-static void savePreferencesToFile(double graphicsScale)
+static void savePreferencesToFile(bool asciiGraphics, double graphicsScale)
 {
     Config preferences;
+    preferences.set("ASCIIGraphics", asciiGraphics);
     preferences.set("GraphicsScale", graphicsScale);
     preferences.writeToFile(preferencesFileName);
 }
@@ -35,24 +37,28 @@ public:
 
 void PrefsMenu::execute()
 {
-    enum { GraphicsScale };
+    enum { AsciiGraphics, GraphicsScale };
     auto& window = getEngine().getWindow();
 
     while (true)
     {
         clear();
         addTitle("Preferences");
+        addItem(MenuItem(AsciiGraphics, "ASCII graphics", toOnOffString(Sprite::useAsciiGraphics())));
         addItem(MenuItem(GraphicsScale, "Graphics scale",
                          toStringAvoidingDecimalPlaces(window.getGraphicsContext().getScale()) + "x"));
         addItem(MenuItem(Menu::Exit, "Back", 'q'));
         setItemLayout(Menu::Vertical);
-        setItemSize(Tile::size);
+        setItemSize(Tile::getMaxSize());
         setTextLayout(TextLayout(LeftAlign, TopAlign));
         setSecondaryColumnAlignment(RightAlign);
         setArea(window.getResolution() / 4, window.getResolution() / 2);
 
         switch (Menu::execute())
         {
+            case AsciiGraphics:
+                Sprite::useAsciiGraphics(!Sprite::useAsciiGraphics());
+                break;
             case GraphicsScale:
                 if (window.getGraphicsContext().getScale() >= 2)
                     window.getGraphicsContext().setScale(1);
@@ -60,7 +66,7 @@ void PrefsMenu::execute()
                     window.getGraphicsContext().setScale(window.getGraphicsContext().getScale() + 0.5);
                 break;
             case Menu::Exit:
-                savePreferencesToFile(window.getGraphicsContext().getScale());
+                savePreferencesToFile(Sprite::useAsciiGraphics(), window.getGraphicsContext().getScale());
                 return;
             default:
                 assert(false);
@@ -155,11 +161,13 @@ int main(int argc, const char** argv)
     if (boost::filesystem::exists(preferencesFileName))
     {
         Config preferences(preferencesFileName);
+        Sprite::useAsciiGraphics(preferences.getOptional<bool>("ASCIIGraphics").get_value_or(false));
         window.getGraphicsContext().setScale(preferences.getOptional<double>("GraphicsScale").get_value_or(1));
     }
 
     BitmapFont font = initFont();
     window.setFont(font);
+    Sprite::setAsciiGraphicsFont(&font);
     Menu::setDefaultNormalColor(TextColor::Gray);
     Menu::setDefaultSelectionColor(TextColor::White);
     Menu::setDefaultSelectionOffset(Vector2(0, 1));

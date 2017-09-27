@@ -27,8 +27,11 @@ bool Door::close()
 void Door::setOpen(bool open)
 {
     isOpen = open;
+
     // TODO: Add getSprite() to Entity to avoid casting here.
-    dynamic_cast<Object&>(getParent()).getSprite().setFrame(isOpen ? 1 : 0);
+    auto& sprite = dynamic_cast<Object&>(getParent()).getSprite();
+    sprite.setFrame(isOpen ? 1 : 0);
+    sprite.setAsciiGlyph(isOpen ? '_' : '#');
 }
 
 void Door::save(SaveFile& file) const

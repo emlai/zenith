@@ -14,6 +14,11 @@ std::string changeFileExtension(boost::string_ref fileName, boost::string_ref ne
         return fileName + "." + newExtension;
 }
 
+std::string toOnOffString(bool value)
+{
+    return value ? "on" : "off";
+}
+
 std::string toStringAvoidingDecimalPlaces(double value)
 {
     auto string = std::to_string(value);

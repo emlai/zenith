@@ -71,9 +71,12 @@ void Texture::setBlendMode(bool state)
     SDL_SetSurfaceBlendMode(surface.get(), state ? SDL_BLENDMODE_BLEND : SDL_BLENDMODE_NONE);
 }
 
-void Texture::render(Window& window, Vector2 position) const
+void Texture::render(Window& window, Vector2 position, Vector2 size) const
 {
-    render(window, Rect(Vector2::zeroVector, getSize()), Rect(position, getSize()));
+    if (size.isZero())
+        size = getSize();
+
+    render(window, Rect(Vector2::zeroVector, size), Rect(position, size));
 }
 
 void Texture::render(Window& window, Rect target) const

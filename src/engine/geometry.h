@@ -106,6 +106,11 @@ struct Vector2Base
         return Vector2(::divideRoundingDown(x, divisor), ::divideRoundingDown(y, divisor));
     }
 
+    Vector2 divideRoundingDown(Vector2 divisor) const
+    {
+        return Vector2(::divideRoundingDown(x, divisor.x), ::divideRoundingDown(y, divisor.y));
+    }
+
     Dir8 getDir8() const;
 
     static const Vector2Base zeroVector;
