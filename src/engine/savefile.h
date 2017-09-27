@@ -12,6 +12,9 @@ class SaveFile
 {
 public:
     SaveFile(boost::string_ref filePath, bool writable);
+    int64_t getOffset() const;
+    void seek(int64_t offset);
+
     void writeInt8(int8_t value) { writeInt8(uint8_t(value)); }
     void writeInt8(uint8_t value);
     void writeInt16(int16_t value) { writeInt16(uint16_t(value)); }
@@ -53,7 +56,7 @@ private:
     template<typename T>
     T read() const { return T::load(*this); }
 
-    std::unique_ptr<SDL_RWops, void (&)(SDL_RWops*)> file;
+    std::unique_ptr<SDL_RWops, void (*)(SDL_RWops*)> file;
 };
 
 template<typename T>

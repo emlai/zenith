@@ -5,25 +5,40 @@
 #include "components/lightsource.h"
 #include "engine/savefile.h"
 
-void World::load(const SaveFile& file)
+void World::load(SaveFile&& file)
 {
     auto areaCount = file.readInt32();
     areas.reserve(size_t(areaCount));
     for (int i = 0; i < areaCount; ++i)
     {
         auto position = file.readVector3();
-        areas.emplace(position, Area(file, *this, Vector2(position), position.z));
+        auto offset = file.readInt64();
+        savedAreaOffsets.emplace(position, offset);
     }
+
+    saveFile = std::make_unique<SaveFile>(std::move(file));
 }
 
 void World::save(SaveFile& file) const
 {
     file.writeInt32(int32_t(areas.size()));
+    auto areaPositionsOffset = file.getOffset();
 
     for (auto& positionAndArea : areas)
     {
         file.write(positionAndArea.first);
+        file.writeInt64(int64_t(0));
+    }
+
+    int index = 0;
+    for (auto& positionAndArea : areas)
+    {
+        auto areaOffset = file.getOffset();
+        file.seek(areaPositionsOffset + index * (sizeof(Vector3) + sizeof(int64_t)) + sizeof(Vector3));
+        file.writeInt64(areaOffset);
+        file.seek(areaOffset);
         positionAndArea.second.save(file);
+        ++index;
     }
 }
 
@@ -92,6 +107,14 @@ Area* World::getArea(Vector3 position)
     auto it = areas.find(position);
     if (it != areas.end())
         return &it->second;
+
+    auto offset = savedAreaOffsets.find(position);
+    if (offset != savedAreaOffsets.end())
+    {
+        saveFile->seek(offset->second);
+        return &areas.emplace(position, Area(*saveFile, *this, Vector2(position), position.z)).first->second;
+    }
+
     return nullptr;
 }
 

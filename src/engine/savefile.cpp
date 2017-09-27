@@ -12,6 +12,16 @@ SaveFile::SaveFile(boost::string_ref filePath, bool writable)
 {
 }
 
+int64_t SaveFile::getOffset() const
+{
+    return SDL_RWtell(file.get());
+}
+
+void SaveFile::seek(int64_t offset)
+{
+    SDL_RWseek(file.get(), offset, RW_SEEK_SET);
+}
+
 void SaveFile::writeInt8(uint8_t value)
 {
     SDL_WriteU8(file.get(), value);

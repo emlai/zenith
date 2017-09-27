@@ -21,7 +21,7 @@ public:
     World(World&&) = default;
     World& operator=(const World&) = delete;
     World& operator=(World&&) = default;
-    void load(const SaveFile& file);
+    void load(SaveFile&& file);
     void save(SaveFile& file) const;
     int getTurn() const;
     void exist(Rect region, int level);
@@ -39,5 +39,7 @@ private:
 
     const Game* game;
     std::unordered_map<Vector3, Area> areas;
+    std::unordered_map<Vector3, int64_t> savedAreaOffsets;
+    std::unique_ptr<SaveFile> saveFile;
     Color32 sunlight;
 };
