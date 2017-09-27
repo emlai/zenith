@@ -13,7 +13,7 @@
 
 static BitmapFont initFont()
 {
-    BitmapFont font("data/graphics/font.dat", Vector2(8, 10));
+    BitmapFont font("data/graphics/font-8x10.bmp", Vector2(8, 10));
     font.setDefaultColor(TextColor::White);
     font.setLineSpacing(1);
     return font;

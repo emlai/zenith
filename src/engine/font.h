@@ -3,8 +3,7 @@
 #include "texture.h"
 #include "color.h"
 #include "geometry.h"
-#include <string>
-#include <vector>
+#include <boost/utility/string_ref.hpp>
 
 class Window;
 
@@ -54,7 +53,6 @@ private:
     void printLine(Window& window, PrintIterator lineBegin, PrintIterator lineEnd,
                    Rect& source, Rect& target) const;
     void initCurrentPosition();
-    std::vector<Color32> loadFromFile(boost::string_ref fileName) const;
 
     Rect printArea;
     bool lineContinuation;

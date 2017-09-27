@@ -20,26 +20,11 @@ static PixelFormatMasks pixelFormatEnumToMasks(uint32_t pixelFormat)
     return masks;
 }
 
-static SDL_Surface* createSurfaceFromPixels(std::vector<Color32>& pixels, uint32_t pixelFormat, Vector2 size)
-{
-    PixelFormatMasks masks = pixelFormatEnumToMasks(pixelFormat);
-    return SDL_CreateRGBSurfaceFrom(pixels.data(), size.x, size.y, SDL_BITSPERPIXEL(pixelFormat),
-                                    size.x * SDL_BYTESPERPIXEL(pixelFormat),
-                                    masks.red, masks.green, masks.blue, masks.alpha);
-}
-
 static SDL_Surface* createSurfaceWithFormat(uint32_t pixelFormat, Vector2 size)
 {
     PixelFormatMasks masks = pixelFormatEnumToMasks(pixelFormat);
     return SDL_CreateRGBSurface(0, size.x, size.y, SDL_BITSPERPIXEL(pixelFormat),
                                 masks.red, masks.green, masks.blue, masks.alpha);
-}
-
-Texture::Texture(std::vector<Color32>&& pixelData, uint32_t pixelFormat, Vector2 size)
-:   surface(createSurfaceFromPixels(pixelData, pixelFormat, size), SDL_FreeSurface),
-    pixelData(std::move(pixelData))
-{
-    setBlendMode(true);
 }
 
 Texture::Texture(boost::string_ref fileName, Color32 transparentColor)

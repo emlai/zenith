@@ -1,9 +1,7 @@
 #include "font.h"
 #include "geometry.h"
 #include <algorithm>
-#include <fstream>
 #include <sstream>
-#include <stdexcept>
 
 const Vector2 BitmapFont::dimensions = Vector2(16, 6);
 
@@ -17,31 +15,8 @@ BitmapFont::BitmapFont(boost::string_ref fileName, Vector2 charSize)
     shadowPosition(1, 1),
     charSize(charSize),
     moveVector(charSize),
-    texture(loadFromFile(fileName), SDL_PIXELFORMAT_RGBA8888, dimensions * charSize)
+    texture(fileName)
 {
-}
-
-std::vector<Color32> BitmapFont::loadFromFile(boost::string_ref fileName) const
-{
-    std::ifstream inputFile(fileName.to_string(), std::ios::binary);
-
-    if (!inputFile)
-        throw std::runtime_error("Unable to open " + fileName);
-
-    const int pixels = dimensions.getArea() * charSize.getArea();
-    std::vector<Color32> pixelData;
-    pixelData.reserve(pixels);
-
-    for (int i = 0; i < pixels / CHAR_BIT; ++i)
-    {
-        char input;
-        inputFile.read(&input, 1);
-
-        for (int bit = 0; bit < CHAR_BIT; ++bit)
-            pixelData.push_back(Color32(input >> bit & 1 ? UINT32_MAX : 0));
-    }
-
-    return pixelData;
 }
 
 void BitmapFont::print(Window& window, boost::string_ref text, Color32 color, bool blend)

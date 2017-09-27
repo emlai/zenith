@@ -15,7 +15,6 @@ class Window;
 class Texture
 {
 public:
-    Texture(std::vector<Color32>&& pixelData, uint32_t pixelFormat, Vector2 size);
     Texture(boost::string_ref fileName, Color32 transparentColor = Color32::none);
     Texture(uint32_t pixelFormat, Vector2 size);
     void setBlendMode(bool);
