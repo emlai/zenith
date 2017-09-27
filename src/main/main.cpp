@@ -39,6 +39,7 @@ void PrefsMenu::execute()
 {
     enum { AsciiGraphics, GraphicsScale };
     auto& window = getEngine().getWindow();
+    int selection = 0;
 
     while (true)
     {
@@ -53,8 +54,10 @@ void PrefsMenu::execute()
         setTextLayout(TextLayout(LeftAlign, TopAlign));
         setSecondaryColumnAlignment(RightAlign);
         setArea(window.getResolution() / 4, window.getResolution() / 2);
+        select(selection);
+        selection = Menu::execute();
 
-        switch (Menu::execute())
+        switch (selection)
         {
             case AsciiGraphics:
                 Sprite::useAsciiGraphics(!Sprite::useAsciiGraphics());
