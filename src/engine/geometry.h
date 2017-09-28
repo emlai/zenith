@@ -265,7 +265,7 @@ namespace std
     {
         size_t operator()(Vector3 vector) const
         {
-            return (vector.x * 73856093) ^ (vector.y * 19349663) ^ (vector.z * 83492791);
+            return (size_t(vector.x) * 73856093) ^ (size_t(vector.y) * 19349663) ^ (size_t(vector.z) * 83492791);
         }
     };
 }
