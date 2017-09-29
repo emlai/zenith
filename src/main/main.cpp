@@ -176,7 +176,15 @@ int main(int argc, char** argv)
     Menu::setDefaultSelectionOffset(Vector2(0, 1));
 
     MainMenu mainMenu;
-    engine.execute(mainMenu);
+
+    try
+    {
+        engine.execute(mainMenu);
+    }
+    catch (const std::exception& exception)
+    {
+        engine.reportErrorToUser(exception.what());
+    }
 
     return 0;
 }

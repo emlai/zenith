@@ -15,7 +15,7 @@ Tile::Tile(World& world, Vector2 position, int level, boost::string_ref groundId
     position(position),
     level(level),
     groundId(groundId),
-    groundSprite(getSprite(*Game::groundSpriteSheet, Game::groundConfig, groundId)),
+    groundSprite(getSprite(*Game::groundSpriteSheet, *Game::groundConfig, groundId)),
     light(Color32::black)
 {
 }
@@ -25,7 +25,7 @@ Tile::Tile(const SaveFile& file, World& world, Vector2 position, int level)
     position(position),
     level(level),
     groundId(file.readString()),
-    groundSprite(getSprite(*Game::groundSpriteSheet, Game::groundConfig, groundId)),
+    groundSprite(getSprite(*Game::groundSpriteSheet, *Game::groundConfig, groundId)),
     light(Color32::black)
 {
     auto creatureCount = file.readInt32();
@@ -224,7 +224,7 @@ void Tile::setObject(std::unique_ptr<Object> newObject)
 void Tile::setGround(boost::string_ref groundId)
 {
     this->groundId = groundId.to_string();
-    groundSprite = getSprite(*Game::groundSpriteSheet, Game::groundConfig, groundId);
+    groundSprite = getSprite(*Game::groundSpriteSheet, *Game::groundConfig, groundId);
 }
 
 std::vector<Entity*> Tile::getEntities() const

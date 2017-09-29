@@ -12,11 +12,11 @@
 #include <fstream>
 #include <functional>
 
-const Config Game::creatureConfig("data/config/creature.cfg");
-const Config Game::objectConfig("data/config/object.cfg");
-const Config Game::itemConfig("data/config/item.cfg");
-const Config Game::groundConfig("data/config/ground.cfg");
-const Config Game::materialConfig("data/config/material.cfg");
+std::unique_ptr<Config> Game::creatureConfig;
+std::unique_ptr<Config> Game::objectConfig;
+std::unique_ptr<Config> Game::itemConfig;
+std::unique_ptr<Config> Game::groundConfig;
+std::unique_ptr<Config> Game::materialConfig;
 std::unique_ptr<Texture> Game::creatureSpriteSheet;
 std::unique_ptr<Texture> Game::objectSpriteSheet;
 std::unique_ptr<Texture> Game::itemSpriteSheet;
@@ -31,6 +31,12 @@ Game::Game(bool loadSavedGame)
     turn(0),
     world(*this)
 {
+    creatureConfig = std::make_unique<Config>("data/config/creature.cfg");
+    objectConfig = std::make_unique<Config>("data/config/object.cfg");
+    itemConfig = std::make_unique<Config>("data/config/item.cfg");
+    groundConfig = std::make_unique<Config>("data/config/ground.cfg");
+    materialConfig = std::make_unique<Config>("data/config/material.cfg");
+
     creatureSpriteSheet = std::make_unique<Texture>("data/graphics/creature.bmp", transparentColor);
     objectSpriteSheet = std::make_unique<Texture>("data/graphics/object.bmp", transparentColor);
     itemSpriteSheet = std::make_unique<Texture>("data/graphics/item.bmp", transparentColor);

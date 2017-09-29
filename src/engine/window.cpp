@@ -176,6 +176,11 @@ int Window::getHeight() const
     return height;
 }
 
+boost::string_ref Window::getTitle() const
+{
+    return SDL_GetWindowTitle(windowHandle.get());
+}
+
 Vector2 Window::getScreenResolution()
 {
     if (!sdlVideoInitialized)

@@ -14,11 +14,11 @@ static Color16 getMaterialColor(boost::string_ref materialId)
     {
         try
         {
-            return Color16(static_cast<uint16_t>(Game::materialConfig.get<int>(materialId, "Color")));
+            return Color16(static_cast<uint16_t>(Game::materialConfig->get<int>(materialId, "Color")));
         }
         catch (const std::runtime_error&)
         {
-            if (Game::materialConfig.get<std::string>(materialId, "Color") == "Random")
+            if (Game::materialConfig->get<std::string>(materialId, "Color") == "Random")
                 return Color16(randInt(Color16::max / 2), randInt(Color16::max / 2), randInt(Color16::max / 2));
             else
                 throw;
@@ -30,12 +30,12 @@ static Color16 getMaterialColor(boost::string_ref materialId)
 
 Item::Item(boost::string_ref id, boost::string_ref materialId)
 :   Item(id, materialId,
-         ::getSprite(*Game::itemSpriteSheet, Game::itemConfig, id, 0, getMaterialColor(materialId)))
+         ::getSprite(*Game::itemSpriteSheet, *Game::itemConfig, id, 0, getMaterialColor(materialId)))
 {
 }
 
 Item::Item(boost::string_ref id, boost::string_ref materialId, Sprite sprite)
-:   Entity(id, Game::itemConfig),
+:   Entity(id, *Game::itemConfig),
     materialId(materialId.to_string()),
     sprite(std::move(sprite))
 {
@@ -98,7 +98,7 @@ bool Item::use(Creature& user, Game& game)
 
 bool Item::isEdible() const
 {
-    return Game::itemConfig.getOptional<bool>(getId(), "isEdible").get_value_or(false);
+    return Game::itemConfig->getOptional<bool>(getId(), "isEdible").get_value_or(false);
 }
 
 EquipmentSlot Item::getEquipmentSlot() const
@@ -133,12 +133,12 @@ void Item::renderEquipped(Window& window, Vector2 position) const
 
 std::string getRandomMaterialId(boost::string_ref itemId)
 {
-    auto materials = Game::itemConfig.get<std::vector<std::string>>(itemId, "PossibleMaterials");
+    auto materials = Game::itemConfig->get<std::vector<std::string>>(itemId, "PossibleMaterials");
     return materials.empty() ? "" : randomElement(materials);
 }
 
 Corpse::Corpse(std::unique_ptr<Creature> creature)
-:   Item(creature->getId() + "Corpse", "", ::getSprite(*Game::creatureSpriteSheet, Game::creatureConfig,
+:   Item(creature->getId() + "Corpse", "", ::getSprite(*Game::creatureSpriteSheet, *Game::creatureConfig,
                                                        creature->getId(), corpseFrame, Color32::none)),
     creature(std::move(creature))
 {
@@ -146,7 +146,7 @@ Corpse::Corpse(std::unique_ptr<Creature> creature)
 }
 
 Corpse::Corpse(boost::string_ref creatureId)
-:   Item(creatureId + "Corpse", "", ::getSprite(*Game::creatureSpriteSheet, Game::creatureConfig,
+:   Item(creatureId + "Corpse", "", ::getSprite(*Game::creatureSpriteSheet, *Game::creatureConfig,
                                                 creatureId, corpseFrame, Color32::none))
 {
     sprite.setAsciiGlyph(corpseGlyph);

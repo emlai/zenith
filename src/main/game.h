@@ -37,11 +37,11 @@ public:
 #endif
     bool playerSeesEverything;
 
-    static const Config creatureConfig;
-    static const Config objectConfig;
-    static const Config itemConfig;
-    static const Config groundConfig;
-    static const Config materialConfig;
+    static std::unique_ptr<Config> creatureConfig;
+    static std::unique_ptr<Config> objectConfig;
+    static std::unique_ptr<Config> itemConfig;
+    static std::unique_ptr<Config> groundConfig;
+    static std::unique_ptr<Config> materialConfig;
     static std::unique_ptr<Texture> creatureSpriteSheet;
     static std::unique_ptr<Texture> objectSpriteSheet;
     static std::unique_ptr<Texture> itemSpriteSheet;

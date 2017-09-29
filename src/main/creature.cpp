@@ -27,7 +27,7 @@ std::vector<Attribute> Creature::initDisplayedAttributes(boost::string_ref id)
 {
     std::vector<Attribute> displayedAttributes;
 
-    for (const auto& attribute : Game::creatureConfig.get<std::vector<std::string>>(id, "DisplayedAttributes"))
+    for (const auto& attribute : Game::creatureConfig->get<std::vector<std::string>>(id, "DisplayedAttributes"))
         displayedAttributes.push_back(stringToAttribute(attribute));
 
     return displayedAttributes;
@@ -35,7 +35,7 @@ std::vector<Attribute> Creature::initDisplayedAttributes(boost::string_ref id)
 
 std::vector<std::vector<int>> Creature::initAttributeIndices(boost::string_ref id)
 {
-    return Game::creatureConfig.get<std::vector<std::vector<int>>>(id, "AttributeIndices");
+    return Game::creatureConfig->get<std::vector<std::vector<int>>>(id, "AttributeIndices");
 }
 
 Creature::Creature(Tile* tile, boost::string_ref id)
@@ -44,7 +44,7 @@ Creature::Creature(Tile* tile, boost::string_ref id)
 }
 
 Creature::Creature(Tile* tile, boost::string_ref id, std::unique_ptr<CreatureController> controller)
-:   Entity(id, Game::creatureConfig),
+:   Entity(id, *Game::creatureConfig),
     equipment({{Head, nullptr}, {Torso, nullptr}, {Hand, nullptr}, {Legs, nullptr}}),
     currentHP(0),
     maxHP(0),
@@ -54,7 +54,7 @@ Creature::Creature(Tile* tile, boost::string_ref id, std::unique_ptr<CreatureCon
     running(false),
     displayedAttributes(initDisplayedAttributes(id)),
     attributeIndices(initAttributeIndices(id)),
-    sprite(getSprite(*Game::creatureSpriteSheet, Game::creatureConfig, id)),
+    sprite(getSprite(*Game::creatureSpriteSheet, *Game::creatureConfig, id)),
     controller(std::move(controller))
 {
     if (tile)
@@ -73,11 +73,11 @@ Creature::Creature(Tile* tile, boost::string_ref id, std::unique_ptr<CreatureCon
 }
 
 Creature::Creature(const SaveFile& file, Tile* tile)
-:   Entity(file.readString(), Game::creatureConfig),
+:   Entity(file.readString(), *Game::creatureConfig),
     equipment({{Head, nullptr}, {Torso, nullptr}, {Hand, nullptr}, {Legs, nullptr}}),
     displayedAttributes(initDisplayedAttributes(getId())),
     attributeIndices(initAttributeIndices(getId())),
-    sprite(getSprite(*Game::creatureSpriteSheet, Game::creatureConfig, getId())),
+    sprite(getSprite(*Game::creatureSpriteSheet, *Game::creatureConfig, getId())),
     controller(AIController::get(getId(), *this))
 {
     if (tile)
@@ -178,15 +178,15 @@ void Creature::render(Window& window, Vector2 position) const
 
 void Creature::generateAttributes(boost::string_ref id)
 {
-    attributeValues.resize(Game::creatureConfig.get<int>(id, "Attributes"));
+    attributeValues.resize(Game::creatureConfig->get<int>(id, "Attributes"));
 
-    auto attributeStrings = Game::creatureConfig.get<std::vector<std::string>>(id, "ConfigAttributes");
+    auto attributeStrings = Game::creatureConfig->get<std::vector<std::string>>(id, "ConfigAttributes");
     auto configAttributes = stringsToAttributes(attributeStrings);
 
     for (auto attribute : configAttributes)
     {
         boost::string_ref attributeName = attributeAbbreviations[attribute];
-        int baseAttributeValue = Game::creatureConfig.get<int>(id, attributeName);
+        int baseAttributeValue = Game::creatureConfig->get<int>(id, attributeName);
         setAttribute(attribute, baseAttributeValue + randNormal(2));
     }
 
@@ -541,7 +541,7 @@ bool Creature::eat(Item& itemToEat)
 {
     assert(itemToEat.isEdible());
 
-    if (auto leftoverItemId = Game::itemConfig.getOptional<std::string>(itemToEat.getId(), "leftoverItem"))
+    if (auto leftoverItemId = Game::itemConfig->getOptional<std::string>(itemToEat.getId(), "leftoverItem"))
         getTileUnder(0).addItem(std::make_unique<Item>(*leftoverItemId, ""));
 
     addMessage("You eat the ", itemToEat.getName(), ".");

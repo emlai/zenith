@@ -31,6 +31,7 @@ public:
     Vector2 getSize() const;
     int getWidth() const;
     int getHeight() const;
+    boost::string_ref getTitle() const;
     GraphicsContext& getGraphicsContext() { return context; }
     static Vector2 getScreenResolution();
 

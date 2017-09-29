@@ -3,14 +3,14 @@
 #include "gui.h"
 
 Object::Object(boost::string_ref id)
-:   Entity(id, Game::objectConfig),
-    sprite(::getSprite(*Game::objectSpriteSheet, Game::objectConfig, id))
+:   Entity(id, *Game::objectConfig),
+    sprite(::getSprite(*Game::objectSpriteSheet, *Game::objectConfig, id))
 {
 }
 
 Object::Object(const SaveFile& file)
-:   Entity(file.readString(), Game::objectConfig),
-    sprite(::getSprite(*Game::objectSpriteSheet, Game::objectConfig, getId()))
+:   Entity(file.readString(), *Game::objectConfig),
+    sprite(::getSprite(*Game::objectSpriteSheet, *Game::objectConfig, getId()))
 {
     for (auto& component : getComponents())
         component->load(file);
@@ -41,7 +41,7 @@ bool Object::blocksSight() const
         if (component->blocksSight())
             return true;
 
-    return Game::objectConfig.get<bool>(getId(), "blocksSight");
+    return Game::objectConfig->get<bool>(getId(), "blocksSight");
 }
 
 void Object::render(Window& window, Vector2 position) const

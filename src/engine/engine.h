@@ -15,6 +15,7 @@ public:
     Window& createWindow(Vector2 size, boost::string_ref title = "", bool fullscreen = true);
     Window& getWindow(unsigned index = 0) { return windows[index]; }
     const Window& getWindow(unsigned index = 0) const { return windows[index]; }
+    void reportErrorToUser(boost::string_ref text);
     template<typename StateType>
     auto execute(StateType& state);
     void render(Window& window);

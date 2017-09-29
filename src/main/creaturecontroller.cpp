@@ -9,7 +9,7 @@ CreatureController::~CreatureController() {}
 
 std::unique_ptr<AIController> AIController::get(boost::string_ref id, Creature& creature)
 {
-    auto ai = AI::get(Game::creatureConfig.get<std::string>(id, "ai"), creature);
+    auto ai = AI::get(Game::creatureConfig->get<std::string>(id, "ai"), creature);
     return std::make_unique<AIController>(std::move(ai));
 }
 
