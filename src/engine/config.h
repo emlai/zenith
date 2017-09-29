@@ -155,7 +155,7 @@ struct Config::ConversionTraits<double>
             return *floatValue;
 
         if (auto intValue = get<long long>(value))
-            return *intValue;
+            return boost::numeric_cast<double>(*intValue);
 
         return boost::none;
     }
