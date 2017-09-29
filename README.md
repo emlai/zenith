@@ -16,6 +16,12 @@ macOS (with [Homebrew](https://brew.sh/)):
 
     brew install cmake boost sdl2
 
+**Note:** On Windows, in addition to specifying the `BOOST_ROOT` and
+`BOOST_LIBRARYDIR` variables for CMake, you may need to also specify
+`Boost_COMPILER` in order to find the Boost libraries: e.g.
+`-DBoost_COMPILER="-vc141"` where `-vc141` is the same string as the one
+encoded in the Boost library filenames.
+
 Then, generate a build system, and build the project:
 
     cmake .
