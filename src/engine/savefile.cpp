@@ -1,6 +1,7 @@
 #include "savefile.h"
 #include <SDL.h>
 #include <cstring>
+#include <stdexcept>
 
 static void closeFile(SDL_RWops* file)
 {
@@ -10,6 +11,8 @@ static void closeFile(SDL_RWops* file)
 SaveFile::SaveFile(boost::string_ref filePath, bool writable)
 :   file(SDL_RWFromFile(filePath.to_string().c_str(), writable ? "wb" : "rb"), closeFile)
 {
+    if (!file)
+        throw std::runtime_error(SDL_GetError());
 }
 
 int64_t SaveFile::getOffset() const
