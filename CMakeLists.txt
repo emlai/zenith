@@ -26,7 +26,7 @@ find_package(Boost REQUIRED COMPONENTS filesystem system)
 link_directories(${Boost_LIBRARY_DIRS})
 
 add_library(zenithEngine ${ENGINE_SOURCES})
-add_executable(zenith ${MAIN_SOURCES})
+add_executable(zenith WIN32 ${MAIN_SOURCES})
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
 target_include_directories(zenith PUBLIC "${PROJECT_SOURCE_DIR}/src")
 target_link_libraries(zenith zenithEngine)
