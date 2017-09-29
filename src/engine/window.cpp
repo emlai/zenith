@@ -4,6 +4,7 @@
 #include "keyboard.h"
 #include "texture.h"
 #include <SDL.h>
+#include <cctype>
 #include <stdexcept>
 
 int Window::windowCount = 0;

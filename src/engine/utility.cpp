@@ -1,4 +1,5 @@
 #include "utility.h"
+#include <cctype>
 
 std::string changeFileExtension(boost::string_ref fileName, boost::string_ref newExtension)
 {

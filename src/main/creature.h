@@ -6,6 +6,7 @@
 #include "engine/geometry.h"
 #include "engine/sprite.h"
 #include "engine/utility.h"
+#include <cctype>
 #include <memory>
 #include <sstream>
 #include <string>

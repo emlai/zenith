@@ -1,4 +1,5 @@
 #include "config.h"
+#include <cctype>
 #include <fstream>
 #include <unordered_map>
 
