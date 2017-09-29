@@ -9,6 +9,7 @@ class Window;
 
 enum HorizontalAlignment { LeftAlign, HorizontalCenter, RightAlign };
 enum VerticalAlignment { TopAlign, VerticalCenter, BottomAlign };
+enum LineBreakMode { PreserveLines, SplitLines };
 
 struct TextLayout
 {
@@ -26,7 +27,8 @@ class BitmapFont
 {
 public:
     BitmapFont(boost::string_ref fileName, Vector2 charSize);
-    void print(Window& window, boost::string_ref, Color32 = Color32::none, bool blend = true);
+    void print(Window& window, boost::string_ref, Color32 = Color32::none, bool blend = true,
+               LineBreakMode lineBreakMode = SplitLines);
     void printLine(Window& window, boost::string_ref, Color32 = Color32::none);
     void printWithCursor(Window& window, boost::string_ref, const char* cursorPosition,
                          Color32 mainColor = Color32::none, Color32 cursorColor = Color32::none);
@@ -45,11 +47,12 @@ public:
     int getLineSpacing() const { return moveVector.y - charSize.y; }
     int getColumnWidth() const { return moveVector.x; }
     int getRowHeight() const { return moveVector.y; }
+    Vector2 getTextSize(boost::string_ref text) const;
     TextLayout getLayout() const { return layout; }
 
 private:
     using PrintIterator = const char*;
-    Vector2 printHelper(Window& window, boost::string_ref, Vector2 position) const;
+    Vector2 printHelper(Window& window, boost::string_ref, Vector2 position, LineBreakMode lineBreakMode) const;
     void printLine(Window& window, PrintIterator lineBegin, PrintIterator lineEnd,
                    Rect& source, Rect& target) const;
     void initCurrentPosition();

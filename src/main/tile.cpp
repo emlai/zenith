@@ -6,7 +6,9 @@
 #include "components/lightsource.h"
 #include "engine/savefile.h"
 #include "engine/texture.h"
+#include <boost/range/adaptor/reversed.hpp>
 #include <cassert>
+#include <cmath>
 
 const Vector2 Tile::spriteSize(20, 20);
 
@@ -115,18 +117,42 @@ void Tile::render(Window& window, int zIndex, bool fogOfWar, bool renderLight) c
             break;
         case 6:
         {
-#ifdef TOOLTIP
-            Rect tileRect(renderPosition, sizeVector);
-
-            if (window.getMousePosition().isWithin(tileRect))
+            bool showTooltip = true;
+            if (showTooltip)
             {
-                Game::cursorTexture->setColor(GUIColor::White);
-                Game::cursorTexture->render(nullptr, &tileRect);
+                Rect tileRect(renderPosition, getSize());
 
-                window.getFont().setArea(tileRect.offset(Vector2(size * 1.2, 0)));
-                window.getFont().print(getTooltip());
+                if (window.getMousePosition().isWithin(tileRect))
+                {
+                    double cursorBreathRateMS = 150.0;
+                    double sine = std::sin(SDL_GetTicks() / cursorBreathRateMS);
+                    double minAlpha = 0.0;
+                    double maxAlpha = 0.5;
+                    double currentAlpha = minAlpha + (sine + 1) / 2 * (maxAlpha - minAlpha);
+                    Color32 cursorColor = Color32(0xFF, 0xFF, 0xFF, currentAlpha * 0xFF);
+                    Game::cursorTexture->setColor(cursorColor);
+                    Game::cursorTexture->render(window, tileRect);
+
+                    auto tooltip = getTooltip();
+                    if (!tooltip.empty())
+                    {
+                        int lineHeight = 2;
+                        Rect lineArea(tileRect.position.x + getSize().x, 
+                                      tileRect.position.y + getSize().y / 2 - lineHeight / 2,
+                                      getSize().x / 2, lineHeight);
+                        window.getGraphicsContext().renderFilledRectangle(lineArea, GUIColor::Black);
+
+                        Vector2 inset = Vector2(window.getFont().getColumnWidth(),
+                                                window.getFont().getRowHeight() / 2);
+                        Rect tooltipArea(Vector2(lineArea.getRight(), tileRect.getTop()),
+                                         window.getFont().getTextSize(tooltip) + inset * 2);
+                        window.getGraphicsContext().renderFilledRectangle(tooltipArea.inset(Vector2(0, 1)), GUIColor::Black);
+                        window.getGraphicsContext().renderFilledRectangle(tooltipArea.inset(Vector2(1, 0)), GUIColor::Black);
+                        window.getFont().setArea(tooltipArea.offset(inset));
+                        window.getFont().print(window, tooltip, TextColor::White, true, PreserveLines);
+                    }
+                }
             }
-#endif
             break;
         }
         default:
@@ -145,7 +171,7 @@ std::string Tile::getTooltip() const
         tooltip += '\n';
     }
 
-    for (auto& item : items)
+    for (auto& item : boost::adaptors::reverse(items))
     {
         tooltip += item->getName();
         tooltip += '\n';

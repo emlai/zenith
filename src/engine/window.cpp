@@ -93,16 +93,13 @@ static int filterKeyRepeatEvents(void* userdata, SDL_Event* event)
 Key Window::waitForInput()
 {
     SDL_Event event;
-    int msPerAnimationFrame = getAnimationFrameTime();
 
     while (true)
     {
         engine->render(*this);
         updateScreen();
 
-        auto msUntilNextFrame = msPerAnimationFrame - (SDL_GetTicks() % msPerAnimationFrame);
-
-        if (!SDL_WaitEventTimeout(&event, msUntilNextFrame))
+        if (!SDL_PollEvent(&event))
             continue;
 
         switch (event.type)

@@ -298,6 +298,9 @@ void Game::render(Window& window)
 
 void Game::renderAtPosition(Window& window, Vector2 centerPosition)
 {
+    printPlayerInformation(window.getFont());
+    MessageSystem::drawMessages(window, window.getFont(), player->getMessages(), getTurn());
+
     Rect worldViewport = GUI::getWorldViewport(getWindow());
 
     Rect view(centerPosition * Tile::getSize() + Tile::getSize() / 2 - worldViewport.size / 2,
@@ -311,9 +314,6 @@ void Game::renderAtPosition(Window& window, Vector2 centerPosition)
 
     window.setView(nullptr);
     window.setViewport(nullptr);
-
-    printPlayerInformation(window.getFont());
-    MessageSystem::drawMessages(window, window.getFont(), player->getMessages(), getTurn());
 
     bool enableGUIDebugRectangles = false;
     if (enableGUIDebugRectangles)

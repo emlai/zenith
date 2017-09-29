@@ -44,11 +44,14 @@ Texture::Texture(boost::string_ref fileName, Color32 transparentColor)
                                    static_cast<uint8_t>(transparentColor.getBlue()));
         SDL_SetColorKey(surface.get(), 1, colorKey);
     }
+
+    setBlendMode(true);
 }
 
 Texture::Texture(uint32_t pixelFormat, Vector2 size)
 :   surface(createSurfaceWithFormat(pixelFormat, size), SDL_FreeSurface)
 {
+    setBlendMode(true);
 }
 
 void Texture::setBlendMode(bool state)
@@ -140,4 +143,6 @@ void Texture::setColor(Color32 color) const
                            uint8_t(color.getRed()),
                            uint8_t(color.getGreen()),
                            uint8_t(color.getBlue()));
+    SDL_SetSurfaceAlphaMod(surface.get(),
+                           uint8_t(color.getAlpha()));
 }

@@ -19,7 +19,8 @@ BitmapFont::BitmapFont(boost::string_ref fileName, Vector2 charSize)
 {
 }
 
-void BitmapFont::print(Window& window, boost::string_ref text, Color32 color, bool blend)
+void BitmapFont::print(Window& window, boost::string_ref text, Color32 color, bool blend,
+                       LineBreakMode lineBreakMode)
 {
     if (!color)
         color = defaultColor;
@@ -29,17 +30,17 @@ void BitmapFont::print(Window& window, boost::string_ref text, Color32 color, bo
     if (drawShadows)
     {
         texture.setColor(color * shadowColorMod);
-        printHelper(window, text, currentPosition + shadowPosition);
+        printHelper(window, text, currentPosition + shadowPosition, lineBreakMode);
     }
 
     texture.setColor(color);
-    currentPosition = printHelper(window, text, currentPosition);
+    currentPosition = printHelper(window, text, currentPosition, lineBreakMode);
     lineContinuation = true;
 }
 
 void BitmapFont::printLine(Window& window, boost::string_ref text, Color32 color)
 {
-    print(window, text, color);
+    print(window, text, color, PreserveLines);
     currentPosition.x = printArea.position.x;
     currentPosition.y += moveVector.y;
 }
@@ -53,41 +54,46 @@ void BitmapFont::printWithCursor(Window& window, boost::string_ref text, const c
     if (cursorColor)
         texture.setColor(cursorColor);
 
-    printHelper(window, "_", cursorPosition);
+    printHelper(window, "_", cursorPosition, PreserveLines);
 }
 
-Vector2 BitmapFont::printHelper(Window& window, boost::string_ref text, Vector2 position) const
+Vector2 BitmapFont::printHelper(Window& window, boost::string_ref text, Vector2 position,
+                                LineBreakMode lineBreakMode) const
 {
     Rect source;
     source.size = charSize;
     Rect target(position, charSize);
 
-    std::istringstream stream(text.to_string());
     std::string splitText;
-    int currentLineSize = 0;
-    int maxLineSize = printArea.getRight() - position.x;
 
-    for (std::string word; stream >> word;)
+    if (lineBreakMode == SplitLines)
     {
-        if ((currentLineSize + int(word.size())) * moveVector.x > maxLineSize)
+        std::istringstream stream(text.to_string());
+        int currentLineSize = 0;
+        int maxLineSize = printArea.getRight() - position.x;
+
+        for (std::string word; stream >> word;)
         {
-            if (splitText.empty())
+            if ((currentLineSize + int(word.size())) * moveVector.x > maxLineSize)
             {
-                splitText = text.to_string();
-                break;
+                if (splitText.empty())
+                {
+                    splitText = text.to_string();
+                    break;
+                }
+
+                assert(splitText.back() == ' ');
+                splitText.back() = '\n';
+                currentLineSize = 0;
             }
 
-            assert(splitText.back() == ' ');
-            splitText.back() = '\n';
-            currentLineSize = 0;
+            splitText += word;
+            splitText += ' ';
+            currentLineSize += word.size() + 1;
         }
 
-        splitText += word;
-        splitText += ' ';
-        currentLineSize += word.size() + 1;
+        text = splitText;
     }
-
-    text = splitText;
 
     const auto lineCount = 1 + std::count(text.begin(), text.end(), '\n');
     const auto textHeight = lineCount * moveVector.y;
@@ -134,7 +140,7 @@ void BitmapFont::printLine(Window& window, PrintIterator lineBegin, PrintIterato
 
     for (auto character = lineBegin; character != lineEnd; ++character)
     {
-        if (*character > ' ')
+        if (*character >= ' ')
         {
             const auto index = *character - ' ';
             source.position = charSize * Vector2(index % dimensions.x, index / dimensions.x);
@@ -143,6 +149,32 @@ void BitmapFont::printLine(Window& window, PrintIterator lineBegin, PrintIterato
 
         target.position.x += moveVector.x;
     }
+}
+
+Vector2 BitmapFont::getTextSize(boost::string_ref text) const
+{
+    int lengthOfLongestLine = 0;
+    int currentLineLength = 0;
+    int lineCount = 0;
+
+    for (auto& character : text)
+    {
+        if (character != '\n')
+        {
+            ++currentLineLength;
+
+            if (&character != &text.back())
+                continue;
+        }
+
+        if (currentLineLength > lengthOfLongestLine)
+            lengthOfLongestLine = currentLineLength;
+
+        currentLineLength = 0;
+        ++lineCount;
+    }
+
+    return Vector2(getColumnWidth() * lengthOfLongestLine, getRowHeight() * lineCount);
 }
 
 void BitmapFont::initCurrentPosition()
