@@ -69,7 +69,7 @@ double randNormal(double stdDev)
     return std::normal_distribution<double>(0.0, stdDev)(rng);
 }
 
-bool raycastIntegerBresenham(Vector2 source, Vector2 target, std::function<bool(Vector2)> process)
+bool raycastIntegerBresenham(Vector2 source, Vector2 target, const std::function<bool(Vector2)>& process)
 {
     const Vector2 delta = target - source;
     const Vector2 sign = ::sign(delta);

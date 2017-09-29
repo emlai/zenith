@@ -10,7 +10,6 @@ class Window;
 
 using Key = decltype(SDL_Keysym::sym);
 using Mod = decltype(SDL_Keysym::mod);
-using RenderFunction = std::function<void(Window&)>;
 
 enum : Key
 {
@@ -50,6 +49,6 @@ enum : Mod
 
 namespace keyboard
 {
-    int readLine(Window&, std::string& lineContent, Vector2 position, RenderFunction,
+    int readLine(Window&, std::string& lineContent, Vector2 position, const std::function<void(Window&)>&,
                  boost::string_ref prefix = "");
 }

@@ -11,7 +11,7 @@ namespace keyboard
     int readLineProcessKey(const SDL_Event&, std::string& line, std::string::iterator& cursor);
 }
 
-int keyboard::readLine(Window& window, std::string& line, Vector2 position, RenderFunction render,
+int keyboard::readLine(Window& window, std::string& line, Vector2 position, const std::function<void(Window&)>& render,
                        boost::string_ref prefix)
 {
     BitmapFont& font = window.getFont();

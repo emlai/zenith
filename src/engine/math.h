@@ -90,4 +90,4 @@ auto& randomElement(IndexableContainer&& container)
 /// Calls `process` with each point on a line from `source` to `target` as determined by Bresenham's
 /// line algorithm. Stops processing and returns false if `process` returns false. Otherwise returns
 /// true after processing all points.
-bool raycastIntegerBresenham(Vector2 source, Vector2 target, std::function<bool(Vector2)> process);
+bool raycastIntegerBresenham(Vector2 source, Vector2 target, const std::function<bool(Vector2)>& process);
