@@ -42,6 +42,7 @@ struct Deferrer
 {
     T deferred;
 
+    Deferrer(T deferred) : deferred(std::move(deferred)) {}
     Deferrer(Deferrer&&) = default;
     ~Deferrer() { deferred(); }
 };
@@ -51,7 +52,7 @@ struct DeferHelper {};
 template<typename T>
 Deferrer<T> operator+(DeferHelper, T deferred)
 {
-    return Deferrer<T> { std::move(deferred) };
+    return Deferrer<T>(std::move(deferred));
 }
 
 #define DEFER auto BOOST_PP_CAT(defer, __LINE__) = DeferHelper() + [&]
