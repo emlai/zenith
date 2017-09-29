@@ -17,7 +17,9 @@ public:
     Key waitForInput();
     Vector2 getMousePosition() const;
     void setShowCursor(bool show);
+    void setFullscreen(bool enable);
     void toggleFullscreen();
+    bool isFullscreen() const;
     void sendCloseRequest();
     void setViewport(const Rect* viewport) { context.setViewport(viewport); }
     void setView(const Rect* view) { context.setView(view); }

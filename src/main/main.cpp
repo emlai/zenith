@@ -21,11 +21,12 @@ static BitmapFont initFont()
 
 static const auto preferencesFileName = "prefs.cfg";
 
-static void savePreferencesToFile(bool asciiGraphics, double graphicsScale)
+static void savePreferencesToFile(bool asciiGraphics, double graphicsScale, bool fullscreen)
 {
     Config preferences;
     preferences.set("ASCIIGraphics", asciiGraphics);
     preferences.set("GraphicsScale", graphicsScale);
+    preferences.set("Fullscreen", fullscreen);
     preferences.writeToFile(preferencesFileName);
 }
 
@@ -37,7 +38,7 @@ public:
 
 void PrefsMenu::execute()
 {
-    enum { AsciiGraphics, GraphicsScale };
+    enum { AsciiGraphics, GraphicsScale, Fullscreen };
     auto& window = getEngine().getWindow();
     int selection = 0;
 
@@ -48,6 +49,7 @@ void PrefsMenu::execute()
         addItem(MenuItem(AsciiGraphics, "ASCII graphics", toOnOffString(Sprite::useAsciiGraphics())));
         addItem(MenuItem(GraphicsScale, "Graphics scale",
                          toStringAvoidingDecimalPlaces(window.getGraphicsContext().getScale()) + "x"));
+        addItem(MenuItem(Fullscreen, "Fullscreen", toOnOffString(window.isFullscreen())));
         addItem(MenuItem(Menu::Exit, "Back", 'q'));
         setItemLayout(Menu::Vertical);
         setItemSize(Tile::getMaxSize());
@@ -68,8 +70,11 @@ void PrefsMenu::execute()
                 else
                     window.getGraphicsContext().setScale(window.getGraphicsContext().getScale() + 0.5);
                 break;
+            case Fullscreen:
+                window.toggleFullscreen();
+                break;
             case Menu::Exit:
-                savePreferencesToFile(Sprite::useAsciiGraphics(), window.getGraphicsContext().getScale());
+                savePreferencesToFile(Sprite::useAsciiGraphics(), window.getGraphicsContext().getScale(), window.isFullscreen());
                 return;
             default:
                 assert(false);
@@ -166,6 +171,7 @@ int main(int argc, char** argv)
         Config preferences(preferencesFileName);
         Sprite::useAsciiGraphics(preferences.getOptional<bool>("ASCIIGraphics").get_value_or(false));
         window.getGraphicsContext().setScale(preferences.getOptional<double>("GraphicsScale").get_value_or(1));
+        window.setFullscreen(preferences.getOptional<bool>("Fullscreen").get_value_or(true));
     }
 
     BitmapFont font = initFont();

@@ -65,11 +65,20 @@ Window::~Window()
     }
 }
 
+void Window::setFullscreen(bool enable)
+{
+    SDL_SetWindowFullscreen(windowHandle.get(), enable ? fullscreenFlag : 0);
+    SDL_ShowCursor(!enable);
+}
+
 void Window::toggleFullscreen()
 {
-    bool isFullscreen = SDL_GetWindowFlags(windowHandle.get()) & fullscreenFlag;
-    SDL_SetWindowFullscreen(windowHandle.get(), isFullscreen ? 0 : fullscreenFlag);
-    SDL_ShowCursor(isFullscreen);
+    setFullscreen(!isFullscreen());
+}
+
+bool Window::isFullscreen() const
+{
+    return SDL_GetWindowFlags(windowHandle.get()) & fullscreenFlag;
 }
 
 static int filterKeyRepeatEvents(void* userdata, SDL_Event* event)
