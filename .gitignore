@@ -11,6 +11,10 @@ Makefile
 build.ninja
 rules.ninja
 *.xcodeproj
+*.sln
+*.vcxproj
+*.vcxproj.filters
+.vs
 
 *build
 Debug
@@ -18,6 +22,10 @@ Release
 MinSizeRel
 RelWithDebInfo
 /zenith
+*.exe
 *.a
+*.dll
+*.pdb
+*.ilk
 prefs.cfg
 *.sav
