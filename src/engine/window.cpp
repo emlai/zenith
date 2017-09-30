@@ -68,7 +68,6 @@ Window::~Window()
 void Window::setFullscreen(bool enable)
 {
     SDL_SetWindowFullscreen(windowHandle.get(), enable ? fullscreenFlag : 0);
-    SDL_ShowCursor(!enable);
 }
 
 void Window::toggleFullscreen()
