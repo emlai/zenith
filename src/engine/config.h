@@ -2,7 +2,6 @@
 
 #include "utility.h"
 #include <boost/optional.hpp>
-#include <boost/variant.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/unordered_map.hpp>
 #include <fstream>
@@ -64,9 +63,57 @@ private:
         boost::unordered_map<std::string, Value> properties;
     };
 
-    using Value = boost::make_recursive_variant<bool, long long, double, std::string,
-                                                std::vector<boost::recursive_variant_>,
-                                                Group_<boost::recursive_variant_>>::type;
+    class Value
+    {
+        using Integer = long long;
+
+    public:
+        enum class Type
+        {
+            Bool,
+            Int,
+            Float,
+            String,
+            List,
+            Group
+        };
+
+        Value(bool value) : boolean(value), type(Type::Bool) {}
+        Value(Integer value) : integer(value), type(Type::Int) {}
+        Value(double value) : floatingPoint(value), type(Type::Float) {}
+        Value(std::string value) : string(std::move(value)), type(Type::String) {}
+        Value(std::vector<Value> value) : list(std::move(value)), type(Type::List) {}
+        Value(Group_<Value> value) : group(std::move(value)), type(Type::Group) {}
+        Value(Value&& value);
+        ~Value();
+        Type getType() const { return type; }
+        bool isBool() const { return type == Type::Bool; }
+        bool isInt() const { return type == Type::Int; }
+        bool isFloat() const { return type == Type::Float; }
+        bool isString() const { return type == Type::String; }
+        bool isList() const { return type == Type::List; }
+        bool isGroup() const { return type == Type::Group; }
+        bool getBool() const { return boolean; }
+        Integer getInt() const { return integer; }
+        double getFloat() const { return floatingPoint; }
+        const std::string& getString() const { return string; }
+        const std::vector<Value>& getList() const { return list; }
+        const Group_<Value>& getGroup() const { return group; }
+
+    private:
+        union
+        {
+            bool boolean;
+            Integer integer;
+            double floatingPoint;
+            std::string string;
+            std::vector<Value> list;
+            Group_<Value> group;
+        };
+
+        Type type;
+    };
+
     using Group = Group_<Value>;
 
     template<typename OutputType>
@@ -75,19 +122,6 @@ private:
     static boost::optional<OutputType> convert(const Value& value)
     {
         return ConversionTraits<OutputType>()(value);
-    }
-
-    template<typename T>
-    static boost::optional<T> get(const Value& value)
-    {
-        try
-        {
-            return boost::get<T>(value);
-        }
-        catch (const boost::bad_get&)
-        {
-            return boost::none;
-        }
     }
 
     Group parseGroup(ConfigReader& reader);
@@ -104,9 +138,18 @@ private:
 template<typename OutputType>
 struct Config::ConversionTraits
 {
-    boost::optional<OutputType> operator()(const Value& value)
+    boost::optional<OutputType> operator()(const Value& value);
+};
+
+template<>
+struct Config::ConversionTraits<bool>
+{
+    boost::optional<bool> operator()(const Value& value)
     {
-        return get<OutputType>(value);
+        if (value.isBool())
+            return value.getBool();
+
+        return boost::none;
     }
 };
 
@@ -115,8 +158,8 @@ struct Config::ConversionTraits<int>
 {
     boost::optional<int> operator()(const Value& value)
     {
-        if (auto intValue = get<long long>(value))
-            return boost::numeric_cast<int>(*intValue);
+        if (value.isInt())
+            return boost::numeric_cast<int>(value.getInt());
 
         return boost::none;
     }
@@ -127,8 +170,8 @@ struct Config::ConversionTraits<unsigned>
 {
     boost::optional<unsigned> operator()(const Value& value)
     {
-        if (auto intValue = get<long long>(value))
-            return boost::numeric_cast<unsigned>(*intValue);
+        if (value.isInt())
+            return boost::numeric_cast<unsigned>(value.getInt());
 
         return boost::none;
     }
@@ -139,8 +182,8 @@ struct Config::ConversionTraits<unsigned short>
 {
     boost::optional<unsigned short> operator()(const Value& value)
     {
-        if (auto intValue = get<long long>(value))
-            return boost::numeric_cast<unsigned short>(*intValue);
+        if (value.isInt())
+            return boost::numeric_cast<unsigned short>(value.getInt());
 
         return boost::none;
     }
@@ -151,11 +194,23 @@ struct Config::ConversionTraits<double>
 {
     boost::optional<double> operator()(const Value& value)
     {
-        if (auto floatValue = get<double>(value))
-            return *floatValue;
+        if (value.isFloat())
+            return value.getFloat();
 
-        if (auto intValue = get<long long>(value))
-            return boost::numeric_cast<double>(*intValue);
+        if (value.isInt())
+            return boost::numeric_cast<double>(value.getInt());
+
+        return boost::none;
+    }
+};
+
+template<>
+struct Config::ConversionTraits<std::string>
+{
+    boost::optional<std::string> operator()(const Value& value)
+    {
+        if (value.isString())
+            return value.getString();
 
         return boost::none;
     }
@@ -166,14 +221,13 @@ struct Config::ConversionTraits<std::vector<ElementType>>
 {
     boost::optional<std::vector<ElementType>> operator()(const Value& value)
     {
-        std::vector<ElementType> outputData;
-        auto vector = get<std::vector<Value>>(value);
-
-        if (!vector)
+        if (!value.isList())
             return boost::none;
 
-        for (auto it = vector->begin(), end = vector->end(); it != end; ++it)
-            outputData.push_back(*convert<ElementType>(*it));
+        std::vector<ElementType> outputData;
+
+        for (auto& element : value.getList())
+            outputData.push_back(*convert<ElementType>(element));
 
         return outputData;
     }
@@ -207,9 +261,9 @@ boost::optional<ValueType> Config::getOptional(boost::string_ref type, boost::st
         if (!groupValue)
             return boost::none;
 
-        auto group = get<Group>(*groupValue);
+        auto& group = groupValue->getGroup();
 
-        if (auto value = group->getOptional(key))
+        if (auto value = group.getOptional(key))
         {
             if (auto converted = convert<ValueType>(*value))
                 return *converted;
@@ -218,17 +272,19 @@ boost::optional<ValueType> Config::getOptional(boost::string_ref type, boost::st
                                          "\" has wrong type!");
         }
 
-        auto baseType = group->getOptional("BaseType");
+        auto baseType = group.getOptional("BaseType");
 
         if (!baseType)
             return boost::none;
 
-        if (auto baseTypeString = get<std::string>(*baseType))
+        if (baseType->isString())
         {
-            if (data.getOptional(*baseTypeString) == nullptr)
-                throw std::runtime_error("BaseType \"" + *baseTypeString + "\" doesn't exist!");
+            auto& baseTypeString = baseType->getString();
 
-            current = *baseTypeString;
+            if (data.getOptional(baseTypeString) == nullptr)
+                throw std::runtime_error("BaseType \"" + baseTypeString + "\" doesn't exist!");
+
+            current = baseTypeString;
         }
         else
             throw std::runtime_error("BaseType of \"" + current + "\" has wrong type!");

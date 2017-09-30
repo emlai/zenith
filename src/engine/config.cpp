@@ -155,12 +155,9 @@ std::vector<std::string> Config::getToplevelKeys() const
 
     for (auto& keyAndValue : data)
     {
-        auto group = get<Group>(keyAndValue.second);
-
-        if (auto it = group->getOptional("isAbstract"))
-            if (auto isAbstract = get<bool>(*it))
-                if (*isAbstract)
-                    continue;
+        if (auto it = keyAndValue.second.getGroup().getOptional("isAbstract"))
+            if (it->isBool() && it->getBool())
+                continue;
 
         keys.push_back(keyAndValue.first);
     }
@@ -221,7 +218,7 @@ Config::Value Config::parseArray(ConfigReader& reader)
     if (reader.peek() == ']')
     {
         reader.get();
-        return values;
+        return std::move(values);
     }
 
     while (true)
@@ -242,7 +239,7 @@ Config::Value Config::parseArray(ConfigReader& reader)
     }
 
     reader.get();
-    return values;
+    return std::move(values);
 }
 
 Config::Value Config::parseNumber(ConfigReader& reader)
@@ -346,24 +343,24 @@ Config::Config(boost::string_ref filePath)
 
 void Config::printValue(std::ostream& stream, const Config::Value& value) const
 {
-    switch (value.which())
+    switch (value.getType())
     {
-        case 0:
-            stream << (boost::get<bool>(value) ? "true" : "false");
+        case Value::Type::Bool:
+            stream << (value.getBool() ? "true" : "false");
             break;
-        case 1:
-            stream << boost::get<long long>(value);
+        case Value::Type::Int:
+            stream << value.getInt();
             break;
-        case 2:
-            stream << boost::get<double>(value);
+        case Value::Type::Float:
+            stream << value.getFloat();
             break;
-        case 3:
-            stream << boost::get<std::string>(value);
+        case Value::Type::String:
+            stream << value.getString();
             break;
-        case 4:
+        case Value::Type::List:
         {
             stream << "[";
-            auto values = boost::get<std::vector<Value>>(value);
+            auto& values = value.getList();
             for (auto& value : values)
             {
                 printValue(stream, value);
@@ -373,11 +370,9 @@ void Config::printValue(std::ostream& stream, const Config::Value& value) const
             stream << "]";
             break;
         }
-        case 5:
+        case Value::Type::Group:
             assert(false && "unimplemented");
             break;
-        default:
-            assert(false);
     }
 }
 
@@ -385,10 +380,55 @@ void Config::writeToFile(boost::string_ref filePath) const
 {
     std::ofstream file(filePath.to_string());
 
-    for (auto keyAndValue : data)
+    for (auto& keyAndValue : data)
     {
         file << keyAndValue.first << " = ";
         printValue(file, keyAndValue.second);
         file << ";\n";
+    }
+}
+
+Config::Value::Value(Value&& value)
+{
+    type = value.type;
+
+    switch (type)
+    {
+        case Type::Bool:
+            boolean = value.boolean;
+            break;
+        case Type::Int:
+            integer = value.integer;
+            break;
+        case Type::Float:
+            floatingPoint = value.floatingPoint;
+            break;
+        case Type::String:
+            new (&string) auto(std::move(value.string));
+            break;
+        case Type::List:
+            new (&list) auto(std::move(value.list));
+            break;
+        case Type::Group:
+            new (&group) auto(std::move(value.group));
+            break;
+    }
+}
+
+Config::Value::~Value()
+{
+    switch (type)
+    {
+        case Type::String:
+            string.~basic_string();
+            break;
+        case Type::List:
+            list.~vector();
+            break;
+        case Type::Group:
+            group.~Group();
+            break;
+        default:
+            break;
     }
 }
