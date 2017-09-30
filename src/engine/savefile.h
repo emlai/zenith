@@ -12,7 +12,7 @@ class SaveFile
 {
 public:
     SaveFile(boost::string_ref filePath, bool writable);
-    int64_t getSize() const;
+    uint64_t getSize() const;
     int64_t getOffset() const;
     void seek(int64_t offset);
     SaveFile copyToMemory();

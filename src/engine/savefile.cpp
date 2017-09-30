@@ -23,9 +23,14 @@ SaveFile::SaveFile(std::vector<char> buffer)
         throw std::runtime_error(SDL_GetError());
 }
 
-int64_t SaveFile::getSize() const
+uint64_t SaveFile::getSize() const
 {
-    return SDL_RWsize(file.get());
+    auto size = SDL_RWsize(file.get());
+
+    if (size < 0)
+        throw std::runtime_error(SDL_GetError());
+
+    return uint64_t(size);
 }
 
 int64_t SaveFile::getOffset() const
