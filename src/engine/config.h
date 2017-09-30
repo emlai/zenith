@@ -236,7 +236,10 @@ struct Config::ConversionTraits<std::vector<ElementType>>
 template<typename ValueType>
 boost::optional<ValueType> Config::getOptional(boost::string_ref key) const
 {
-    return convert<ValueType>(data.at(key.to_string()));
+    if (auto value = data.getOptional(key.to_string()))
+        return convert<ValueType>(*value);
+
+    return boost::none;
 }
 
 template<typename ValueType>
