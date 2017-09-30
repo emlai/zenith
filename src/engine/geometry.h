@@ -2,6 +2,7 @@
 
 #include "math.h"
 #include "utility.h"
+#include <boost/functional/hash.hpp>
 #include <cassert>
 #include <cmath>
 
@@ -258,7 +259,7 @@ struct Vector3Base
     }
 };
 
-namespace std
+namespace boost
 {
     template<>
     struct hash<Vector3>

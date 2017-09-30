@@ -3,10 +3,10 @@
 #include "area.h"
 #include "engine/color.h"
 #include "engine/geometry.h"
+#include <boost/unordered_map.hpp>
 #include <fstream>
 #include <functional>
 #include <memory>
-#include <unordered_map>
 
 class Creature;
 class Game;
@@ -38,8 +38,8 @@ private:
     static Vector2 globalPositionToTilePosition(Vector2 position);
 
     const Game* game;
-    std::unordered_map<Vector3, Area> areas;
-    std::unordered_map<Vector3, int64_t> savedAreaOffsets;
+    boost::unordered_map<Vector3, Area> areas;
+    boost::unordered_map<Vector3, int64_t> savedAreaOffsets;
     std::unique_ptr<SaveFile> saveFile;
     Color32 sunlight;
 };

@@ -6,12 +6,12 @@
 #include "engine/geometry.h"
 #include "engine/sprite.h"
 #include "engine/utility.h"
+#include <boost/unordered_map.hpp>
+#include <boost/unordered_set.hpp>
 #include <cctype>
 #include <memory>
 #include <sstream>
 #include <string>
-#include <unordered_map>
-#include <unordered_set>
 #include <vector>
 
 class Item;
@@ -155,9 +155,9 @@ private:
     const auto& getAttributeIndices(int attribute) const { return attributeIndices[attribute]; }
 
     std::vector<Tile*> tilesUnder;
-    mutable std::unordered_set<Vector3> seenTilePositions;
+    mutable boost::unordered_set<Vector3> seenTilePositions;
     std::vector<std::unique_ptr<Item>> inventory;
-    std::unordered_map<EquipmentSlot, Item*> equipment;
+    boost::unordered_map<EquipmentSlot, Item*> equipment;
     double currentHP, maxHP, currentAP, currentMP, maxMP;
     bool running;
     std::vector<double> attributeValues;

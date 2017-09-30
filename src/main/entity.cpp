@@ -1,10 +1,10 @@
 #include "entity.h"
+#include <boost/unordered_set.hpp>
 #include <iostream>
-#include <unordered_set>
 
 static void reportUnknownComponent(boost::string_ref name)
 {
-    static std::unordered_set<std::string> reportedNames;
+    static boost::unordered_set<std::string> reportedNames;
 
     if (reportedNames.insert(name.to_string()).second)
         std::cerr << "Unknown component '" << name << "'\n";

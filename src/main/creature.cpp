@@ -45,7 +45,6 @@ Creature::Creature(Tile* tile, boost::string_ref id)
 
 Creature::Creature(Tile* tile, boost::string_ref id, std::unique_ptr<CreatureController> controller)
 :   Entity(id, *Game::creatureConfig),
-    equipment({{Head, nullptr}, {Torso, nullptr}, {Hand, nullptr}, {Legs, nullptr}}),
     currentHP(0),
     maxHP(0),
     currentAP(0),
@@ -57,6 +56,11 @@ Creature::Creature(Tile* tile, boost::string_ref id, std::unique_ptr<CreatureCon
     sprite(getSprite(*Game::creatureSpriteSheet, *Game::creatureConfig, id)),
     controller(std::move(controller))
 {
+    equipment[Head] = nullptr;
+    equipment[Torso] = nullptr;
+    equipment[Hand] = nullptr;
+    equipment[Legs] = nullptr;
+
     if (tile)
         tilesUnder.push_back(tile);
 
@@ -74,12 +78,16 @@ Creature::Creature(Tile* tile, boost::string_ref id, std::unique_ptr<CreatureCon
 
 Creature::Creature(const SaveFile& file, Tile* tile)
 :   Entity(file.readString(), *Game::creatureConfig),
-    equipment({{Head, nullptr}, {Torso, nullptr}, {Hand, nullptr}, {Legs, nullptr}}),
     displayedAttributes(initDisplayedAttributes(getId())),
     attributeIndices(initAttributeIndices(getId())),
     sprite(getSprite(*Game::creatureSpriteSheet, *Game::creatureConfig, getId())),
     controller(AIController::get(getId(), *this))
 {
+    equipment[Head] = nullptr;
+    equipment[Torso] = nullptr;
+    equipment[Hand] = nullptr;
+    equipment[Legs] = nullptr;
+
     if (tile)
         tilesUnder.push_back(tile);
 

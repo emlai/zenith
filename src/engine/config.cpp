@@ -1,7 +1,6 @@
 #include "config.h"
 #include <cctype>
 #include <fstream>
-#include <unordered_map>
 
 /// Wrapper around std::ifstream that keeps track of the current line and column.
 class ConfigReader

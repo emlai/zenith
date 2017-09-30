@@ -4,11 +4,11 @@
 #include <boost/optional.hpp>
 #include <boost/variant.hpp>
 #include <boost/numeric/conversion/cast.hpp>
+#include <boost/unordered_map.hpp>
 #include <fstream>
 #include <functional>
 #include <stdexcept>
 #include <string>
-#include <unordered_map>
 #include <vector>
 
 class ConfigReader;
@@ -61,7 +61,7 @@ private:
         }
 
     private:
-        std::unordered_map<std::string, Value> properties;
+        boost::unordered_map<std::string, Value> properties;
     };
 
     using Value = boost::make_recursive_variant<bool, long long, double, std::string,

@@ -5,7 +5,8 @@
 #include "world.h"
 #include "engine/geometry.h"
 #include "engine/math.h"
-#include <unordered_set>
+#include <boost/unordered_map.hpp>
+#include <boost/unordered_set.hpp>
 
 Building::Building(std::vector<Room>&& rooms)
 :   rooms(std::move(rooms))
@@ -187,7 +188,7 @@ static int heuristicCostEstimate(const Tile& a, const Tile& b)
     return distance.x * distance.y;
 }
 
-static std::vector<Tile*> reconstructPath(const std::unordered_map<Tile*, Tile*>& cameFrom, Tile* current)
+static std::vector<Tile*> reconstructPath(const boost::unordered_map<Tile*, Tile*>& cameFrom, Tile* current)
 {
     std::vector<Tile*> totalPath = { current };
 
@@ -203,11 +204,14 @@ static std::vector<Tile*> reconstructPath(const std::unordered_map<Tile*, Tile*>
 std::vector<Tile*> WorldGenerator::findPathAStar(Tile& source, Tile& target,
                                                  const std::function<bool(Tile&)>& isAllowed) const
 {
-    std::unordered_set<Tile*> closedSet;
-    std::unordered_set<Tile*> openSet = { &source };
-    std::unordered_map<Tile*, Tile*> sources;
-    std::unordered_map<Tile*, int> costs = {{ &source, 0 }};
-    std::unordered_map<Tile*, int> estimatedCosts = {{ &source, heuristicCostEstimate(source, target) }};
+    boost::unordered_set<Tile*> closedSet;
+    boost::unordered_set<Tile*> openSet;
+    openSet.emplace(&source);
+    boost::unordered_map<Tile*, Tile*> sources;
+    boost::unordered_map<Tile*, int> costs;
+    costs.emplace(&source, 0);
+    boost::unordered_map<Tile*, int> estimatedCosts;
+    estimatedCosts.emplace(&source, heuristicCostEstimate(source, target));
 
     auto comparator = [&](Tile* a, Tile* b) { return estimatedCosts.at(a) < estimatedCosts.at(b); };
 
