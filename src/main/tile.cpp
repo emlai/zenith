@@ -258,7 +258,7 @@ void Tile::emitLight()
 {
     forEachLightSource([&](auto& lightSource)
     {
-        lightSource.emitLight(world, getCenterPosition(), level);
+        lightSource.emitLight(world, this->getCenterPosition(), level);
     });
 }
 
