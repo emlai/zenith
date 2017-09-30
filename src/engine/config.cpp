@@ -419,6 +419,10 @@ Config::Value::~Value()
 {
     switch (type)
     {
+        case Type::Bool:
+        case Type::Int:
+        case Type::Float:
+            break;
         case Type::String:
             string.~basic_string();
             break;
@@ -427,8 +431,6 @@ Config::Value::~Value()
             break;
         case Type::Group:
             group.~Group();
-            break;
-        default:
             break;
     }
 }
