@@ -12,8 +12,10 @@ class SaveFile
 {
 public:
     SaveFile(boost::string_ref filePath, bool writable);
+    int64_t getSize() const;
     int64_t getOffset() const;
     void seek(int64_t offset);
+    SaveFile copyToMemory();
 
     void writeInt8(int8_t value) { writeInt8(uint8_t(value)); }
     void writeInt8(uint8_t value);
@@ -49,6 +51,7 @@ public:
     void read(std::vector<T>& vector) const;
 
 private:
+    SaveFile(std::vector<char> buffer);
     template<typename T>
     void write(const std::unique_ptr<T>& value) { value->save(*this); }
     template<typename T>
@@ -56,6 +59,7 @@ private:
     template<typename T>
     T read() const { return T::load(*this); }
 
+    std::vector<char> buffer;
     std::unique_ptr<SDL_RWops, void (*)(SDL_RWops*)> file;
 };
 

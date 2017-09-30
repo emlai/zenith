@@ -431,7 +431,7 @@ void Game::load()
     turn = file.readInt32();
     auto playerPosition = file.readVector2();
     auto playerLevel = file.readInt32();
-    world.load(std::move(file));
+    world.load(file);
 
     player = &world.getTile(playerPosition, playerLevel)->getCreature(0);
     player->setController(std::make_unique<PlayerController>(*this));

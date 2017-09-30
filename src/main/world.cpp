@@ -5,7 +5,7 @@
 #include "components/lightsource.h"
 #include "engine/savefile.h"
 
-void World::load(SaveFile&& file)
+void World::load(SaveFile& file)
 {
     auto areaCount = file.readInt32();
     areas.reserve(size_t(areaCount));
@@ -16,7 +16,7 @@ void World::load(SaveFile&& file)
         savedAreaOffsets.emplace(position, offset);
     }
 
-    saveFile = std::make_unique<SaveFile>(std::move(file));
+    saveFile = std::make_unique<SaveFile>(file.copyToMemory());
 }
 
 void World::save(SaveFile& file) const

@@ -15,6 +15,19 @@ SaveFile::SaveFile(boost::string_ref filePath, bool writable)
         throw std::runtime_error(SDL_GetError());
 }
 
+SaveFile::SaveFile(std::vector<char> buffer)
+:   buffer(std::move(buffer)),
+    file(SDL_RWFromMem(this->buffer.data(), this->buffer.size()), closeFile)
+{
+    if (!file)
+        throw std::runtime_error(SDL_GetError());
+}
+
+int64_t SaveFile::getSize() const
+{
+    return SDL_RWsize(file.get());
+}
+
 int64_t SaveFile::getOffset() const
 {
     return SDL_RWtell(file.get());
@@ -138,4 +151,22 @@ Vector3 SaveFile::readVector3() const
     auto y = readInt32();
     auto z = readInt32();
     return Vector3(x, y, z);
+}
+
+SaveFile SaveFile::copyToMemory()
+{
+    auto offset = getOffset();
+    seek(0);
+    auto size = getSize();
+    std::vector<char> buffer(size);
+    size_t bytesRead = SDL_RWread(file.get(), buffer.data(), 1, size);
+
+    if (bytesRead == 0)
+        throw std::runtime_error(SDL_GetError());
+
+    if (bytesRead != size)
+        throw std::runtime_error("SDL_RWread didn't read the requested number of bytes");
+
+    seek(offset);
+    return SaveFile(std::move(buffer));
 }

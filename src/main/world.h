@@ -21,7 +21,7 @@ public:
     World(World&&) = default;
     World& operator=(const World&) = delete;
     World& operator=(World&&) = default;
-    void load(SaveFile&& file);
+    void load(SaveFile& file);
     void save(SaveFile& file) const;
     int getTurn() const;
     void exist(Rect region, int level);
