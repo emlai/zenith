@@ -1,0 +1,26 @@
+image: Visual Studio 2017
+
+environment:
+  MSVC_DEFAULT_OPTIONS: ON
+  BOOST_ROOT: C:\Libraries\boost_1_64_0
+  BOOST_LIBRARYDIR: C:\Libraries\boost_1_64_0\lib64-msvc-14.1
+
+init:
+  - cmd: cmake --version
+  - cmd: msbuild /version
+
+install:
+  - ps: |
+      $SDL_VERSION = "2.0.6"
+      $SDL2DIR = "C:\sdl_root\SDL2-$SDL_VERSION"
+      if (!(Test-Path -Path $SDL2DIR)) {
+        Start-FileDownload https://libsdl.org/release/SDL2-devel-$SDL_VERSION-VC.zip
+        7z x SDL2-devel-$SDL_VERSION-VC.zip -oC:\sdl_root\
+      }
+      $env:SDL2DIR = $SDL2DIR
+
+before_build:
+  - cmd: cd C:\projects\zenith
+  - cmd: mkdir build
+  - cmd: cd build
+  - cmd: cmake -G "Visual Studio 15 2017 Win64" -DBOOST_ROOT="%BOOST_ROOT%" -DBOOST_LIBRARYDIR="%BOOST_LIBRARYDIR%" ..
