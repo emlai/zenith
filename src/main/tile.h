@@ -46,8 +46,8 @@ public:
     void setObject(std::unique_ptr<Object>);
     boost::string_ref getGroundId() const { return groundId; }
     void setGround(boost::string_ref groundId);
-    std::vector<Entity*> getEntities() const;
-    std::vector<LightSource*> getLightSources() const;
+    void forEachEntity(const std::function<void(Entity&)>& function) const;
+    void forEachLightSource(const std::function<void(LightSource&)>& function) const;
     Color32 getLight() const { return light; }
     void emitLight();
     void addLight(Color32 light) { this->light.lighten(light); }
