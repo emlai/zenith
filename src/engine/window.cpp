@@ -5,6 +5,7 @@
 #include "texture.h"
 #include <SDL.h>
 #include <cctype>
+#include <climits>
 #include <stdexcept>
 
 int Window::windowCount = 0;
@@ -104,12 +105,16 @@ Key Window::waitForInput()
         switch (event.type)
         {
             case SDL_KEYDOWN:
+            {
                 SDL_FilterEvents(filterKeyRepeatEvents, &event);
 
-                if ((event.key.keysym.mod & Shift) && std::isalpha(event.key.keysym.sym))
-                    return std::toupper(event.key.keysym.sym);
+                auto key = event.key.keysym.sym;
+
+                if ((event.key.keysym.mod & Shift) && key > 0 && key <= UCHAR_MAX && std::isalpha(key))
+                    return std::toupper(key);
                 else
-                    return event.key.keysym.sym;
+                    return key;
+            }
 
             case SDL_WINDOWEVENT:
                 if (handleWindowEvent(event.window.event))
