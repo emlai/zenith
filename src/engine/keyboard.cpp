@@ -25,7 +25,7 @@ int keyboard::readLine(Window& window, std::string& line, Vector2 position, cons
         render(window);
         font.setArea(Rect(position, window.getResolution() - position));
         font.print(window, prefix);
-        font.printWithCursor(window, line, &*cursor);
+        font.printWithCursor(window, line, cursor == line.end() ? nullptr : &*cursor);
         window.updateScreen();
         SDL_WaitEvent(&event);
         exitCode = readLineProcessKey(event, line, cursor);
