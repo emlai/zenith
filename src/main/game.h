@@ -34,6 +34,7 @@ public:
     Window& getWindow() const;
 #ifdef DEBUG
     void enterCommandMode(Window&);
+    static const Key commandModeKey = '`';
 #endif
     bool playerSeesEverything;
 

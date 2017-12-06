@@ -91,7 +91,7 @@ Action PlayerController::control(Creature& creature)
                 {
                     return item.isUsable();
                 });
-        
+
                 if (selectedItemIndex != Menu::Exit)
                     if (creature.use(*creature.getInventory()[selectedItemIndex], game))
                         return UseItem;
@@ -108,7 +108,7 @@ Action PlayerController::control(Creature& creature)
                 {
                     return item.isEdible();
                 });
-        
+
                 if (selectedItemIndex != Menu::Exit)
                     if (creature.eat(*creature.getInventory()[selectedItemIndex]))
                         return EatItem;
@@ -127,7 +127,7 @@ Action PlayerController::control(Creature& creature)
                     creature.drop(*creature.getInventory()[selectedItemIndex]);
                     return DropItem;
                 }
-        
+
                 break;
             }
 
@@ -170,7 +170,7 @@ Action PlayerController::control(Creature& creature)
                 break;
             }
 
-            case Tab:
+            case Game::commandModeKey:
                 game.enterCommandMode(game.getWindow());
                 return NoAction;
 #endif

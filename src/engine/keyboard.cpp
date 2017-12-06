@@ -5,6 +5,7 @@
 #include <SDL.h>
 #include <cctype>
 #include <cassert>
+#include <climits>
 
 namespace keyboard
 {
@@ -16,11 +17,9 @@ int keyboard::readLine(Window& window, std::string& line, Vector2 position, cons
 {
     BitmapFont& font = window.getFont();
     std::string::iterator cursor = line.end();
-    int exitCode = 0;
     SDL_Event event;
-    SDL_StartTextInput();
 
-    while (!exitCode)
+    while (true)
     {
         render(window);
         font.setArea(Rect(position, window.getResolution() - position));
@@ -28,52 +27,55 @@ int keyboard::readLine(Window& window, std::string& line, Vector2 position, cons
         font.printWithCursor(window, line, cursor == line.end() ? nullptr : &*cursor);
         window.updateScreen();
         SDL_WaitEvent(&event);
-        exitCode = readLineProcessKey(event, line, cursor);
-    }
 
-    SDL_StopTextInput();
-    return exitCode;
+        if (auto key = readLineProcessKey(event, line, cursor))
+            return key;
+    }
 }
 
 int keyboard::readLineProcessKey(const SDL_Event& event, std::string& line, std::string::iterator& cursor)
 {
     static const int maxBufferSize = 4096;
 
-    if (event.type == SDL_TEXTINPUT)
-    {
-        if (std::isprint(event.text.text[0]) && event.text.text[1] == '\0' &&
-            line.size() < maxBufferSize)
-            cursor = 1 + line.insert(cursor, event.text.text[0]);
-        return 0;
-    }
-
     if (event.type != SDL_KEYDOWN)
         return 0;
 
-    switch (event.key.keysym.sym)
+    auto key = event.key.keysym.sym;
+
+    switch (key)
     {
-        case Enter:
-        case Esc:
-        case Tab:
-        case UpArrow:
-        case DownArrow:
-            return event.key.keysym.sym;
         case Backspace:
             if (cursor != line.begin())
+            {
                 cursor = line.erase(cursor - 1);
+                return 0;
+            }
             break;
+
         case Delete:
             if (cursor != line.end())
+            {
                 cursor = line.erase(cursor);
+                return 0;
+            }
             break;
+
         case LeftArrow:
             if (cursor-- == line.begin())
+            {
                 cursor = line.end();
+                return 0;
+            }
             break;
+
         case RightArrow:
             if (cursor++ == line.end())
+            {
                 cursor = line.begin();
+                return 0;
+            }
             break;
+
         case 'v':
             if (event.key.keysym.mod & Ctrl)
             {
@@ -85,21 +87,31 @@ int keyboard::readLineProcessKey(const SDL_Event& event, std::string& line, std:
                                              clipboardText.get() + clipboardTextSize);
                 line.insert(cursor, clipboardText.get(), endPosition);
                 cursor = line.end();
+                return 0;
             }
             break;
+
         case 'c':
             if (event.key.keysym.mod & Ctrl && !line.empty())
+            {
                 SDL_SetClipboardText(line.c_str());
+                return 0;
+            }
             break;
+
         case 'x':
             if (event.key.keysym.mod & Ctrl && !line.empty())
             {
                 SDL_SetClipboardText(line.c_str());
                 line.clear();
                 cursor = line.begin();
+                return 0;
             }
             break;
     }
 
-    return 0;
+    if (key >= 0 && key <= UCHAR_MAX && std::isprint(key) && line.size() < maxBufferSize)
+        cursor = 1 + line.insert(cursor, key);
+
+    return key;
 }

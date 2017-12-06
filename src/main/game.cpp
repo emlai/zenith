@@ -389,7 +389,7 @@ void Game::enterCommandMode(Window& window)
             command.clear();
         }
 
-        if (result == Esc || result == Tab)
+        if (result == Esc || result == commandModeKey)
             break;
 
         if (result == UpArrow)
