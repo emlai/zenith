@@ -56,10 +56,12 @@ public:
     void setTableCellSpacing(Vector2 spacing) { tableCellSpacing = spacing; }
     void setSecondaryColumnAlignment(HorizontalAlignment alignment) { secondaryColumnAlignment = alignment; }
     void setTextColor(Color32 color) { textColor = color; }
+    void setHoverColor(Color32 color) { hoverColor = color; }
     void setArea(Rect area) { this->area = area; }
     void setArea(Vector2 position, Vector2 size) { area = Rect(position, size); }
     void setArea(int x, int y, int width, int height) { area = Rect(x, y, width, height); }
     static void setDefaultTextColor(Color32 color) { defaultTextColor = color; }
+    static void setDefaultHoverColor(Color32 color) { defaultHoverColor = color; }
 
 private:
     bool isValidIndex(unsigned index) const { return index < menuItems.size(); }
@@ -82,7 +84,9 @@ private:
     Vector2 tableCellSpacing;
     HorizontalAlignment secondaryColumnAlignment;
     Color32 textColor;
+    Color32 hoverColor;
     Rect area;
     Vector2 size;
     static Color32 defaultTextColor;
+    static Color32 defaultHoverColor;
 };

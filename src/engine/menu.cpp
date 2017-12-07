@@ -3,9 +3,11 @@
 #include "font.h"
 #include "window.h"
 #include "sprite.h"
+#include <algorithm>
 #include <cctype>
 
 Color32 Menu::defaultTextColor = Color32::white * 0.6;
+Color32 Menu::defaultHoverColor = Color32::white;
 
 void Menu::addTitle(boost::string_ref text)
 {
@@ -30,6 +32,7 @@ void Menu::clear()
     tableCellSpacing = Vector2(0, 0);
     secondaryColumnAlignment = LeftAlign;
     textColor = defaultTextColor;
+    hoverColor = defaultHoverColor;
     area = Rect(0, 0, 0, 0);
 }
 
@@ -183,10 +186,12 @@ void Menu::render(Window& window)
     for (auto item = menuItems.begin(); item != menuItems.end(); ++item, ++position, ++index)
     {
         Vector2 itemPosition = position->position;
+        bool isHovered = window.getMousePosition().isWithin(Rect(itemPosition, position->size));
+        auto color = isHovered ? hoverColor : textColor;
 
         auto hotkeyPrefix = getHotkeyPrefix(index);
         font.setArea(Rect(itemPosition, position->size));
-        font.print(window, hotkeyPrefix, textColor);
+        font.print(window, hotkeyPrefix, color);
         itemPosition.x += hotkeyPrefix.size() * font.getColumnWidth() + tableCellSpacing.x;
 
         if (item->mainImage)
@@ -198,7 +203,7 @@ void Menu::render(Window& window)
             font.setArea(Rect(itemPosition, position->size));
         }
 
-        font.print(window, item->mainText, textColor);
+        font.print(window, item->mainText, color);
         itemPosition.x += calculateMaxTextSize() * font.getColumnWidth() + tableCellSpacing.x;
 
         if (item->secondaryImage)
@@ -212,7 +217,7 @@ void Menu::render(Window& window)
             auto oldLayout = font.getLayout();
             font.setLayout(TextLayout(secondaryColumnAlignment, font.getLayout().verticalAlignment));
             font.setArea(Rect(itemPosition, position->size - Vector2(itemPosition.x - position->position.x, 0)));
-            font.print(window, item->secondaryText, textColor);
+            font.print(window, item->secondaryText, color);
             font.setLayout(oldLayout);
         }
     }
