@@ -152,6 +152,19 @@ void Menu::calculateItemPositions()
     }
 }
 
+int Menu::calculateMainImageColumnWidth() const
+{
+    auto width = 0;
+
+    for (auto& item : menuItems)
+    {
+        if (item.mainImage)
+            width = std::max(width, item.mainImage->getWidth());
+    }
+
+    return width + tableCellSpacing.x;
+}
+
 void Menu::render(Window& window)
 {
     auto& font = window.getFont();
@@ -165,15 +178,16 @@ void Menu::render(Window& window)
         ++position;
     }
 
+    auto mainImageColumnWidth = calculateMainImageColumnWidth();
+
     for (auto item = menuItems.begin(); item != menuItems.end(); ++item, ++position, ++index)
     {
         Vector2 itemPosition = position->position;
 
         if (item->mainImage)
-        {
             item->mainImage->render(window, itemPosition);
-            itemPosition.x += item->mainImage->getWidth() + tableCellSpacing.x;
-        }
+
+        itemPosition.x += mainImageColumnWidth;
 
         std::string text = getHotkeyPrefix(index) + item->mainText;
         font.setArea(Rect(itemPosition, position->size));

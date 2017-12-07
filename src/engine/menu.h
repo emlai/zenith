@@ -67,6 +67,7 @@ private:
     void calculateSize();
     void calculateItemPositions();
     std::string getHotkeyPrefix(int index) const;
+    int calculateMainImageColumnWidth() const;
 
     std::string title;
     std::vector<MenuItem> menuItems;
