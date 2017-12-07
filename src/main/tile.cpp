@@ -137,7 +137,7 @@ void Tile::render(Window& window, int zIndex, bool fogOfWar, bool renderLight) c
                     if (!tooltip.empty())
                     {
                         int lineHeight = 2;
-                        Rect lineArea(tileRect.position.x + getSize().x, 
+                        Rect lineArea(tileRect.position.x + getSize().x,
                                       tileRect.position.y + getSize().y / 2 - lineHeight / 2,
                                       getSize().x / 2, lineHeight);
                         window.getGraphicsContext().renderFilledRectangle(lineArea, GUIColor::Black);
@@ -149,7 +149,7 @@ void Tile::render(Window& window, int zIndex, bool fogOfWar, bool renderLight) c
                         window.getGraphicsContext().renderFilledRectangle(tooltipArea.inset(Vector2(0, 1)), GUIColor::Black);
                         window.getGraphicsContext().renderFilledRectangle(tooltipArea.inset(Vector2(1, 0)), GUIColor::Black);
                         window.getFont().setArea(tooltipArea.offset(inset));
-                        window.getFont().print(window, tooltip, TextColor::White, true, PreserveLines);
+                        window.getFont().print(window, tooltip, TextColor::White, GUIColor::Black, true, PreserveLines);
                     }
                 }
             }

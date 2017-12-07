@@ -27,11 +27,14 @@ class BitmapFont
 {
 public:
     BitmapFont(boost::string_ref fileName, Vector2 charSize);
-    void print(Window& window, boost::string_ref, Color32 = Color32::none, bool blend = true,
+    void print(Window& window, boost::string_ref text, Color32 color = Color32::none,
+               Color32 backgroundColor = Color32::none, bool blend = true,
                LineBreakMode lineBreakMode = SplitLines);
-    void printLine(Window& window, boost::string_ref, Color32 = Color32::none);
+    void printLine(Window& window, boost::string_ref text, Color32 color = Color32::none,
+                   Color32 backgroundColor = Color32::none);
     void printWithCursor(Window& window, boost::string_ref, const char* cursorPosition,
-                         Color32 mainColor = Color32::none, Color32 cursorColor = Color32::none);
+                         Color32 mainColor = Color32::none, Color32 cursorColor = Color32::none,
+                         Color32 backgroundColor = Color32::none);
     void setArea(Rect area) { printArea = area; initCurrentPosition(); }
     void setLayout(TextLayout layout) { this->layout = layout; initCurrentPosition(); }
     void setDefaultColor(Color32 color) { defaultColor = color; }
@@ -52,9 +55,10 @@ public:
 
 private:
     using PrintIterator = const char*;
-    Vector2 printHelper(Window& window, boost::string_ref, Vector2 position, LineBreakMode lineBreakMode) const;
+    Vector2 printHelper(Window& window, boost::string_ref, Vector2 position,
+                        Color32 backgroundColor, LineBreakMode lineBreakMode) const;
     void printLine(Window& window, PrintIterator lineBegin, PrintIterator lineEnd,
-                   Rect& source, Rect& target) const;
+                   Rect& source, Rect& target, Color32 backgroundColor) const;
     void initCurrentPosition();
 
     Rect printArea;

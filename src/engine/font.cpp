@@ -1,5 +1,6 @@
 #include "font.h"
 #include "geometry.h"
+#include "window.h"
 #include <algorithm>
 #include <sstream>
 
@@ -15,12 +16,12 @@ BitmapFont::BitmapFont(boost::string_ref fileName, Vector2 charSize)
     shadowPosition(1, 1),
     charSize(charSize),
     moveVector(charSize),
-    texture(fileName)
+    texture(fileName, Color32::black)
 {
 }
 
-void BitmapFont::print(Window& window, boost::string_ref text, Color32 color, bool blend,
-                       LineBreakMode lineBreakMode)
+void BitmapFont::print(Window& window, boost::string_ref text, Color32 color, Color32 backgroundColor,
+                       bool blend, LineBreakMode lineBreakMode)
 {
     if (!color)
         color = defaultColor;
@@ -30,23 +31,23 @@ void BitmapFont::print(Window& window, boost::string_ref text, Color32 color, bo
     if (drawShadows)
     {
         texture.setColor(color * shadowColorMod);
-        printHelper(window, text, currentPosition + shadowPosition, lineBreakMode);
+        printHelper(window, text, currentPosition + shadowPosition, backgroundColor, lineBreakMode);
     }
 
     texture.setColor(color);
-    currentPosition = printHelper(window, text, currentPosition, lineBreakMode);
+    currentPosition = printHelper(window, text, currentPosition, backgroundColor, lineBreakMode);
     lineContinuation = true;
 }
 
-void BitmapFont::printLine(Window& window, boost::string_ref text, Color32 color)
+void BitmapFont::printLine(Window& window, boost::string_ref text, Color32 color, Color32 backgroundColor)
 {
-    print(window, text, color, PreserveLines);
+    print(window, text, color, backgroundColor, PreserveLines);
     currentPosition.x = printArea.position.x;
     currentPosition.y += moveVector.y;
 }
 
 void BitmapFont::printWithCursor(Window& window, boost::string_ref text, const char* cursor,
-                                 Color32 mainColor, Color32 cursorColor)
+                                 Color32 mainColor, Color32 cursorColor, Color32 backgroundColor)
 {
     Vector2 cursorPosition = currentPosition + Vector2(int((cursor - text.begin()) * moveVector.x), 0);
     print(window, text, mainColor);
@@ -54,11 +55,11 @@ void BitmapFont::printWithCursor(Window& window, boost::string_ref text, const c
     if (cursorColor)
         texture.setColor(cursorColor);
 
-    printHelper(window, "_", cursorPosition, PreserveLines);
+    printHelper(window, "_", cursorPosition, backgroundColor, PreserveLines);
 }
 
 Vector2 BitmapFont::printHelper(Window& window, boost::string_ref text, Vector2 position,
-                                LineBreakMode lineBreakMode) const
+                                Color32 backgroundColor, LineBreakMode lineBreakMode) const
 {
     Rect source;
     source.size = charSize;
@@ -112,7 +113,7 @@ Vector2 BitmapFont::printHelper(Window& window, boost::string_ref text, Vector2 
     {
         if (*character == '\n' || character == text.end())
         {
-            printLine(window, lineBegin, character, source, target);
+            printLine(window, lineBegin, character, source, target, backgroundColor);
 
             if (character == text.end())
                 return target.position;
@@ -127,7 +128,7 @@ Vector2 BitmapFont::printHelper(Window& window, boost::string_ref text, Vector2 
 }
 
 void BitmapFont::printLine(Window& window, PrintIterator lineBegin, PrintIterator lineEnd,
-                           Rect& source, Rect& target) const
+                           Rect& source, Rect& target, Color32 backgroundColor) const
 {
     const int lineWidth = int((lineEnd - lineBegin) * moveVector.x);
 
@@ -147,6 +148,7 @@ void BitmapFont::printLine(Window& window, PrintIterator lineBegin, PrintIterato
         {
             const auto index = *character - ' ';
             source.position = charSize * Vector2(index % dimensions.x, index / dimensions.x);
+            window.getGraphicsContext().renderFilledRectangle(target, backgroundColor);
             texture.render(window, source, target);
         }
 
