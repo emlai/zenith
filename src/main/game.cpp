@@ -76,7 +76,6 @@ InventoryMenu::InventoryMenu(Window& window, const Creature& player, boost::stri
     setTextLayout(TextLayout(LeftAlign, Sprite::useAsciiGraphics() ? TopAlign : VerticalCenter));
     setTableCellSpacing(Vector2(window.getFont().getColumnWidth(), 0));
     setHotkeyStyle(LetterHotkeys);
-    setHotkeySuffix(Game::hotkeySuffix);
 
     if (showNothingAsOption)
         addItem(MenuItem(-1, "nothing"));
@@ -121,7 +120,6 @@ void EquipmentMenu::execute()
         setTextLayout(TextLayout(LeftAlign, Sprite::useAsciiGraphics() ? TopAlign : VerticalCenter));
         setTableCellSpacing(Vector2(getEngine().getWindow().getFont().getColumnWidth(), 0));
         setHotkeyStyle(LetterHotkeys);
-        setHotkeySuffix(Game::hotkeySuffix);
 
         for (int i = 0; i < equipmentSlots; ++i)
         {

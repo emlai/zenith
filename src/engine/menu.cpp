@@ -23,7 +23,7 @@ void Menu::clear()
     menuItems.clear();
     wrapEnabled = true;
     hotkeyStyle = CustomHotkeys;
-    hotkeySuffix = ".";
+    hotkeySuffix = ")";
     itemLayout = Vertical;
     itemSpacing = 1;
     itemSize = boost::none;
