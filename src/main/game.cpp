@@ -173,7 +173,12 @@ void LookMode::execute()
 {
     while (true)
     {
-        switch (getEngine().getWindow().waitForInput())
+        Event event = getEngine().getWindow().waitForInput();
+
+        if (event.type != Event::KeyDown)
+            continue;
+
+        switch (event.key)
         {
             case UpArrow: position += North; break;
             case RightArrow: position += East; break;
@@ -246,7 +251,12 @@ private:
 
 boost::optional<Dir8> DirectionQuestion::execute()
 {
-    switch (getEngine().getWindow().waitForInput())
+    Event event = getEngine().getWindow().waitForInput();
+
+    if (event.type != Event::KeyDown)
+        return boost::none;
+
+    switch (event.key)
     {
         case UpArrow: return North;
         case RightArrow: return East;

@@ -48,13 +48,33 @@ int Menu::execute()
 
     while (exitCode == -3)
     {
-        const Key input = window.waitForInput();
+        Event event = window.waitForInput();
+
+        if (event.type == Event::MouseButtonDown)
+        {
+            for (auto& item : itemPositions)
+            {
+                if (!title.empty() && &item == &itemPositions[0])
+                    continue; // Skip title.
+
+                if (event.mousePosition.isWithin(item))
+                {
+                    auto index = &item - &itemPositions[title.empty() ? 0 : 1];
+                    exitCode = menuItems[index].id;
+                    break;
+                }
+            }
+            continue;
+        }
 
         if (window.shouldClose())
         {
             exitCode = Window::CloseRequest;
             break;
         }
+
+        assert(event.type == Event::KeyDown);
+        auto input = event.key;
 
         if (input == Esc)
         {
@@ -133,8 +153,9 @@ void Menu::calculateSize()
 
 void Menu::calculateItemPositions()
 {
+    int count = int(menuItems.size()) + (title.empty() ? 0 : 1);
     itemPositions.clear();
-    itemPositions.reserve(menuItems.size());
+    itemPositions.reserve(count);
     Vector2 size;
 
     if (itemLayout == Vertical)
@@ -144,7 +165,7 @@ void Menu::calculateItemPositions()
 
     Vector2 position = area.position;
 
-    for (int i = 0, count = int(menuItems.size()) + (title.empty() ? 0 : 1); i < count; ++i)
+    for (int i = 0; i < count; ++i)
     {
         itemPositions.push_back(Rect(position, size));
 

@@ -29,7 +29,12 @@ Action PlayerController::control(Creature& creature)
 
     while (true)
     {
-        switch (game.getWindow().waitForInput())
+        Event event = game.getWindow().waitForInput();
+
+        if (event.type != Event::KeyDown)
+            continue;
+
+        switch (event.key)
         {
             case RightArrow:
                 if (!creature.isDead())

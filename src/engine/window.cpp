@@ -90,7 +90,7 @@ static int filterKeyRepeatEvents(void* userdata, SDL_Event* event)
     return 1;
 }
 
-Key Window::waitForInput()
+Event Window::waitForInput()
 {
     SDL_Event event;
 
@@ -111,10 +111,15 @@ Key Window::waitForInput()
                 auto key = event.key.keysym.sym;
 
                 if ((event.key.keysym.mod & Shift) && key > 0 && key <= UCHAR_MAX && std::isalpha(key))
-                    return std::toupper(key);
+                    return Event(Key(std::toupper(key)));
                 else
-                    return key;
+                    return Event(Key(key));
             }
+
+            case SDL_MOUSEBUTTONDOWN:
+                if (event.button.button == SDL_BUTTON_LEFT)
+                    return Event(Vector2(event.button.x, event.button.y));
+                break;
 
             case SDL_WINDOWEVENT:
                 if (handleWindowEvent(event.window.event))
