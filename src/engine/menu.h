@@ -48,7 +48,7 @@ public:
     void render(Window& window) override;
     void setWrap(bool state) { wrapEnabled = state; }
     void setHotkeyStyle(HotkeyStyle style) { hotkeyStyle = style; }
-    void setHotkeySeparator(std::string&& string) { hotkeySeparator = std::move(string); }
+    void setHotkeySuffix(std::string string) { hotkeySuffix = std::move(string); }
     void setTextLayout(TextLayout layout) { textLayout = layout; }
     void setItemLayout(ItemLayout layout) { itemLayout = layout; }
     void setItemSpacing(int amount) { itemSpacing = amount; }
@@ -74,7 +74,7 @@ private:
     std::vector<Rect> itemPositions;
     bool wrapEnabled;
     HotkeyStyle hotkeyStyle;
-    std::string hotkeySeparator;
+    std::string hotkeySuffix;
     TextLayout textLayout;
     ItemLayout itemLayout;
     int itemSpacing;

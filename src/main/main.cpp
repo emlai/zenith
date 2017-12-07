@@ -56,7 +56,7 @@ void PrefsMenu::execute()
         setSecondaryColumnAlignment(RightAlign);
         setArea(window.getResolution() / 4, window.getResolution() / 2);
         setHotkeyStyle(LetterHotkeys);
-        setHotkeySeparator(Game::hotkeySeparator);
+        setHotkeySuffix(Game::hotkeySuffix);
 
         auto selection = Menu::execute();
 
@@ -111,7 +111,7 @@ void MainMenu::execute()
         setTextLayout(TextLayout(HorizontalCenter, VerticalCenter));
         setArea(Vector2(0, 0), getEngine().getWindow().getResolution() / Vector2(1, 6));
         setHotkeyStyle(LetterHotkeys);
-        setHotkeySeparator(Game::hotkeySeparator);
+        setHotkeySuffix(Game::hotkeySuffix);
 
         auto selection = Menu::execute();
 

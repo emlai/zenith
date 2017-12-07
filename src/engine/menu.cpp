@@ -23,7 +23,7 @@ void Menu::clear()
     menuItems.clear();
     wrapEnabled = true;
     hotkeyStyle = CustomHotkeys;
-    hotkeySeparator = ". ";
+    hotkeySuffix = ".";
     itemLayout = Vertical;
     itemSpacing = 1;
     itemSize = boost::none;
@@ -184,14 +184,21 @@ void Menu::render(Window& window)
     {
         Vector2 itemPosition = position->position;
 
+        auto hotkeyPrefix = getHotkeyPrefix(index);
+        font.setArea(Rect(itemPosition, position->size));
+        font.print(window, hotkeyPrefix, textColor);
+        itemPosition.x += hotkeyPrefix.size() * font.getColumnWidth() + tableCellSpacing.x;
+
         if (item->mainImage)
             item->mainImage->render(window, itemPosition);
 
-        itemPosition.x += mainImageColumnWidth;
+        if (mainImageColumnWidth > 0)
+        {
+            itemPosition.x += mainImageColumnWidth;
+            font.setArea(Rect(itemPosition, position->size));
+        }
 
-        std::string text = getHotkeyPrefix(index) + item->mainText;
-        font.setArea(Rect(itemPosition, position->size));
-        font.print(window, text, textColor);
+        font.print(window, item->mainText, textColor);
         itemPosition.x += calculateMaxTextSize() * font.getColumnWidth() + tableCellSpacing.x;
 
         if (item->secondaryImage)
@@ -216,7 +223,7 @@ std::string Menu::getHotkeyPrefix(int index) const
     switch (hotkeyStyle)
     {
         case CustomHotkeys: return "";
-        case NumberHotkeys: return std::to_string(index) + hotkeySeparator;
-        case LetterHotkeys: return char('a' + index - 1) + hotkeySeparator;
+        case NumberHotkeys: return std::to_string(index) + hotkeySuffix;
+        case LetterHotkeys: return char('a' + index - 1) + hotkeySuffix;
     }
 }

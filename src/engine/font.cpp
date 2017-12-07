@@ -95,14 +95,17 @@ Vector2 BitmapFont::printHelper(Window& window, boost::string_ref text, Vector2 
         text = splitText;
     }
 
-    const auto lineCount = 1 + std::count(text.begin(), text.end(), '\n');
-    const auto textHeight = lineCount * moveVector.y;
-
-    switch (layout.verticalAlignment)
+    if (!lineContinuation)
     {
-        case TopAlign: break;
-        case VerticalCenter: target.position.y -= textHeight / 2; break;
-        case BottomAlign: target.position.y -= textHeight; break;
+        const auto lineCount = 1 + std::count(text.begin(), text.end(), '\n');
+        const auto textHeight = lineCount * moveVector.y;
+
+        switch (layout.verticalAlignment)
+        {
+            case TopAlign: break;
+            case VerticalCenter: target.position.y -= textHeight / 2; break;
+            case BottomAlign: target.position.y -= textHeight; break;
+        }
     }
 
     for (auto character = text.begin(), lineBegin = text.begin();; ++character)
