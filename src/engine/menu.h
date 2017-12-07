@@ -36,6 +36,7 @@ class Menu : public State
 {
 public:
     enum ItemLayout { Vertical, Horizontal };
+    enum HotkeyStyle { CustomHotkeys, NumberHotkeys, LetterHotkeys };
     enum { Exit = INT_MIN };
 
     Menu() { clear(); }
@@ -46,54 +47,41 @@ public:
     int execute();
     void render(Window& window) override;
     void setWrap(bool state) { wrapEnabled = state; }
-    void setShowNumbers(bool state) { showNumbers = state; }
-    void setNumberSeparator(std::string&& string) { numberSeparator = std::move(string); }
+    void setHotkeyStyle(HotkeyStyle style) { hotkeyStyle = style; }
+    void setHotkeySeparator(std::string&& string) { hotkeySeparator = std::move(string); }
     void setTextLayout(TextLayout layout) { textLayout = layout; }
     void setItemLayout(ItemLayout layout) { itemLayout = layout; }
     void setItemSpacing(int amount) { itemSpacing = amount; }
     void setItemSize(boost::optional<Vector2> size) { itemSize = size; }
     void setTableCellSpacing(Vector2 spacing) { tableCellSpacing = spacing; }
     void setSecondaryColumnAlignment(HorizontalAlignment alignment) { secondaryColumnAlignment = alignment; }
-    void setNormalColor(Color32 color) { normalColor = color; }
-    void setSelectionColor(Color32 color) { selectionColor = color; }
-    void setSelectionOffset(Vector2 offset) { selectionOffset = offset; }
+    void setTextColor(Color32 color) { textColor = color; }
     void setArea(Rect area) { this->area = area; }
     void setArea(Vector2 position, Vector2 size) { area = Rect(position, size); }
     void setArea(int x, int y, int width, int height) { area = Rect(x, y, width, height); }
-    void select(int index);
-    int getSelectedIndex() const { return int(selection - menuItems.begin()); }
-    static void setDefaultNormalColor(Color32 color) { defaultNormalColor = color; }
-    static void setDefaultSelectionColor(Color32 color) { defaultSelectionColor = color; }
-    static void setDefaultSelectionOffset(Vector2 offset) { defaultSelectionOffset = offset; }
+    static void setDefaultTextColor(Color32 color) { defaultTextColor = color; }
 
 private:
     bool isValidIndex(unsigned index) const { return index < menuItems.size(); }
-    void select(std::vector<MenuItem>::iterator newSelection);
-    void selectNext();
-    void selectPrevious();
     int calculateMaxTextSize() const;
     void calculateSize();
     void calculateItemPositions();
+    std::string getHotkeyPrefix(int index) const;
 
     std::string title;
     std::vector<MenuItem> menuItems;
-    std::vector<MenuItem>::iterator selection;
     std::vector<Rect> itemPositions;
     bool wrapEnabled;
-    bool showNumbers;
-    std::string numberSeparator;
+    HotkeyStyle hotkeyStyle;
+    std::string hotkeySeparator;
     TextLayout textLayout;
     ItemLayout itemLayout;
     int itemSpacing;
     boost::optional<Vector2> itemSize;
     Vector2 tableCellSpacing;
     HorizontalAlignment secondaryColumnAlignment;
-    Color32 normalColor;
-    Color32 selectionColor;
-    Vector2 selectionOffset;
+    Color32 textColor;
     Rect area;
     Vector2 size;
-    static Color32 defaultNormalColor;
-    static Color32 defaultSelectionColor;
-    static Vector2 defaultSelectionOffset;
+    static Color32 defaultTextColor;
 };

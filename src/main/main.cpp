@@ -40,7 +40,6 @@ void PrefsMenu::execute()
 {
     enum { AsciiGraphics, GraphicsScale, Fullscreen };
     auto& window = getEngine().getWindow();
-    int selection = 0;
 
     while (true)
     {
@@ -56,8 +55,10 @@ void PrefsMenu::execute()
         setTextLayout(TextLayout(LeftAlign, TopAlign));
         setSecondaryColumnAlignment(RightAlign);
         setArea(window.getResolution() / 4, window.getResolution() / 2);
-        select(selection);
-        selection = Menu::execute();
+        setHotkeyStyle(LetterHotkeys);
+        setHotkeySeparator(Game::hotkeySeparator);
+
+        auto selection = Menu::execute();
 
         switch (selection)
         {
@@ -109,7 +110,9 @@ void MainMenu::execute()
         setItemSpacing(18);
         setTextLayout(TextLayout(HorizontalCenter, VerticalCenter));
         setArea(Vector2(0, 0), getEngine().getWindow().getResolution() / Vector2(1, 6));
-        
+        setHotkeyStyle(LetterHotkeys);
+        setHotkeySeparator(Game::hotkeySeparator);
+
         auto selection = Menu::execute();
 
         switch (selection)
@@ -177,9 +180,7 @@ int main(int argc, char** argv)
     BitmapFont font = initFont();
     window.setFont(font);
     Sprite::setAsciiGraphicsFont(&font);
-    Menu::setDefaultNormalColor(TextColor::Gray);
-    Menu::setDefaultSelectionColor(TextColor::White);
-    Menu::setDefaultSelectionOffset(Vector2(0, 1));
+    Menu::setDefaultTextColor(TextColor::Gray);
 
     MainMenu mainMenu;
 

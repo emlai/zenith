@@ -5,9 +5,7 @@
 #include "sprite.h"
 #include <cctype>
 
-Color32 Menu::defaultNormalColor = Color32::white * 0.6;
-Color32 Menu::defaultSelectionColor = Color32::white;
-Vector2 Menu::defaultSelectionOffset(0, 0);
+Color32 Menu::defaultTextColor = Color32::white * 0.6;
 
 void Menu::addTitle(boost::string_ref text)
 {
@@ -17,7 +15,6 @@ void Menu::addTitle(boost::string_ref text)
 int Menu::addItem(MenuItem&& item)
 {
     menuItems.push_back(std::move(item));
-    selection = menuItems.begin();
     return int(menuItems.size() - 1);
 }
 
@@ -25,16 +22,14 @@ void Menu::clear()
 {
     menuItems.clear();
     wrapEnabled = true;
-    showNumbers = false;
-    numberSeparator = ". ";
+    hotkeyStyle = CustomHotkeys;
+    hotkeySeparator = ". ";
     itemLayout = Vertical;
     itemSpacing = 1;
     itemSize = boost::none;
     tableCellSpacing = Vector2(0, 0);
     secondaryColumnAlignment = LeftAlign;
-    normalColor = defaultNormalColor;
-    selectionColor = defaultSelectionColor;
-    selectionOffset = defaultSelectionOffset;
+    textColor = defaultTextColor;
     area = Rect(0, 0, 0, 0);
 }
 
@@ -53,84 +48,43 @@ int Menu::execute()
         const Key input = window.waitForInput();
 
         if (window.shouldClose())
-            exitCode = Window::CloseRequest;
-
-        switch (input)
         {
-            case DownArrow:
-                if (itemLayout == Vertical)
-                    selectNext();
-                break;
-            case UpArrow:
-                if (itemLayout == Vertical)
-                    selectPrevious();
-                break;
-            case RightArrow:
-                if (itemLayout == Horizontal)
-                    selectNext();
-                break;
-            case LeftArrow:
-                if (itemLayout == Horizontal)
-                    selectPrevious();
-                break;
-            case Enter:
-                exitCode = selection->id;
-                break;
-            case Esc:
-                exitCode = Exit;
-                break;
-            default:
-                // Handle implicit number shortcuts.
-                if (showNumbers && isdigit(input) && input != '0' && isValidIndex(input - '1'))
-                {
-                    select(int(input - '1'));
-                    exitCode = selection->id;
-                    break;
-                }
+            exitCode = Window::CloseRequest;
+            break;
+        }
 
-                // Handle custom shortcuts.
-                for (auto item = menuItems.begin(); item != menuItems.end(); ++item)
-                {
-                    if (input == item->shortcut)
-                    {
-                        select(item);
-                        exitCode = selection->id;
-                        break;
-                    }
-                }
+        if (input == Esc)
+        {
+            exitCode = Exit;
+            break;
+        }
 
+        switch (hotkeyStyle)
+        {
+            case NumberHotkeys:
+                if (std::isdigit(input) && input != '0' && isValidIndex(input - '1'))
+                    exitCode = menuItems[input - '1'].id;
                 break;
+
+            case LetterHotkeys:
+                if (input >= 'a' && input <= 'z' && isValidIndex(input - 'a'))
+                    exitCode = menuItems[input - 'a'].id;
+                break;
+        }
+
+        // Handle custom shortcuts.
+        for (auto item = menuItems.begin(); item != menuItems.end(); ++item)
+        {
+            if (input == item->shortcut)
+            {
+                exitCode = item->id;
+                break;
+            }
         }
     }
 
     font.setLayout(oldLayout);
     return exitCode;
-}
-
-void Menu::select(int index)
-{
-    selection = menuItems.begin() + index;
-}
-
-void Menu::select(std::vector<MenuItem>::iterator newSelection)
-{
-    selection = newSelection;
-}
-
-void Menu::selectNext()
-{
-    if (selection != menuItems.end() - 1)
-        ++selection;
-    else if (wrapEnabled)
-        selection = menuItems.begin();
-}
-
-void Menu::selectPrevious()
-{
-    if (selection != menuItems.begin())
-        --selection;
-    else if (wrapEnabled)
-        selection = menuItems.end() - 1;
 }
 
 int Menu::calculateMaxTextSize() const
@@ -140,16 +94,15 @@ int Menu::calculateMaxTextSize() const
 
     for (const MenuItem& item : menuItems)
     {
-        const int currentSize = int(item.mainText.size());
+        auto index = &item - &menuItems[0];
+        auto currentSize = getHotkeyPrefix(index + 1).size() + item.mainText.size();
+
         if (currentSize > maxSize)
         {
             maxSize = currentSize;
-            indexOfMax = int(&item - &menuItems[0]);
+            indexOfMax = index;
         }
     }
-
-    if (showNumbers)
-        maxSize += std::to_string(indexOfMax + 1).size() + numberSeparator.size();
 
     return maxSize;
 }
@@ -167,8 +120,7 @@ void Menu::calculateSize()
     else
     {
         maxCharsPerLine = int((menuItems.size() - 1) * itemSpacing);
-        if (showNumbers)
-            maxCharsPerLine += std::to_string(menuItems.size()).size() + numberSeparator.size();
+        maxCharsPerLine += getHotkeyPrefix(menuItems.size()).size();
         maxCharsPerLine += menuItems.back().mainText.size();
         lines = 1;
     }
@@ -209,14 +161,13 @@ void Menu::render(Window& window)
     if (!title.empty())
     {
         font.setArea(*position);
-        font.print(window, title, normalColor);
+        font.print(window, title, textColor);
         ++position;
     }
 
-    for (auto item = menuItems.begin(); item != menuItems.end(); ++item, ++position)
+    for (auto item = menuItems.begin(); item != menuItems.end(); ++item, ++position, ++index)
     {
-        Vector2 initialPosition = selection == item ? position->position + selectionOffset : position->position;
-        Vector2 itemPosition = initialPosition;
+        Vector2 itemPosition = position->position;
 
         if (item->mainImage)
         {
@@ -224,11 +175,9 @@ void Menu::render(Window& window)
             itemPosition.x += item->mainImage->getWidth() + tableCellSpacing.x;
         }
 
-        std::string text =
-            showNumbers ? std::to_string(index++) + numberSeparator + item->mainText : item->mainText;
-
+        std::string text = getHotkeyPrefix(index) + item->mainText;
         font.setArea(Rect(itemPosition, position->size));
-        font.print(window, text, selection == item ? selectionColor : normalColor);
+        font.print(window, text, textColor);
         itemPosition.x += calculateMaxTextSize() * font.getColumnWidth() + tableCellSpacing.x;
 
         if (item->secondaryImage)
@@ -241,9 +190,19 @@ void Menu::render(Window& window)
         {
             auto oldLayout = font.getLayout();
             font.setLayout(TextLayout(secondaryColumnAlignment, font.getLayout().verticalAlignment));
-            font.setArea(Rect(itemPosition, position->size - Vector2(itemPosition.x - initialPosition.x, 0)));
-            font.print(window, item->secondaryText, selection == item ? selectionColor : normalColor);
+            font.setArea(Rect(itemPosition, position->size - Vector2(itemPosition.x - position->position.x, 0)));
+            font.print(window, item->secondaryText, textColor);
             font.setLayout(oldLayout);
         }
+    }
+}
+
+std::string Menu::getHotkeyPrefix(int index) const
+{
+    switch (hotkeyStyle)
+    {
+        case CustomHotkeys: return "";
+        case NumberHotkeys: return std::to_string(index) + hotkeySeparator;
+        case LetterHotkeys: return char('a' + index - 1) + hotkeySeparator;
     }
 }

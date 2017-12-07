@@ -75,27 +75,21 @@ InventoryMenu::InventoryMenu(Window& window, const Creature& player, boost::stri
     setItemSize(Tile::getMaxSize());
     setTextLayout(TextLayout(LeftAlign, Sprite::useAsciiGraphics() ? TopAlign : VerticalCenter));
     setTableCellSpacing(Vector2(window.getFont().getColumnWidth(), 0));
+    setHotkeyStyle(LetterHotkeys);
+    setHotkeySeparator(Game::hotkeySeparator);
 
     if (showNothingAsOption)
         addItem(MenuItem(-1, "nothing"));
 
     int id = 0;
-    int preselectedIndex = 0;
 
     for (auto& item : player.getInventory())
     {
         if (!itemFilter || itemFilter(*item))
-        {
-            int index = addItem(MenuItem(id, item->getName(), NoKey, &item->getSprite()));
-
-            if (&*item == preselectedItem)
-                preselectedIndex = index;
-        }
+            addItem(MenuItem(id, item->getName(), NoKey, &item->getSprite()));
 
         ++id;
     }
-
-    select(preselectedIndex);
 }
 
 int Game::showInventory(boost::string_ref title, bool showNothingAsOption, Item* preselectedItem,
@@ -118,8 +112,6 @@ private:
 
 void EquipmentMenu::execute()
 {
-    int selectedMenuItem = 0;
-
     while (true)
     {
         clear();
@@ -128,6 +120,8 @@ void EquipmentMenu::execute()
         setItemSize(Tile::getMaxSize());
         setTextLayout(TextLayout(LeftAlign, Sprite::useAsciiGraphics() ? TopAlign : VerticalCenter));
         setTableCellSpacing(Vector2(getEngine().getWindow().getFont().getColumnWidth(), 0));
+        setHotkeyStyle(LetterHotkeys);
+        setHotkeySeparator(Game::hotkeySeparator);
 
         for (int i = 0; i < equipmentSlots; ++i)
         {
@@ -137,13 +131,10 @@ void EquipmentMenu::execute()
             addItem(MenuItem(i, toString(slot) + ":", itemName, NoKey, nullptr, image));
         }
 
-        select(selectedMenuItem);
-
         auto choice = Menu::execute();
         if (choice == Menu::Exit)
             break;
 
-        selectedMenuItem = getSelectedIndex();
         auto selectedSlot = static_cast<EquipmentSlot>(choice);
 
         InventoryMenu inventoryMenu(getEngine().getWindow(), *player, "", true,

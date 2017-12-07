@@ -51,6 +51,7 @@ public:
     static std::unique_ptr<Texture> fogOfWarTexture;
 
     static constexpr auto saveFileName = "zenith.sav";
+    static constexpr auto hotkeySeparator = ") ";
 
 private:
     friend class LookMode;
