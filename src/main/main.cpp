@@ -19,6 +19,31 @@ static BitmapFont initFont()
     return font;
 }
 
+class LoadingScreen : public State
+{
+public:
+    LoadingScreen(std::string text) : text(std::move(text)) {}
+
+    void render(Window& window) override
+    {
+        auto& font = window.getFont();
+        auto oldLayout = font.getLayout();
+        font.setArea(Rect(Vector2(0, 0), window.getResolution()));
+        font.setLayout(TextLayout(HorizontalCenter, VerticalCenter));
+        font.print(window, text);
+        font.setLayout(oldLayout);
+    }
+
+    void execute()
+    {
+        getEngine().render(getEngine().getWindow());
+        getEngine().getWindow().updateScreen();
+    }
+
+private:
+    std::string text;
+};
+
 static const auto preferencesFileName = "prefs.cfg";
 
 static void savePreferencesToFile(bool asciiGraphics, double graphicsScale, bool fullscreen)
@@ -119,6 +144,12 @@ void MainMenu::execute()
             case LoadGame:
                 if (!game)
                 {
+                    if (selection == LoadGame)
+                    {
+                        LoadingScreen loadingScreen("Loading game...");
+                        getEngine().execute(loadingScreen);
+                    }
+
                     rng.seed();
                     game = std::make_unique<Game>(selection == LoadGame);
                 }
@@ -149,7 +180,12 @@ void MainMenu::execute()
 
             case Menu::Exit:
             case Window::CloseRequest:
-                if (game) game->save();
+                if (game)
+                {
+                    LoadingScreen loadingScreen("Saving game...");
+                    getEngine().execute(loadingScreen);
+                    game->save();
+                }
                 return;
         }
     }
