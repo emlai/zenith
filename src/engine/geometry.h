@@ -8,6 +8,7 @@
 
 enum Dir8
 {
+    NoDir,
     North,
     NorthEast,
     East,
@@ -17,8 +18,6 @@ enum Dir8
     West,
     NorthWest
 };
-
-const int directions = 8;
 
 inline Dir8 randomDir8()
 {
@@ -140,7 +139,7 @@ Dir8 Vector2Base<T>::getDir8() const
             switch (sign(y))
             {
                 case -1: return North;
-                case 0: assert(false);
+                case 0: return NoDir;
                 case 1: return South;
             }
         case 1:

@@ -124,6 +124,7 @@ void Tile::render(Window& window, int zIndex, bool fogOfWar, bool renderLight) c
 
                 if (window.getMousePosition().isWithin(tileRect))
                 {
+                    Game::cursorPosition = getPosition();
                     double cursorBreathRateMS = 150.0;
                     double sine = std::sin(SDL_GetTicks() / cursorBreathRateMS);
                     double minAlpha = 0.0;

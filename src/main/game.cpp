@@ -25,6 +25,7 @@ std::unique_ptr<Texture> Game::cursorTexture;
 std::unique_ptr<Texture> Game::fogOfWarTexture;
 
 static const Color32 transparentColor(0x5A5268FF);
+boost::optional<Vector2> Game::cursorPosition;
 
 Game::Game(bool loadSavedGame)
 :   playerSeesEverything(false),
@@ -297,6 +298,7 @@ void Game::render(Window& window)
 
 void Game::renderAtPosition(Window& window, Vector2 centerPosition)
 {
+    cursorPosition = boost::none;
     printPlayerInformation(window.getFont());
     MessageSystem::drawMessages(window, window.getFont(), player->getMessages(), getTurn());
 

@@ -36,6 +36,7 @@ public:
     void enterCommandMode(Window&);
     static const Key commandModeKey = '`';
 #endif
+    static boost::optional<Vector2> cursorPosition;
     bool playerSeesEverything;
 
     static std::unique_ptr<Config> creatureConfig;

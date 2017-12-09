@@ -31,8 +31,17 @@ Action PlayerController::control(Creature& creature)
     {
         Event event = game.getWindow().waitForInput();
 
-        if (event.type != Event::KeyDown)
+        if (event.type == Event::MouseButtonDown)
+        {
+            if (!creature.isDead() && Game::cursorPosition)
+                if (auto direction = (*Game::cursorPosition - creature.getPosition()).getDir8())
+                    if (auto action = creature.tryToMoveOrAttack(direction))
+                        return action;
+
             continue;
+        }
+
+        assert(event.type == Event::KeyDown);
 
         switch (event.key)
         {
