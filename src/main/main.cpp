@@ -70,7 +70,12 @@ void PrefsMenu::execute()
     {
         clear();
         addTitle("Preferences");
-        addItem(MenuItem(AsciiGraphics, "ASCII graphics", toOnOffString(Sprite::useAsciiGraphics())));
+
+        // This is a hidden option until the ASCII mode is fully implemented,
+        // so only show it if it's explicitly set to 'true' in the preferences file.
+        if (Sprite::useAsciiGraphics())
+            addItem(MenuItem(AsciiGraphics, "ASCII graphics", toOnOffString(Sprite::useAsciiGraphics())));
+
         addItem(MenuItem(GraphicsScale, "Graphics scale",
                          toStringAvoidingDecimalPlaces(window.getGraphicsContext().getScale()) + "x"));
         addItem(MenuItem(Fullscreen, "Fullscreen", toOnOffString(window.isFullscreen())));
