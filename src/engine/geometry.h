@@ -9,28 +9,28 @@
 enum Dir8
 {
     NoDir,
-    North,
-    NorthEast,
     East,
     SouthEast,
     South,
     SouthWest,
     West,
-    NorthWest
+    NorthWest,
+    North,
+    NorthEast
 };
 
 inline Dir8 randomDir8()
 {
     switch (randInt(7))
     {
-        case 0: return North;
-        case 1: return NorthEast;
-        case 2: return East;
-        case 3: return SouthEast;
-        case 4: return South;
-        case 5: return SouthWest;
-        case 6: return West;
-        case 7: return NorthWest;
+        case 0: return East;
+        case 1: return SouthEast;
+        case 2: return South;
+        case 3: return SouthWest;
+        case 4: return West;
+        case 5: return NorthWest;
+        case 6: return North;
+        case 7: return NorthEast;
     }
 
     assert(false);
@@ -126,34 +126,11 @@ inline bool Vector2Base<T>::isWithin(Vector2Base<U> vector) const
 template<typename T>
 Dir8 Vector2Base<T>::getDir8() const
 {
-    switch (sign(x))
-    {
-        case -1:
-            switch (sign(y))
-            {
-                case -1: return NorthWest;
-                case 0: return West;
-                case 1: return SouthWest;
-            }
-        case 0:
-            switch (sign(y))
-            {
-                case -1: return North;
-                case 0: return NoDir;
-                case 1: return South;
-            }
-        case 1:
-            switch (sign(y))
-            {
-                case -1: return NorthEast;
-                case 0: return East;
-                case 1: return SouthEast;
-            }
-    }
-
-    assert(false);
+    if (isZero()) return NoDir;
+    double angle = std::atan2(y, x);
+    int octant = static_cast<int>(std::round(8 * angle / (2 * pi) + 8)) % 8;
+    return static_cast<Dir8>(octant + 1);
 }
-
 
 template<typename T>
 const Vector2Base<T> Vector2Base<T>::zeroVector = Vector2Base<T>(0, 0);
