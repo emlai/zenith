@@ -90,6 +90,7 @@ void GraphicsContext::clearScreen()
 
 Vector2 GraphicsContext::mapFromTargetCoordinates(Vector2 position) const
 {
+    position /= getScale();
     position -= getViewport().position;
 
     if (view)
