@@ -14,7 +14,7 @@ namespace GUIColor
 {
     const Color16 White(0xFEEF);
     const Color16 Gray(0x778F);
-    const Color16 Black(0x001F);
+    const Color16 Black(0x000F);
 }
 
 namespace TextColor
