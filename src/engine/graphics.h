@@ -35,7 +35,6 @@ private:
     friend class Texture;
     friend class Window;
 
-    void applyFrameLimit();
     void clearScreen();
     Vector2 mapFromTargetCoordinates(Vector2) const;
     Rect mapToTargetCoordinates(Rect) const;
