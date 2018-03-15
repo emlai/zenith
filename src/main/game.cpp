@@ -240,7 +240,7 @@ std::string Game::askForString(std::string&& question)
 class DirectionQuestion : public State
 {
 public:
-    DirectionQuestion(std::string question) : question(std::move(question)) {}
+    DirectionQuestion(std::string question, Vector2 origin) : question(std::move(question)), origin(origin) {}
     boost::optional<Dir8> execute();
 
 private:
@@ -248,23 +248,17 @@ private:
     bool renderPreviousState() const override { return true; }
 
     std::string question;
+    Vector2 origin;
 };
 
 boost::optional<Dir8> DirectionQuestion::execute()
 {
     Event event = getEngine().getWindow().waitForInput();
 
-    if (event.type != Event::KeyDown)
-        return boost::none;
+    if (auto direction = getDirectionFromEvent(event, origin))
+        return direction;
 
-    switch (event.key)
-    {
-        case UpArrow: return North;
-        case RightArrow: return East;
-        case DownArrow: return South;
-        case LeftArrow: return West;
-        default: return boost::none;
-    }
+    return boost::none;
 }
 
 void DirectionQuestion::render(Window& window)
@@ -275,7 +269,7 @@ void DirectionQuestion::render(Window& window)
 
 boost::optional<Dir8> Game::askForDirection(std::string&& question)
 {
-    DirectionQuestion directionQuestion(question);
+    DirectionQuestion directionQuestion(question, player->getPosition());
     return getEngine().execute(directionQuestion);
 }
 

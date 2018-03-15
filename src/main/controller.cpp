@@ -31,44 +31,16 @@ Action PlayerController::control(Creature& creature)
     {
         Event event = game.getWindow().waitForInput();
 
-        if (event.type == Event::MouseButtonDown)
-        {
-            if (!creature.isDead() && Game::cursorPosition)
-                if (auto direction = (*Game::cursorPosition - creature.getPosition()).getDir8())
-                    if (auto action = creature.tryToMoveOrAttack(direction))
-                        return action;
+        if (!creature.isDead())
+            if (auto direction = getDirectionFromEvent(event, creature.getPosition()))
+                if (auto action = creature.tryToMoveOrAttack(direction))
+                    return action;
 
+        if (event.type != Event::KeyDown)
             continue;
-        }
-
-        assert(event.type == Event::KeyDown);
 
         switch (event.key)
         {
-            case RightArrow:
-                if (!creature.isDead())
-                    if (auto action = creature.tryToMoveOrAttack(East))
-                        return action;
-                break;
-
-            case LeftArrow:
-                if (!creature.isDead())
-                    if (auto action = creature.tryToMoveOrAttack(West))
-                        return action;
-                break;
-
-            case DownArrow:
-                if (!creature.isDead())
-                    if (auto action = creature.tryToMoveOrAttack(South))
-                        return action;
-                break;
-
-            case UpArrow:
-                if (!creature.isDead())
-                    if (auto action = creature.tryToMoveOrAttack(North))
-                        return action;
-                break;
-
             case Enter:
                 if (!creature.isDead() && creature.enter())
                     return Move;
@@ -190,4 +162,36 @@ Action PlayerController::control(Creature& creature)
 #endif
         }
     }
+}
+
+Dir8 getDirectionFromEvent(Event event, Vector2 origin)
+{
+    switch (event.type)
+    {
+        case Event::MouseButtonDown:
+            if (Game::cursorPosition)
+                if (auto direction = (*Game::cursorPosition - origin).getDir8())
+                    return direction;
+
+            break;
+
+        case Event::KeyDown:
+            switch (event.key)
+            {
+                case RightArrow:
+                    return East;
+
+                case LeftArrow:
+                    return West;
+
+                case DownArrow:
+                    return South;
+
+                case UpArrow:
+                    return North;
+            }
+            break;
+    }
+
+    return Dir8::NoDir;
 }

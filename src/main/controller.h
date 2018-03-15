@@ -1,11 +1,13 @@
 #pragma once
 
 #include "ai.h"
+#include "engine/geometry.h"
 #include <boost/utility/string_ref.hpp>
 #include <memory>
 
 class Creature;
 class Game;
+class Event;
 enum Action : int;
 
 class Controller
@@ -36,3 +38,5 @@ private:
 
     Game& game;
 };
+
+Dir8 getDirectionFromEvent(Event event, Vector2 origin);
