@@ -8,14 +8,14 @@ class Creature;
 class Game;
 enum Action : int;
 
-class CreatureController
+class Controller
 {
 public:
-    virtual ~CreatureController() = 0;
+    virtual ~Controller() = 0;
     virtual Action control(Creature& creature) = 0;
 };
 
-class AIController : public CreatureController
+class AIController : public Controller
 {
 public:
     AIController(std::unique_ptr<AI> ai) : ai(std::move(ai)) {}
@@ -26,7 +26,7 @@ private:
     std::unique_ptr<AI> ai;
 };
 
-class PlayerController : public CreatureController
+class PlayerController : public Controller
 {
 public:
     PlayerController(Game& game) : game(game) {}

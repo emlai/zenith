@@ -1,11 +1,11 @@
-#include "creaturecontroller.h"
+#include "controller.h"
 #include "action.h"
 #include "creature.h"
 #include "game.h"
 #include "engine/menu.h"
 #include "engine/window.h"
 
-CreatureController::~CreatureController() {}
+Controller::~Controller() {}
 
 std::unique_ptr<AIController> AIController::get(boost::string_ref id, Creature& creature)
 {

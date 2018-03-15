@@ -1,6 +1,6 @@
 #include "creature.h"
 #include "action.h"
-#include "creaturecontroller.h"
+#include "controller.h"
 #include "game.h"
 #include "msgsystem.h"
 #include "tile.h"
@@ -43,7 +43,7 @@ Creature::Creature(Tile* tile, boost::string_ref id)
 {
 }
 
-Creature::Creature(Tile* tile, boost::string_ref id, std::unique_ptr<CreatureController> controller)
+Creature::Creature(Tile* tile, boost::string_ref id, std::unique_ptr<Controller> controller)
 :   Entity(id, *Game::creatureConfig),
     currentHP(0),
     maxHP(0),
@@ -600,7 +600,7 @@ int Creature::getTurn() const
     return getWorld().getTurn();
 }
 
-void Creature::setController(std::unique_ptr<CreatureController> controller)
+void Creature::setController(std::unique_ptr<Controller> controller)
 {
     this->controller = std::move(controller);
 }

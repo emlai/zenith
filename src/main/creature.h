@@ -1,6 +1,6 @@
 #pragma once
 
-#include "creaturecontroller.h"
+#include "controller.h"
 #include "entity.h"
 #include "msgsystem.h"
 #include "engine/geometry.h"
@@ -88,7 +88,7 @@ class Creature final : public Entity
 {
 public:
     Creature(Tile*, boost::string_ref id);
-    Creature(Tile*, boost::string_ref id, std::unique_ptr<CreatureController> controller);
+    Creature(Tile*, boost::string_ref id, std::unique_ptr<Controller> controller);
     Creature(const SaveFile& file, Tile* tile);
     void save(SaveFile& file) const;
     void exist();
@@ -134,7 +134,7 @@ public:
     std::vector<Creature*> getCreaturesCurrentlySeenBy(int maxFieldOfVisionRadius) const;
     std::vector<Creature*> getCurrentlySeenCreatures() const;
     Creature* getNearestEnemy() const;
-    void setController(std::unique_ptr<CreatureController> controller);
+    void setController(std::unique_ptr<Controller> controller);
 
 private:
     World& getWorld() const;
@@ -164,7 +164,7 @@ private:
     std::vector<Attribute> displayedAttributes;
     std::vector<std::vector<int>> attributeIndices;
     Sprite sprite;
-    std::unique_ptr<CreatureController> controller;
+    std::unique_ptr<Controller> controller;
     std::vector<Message> messages;
 
     static constexpr double fullAP = 1.0;
