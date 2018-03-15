@@ -118,7 +118,10 @@ Event Window::waitForInput()
 
             case SDL_MOUSEBUTTONDOWN:
                 if (event.button.button == SDL_BUTTON_LEFT)
-                    return Event(Vector2(event.button.x, event.button.y));
+                {
+                    Vector2 position(event.button.x, event.button.y);
+                    return Event(context.mapFromTargetCoordinates(position));
+                }
                 break;
 
             case SDL_WINDOWEVENT:
