@@ -300,7 +300,7 @@ int main(int argc, char** argv)
     }
     catch (const std::exception& exception)
     {
-        engine.reportErrorToUser(exception.what());
+        engine.reportErrorToUser(std::string("Unhandled exception: ") + exception.what());
     }
 
     return 0;
