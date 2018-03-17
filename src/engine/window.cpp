@@ -110,6 +110,10 @@ Event Window::waitForInput()
 
                 auto key = event.key.keysym.sym;
 
+                // Use shifts only as modifiers.
+                if (key == SDLK_LSHIFT || key == SDLK_RSHIFT)
+                    continue;
+
                 if ((event.key.keysym.mod & Shift) && key > 0 && key <= UCHAR_MAX && std::isalpha(key))
                     return Event(Key(std::toupper(key)));
                 else

@@ -1,3 +1,4 @@
+#include "action.h"
 #include "game.h"
 #include "gui.h"
 #include "engine/engine.h"
@@ -52,7 +53,72 @@ static void savePreferencesToFile(bool asciiGraphics, double graphicsScale, bool
     preferences.set("ASCIIGraphics", asciiGraphics);
     preferences.set("GraphicsScale", graphicsScale);
     preferences.set("Fullscreen", fullscreen);
+    saveKeyMap(preferences);
     preferences.writeToFile(preferencesFileName);
+}
+
+static void setPrefsMenuCommonOptions(Menu& menu, const Window& window)
+{
+    menu.addItem(MenuItem(Menu::Exit, "Back", 'q'));
+    menu.setItemLayout(Menu::Vertical);
+    menu.setItemSize(Tile::getMaxSize());
+    menu.setTextLayout(TextLayout(LeftAlign, TopAlign));
+    menu.setSecondaryColumnAlignment(RightAlign);
+    menu.setArea(window.getResolution() / 4, window.getResolution() / 2);
+    menu.setHotkeyStyle(Menu::LetterHotkeys);
+}
+
+class KeyMapMenu : public Menu
+{
+public:
+    void execute();
+};
+
+void KeyMapMenu::execute()
+{
+    enum { ResetDefaults };
+    auto& window = getEngine().getWindow();
+
+    while (true)
+    {
+        clear();
+        addTitle("Key map");
+
+        for (int i = NoAction + 1; i < LastAction; ++i)
+        {
+            auto action = static_cast<Action>(i);
+
+            if (auto key = getMappedKey(action))
+            {
+                auto text = pascalCaseToSentenceCase(toString(action));
+                text[0] = std::toupper(text[0]);
+                addItem(MenuItem(action, text, toString(key)));
+            }
+        }
+
+        addItem(MenuItem(ResetDefaults, "Reset defaults"));
+        setPrefsMenuCommonOptions(*this, window);
+
+        auto selection = Menu::execute();
+
+        switch (selection)
+        {
+            case ResetDefaults:
+                loadKeyMap(nullptr);
+                break;
+
+            case Menu::Exit:
+                return;
+
+            default:
+                auto event = window.waitForInput();
+
+                if (event.type == Event::KeyDown && getMappedAction(event.key) == NoAction)
+                    mapKey(event.key, static_cast<Action>(selection));
+
+                break;
+        }
+    }
 }
 
 class PrefsMenu : public Menu
@@ -63,7 +129,7 @@ public:
 
 void PrefsMenu::execute()
 {
-    enum { AsciiGraphics, GraphicsScale, Fullscreen };
+    enum { AsciiGraphics, GraphicsScale, Fullscreen, KeyMap };
     auto& window = getEngine().getWindow();
 
     while (true)
@@ -79,13 +145,9 @@ void PrefsMenu::execute()
         addItem(MenuItem(GraphicsScale, "Graphics scale",
                          toStringAvoidingDecimalPlaces(window.getGraphicsContext().getScale()) + "x"));
         addItem(MenuItem(Fullscreen, "Fullscreen", toOnOffString(window.isFullscreen())));
-        addItem(MenuItem(Menu::Exit, "Back", 'q'));
-        setItemLayout(Menu::Vertical);
-        setItemSize(Tile::getMaxSize());
-        setTextLayout(TextLayout(LeftAlign, TopAlign));
-        setSecondaryColumnAlignment(RightAlign);
-        setArea(window.getResolution() / 4, window.getResolution() / 2);
-        setHotkeyStyle(LetterHotkeys);
+        addItem(MenuItem(KeyMap, "Key map"));
+
+        setPrefsMenuCommonOptions(*this, window);
 
         auto selection = Menu::execute();
 
@@ -103,6 +165,12 @@ void PrefsMenu::execute()
             case Fullscreen:
                 window.toggleFullscreen();
                 break;
+            case KeyMap:
+            {
+                KeyMapMenu keyMapMenu;
+                getEngine().execute(keyMapMenu);
+                break;
+            }
             case Menu::Exit:
                 savePreferencesToFile(Sprite::useAsciiGraphics(), window.getGraphicsContext().getScale(), window.isFullscreen());
                 return;
@@ -214,7 +282,10 @@ int main(int argc, char** argv)
         Sprite::useAsciiGraphics(preferences.getOptional<bool>("ASCIIGraphics").get_value_or(false));
         window.getGraphicsContext().setScale(preferences.getOptional<double>("GraphicsScale").get_value_or(1));
         window.setFullscreen(preferences.getOptional<bool>("Fullscreen").get_value_or(true));
+        loadKeyMap(&preferences);
     }
+    else
+        loadKeyMap(nullptr);
 
     BitmapFont font = initFont();
     window.setFont(font);

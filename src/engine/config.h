@@ -25,6 +25,7 @@ public:
     boost::optional<ValueType> getOptional(boost::string_ref type, boost::string_ref attribute) const;
     std::vector<std::string> getToplevelKeys() const;
     void set(boost::string_ref key, bool value) { data.insert(key.to_string(), Value(value)); }
+    void set(boost::string_ref key, long long value) { data.insert(key.to_string(), Value(value)); }
     void set(boost::string_ref key, double value) { data.insert(key.to_string(), Value(value)); }
     void writeToFile(boost::string_ref filePath) const;
 

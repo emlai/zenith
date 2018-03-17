@@ -7,6 +7,14 @@
 #include <cassert>
 #include <climits>
 
+std::string toString(Key key)
+{
+    if (key > 0 && key <= UCHAR_MAX && std::islower(key))
+        return std::string(1, char(key));
+
+    return SDL_GetKeyName(key);
+}
+
 namespace keyboard
 {
     int readLineProcessKey(const SDL_Event&, std::string& line, std::string::iterator& cursor);

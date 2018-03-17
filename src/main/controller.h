@@ -2,9 +2,11 @@
 
 #include "ai.h"
 #include "engine/geometry.h"
+#include "engine/keyboard.h"
 #include <boost/utility/string_ref.hpp>
 #include <memory>
 
+class Config;
 class Creature;
 class Game;
 class Event;
@@ -39,4 +41,10 @@ private:
     Game& game;
 };
 
+Action getMappedAction(Key key);
+Key getMappedKey(Action action);
+void mapKey(Key key, Action action);
+// If 'config' is null, loads the default key map.
+void loadKeyMap(const Config* config);
+void saveKeyMap(Config& config);
 Dir8 getDirectionFromEvent(Event event, Vector2 origin);

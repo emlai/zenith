@@ -27,6 +27,8 @@ enum : Key
     F3 = SDLK_F3
 };
 
+std::string toString(Key key);
+
 enum : Mod
 {
     NoMod = 0,

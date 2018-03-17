@@ -39,35 +39,37 @@ Action PlayerController::control(Creature& creature)
         if (event.type != Event::KeyDown)
             continue;
 
-        switch (event.key)
+        auto action = getMappedAction(event.key);
+
+        switch (action)
         {
-            case Enter:
+            case GoUpOrDown:
                 if (!creature.isDead() && creature.enter())
-                    return Move;
+                    return GoUpOrDown;
                 break;
 
-            case '.':
+            case Wait:
                 return Wait;
 
-            case ',':
+            case PickUpItems:
                 if (!creature.isDead() && creature.pickUpItem())
                     return PickUpItems;
                 break;
 
-            case 'l':
+            case EnterLookMode:
                 game.lookMode();
                 break;
 
-            case 'i':
+            case OpenInventory:
                 game.showInventory("Inventory", false);
                 break;
 
-            case 'e':
+            case ShowEquipmentMenu:
                 if (!creature.isDead())
                     game.showEquipmentMenu();
                 break;
 
-            case 'u':
+            case UseItem:
             {
                 if (creature.isDead())
                     break;
@@ -84,7 +86,7 @@ Action PlayerController::control(Creature& creature)
                 break;
             }
 
-            case 'E':
+            case EatItem:
             {
                 if (creature.isDead())
                     break;
@@ -101,7 +103,7 @@ Action PlayerController::control(Creature& creature)
                 break;
             }
 
-            case 'd':
+            case DropItem:
             {
                 if (creature.isDead())
                     break;
@@ -117,7 +119,7 @@ Action PlayerController::control(Creature& creature)
                 break;
             }
 
-            case 'c':
+            case Close:
             {
                 if (creature.isDead())
                     break;
@@ -129,38 +131,117 @@ Action PlayerController::control(Creature& creature)
                 break;
             }
 
-            case 'r':
+            case ToggleRunning:
                 creature.setRunning(!creature.isRunning());
                 break;
 
-            case Esc:
-            case 'q':
-            case NoKey:
-                game.stop();
-                return NoAction;
+            default:
+                switch (event.key)
+                {
+                    case Esc:
+                    case 'q':
+                    case NoKey:
+                        game.stop();
+                        return NoAction;
 
 #ifdef DEBUG
-            case F2:
-                game.playerSeesEverything = !game.playerSeesEverything;
-                break;
+                    case F2:
+                        game.playerSeesEverything = !game.playerSeesEverything;
+                        break;
 
-            case F3:
-            {
-                auto itemName = game.askForString("Which item do you want to spawn?");
+                    case F3:
+                    {
+                        auto itemName = game.askForString("Which item do you want to spawn?");
 
-                if (itemName.empty())
-                    break;
+                        if (itemName.empty())
+                            break;
 
-                auto materialName = game.askForString("Which material do you want to use for the item?");
-                creature.getTileUnder(0).addItem(std::make_unique<Item>(itemName, materialName));
-                break;
-            }
+                        auto materialName = game.askForString("Which material do you want to use for the item?");
+                        creature.getTileUnder(0).addItem(std::make_unique<Item>(itemName, materialName));
+                        break;
+                    }
 
-            case Game::commandModeKey:
-                game.enterCommandMode(game.getWindow());
-                return NoAction;
+                    case Game::commandModeKey:
+                        game.enterCommandMode(game.getWindow());
+                        return NoAction;
 #endif
+                }
+                break;
         }
+    }
+}
+
+static const int keyMapSize = 128;
+static Action keyMap[keyMapSize];
+
+Action getMappedAction(Key key)
+{
+    if (key >= 0 && key < keyMapSize)
+        return keyMap[key];
+
+    return NoAction;
+}
+
+Key getMappedKey(Action action)
+{
+    for (int i = 0; i < keyMapSize; ++i)
+    {
+        if (keyMap[i] == action)
+            return i;
+    }
+
+    return NoKey;
+}
+
+void mapKey(Key key, Action action)
+{
+    if (key >= 0 && key < keyMapSize)
+    {
+        auto oldKey = getMappedKey(action);
+        keyMap[oldKey] = NoAction;
+        keyMap[key] = action;
+    }
+}
+
+static Key getDefaultKeyForAction(Action action)
+{
+    switch (action)
+    {
+        case Wait: return '.';
+        case GoUpOrDown: return Enter;
+        case PickUpItems: return ',';
+        case DropItem: return 'd';
+        case UseItem: return 'u';
+        case EatItem: return 'e';
+        case Close: return 'c';
+        case EnterLookMode: return 'l';
+        case OpenInventory: return 'i';
+        case ShowEquipmentMenu: return 'E';
+        case ToggleRunning: return 'r';
+        default: return NoKey;
+    }
+}
+
+void loadKeyMap(const Config* config)
+{
+    for (int i = NoAction + 1; i < LastAction; ++i)
+    {
+        auto action = static_cast<Action>(i);
+        Key key = config ? config->getOptional<int>(toString(action)).get_value_or(NoKey) : NoKey;
+
+        if (!key)
+            key = getDefaultKeyForAction(action);
+
+        mapKey(key, action);
+    }
+}
+
+void saveKeyMap(Config& config)
+{
+    for (int i = NoAction + 1; i < LastAction; ++i)
+    {
+        auto action = static_cast<Action>(i);
+        config.set(toString(action), static_cast<long long>(getMappedKey(action)));
     }
 }
 
