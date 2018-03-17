@@ -31,7 +31,8 @@ public:
                Color32 backgroundColor = Color32::none, bool blend = true,
                LineBreakMode lineBreakMode = SplitLines);
     void printLine(Window& window, boost::string_ref text, Color32 color = Color32::none,
-                   Color32 backgroundColor = Color32::none);
+                   Color32 backgroundColor = Color32::none, bool blend = true,
+                   LineBreakMode lineBreakMode = SplitLines);
     void printWithCursor(Window& window, boost::string_ref, const char* cursorPosition,
                          Color32 mainColor = Color32::none, Color32 cursorColor = Color32::none,
                          Color32 backgroundColor = Color32::none);

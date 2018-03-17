@@ -365,7 +365,8 @@ void Game::printStat(BitmapFont& font, boost::string_ref statName, double curren
 void Game::printAttribute(BitmapFont& font, boost::string_ref attributeName, double attributeValue) const
 {
     std::string padding(5 - attributeName.size(), ' ');
-    font.printLine(getWindow(), attributeName + padding + std::to_string(int(attributeValue)));
+    font.printLine(getWindow(), attributeName + padding + std::to_string(int(attributeValue)),
+                   Color32::none, Color32::none, true, PreserveLines);
 }
 
 #ifdef DEBUG

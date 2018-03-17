@@ -39,9 +39,10 @@ void BitmapFont::print(Window& window, boost::string_ref text, Color32 color, Co
     lineContinuation = true;
 }
 
-void BitmapFont::printLine(Window& window, boost::string_ref text, Color32 color, Color32 backgroundColor)
+void BitmapFont::printLine(Window& window, boost::string_ref text, Color32 color, Color32 backgroundColor,
+                           bool blend, LineBreakMode lineBreakMode)
 {
-    print(window, text, color, backgroundColor, PreserveLines);
+    print(window, text, color, backgroundColor, blend, lineBreakMode);
     currentPosition.x = printArea.position.x;
     currentPosition.y += moveVector.y;
 }
