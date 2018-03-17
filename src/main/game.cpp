@@ -356,10 +356,19 @@ void Game::printPlayerInformation(BitmapFont& font) const
 void Game::printStat(BitmapFont& font, boost::string_ref statName, double currentValue,
                      double maximumValue, Color16 color) const
 {
-    std::string currentValueString = std::to_string(int(std::ceil(currentValue)));
+    int currentValueInt = std::ceil(currentValue);
+    int maximumValueInt = std::ceil(maximumValue);
+    std::string currentValueString = std::to_string(currentValueInt);
     std::string padding(std::max(0, 4 - int(currentValueString.size())), ' ');
-    font.printLine(getWindow(), statName + padding + currentValueString + '/' +
-                   std::to_string(int(std::ceil(maximumValue))), color);
+    auto text = statName + padding + currentValueString + "/" + std::to_string(maximumValueInt);
+
+    auto sidebarArea = GUI::getSidebarArea(getWindow());
+    auto columns = sidebarArea.getWidth() / font.getColumnWidth();
+    auto filledColumns = columns * std::max(currentValueInt, 0) / maximumValueInt;
+    text.append(columns - text.size(), ' ');
+
+    font.print(getWindow(), boost::string_ref(text).substr(0, filledColumns), TextColor::White, color, true, PreserveLines);
+    font.printLine(getWindow(), boost::string_ref(text).substr(filledColumns), TextColor::White, Color32::none, true, PreserveLines);
 }
 
 void Game::printAttribute(BitmapFont& font, boost::string_ref attributeName, double attributeValue) const
