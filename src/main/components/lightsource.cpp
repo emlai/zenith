@@ -7,6 +7,10 @@ void LightSource::emitLight(World& world, Vector2 position, int level) const
 {
     position = position.divideRoundingDown(Tile::getSize());
     Color32 color = Color16(getParent().getConfig().get<uint16_t>(getParent().getId(), "LightColor"));
+
+    if (auto flicker = getParent().getConfig().getOptional<double>(getParent().getId(), "LightFlicker"))
+        color *= 1 + randNormal(*flicker);
+
     int radius = getParent().getConfig().get<int>(getParent().getId(), "LightRadius");
     assert(radius <= maxRadius);
     double radiusSquared = radius * radius;
