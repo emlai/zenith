@@ -6,6 +6,7 @@
 #include <SDL.h>
 #include <cctype>
 #include <climits>
+#include <deque>
 #include <stdexcept>
 
 int Window::windowCount = 0;
@@ -90,12 +91,47 @@ static int filterKeyRepeatEvents(void* userdata, SDL_Event* event)
     return 1;
 }
 
-Event Window::waitForInput()
+void Window::wait(int ms)
 {
+    auto waitUntil = SDL_GetTicks() + ms;
+
+    while (SDL_GetTicks() < waitUntil)
+    {
+        engine->render(*this);
+        updateScreen();
+        SDL_PumpEvents();
+    }
+}
+
+static std::deque<Event> eventQueue;
+
+Event Window::waitForInput(int timeoutMS)
+{
+    if (eventQueue.size() > 1)
+        eventQueue.resize(1);
+
+    auto waitUntil = SDL_GetTicks() + timeoutMS;
     SDL_Event event;
 
     while (true)
     {
+        if (timeoutMS == 0 && !eventQueue.empty())
+        {
+            auto result = eventQueue.front();
+            eventQueue.pop_front();
+            return result;
+        }
+
+        if (timeoutMS != 0 && SDL_GetTicks() >= waitUntil)
+        {
+            if (eventQueue.empty())
+                return Event();
+
+            auto result = eventQueue.front();
+            eventQueue.pop_front();
+            return result;
+        }
+
         engine->render(*this);
         updateScreen();
 
@@ -115,22 +151,25 @@ Event Window::waitForInput()
                     continue;
 
                 if ((event.key.keysym.mod & Shift) && key > 0 && key <= UCHAR_MAX && std::isalpha(key))
-                    return Event(Key(std::toupper(key)));
+                    eventQueue.push_back(Event(Key(std::toupper(key))));
                 else
-                    return Event(Key(key));
+                    eventQueue.push_back(Event(Key(key)));
+
+                break;
             }
 
             case SDL_MOUSEBUTTONDOWN:
                 if (event.button.button == SDL_BUTTON_LEFT)
                 {
                     Vector2 position(event.button.x, event.button.y);
-                    return Event(context.mapFromTargetCoordinates(position));
+                    eventQueue.push_back(Event(context.mapFromTargetCoordinates(position)));
                 }
                 break;
 
             case SDL_WINDOWEVENT:
                 if (handleWindowEvent(event.window.event))
-                    return NoKey;
+                    eventQueue.push_back(Event(NoKey));
+
                 break;
         }
     }

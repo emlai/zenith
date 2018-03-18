@@ -11,8 +11,9 @@ struct SDL_Window;
 class Event
 {
 public:
-    enum Type { KeyDown, MouseButtonDown };
+    enum Type { Timeout, KeyDown, MouseButtonDown };
 
+    Event() : type(Timeout) {}
     Event(Key key) : type(KeyDown), key(key) {}
     Event(Vector2 mousePosition) : type(MouseButtonDown), mousePosition(mousePosition) {}
 
@@ -30,7 +31,8 @@ public:
     Window(Engine& engine, Vector2 size, boost::string_ref title = "", bool fullscreen = true);
     Window(Window&& window) = default;
     ~Window();
-    Event waitForInput();
+    void wait(int ms);
+    Event waitForInput(int timeoutMS = 0);
     Vector2 getMousePosition() const;
     void setShowCursor(bool show);
     void setFullscreen(bool enable);

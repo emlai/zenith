@@ -5,6 +5,8 @@
 #include "engine/menu.h"
 #include "engine/window.h"
 
+const int turnDurationMS = 200;
+
 Controller::~Controller() {}
 
 std::unique_ptr<AIController> AIController::get(boost::string_ref id, Creature& creature)
@@ -29,7 +31,10 @@ Action PlayerController::control(Creature& creature)
 
     while (true)
     {
-        Event event = game.getWindow().waitForInput();
+        Event event = game.getWindow().waitForInput(turnDurationMS);
+
+        if (event.type == Event::Timeout)
+            return Wait;
 
         if (!creature.isDead())
             if (auto direction = getDirectionFromEvent(event, creature.getPosition()))
@@ -47,9 +52,6 @@ Action PlayerController::control(Creature& creature)
                 if (!creature.isDead() && creature.enter())
                     return GoUpOrDown;
                 break;
-
-            case Wait:
-                return Wait;
 
             case PickUpItems:
                 if (!creature.isDead() && creature.pickUpItem())
@@ -207,7 +209,6 @@ static Key getDefaultKeyForAction(Action action)
 {
     switch (action)
     {
-        case Wait: return '.';
         case GoUpOrDown: return Enter;
         case PickUpItems: return ',';
         case DropItem: return 'd';
