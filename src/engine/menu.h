@@ -5,7 +5,7 @@
 #include "keyboard.h"
 #include "geometry.h"
 #include "state.h"
-#include <boost/optional.hpp>
+#include <optional>
 #include <vector>
 
 class Sprite;
@@ -13,11 +13,11 @@ class Window;
 
 struct MenuItem
 {
-    MenuItem(int id, boost::string_ref text, Key shortcut = NoKey, const Sprite* image = nullptr)
+    MenuItem(int id, std::string_view text, Key shortcut = NoKey, const Sprite* image = nullptr)
     :   id(id), mainImage(image), mainText(text), secondaryImage(nullptr), shortcut(shortcut)
     {
     }
-    MenuItem(int id, boost::string_ref mainText, boost::string_ref secondaryText, Key shortcut = NoKey,
+    MenuItem(int id, std::string_view mainText, std::string_view secondaryText, Key shortcut = NoKey,
              const Sprite* mainImage = nullptr, const Sprite* secondaryImage = nullptr)
     :   id(id), mainImage(mainImage), mainText(mainText), secondaryImage(secondaryImage),
         secondaryText(secondaryText), shortcut(shortcut)
@@ -40,7 +40,7 @@ public:
     enum { Exit = INT_MIN };
 
     Menu() { clear(); }
-    void addTitle(boost::string_ref text);
+    void addTitle(std::string_view text);
     /// Returns the index of the added menu item.
     int addItem(MenuItem&& item);
     void clear();
@@ -52,7 +52,7 @@ public:
     void setTextLayout(TextLayout layout) { textLayout = layout; }
     void setItemLayout(ItemLayout layout) { itemLayout = layout; }
     void setItemSpacing(int amount) { itemSpacing = amount; }
-    void setItemSize(boost::optional<Vector2> size) { itemSize = size; }
+    void setItemSize(std::optional<Vector2> size) { itemSize = size; }
     void setTableCellSpacing(Vector2 spacing) { tableCellSpacing = spacing; }
     void setSecondaryColumnAlignment(HorizontalAlignment alignment) { secondaryColumnAlignment = alignment; }
     void setTextColor(Color32 color) { textColor = color; }
@@ -80,7 +80,7 @@ private:
     TextLayout textLayout;
     ItemLayout itemLayout;
     int itemSpacing;
-    boost::optional<Vector2> itemSize;
+    std::optional<Vector2> itemSize;
     Vector2 tableCellSpacing;
     HorizontalAlignment secondaryColumnAlignment;
     Color32 textColor;

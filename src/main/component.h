@@ -1,6 +1,6 @@
 #pragma once
 
-#include <boost/utility/string_ref.hpp>
+#include <string_view>
 #include <cassert>
 #include <memory>
 
@@ -14,7 +14,7 @@ class Component
 {
 public:
     virtual ~Component() = 0;
-    static std::unique_ptr<Component> get(boost::string_ref name, Entity& parent);
+    static std::unique_ptr<Component> get(std::string_view name, Entity& parent);
     Entity& getParent() const { return *parent; }
 
     /// Returns true if the component did react to the movement attempt.

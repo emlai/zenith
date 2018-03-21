@@ -6,8 +6,8 @@
 #include "engine/geometry.h"
 #include "engine/sprite.h"
 #include "engine/utility.h"
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
+#include <unordered_map>
+#include <unordered_set>
 #include <cctype>
 #include <memory>
 #include <sstream>
@@ -73,7 +73,7 @@ enum EquipmentSlot : int
 
 const int equipmentSlots = 4;
 
-boost::string_ref toString(EquipmentSlot slot);
+std::string_view toString(EquipmentSlot slot);
 
 namespace std
 {
@@ -87,8 +87,8 @@ namespace std
 class Creature final : public Entity
 {
 public:
-    Creature(Tile*, boost::string_ref id);
-    Creature(Tile*, boost::string_ref id, std::unique_ptr<Controller> controller);
+    Creature(Tile*, std::string_view id);
+    Creature(Tile*, std::string_view id, std::unique_ptr<Controller> controller);
     Creature(const SaveFile& file, Tile* tile);
     void save(SaveFile& file) const;
     void exist();
@@ -143,21 +143,21 @@ private:
     void attack(Creature&);
     void setAttribute(Attribute, double amount);
     void editAttribute(Attribute, double amount);
-    void generateAttributes(boost::string_ref);
+    void generateAttributes(std::string_view);
     void calculateDerivedStats();
     void editHP(double amount) { currentHP = std::min(currentHP + amount, maxHP); }
     void editAP(double amount) { currentAP += amount; }
     void editMP(double amount) { currentMP = std::min(currentMP + amount, maxMP); }
     void regenerate();
     void onDeath();
-    static std::vector<Attribute> initDisplayedAttributes(boost::string_ref);
-    static std::vector<std::vector<int>> initAttributeIndices(boost::string_ref);
+    static std::vector<Attribute> initDisplayedAttributes(std::string_view);
+    static std::vector<std::vector<int>> initAttributeIndices(std::string_view);
     const auto& getAttributeIndices(int attribute) const { return attributeIndices[attribute]; }
 
     std::vector<Tile*> tilesUnder;
-    mutable boost::unordered_set<Vector3> seenTilePositions;
+    mutable std::unordered_set<Vector3> seenTilePositions;
     std::vector<std::unique_ptr<Item>> inventory;
-    boost::unordered_map<EquipmentSlot, Item*> equipment;
+    std::unordered_map<EquipmentSlot, Item*> equipment;
     double currentHP, maxHP, currentAP, currentMP, maxMP;
     bool running;
     std::vector<double> attributeValues;
@@ -186,5 +186,5 @@ void Creature::addMessage(Args&&... messageParts)
         messages.emplace_back(std::move(message), getTurn());
 }
 
-Attribute stringToAttribute(boost::string_ref);
+Attribute stringToAttribute(std::string_view);
 std::vector<Attribute> stringsToAttributes(const std::vector<std::string>&);

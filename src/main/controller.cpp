@@ -7,7 +7,7 @@
 
 Controller::~Controller() {}
 
-std::unique_ptr<AIController> AIController::get(boost::string_ref id, Creature& creature)
+std::unique_ptr<AIController> AIController::get(std::string_view id, Creature& creature)
 {
     auto ai = AI::get(Game::creatureConfig->get<std::string>(id, "ai"), creature);
     return std::make_unique<AIController>(std::move(ai));
@@ -124,7 +124,7 @@ Action PlayerController::control(Creature& creature)
                 if (creature.isDead())
                     break;
 
-                boost::optional<Dir8> direction = game.askForDirection("What do you want to close?");
+                std::optional<Dir8> direction = game.askForDirection("What do you want to close?");
 
                 if (direction && creature.close(*direction))
                     return Close;
@@ -227,7 +227,7 @@ void loadKeyMap(const Config* config)
     for (int i = NoAction + 1; i < LastAction; ++i)
     {
         auto action = static_cast<Action>(i);
-        Key key = config ? config->getOptional<int>(toString(action)).get_value_or(NoKey) : NoKey;
+        Key key = config ? config->getOptional<int>(toString(action)).value_or(NoKey) : NoKey;
 
         if (!key)
             key = getDefaultKeyForAction(action);

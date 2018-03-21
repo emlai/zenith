@@ -1,7 +1,6 @@
 #pragma once
 
-#include <boost/preprocessor/cat.hpp>
-#include <boost/utility/string_ref.hpp>
+#include <string_view>
 #include <ostream>
 #include <string>
 #include <vector>
@@ -15,7 +14,7 @@ std::ostream& operator<<(std::ostream& outputStream, const std::vector<T>& eleme
     return outputStream;
 }
 
-std::string changeFileExtension(boost::string_ref fileName, boost::string_ref newExtension);
+std::string changeFileExtension(std::string_view fileName, std::string_view newExtension);
 
 /// Performs integer division, rounding towards negative infinity.
 inline int divideRoundingDown(int dividend, int divisor)
@@ -31,11 +30,37 @@ inline int divideRoundingDown(int dividend, int divisor)
 std::string toOnOffString(bool value);
 std::string toStringAvoidingDecimalPlaces(double value);
 
-std::string operator+(boost::string_ref a, boost::string_ref b);
+std::string operator+(std::string_view a, std::string_view b);
+bool startsWith(std::string_view, std::string_view);
+bool endsWith(std::string_view, std::string_view);
+std::string_view removeSuffix(std::string_view, std::string_view);
 
-std::string pascalCaseToSentenceCase(boost::string_ref pascalCaseString);
+std::string pascalCaseToSentenceCase(std::string_view pascalCaseString);
 
 bool isVowel(char);
+
+template<typename T>
+struct IteratorRange
+{
+    T _begin;
+    T _end;
+
+    IteratorRange(T begin, T end) : _begin(begin), _end(end) {}
+    T begin() const { return _begin; }
+    T end() const { return _end; }
+};
+
+template<typename T>
+IteratorRange<T> makeIteratorRange(T begin, T end)
+{
+    return IteratorRange<T>(begin, end);
+}
+
+template<typename T>
+auto reverse(const T& v)
+{
+    return makeIteratorRange(v.rbegin(), v.rend());
+}
 
 template<typename T>
 struct Deferrer
@@ -55,4 +80,6 @@ Deferrer<T> operator+(DeferHelper, T deferred)
     return Deferrer<T>(std::move(deferred));
 }
 
-#define DEFER auto BOOST_PP_CAT(defer, __LINE__) = DeferHelper() + [&]
+#define PP_CAT_I(a, b) a ## b
+#define PP_CAT(a, b) PP_CAT_I(a, b)
+#define DEFER auto PP_CAT(defer, __LINE__) = DeferHelper() + [&]

@@ -2,7 +2,7 @@
 
 #include "geometry.h"
 #include <SDL.h>
-#include <boost/utility/string_ref.hpp>
+#include <string_view>
 #include <functional>
 #include <string>
 
@@ -52,5 +52,5 @@ enum : Mod
 namespace keyboard
 {
     int readLine(Window&, std::string& lineContent, Vector2 position, const std::function<void(Window&)>&,
-                 boost::string_ref prefix = "");
+                 std::string_view prefix = "");
 }

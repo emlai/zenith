@@ -1,16 +1,16 @@
 #include "entity.h"
-#include <boost/unordered_set.hpp>
+#include <unordered_set>
 #include <iostream>
 
-static void reportUnknownComponent(boost::string_ref name)
+static void reportUnknownComponent(std::string_view name)
 {
-    static boost::unordered_set<std::string> reportedNames;
+    static std::unordered_set<std::string> reportedNames;
 
-    if (reportedNames.insert(name.to_string()).second)
+    if (reportedNames.insert(std::string(name)).second)
         std::cerr << "Unknown component '" << name << "'\n";
 }
 
-Entity::Entity(boost::string_ref id, const Config& config)
+Entity::Entity(std::string_view id, const Config& config)
 :   id(id),
     config(&config)
 {
@@ -28,7 +28,7 @@ Entity::Entity(boost::string_ref id, const Config& config)
 
 std::string Entity::getName() const
 {
-    std::string prefix = std::move(getConfig().getOptional<std::string>(getId(), "NamePrefix").get_value_or(""));
+    std::string prefix = std::move(getConfig().getOptional<std::string>(getId(), "NamePrefix").value_or(""));
 
     if (!prefix.empty())
         prefix += ' ';

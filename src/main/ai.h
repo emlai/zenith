@@ -1,6 +1,6 @@
 #pragma once
 
-#include <boost/utility/string_ref.hpp>
+#include <string_view>
 #include <memory>
 
 class Creature;
@@ -12,7 +12,7 @@ public:
     AI(Creature& creature) : creature(&creature) {}
     virtual ~AI() = default;
     virtual Action control() = 0;
-    static std::unique_ptr<AI> get(boost::string_ref id, Creature& creature);
+    static std::unique_ptr<AI> get(std::string_view id, Creature& creature);
 
 protected:
     Creature* creature;

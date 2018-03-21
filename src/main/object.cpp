@@ -2,7 +2,7 @@
 #include "game.h"
 #include "gui.h"
 
-Object::Object(boost::string_ref id)
+Object::Object(std::string_view id)
 :   Entity(id, *Game::objectConfig),
     sprite(::getSprite(*Game::objectSpriteSheet, *Game::objectConfig, id))
 {

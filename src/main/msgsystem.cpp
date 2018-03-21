@@ -22,7 +22,7 @@ namespace MessageSystem
 #ifdef DEBUG
     struct DebugMessage
     {
-        DebugMessage(boost::string_ref content, MessageType type = Normal)
+        DebugMessage(std::string_view content, MessageType type = Normal)
         :   content(content), type(type)
         {
         }
@@ -62,7 +62,7 @@ void MessageSystem::drawMessages(Window& window, BitmapFont& font,
 
 #ifdef DEBUG
 
-void MessageSystem::addDebugMessage(boost::string_ref message, MessageType type)
+void MessageSystem::addDebugMessage(std::string_view message, MessageType type)
 {
     debugMessages.push_front(DebugMessage(message, type));
 

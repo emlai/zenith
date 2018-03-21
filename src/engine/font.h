@@ -3,7 +3,7 @@
 #include "texture.h"
 #include "color.h"
 #include "geometry.h"
-#include <boost/utility/string_ref.hpp>
+#include <string_view>
 
 class Window;
 
@@ -26,14 +26,14 @@ struct TextLayout
 class BitmapFont
 {
 public:
-    BitmapFont(boost::string_ref fileName, Vector2 charSize);
-    void print(Window& window, boost::string_ref text, Color32 color = Color32::none,
+    BitmapFont(std::string_view fileName, Vector2 charSize);
+    void print(Window& window, std::string_view text, Color32 color = Color32::none,
                Color32 backgroundColor = Color32::none, bool blend = true,
                LineBreakMode lineBreakMode = SplitLines);
-    void printLine(Window& window, boost::string_ref text, Color32 color = Color32::none,
+    void printLine(Window& window, std::string_view text, Color32 color = Color32::none,
                    Color32 backgroundColor = Color32::none, bool blend = true,
                    LineBreakMode lineBreakMode = SplitLines);
-    void printWithCursor(Window& window, boost::string_ref, const char* cursorPosition,
+    void printWithCursor(Window& window, std::string_view, const char* cursorPosition,
                          Color32 mainColor = Color32::none, Color32 cursorColor = Color32::none,
                          Color32 backgroundColor = Color32::none);
     void setArea(Rect area) { printArea = area; initCurrentPosition(); }
@@ -51,12 +51,12 @@ public:
     int getLineSpacing() const { return moveVector.y - charSize.y; }
     int getColumnWidth() const { return moveVector.x; }
     int getRowHeight() const { return moveVector.y; }
-    Vector2 getTextSize(boost::string_ref text) const;
+    Vector2 getTextSize(std::string_view text) const;
     TextLayout getLayout() const { return layout; }
 
 private:
-    using PrintIterator = const char*;
-    Vector2 printHelper(Window& window, boost::string_ref, Vector2 position,
+    using PrintIterator = std::string_view::const_iterator;
+    Vector2 printHelper(Window& window, std::string_view, Vector2 position,
                         Color32 backgroundColor, LineBreakMode lineBreakMode) const;
     void printLine(Window& window, PrintIterator lineBegin, PrintIterator lineEnd,
                    Rect& source, Rect& target, Color32 backgroundColor) const;

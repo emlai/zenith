@@ -1,13 +1,13 @@
 #pragma once
 
 #include "utility.h"
-#include <boost/optional.hpp>
-#include <boost/numeric/conversion/cast.hpp>
-#include <boost/unordered_map.hpp>
+#include <optional>
+#include <unordered_map>
 #include <fstream>
 #include <functional>
 #include <stdexcept>
 #include <string>
+#include <string_view>
 #include <vector>
 
 class ConfigReader;
@@ -16,18 +16,18 @@ class Config
 {
 public:
     Config() {}
-    Config(boost::string_ref filePath);
+    Config(std::string_view filePath);
     template<typename ValueType>
-    boost::optional<ValueType> getOptional(boost::string_ref key) const;
+    std::optional<ValueType> getOptional(std::string_view key) const;
     template<typename ValueType>
-    ValueType get(boost::string_ref type, boost::string_ref attribute) const;
+    ValueType get(std::string_view type, std::string_view attribute) const;
     template<typename ValueType>
-    boost::optional<ValueType> getOptional(boost::string_ref type, boost::string_ref attribute) const;
+    std::optional<ValueType> getOptional(std::string_view type, std::string_view attribute) const;
     std::vector<std::string> getToplevelKeys() const;
-    void set(boost::string_ref key, bool value) { data.insert(key.to_string(), Value(value)); }
-    void set(boost::string_ref key, long long value) { data.insert(key.to_string(), Value(value)); }
-    void set(boost::string_ref key, double value) { data.insert(key.to_string(), Value(value)); }
-    void writeToFile(boost::string_ref filePath) const;
+    void set(std::string key, bool value) { data.insert(std::move(key), Value(value)); }
+    void set(std::string key, long long value) { data.insert(std::move(key), Value(value)); }
+    void set(std::string key, double value) { data.insert(std::move(key), Value(value)); }
+    void writeToFile(const std::string& filePath) const;
 
 private:
     template<typename Value>
@@ -61,7 +61,7 @@ private:
         }
 
     private:
-        boost::unordered_map<std::string, Value> properties;
+        std::unordered_map<std::string, Value> properties;
     };
 
     class Value
@@ -120,7 +120,7 @@ private:
     template<typename OutputType>
     struct ConversionTraits;
     template<typename OutputType>
-    static boost::optional<OutputType> convert(const Value& value)
+    static std::optional<OutputType> convert(const Value& value)
     {
         return ConversionTraits<OutputType>()(value);
     }
@@ -139,91 +139,91 @@ private:
 template<typename OutputType>
 struct Config::ConversionTraits
 {
-    boost::optional<OutputType> operator()(const Value& value);
+    std::optional<OutputType> operator()(const Value& value);
 };
 
 template<>
 struct Config::ConversionTraits<bool>
 {
-    boost::optional<bool> operator()(const Value& value)
+    std::optional<bool> operator()(const Value& value)
     {
         if (value.isBool())
             return value.getBool();
 
-        return boost::none;
+        return std::nullopt;
     }
 };
 
 template<>
 struct Config::ConversionTraits<int>
 {
-    boost::optional<int> operator()(const Value& value)
+    std::optional<int> operator()(const Value& value)
     {
         if (value.isInt())
-            return boost::numeric_cast<int>(value.getInt());
+            return static_cast<int>(value.getInt());
 
-        return boost::none;
+        return std::nullopt;
     }
 };
 
 template<>
 struct Config::ConversionTraits<unsigned>
 {
-    boost::optional<unsigned> operator()(const Value& value)
+    std::optional<unsigned> operator()(const Value& value)
     {
         if (value.isInt())
-            return boost::numeric_cast<unsigned>(value.getInt());
+            return static_cast<unsigned>(value.getInt());
 
-        return boost::none;
+        return std::nullopt;
     }
 };
 
 template<>
 struct Config::ConversionTraits<unsigned short>
 {
-    boost::optional<unsigned short> operator()(const Value& value)
+    std::optional<unsigned short> operator()(const Value& value)
     {
         if (value.isInt())
-            return boost::numeric_cast<unsigned short>(value.getInt());
+            return static_cast<unsigned short>(value.getInt());
 
-        return boost::none;
+        return std::nullopt;
     }
 };
 
 template<>
 struct Config::ConversionTraits<double>
 {
-    boost::optional<double> operator()(const Value& value)
+    std::optional<double> operator()(const Value& value)
     {
         if (value.isFloat())
             return value.getFloat();
 
         if (value.isInt())
-            return boost::numeric_cast<double>(value.getInt());
+            return static_cast<double>(value.getInt());
 
-        return boost::none;
+        return std::nullopt;
     }
 };
 
 template<>
 struct Config::ConversionTraits<std::string>
 {
-    boost::optional<std::string> operator()(const Value& value)
+    std::optional<std::string> operator()(const Value& value)
     {
         if (value.isString())
             return value.getString();
 
-        return boost::none;
+        return std::nullopt;
     }
 };
 
 template<typename ElementType>
 struct Config::ConversionTraits<std::vector<ElementType>>
 {
-    boost::optional<std::vector<ElementType>> operator()(const Value& value)
+    std::optional<std::vector<ElementType>> operator()(const Value& value)
     {
         if (!value.isList())
-            return boost::none;
+            return std::nullopt;
 
         std::vector<ElementType> outputData;
 
@@ -235,16 +235,16 @@ struct Config::ConversionTraits<std::vector<ElementType>>
 };
 
 template<typename ValueType>
-boost::optional<ValueType> Config::getOptional(boost::string_ref key) const
+std::optional<ValueType> Config::getOptional(std::string_view key) const
 {
-    if (auto value = data.getOptional(key.to_string()))
+    if (auto value = data.getOptional(std::string(key)))
         return convert<ValueType>(*value);
 
-    return boost::none;
+    return std::nullopt;
 }
 
 template<typename ValueType>
-ValueType Config::get(boost::string_ref type, boost::string_ref attribute) const
+ValueType Config::get(std::string_view type, std::string_view attribute) const
 {
     if (auto value = getOptional<ValueType>(type, attribute))
         return ValueType(std::move(*value));
@@ -253,17 +253,17 @@ ValueType Config::get(boost::string_ref type, boost::string_ref attribute) const
 }
 
 template<typename ValueType>
-boost::optional<ValueType> Config::getOptional(boost::string_ref type, boost::string_ref attribute) const
+std::optional<ValueType> Config::getOptional(std::string_view type, std::string_view attribute) const
 {
-    std::string current = type.to_string();
-    std::string key = attribute.to_string();
+    std::string current(type);
+    std::string key(attribute);
 
     while (true)
     {
         auto groupValue = data.getOptional(current);
 
         if (!groupValue)
-            return boost::none;
+            return std::nullopt;
 
         auto& group = groupValue->getGroup();
 
@@ -279,7 +279,7 @@ boost::optional<ValueType> Config::getOptional(boost::string_ref type, boost::st
         auto baseType = group.getOptional("BaseType");
 
         if (!baseType)
-            return boost::none;
+            return std::nullopt;
 
         if (baseType->isString())
         {

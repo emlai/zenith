@@ -8,7 +8,7 @@
 #include "engine/color.h"
 #include "engine/geometry.h"
 #include "engine/sprite.h"
-#include <boost/utility/string_ref.hpp>
+#include <string_view>
 #include <memory>
 #include <vector>
 
@@ -22,7 +22,7 @@ class World;
 class Tile
 {
 public:
-    Tile(World& world, Vector2 position, int level, boost::string_ref groundId);
+    Tile(World& world, Vector2 position, int level, std::string_view groundId);
     Tile(const SaveFile& file, World& world, Vector2 position, int level);
     void save(SaveFile& file) const;
     void exist();
@@ -39,13 +39,13 @@ public:
     const std::vector<std::unique_ptr<Item>>& getItems() const { return items; }
     std::unique_ptr<Item> removeTopmostItem();
     void addItem(std::unique_ptr<Item> item);
-    void addLiquid(boost::string_ref materialId);
+    void addLiquid(std::string_view materialId);
     bool hasObject() const { return bool(object); }
     Object* getObject() { return object.get(); }
     const Object* getObject() const { return object.get(); }
     void setObject(std::unique_ptr<Object>);
-    boost::string_ref getGroundId() const { return groundId; }
-    void setGround(boost::string_ref groundId);
+    std::string_view getGroundId() const { return groundId; }
+    void setGround(std::string_view groundId);
     void forEachEntity(const std::function<void(Entity&)>& function) const;
     void forEachLightSource(const std::function<void(LightSource&)>& function) const;
     Color32 getLight() const { return light; }

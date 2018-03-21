@@ -5,8 +5,8 @@
 #include "world.h"
 #include "engine/geometry.h"
 #include "engine/math.h"
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
+#include <unordered_map>
+#include <unordered_set>
 
 Building::Building(std::vector<Room>&& rooms)
 :   rooms(std::move(rooms))
@@ -94,7 +94,7 @@ std::vector<Building> WorldGenerator::generateBuildings(Rect region, int level)
     return buildings;
 }
 
-boost::optional<Building> WorldGenerator::generateBuilding(Rect region, int level)
+std::optional<Building> WorldGenerator::generateBuilding(Rect region, int level)
 {
     if (auto room = generateRoom(region, level))
     {
@@ -103,10 +103,10 @@ boost::optional<Building> WorldGenerator::generateBuilding(Rect region, int leve
         return Building(std::move(rooms));
     }
     else
-        return boost::none;
+        return std::nullopt;
 }
 
-boost::optional<Room> WorldGenerator::generateRoom(Rect region, int level)
+std::optional<Room> WorldGenerator::generateRoom(Rect region, int level)
 {
     bool canGenerateHere = true;
 
@@ -117,7 +117,7 @@ boost::optional<Room> WorldGenerator::generateRoom(Rect region, int level)
     });
 
     if (!canGenerateHere)
-        return boost::none;
+        return std::nullopt;
 
     auto wallId = "BrickWall";
     auto floorId = "WoodenFloor";
@@ -188,7 +188,7 @@ static int heuristicCostEstimate(const Tile& a, const Tile& b)
     return distance.x * distance.y;
 }
 
-static std::vector<Tile*> reconstructPath(const boost::unordered_map<Tile*, Tile*>& cameFrom, Tile* current)
+static std::vector<Tile*> reconstructPath(const std::unordered_map<Tile*, Tile*>& cameFrom, Tile* current)
 {
     std::vector<Tile*> totalPath = { current };
 
@@ -204,13 +204,13 @@ static std::vector<Tile*> reconstructPath(const boost::unordered_map<Tile*, Tile
 std::vector<Tile*> WorldGenerator::findPathAStar(Tile& source, Tile& target,
                                                  const std::function<bool(Tile&)>& isAllowed) const
 {
-    boost::unordered_set<Tile*> closedSet;
-    boost::unordered_set<Tile*> openSet;
+    std::unordered_set<Tile*> closedSet;
+    std::unordered_set<Tile*> openSet;
     openSet.emplace(&source);
-    boost::unordered_map<Tile*, Tile*> sources;
-    boost::unordered_map<Tile*, int> costs;
+    std::unordered_map<Tile*, Tile*> sources;
+    std::unordered_map<Tile*, int> costs;
     costs.emplace(&source, 0);
-    boost::unordered_map<Tile*, int> estimatedCosts;
+    std::unordered_map<Tile*, int> estimatedCosts;
     estimatedCosts.emplace(&source, heuristicCostEstimate(source, target));
 
     auto comparator = [&](Tile* a, Tile* b) { return estimatedCosts.at(a) < estimatedCosts.at(b); };
@@ -291,7 +291,7 @@ void WorldGenerator::generatePaths(const std::vector<Building>& buildings)
                 auto path = findPathAStar(*pathStart, *pathEnd, [](Tile& tile)
                 {
                     return !tile.hasObject() || tile.getObject()->getId() == "Door"
-                        || tile.getObject()->getId().starts_with("Stairs");
+                        || startsWith(tile.getObject()->getId(), "Stairs");
                 });
 
                 if (!path.empty())

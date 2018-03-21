@@ -45,7 +45,7 @@ void GraphicsContext::setViewport(const Rect* viewport)
     if (viewport)
         this->viewport = *viewport;
     else
-        this->viewport = boost::none;
+        this->viewport = std::nullopt;
 }
 
 Rect GraphicsContext::getViewport() const
@@ -61,7 +61,7 @@ void GraphicsContext::setView(const Rect* view)
     if (view)
         this->view = *view;
     else
-        this->view = boost::none;
+        this->view = std::nullopt;
 }
 
 void GraphicsContext::setFont(BitmapFont& font)

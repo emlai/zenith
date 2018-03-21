@@ -1,7 +1,7 @@
 #pragma once
 
 #include "engine/geometry.h"
-#include <boost/optional.hpp>
+#include <optional>
 #include <vector>
 
 class Tile;
@@ -42,8 +42,8 @@ public:
 
 private:
     std::vector<Building> generateBuildings(Rect region, int level);
-    boost::optional<Building> generateBuilding(Rect region, int level);
-    boost::optional<Room> generateRoom(Rect region, int level);
+    std::optional<Building> generateBuilding(Rect region, int level);
+    std::optional<Room> generateRoom(Rect region, int level);
     Tile* findPathStart(Tile& tile) const;
     std::vector<Tile*> findPathAStar(Tile& source, Tile& target,
                                      const std::function<bool(Tile&)>& isAllowed) const;

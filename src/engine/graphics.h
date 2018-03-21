@@ -4,7 +4,7 @@
 #include "geometry.h"
 #include "texture.h"
 #include <SDL.h>
-#include <boost/optional.hpp>
+#include <optional>
 #include <memory>
 
 class BitmapFont;
@@ -19,7 +19,7 @@ public:
     void setViewport(const Rect* viewport);
     Rect getViewport() const;
     void setView(const Rect* view);
-    const Rect* getView() const { return view.get_ptr(); }
+    const Rect* getView() const { return &*view; }
     void setFont(BitmapFont&);
     BitmapFont& getFont();
     void setScale(double scale);
@@ -43,8 +43,8 @@ private:
     std::unique_ptr<SDL_Renderer, void (&)(SDL_Renderer*)> renderer;
     std::unique_ptr<SDL_Texture, void (&)(SDL_Texture*)> framebuffer;
     Texture targetTexture;
-    boost::optional<Rect> viewport;
-    boost::optional<Rect> view;
+    std::optional<Rect> viewport;
+    std::optional<Rect> view;
     BitmapFont* font;
     int animationFrameTime;
 };

@@ -2,8 +2,6 @@ image: Visual Studio 2017
 
 environment:
   MSVC_DEFAULT_OPTIONS: ON
-  BOOST_ROOT: C:\Libraries\boost_1_64_0
-  BOOST_LIBRARYDIR: C:\Libraries\boost_1_64_0\lib64-msvc-14.1
 
 init:
   - cmd: cmake --version
@@ -23,4 +21,4 @@ before_build:
   - cmd: cd C:\projects\zenith
   - cmd: mkdir build
   - cmd: cd build
-  - cmd: cmake -G "Visual Studio 15 2017 Win64" -DBOOST_ROOT="%BOOST_ROOT%" -DBOOST_LIBRARYDIR="%BOOST_LIBRARYDIR%" ..
+  - cmd: cmake -G "Visual Studio 15 2017 Win64" ..

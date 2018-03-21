@@ -27,7 +27,7 @@ public:
 class Window
 {
 public:
-    Window(Engine& engine, Vector2 size, boost::string_ref title = "", bool fullscreen = true);
+    Window(Engine& engine, Vector2 size, std::string_view title = "", bool fullscreen = true);
     Window(Window&& window) = default;
     ~Window();
     Event waitForInput();
@@ -49,7 +49,7 @@ public:
     Vector2 getSize() const;
     int getWidth() const;
     int getHeight() const;
-    boost::string_ref getTitle() const;
+    std::string_view getTitle() const;
     GraphicsContext& getGraphicsContext() { return context; }
     static Vector2 getScreenResolution();
 

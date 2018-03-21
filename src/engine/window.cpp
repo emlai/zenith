@@ -39,10 +39,10 @@ SDL_Window* Window::initWindowHandle(Vector2 size, const char* title, bool fulls
     return windowHandle;
 }
 
-Window::Window(Engine& engine, Vector2 size, boost::string_ref title, bool fullscreen)
+Window::Window(Engine& engine, Vector2 size, std::string_view title, bool fullscreen)
 :   engine(&engine),
     closeRequestReceived(false),
-    windowHandle(initWindowHandle(size, title.to_string().c_str(), fullscreen), SDL_DestroyWindow),
+    windowHandle(initWindowHandle(size, std::string(title).c_str(), fullscreen), SDL_DestroyWindow),
     context(*this)
 {
     SDL_EventState(SDL_WINDOWEVENT_ENTER, SDL_IGNORE);
@@ -198,7 +198,7 @@ int Window::getHeight() const
     return height;
 }
 
-boost::string_ref Window::getTitle() const
+std::string_view Window::getTitle() const
 {
     return SDL_GetWindowTitle(windowHandle.get());
 }

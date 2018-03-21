@@ -6,7 +6,7 @@
 
 const Vector2 BitmapFont::dimensions = Vector2(16, 6);
 
-BitmapFont::BitmapFont(boost::string_ref fileName, Vector2 charSize)
+BitmapFont::BitmapFont(std::string_view fileName, Vector2 charSize)
 :   printArea(0, 0, 0, 0),
     lineContinuation(false),
     currentPosition(0, 0),
@@ -20,7 +20,7 @@ BitmapFont::BitmapFont(boost::string_ref fileName, Vector2 charSize)
 {
 }
 
-void BitmapFont::print(Window& window, boost::string_ref text, Color32 color, Color32 backgroundColor,
+void BitmapFont::print(Window& window, std::string_view text, Color32 color, Color32 backgroundColor,
                        bool blend, LineBreakMode lineBreakMode)
 {
     if (!color)
@@ -39,7 +39,7 @@ void BitmapFont::print(Window& window, boost::string_ref text, Color32 color, Co
     lineContinuation = true;
 }
 
-void BitmapFont::printLine(Window& window, boost::string_ref text, Color32 color, Color32 backgroundColor,
+void BitmapFont::printLine(Window& window, std::string_view text, Color32 color, Color32 backgroundColor,
                            bool blend, LineBreakMode lineBreakMode)
 {
     print(window, text, color, backgroundColor, blend, lineBreakMode);
@@ -47,10 +47,10 @@ void BitmapFont::printLine(Window& window, boost::string_ref text, Color32 color
     currentPosition.y += moveVector.y;
 }
 
-void BitmapFont::printWithCursor(Window& window, boost::string_ref text, const char* cursor,
+void BitmapFont::printWithCursor(Window& window, std::string_view text, const char* cursor,
                                  Color32 mainColor, Color32 cursorColor, Color32 backgroundColor)
 {
-    Vector2 cursorPosition = currentPosition + Vector2(int((cursor - text.begin()) * moveVector.x), 0);
+    Vector2 cursorPosition = currentPosition + Vector2(int((cursor - text.data()) * moveVector.x), 0);
     print(window, text, mainColor);
 
     if (cursorColor)
@@ -59,7 +59,7 @@ void BitmapFont::printWithCursor(Window& window, boost::string_ref text, const c
     printHelper(window, "_", cursorPosition, backgroundColor, PreserveLines);
 }
 
-Vector2 BitmapFont::printHelper(Window& window, boost::string_ref text, Vector2 position,
+Vector2 BitmapFont::printHelper(Window& window, std::string_view text, Vector2 position,
                                 Color32 backgroundColor, LineBreakMode lineBreakMode) const
 {
     Rect source;
@@ -70,7 +70,8 @@ Vector2 BitmapFont::printHelper(Window& window, boost::string_ref text, Vector2 
 
     if (lineBreakMode == SplitLines)
     {
-        std::istringstream stream(text.to_string());
+        std::stringstream stream;
+        stream << text;
         int currentLineSize = 0;
         int maxLineSize = printArea.getRight() - position.x;
 
@@ -80,7 +81,7 @@ Vector2 BitmapFont::printHelper(Window& window, boost::string_ref text, Vector2 
             {
                 if (splitText.empty())
                 {
-                    splitText = text.to_string();
+                    splitText = text;
                     break;
                 }
 
@@ -157,7 +158,7 @@ void BitmapFont::printLine(Window& window, PrintIterator lineBegin, PrintIterato
     }
 }
 
-Vector2 BitmapFont::getTextSize(boost::string_ref text) const
+Vector2 BitmapFont::getTextSize(std::string_view text) const
 {
     int lengthOfLongestLine = 0;
     int currentLineLength = 0;
