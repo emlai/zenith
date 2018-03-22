@@ -149,8 +149,27 @@ Tile* World::getTile(Vector2 position, int level)
 
 void World::forEachTile(Rect region, int level, const std::function<void(Tile&)>& function)
 {
-    for (int x = region.getLeft(); x <= region.getRight(); ++x)
-        for (int y = region.getTop(); y <= region.getBottom(); ++y)
-            if (auto* tile = getOrCreateTile(Vector2(x, y), level))
-                function(*tile);
+    Area* currentArea = nullptr;
+    Vector3 currentAreaPosition;
+
+    for (int y = region.getTop(); y <= region.getBottom(); ++y)
+    {
+        for (int x = region.getLeft(); x <= region.getRight(); ++x)
+        {
+            Vector2 position(x, y);
+            Vector3 areaPosition = globalPositionToAreaPosition(position, level);
+
+            if (!currentArea || areaPosition != currentAreaPosition)
+            {
+                currentArea = getOrCreateArea(areaPosition);
+                currentAreaPosition = areaPosition;
+
+                if (!currentArea)
+                    continue;
+            }
+
+            Tile* tile = &currentArea->getTileAt(globalPositionToTilePosition(position));
+            function(*tile);
+        }
+    }
 }
