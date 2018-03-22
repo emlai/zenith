@@ -51,9 +51,9 @@ std::vector<Building> WorldGenerator::generateBuildings(Rect region, int level)
 
     if (world.getTile(region.position, level + 1) != nullptr)
     {
-        world.forEachTile(region, level + 1, [&](Tile& tile)
+        for (auto* tile : world.getTiles(region, level + 1))
         {
-            if (tile.hasObject() && tile.getObject()->getId() == "StairsDown")
+            if (tile->hasObject() && tile->getObject()->getId() == "StairsDown")
             {
                 // TODO: Make this building exactly the same size as the one above it, so that the
                 // generation of the building always succeeds, so that we don't have to remove any
@@ -61,18 +61,18 @@ std::vector<Building> WorldGenerator::generateBuildings(Rect region, int level)
 
                 auto size = makeRandomVector(minSize, maxSize);
                 // Makes sure the StairsUp are inside the building.
-                auto topLeftPosition = tile.getPosition() - Vector2(1, 1) - makeRandomVector(size - Vector2(3, 3));
+                auto topLeftPosition = tile->getPosition() - Vector2(1, 1) - makeRandomVector(size - Vector2(3, 3));
                 auto building = generateBuilding(Rect(topLeftPosition, size), level);
 
                 if (building)
                 {
-                    tile.getTileBelow()->setObject(std::make_unique<Object>("StairsUp"));
+                    tile->getTileBelow()->setObject(std::make_unique<Object>("StairsUp"));
                     buildings.push_back(std::move(*building));
                 }
                 else
-                    tile.setObject(nullptr);
+                    tile->setObject(nullptr);
             }
-        });
+        }
     }
 
     while (buildings.size() < buildingsToGenerate)
@@ -110,11 +110,11 @@ boost::optional<Room> WorldGenerator::generateRoom(Rect region, int level)
 {
     bool canGenerateHere = true;
 
-    world.forEachTile(region, level, [&](const Tile& tile)
+    for (auto* tile : world.getTiles(region, level))
     {
-        if (tile.getGroundId() == "WoodenFloor" && !tile.hasObject())
+        if (tile->getGroundId() == "WoodenFloor" && !tile->hasObject())
             canGenerateHere = false;
-    });
+    }
 
     if (!canGenerateHere)
         return boost::none;
@@ -123,11 +123,11 @@ boost::optional<Room> WorldGenerator::generateRoom(Rect region, int level)
     auto floorId = "WoodenFloor";
     auto doorId = "Door";
 
-    world.forEachTile(region, level, [&](Tile& tile)
+    for (auto* tile : world.getTiles(region, level))
     {
-        tile.setGround(floorId);
-        tile.setObject(nullptr);
-    });
+        tile->setGround(floorId);
+        tile->setObject(nullptr);
+    }
 
     std::vector<Tile*> nonCornerWalls;
     const unsigned nonCornerWallCount = region.getPerimeter() - 8;
