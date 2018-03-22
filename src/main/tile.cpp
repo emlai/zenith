@@ -254,39 +254,43 @@ void Tile::setGround(boost::string_ref groundId)
     groundSprite = getSprite(*Game::groundSpriteSheet, *Game::groundConfig, groundId);
 }
 
-void Tile::forEachEntity(const std::function<void(Entity&)>& function) const
+std::vector<Entity*> Tile::getEntities() const
 {
+    std::vector<Entity*> entities;
+
     for (auto& creature : creatures)
     {
-        function(*creature);
+        entities.push_back(creature.get());
 
         for (auto slotAndItem : creature->getEquipment())
             if (slotAndItem.second)
-                function(*slotAndItem.second);
+                entities.push_back(slotAndItem.second);
     }
 
     for (auto& item : items)
-        function(*item);
+        entities.push_back(item.get());
 
     if (object)
-        function(*object);
+        entities.push_back(object.get());
+
+    return entities;
 }
 
-void Tile::forEachLightSource(const std::function<void(LightSource&)>& function) const
+std::vector<LightSource*> Tile::getLightSources() const
 {
-    forEachEntity([&](Entity& entity)
-    {
-        for (auto* lightSource : entity.getComponentsOfType<LightSource>())
-            function(*lightSource);
-    });
+    std::vector<LightSource*> lightSources;
+
+    for (auto* entity : getEntities())
+        for (auto* lightSource : entity->getComponentsOfType<LightSource>())
+            lightSources.push_back(lightSource);
+
+    return lightSources;
 }
 
 void Tile::emitLight()
 {
-    forEachLightSource([&](auto& lightSource)
-    {
-        lightSource.emitLight(world, this->getCenterPosition(), level);
-    });
+    for (auto* lightSource : getLightSources())
+        lightSource->emitLight(world, getCenterPosition(), level);
 }
 
 void Tile::resetLight()

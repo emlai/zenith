@@ -52,13 +52,13 @@ void World::exist(Rect region, int level)
     // Collect the creatures into a vector to avoid updating the same creature more than once.
     std::vector<Creature*> creaturesToUpdate;
 
-    forEachTile(region, level, [&](Tile& tile)
+    for (auto* tile : getTiles(region, level))
     {
-        tile.exist();
+        tile->exist();
 
-        for (auto& creature : tile.getCreatures())
+        for (auto& creature : tile->getCreatures())
             creaturesToUpdate.push_back(creature.get());
-    });
+    }
 
     // Sort the creatures according to their memory addresses to update them in a consistent order.
     std::sort(creaturesToUpdate.begin(), creaturesToUpdate.end());
@@ -72,19 +72,23 @@ void World::exist(Rect region, int level)
 void World::render(Window& window, Rect region, int level, const Creature& player)
 {
     auto lightRegion = region.inset(Vector2(-LightSource::maxRadius, -LightSource::maxRadius));
-    forEachTile(lightRegion, level, [&](Tile& tile) { tile.resetLight(); });
-    forEachTile(lightRegion, level, [&](Tile& tile) { tile.emitLight(); });
+
+    for (auto* tile : getTiles(lightRegion, level))
+        tile->resetLight();
+
+    for (auto* tile : getTiles(lightRegion, level))
+        tile->emitLight();
 
     std::vector<std::pair<const Tile*, bool>> tilesToRender;
     tilesToRender.reserve(region.getArea());
 
-    forEachTile(region, level, [&](const Tile& tile)
+    for (auto* tile : getTiles(region, level))
     {
-        if (game->playerSeesEverything || player.sees(tile))
-            tilesToRender.emplace_back(&tile, false);
-        else if (player.remembers(tile))
-            tilesToRender.emplace_back(&tile, true);
-    });
+        if (game->playerSeesEverything || player.sees(*tile))
+            tilesToRender.emplace_back(tile, false);
+        else if (player.remembers(*tile))
+            tilesToRender.emplace_back(tile, true);
+    }
 
     for (int zIndex = 0; zIndex < 7; ++zIndex)
         for (auto tileAndFogOfWar : tilesToRender)
@@ -147,8 +151,11 @@ Tile* World::getTile(Vector2 position, int level)
     return nullptr;
 }
 
-void World::forEachTile(Rect region, int level, const std::function<void(Tile&)>& function)
+std::vector<Tile*> World::getTiles(Rect region, int level)
 {
+    std::vector<Tile*> tiles;
+    tiles.reserve(region.getArea());
+
     Area* currentArea = nullptr;
     Vector3 currentAreaPosition;
 
@@ -168,8 +175,9 @@ void World::forEachTile(Rect region, int level, const std::function<void(Tile&)>
                     continue;
             }
 
-            Tile* tile = &currentArea->getTileAt(globalPositionToTilePosition(position));
-            function(*tile);
+            tiles.push_back(&currentArea->getTileAt(globalPositionToTilePosition(position)));
         }
     }
+
+    return tiles;
 }
