@@ -4,6 +4,7 @@
 #include "font.h"
 #include "geometry.h"
 #include "window.h"
+#include <cstring>
 
 GraphicsContext::GraphicsContext(const Window& window)
 :   window(window),
@@ -76,8 +77,16 @@ BitmapFont& GraphicsContext::getFont()
 
 void GraphicsContext::updateScreen()
 {
+    void* pixels;
+    int pitch;
+    int result = SDL_LockTexture(framebuffer.get(), nullptr, &pixels, &pitch);
+    assert(result == 0);
+
     SDL_Surface* surface = targetTexture.getSurface();
-    SDL_UpdateTexture(framebuffer.get(), nullptr, surface->pixels, surface->pitch);
+    std::memcpy(pixels, surface->pixels, surface->h * pitch);
+
+    SDL_UnlockTexture(framebuffer.get());
+
     SDL_RenderCopy(renderer.get(), framebuffer.get(), nullptr, nullptr);
     SDL_RenderPresent(renderer.get());
     clearScreen();
