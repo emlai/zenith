@@ -30,6 +30,7 @@ add_executable(zenith WIN32 ${MAIN_SOURCES})
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
 target_include_directories(zenith PUBLIC "${PROJECT_SOURCE_DIR}/src")
 target_link_libraries(zenith zenithEngine)
+set_target_properties(zenith PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
 
 target_include_directories(zenith SYSTEM PUBLIC ${Boost_INCLUDE_DIR})
 target_include_directories(zenithEngine SYSTEM PUBLIC ${Boost_INCLUDE_DIR})
