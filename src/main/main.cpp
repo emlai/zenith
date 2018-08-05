@@ -6,6 +6,7 @@
 #include "engine/geometry.h"
 #include "engine/utility.h"
 #include "engine/window.h"
+#include <nbind/nbind.h>
 #include <boost/filesystem.hpp>
 #include <cassert>
 #include <cstdio>
@@ -264,16 +265,19 @@ void MainMenu::execute()
     }
 }
 
-int main(int argc, char** argv)
-{
-    if (argc == 2 && std::string(argv[1]) == "--version")
-    {
-        std::cout << PROJECT_NAME << ' ' << PROJECT_VERSION << std::endl;
-        return 0;
-    }
+class App {
+public:
+    static void run();
+};
 
+NBIND_CLASS(App) {
+    method(run);
+}
+
+void App::run()
+{
     Engine engine;
-    auto& window = engine.createWindow(Window::getScreenResolution(), PROJECT_NAME, true);
+    auto& window = engine.createWindow(Window::getScreenResolution(), "zenith", true);
     window.setAnimationFrameRate(4);
 
     if (boost::filesystem::exists(preferencesFileName))
@@ -302,6 +306,4 @@ int main(int argc, char** argv)
     {
         engine.reportErrorToUser(std::string("Unhandled exception: ") + exception.what());
     }
-
-    return 0;
 }

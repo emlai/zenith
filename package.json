@@ -1,0 +1,17 @@
+{
+  "name": "zenith",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "install": "autogypi && node-gyp configure build && ndts . > src/main/zenith.d.ts",
+    "start": "ts-node src/main/main.ts"
+  },
+  "dependencies": {
+    "@types/node": "^10.5.6",
+    "autogypi": "^0.2.2",
+    "nbind": "^0.3.15",
+    "node-gyp": "^3.7.0",
+    "ts-node": "^7.0.0",
+    "typescript": "^3.0.1"
+  }
+}

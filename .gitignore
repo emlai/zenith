@@ -30,3 +30,8 @@ RelWithDebInfo
 *.ilk
 prefs.cfg
 *.sav
+
+.vscode
+node_modules
+*.gypi
+*.d.ts
