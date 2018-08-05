@@ -52,8 +52,8 @@ private:
             return nullptr;
         }
 
-        auto begin() const { return properties.begin(); }
-        auto end() const { return properties.end(); }
+        typename boost::unordered_map<std::string, Value>::const_iterator begin() const { return properties.begin(); }
+        typename boost::unordered_map<std::string, Value>::const_iterator end() const { return properties.end(); }
 
         void insert(std::string&& key, Value&& value)
         {

@@ -42,7 +42,7 @@ public:
     void setFont(BitmapFont& font) { context.setFont(font); }
     BitmapFont& getFont() { return context.getFont(); }
     void setAnimationFrameRate(int fps) { context.setAnimationFrameRate(fps); }
-    auto getAnimationFrameTime() const { return context.getAnimationFrameTime(); }
+    int getAnimationFrameTime() const { return context.getAnimationFrameTime(); }
     void updateScreen() { context.updateScreen(); }
     bool shouldClose() const;
     Vector2 getResolution() const;

@@ -48,7 +48,7 @@ public:
     RNG(Generator algorithm) : algorithm(std::move(algorithm)) {}
     void seed();
     void seed(RNG::result_type);
-    auto getSeed() const { return currentSeed; }
+    result_type getSeed() const { return currentSeed; }
     result_type operator()() { return algorithm(); }
     static constexpr result_type max() { return std::numeric_limits<result_type>::max(); }
     static constexpr result_type min() { return std::numeric_limits<result_type>::min(); }
@@ -81,7 +81,7 @@ T randInt(T min, T max)
 }
 
 template<typename IndexableContainer>
-auto& randomElement(IndexableContainer&& container)
+auto randomElement(IndexableContainer&& container) -> decltype(container[0])&
 {
     assert(!container.empty());
     return container[randInt(container.size() - 1)];

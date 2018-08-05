@@ -30,7 +30,7 @@ public:
     template<typename... Args>
     Creature* spawnCreature(Args&&...);
     bool hasCreature() const { return !creatures.empty(); }
-    const auto& getCreatures() const { return creatures; }
+    const std::vector<std::unique_ptr<Creature>>& getCreatures() const { return creatures; }
     Creature& getCreature(int index) const { return *creatures[index]; }
     void transferCreature(Creature&, Tile&);
     std::unique_ptr<Creature> removeSingleTileCreature(Creature&);
@@ -85,6 +85,6 @@ private:
 template<typename... Args>
 Creature* Tile::spawnCreature(Args&&... creatureArgs)
 {
-    addCreature(std::make_unique<Creature>(this, std::forward<Args>(creatureArgs)...));
+    addCreature(make_unique<Creature>(this, std::forward<Args>(creatureArgs)...));
     return creatures.back().get();
 }

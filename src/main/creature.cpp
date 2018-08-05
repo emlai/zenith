@@ -70,7 +70,7 @@ Creature::Creature(Tile* tile, boost::string_ref id, std::unique_ptr<Controller>
     {
         for (auto& itemId : *initialEquipment)
         {
-            inventory.push_back(std::make_unique<Item>(itemId, getRandomMaterialId(itemId)));
+            inventory.push_back(make_unique<Item>(itemId, getRandomMaterialId(itemId)));
             equip(inventory.back()->getEquipmentSlot(), &*inventory.back());
         }
     }
@@ -484,7 +484,7 @@ void Creature::onDeath()
     if (getTilesUnder().size() == 1)
     {
         std::unique_ptr<Creature> self = getTileUnder(0).removeSingleTileCreature(*this);
-        getTileUnder(0).addItem(std::make_unique<Corpse>(std::move(self)));
+        getTileUnder(0).addItem(make_unique<Corpse>(std::move(self)));
     }
     else
     {
@@ -550,7 +550,7 @@ bool Creature::eat(Item& itemToEat)
     assert(itemToEat.isEdible());
 
     if (auto leftoverItemId = Game::itemConfig->getOptional<std::string>(itemToEat.getId(), "leftoverItem"))
-        getTileUnder(0).addItem(std::make_unique<Item>(*leftoverItemId, ""));
+        getTileUnder(0).addItem(make_unique<Item>(*leftoverItemId, ""));
 
     addMessage("You eat the ", itemToEat.getName(), ".");
     removeItem(itemToEat);

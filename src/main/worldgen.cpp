@@ -66,7 +66,7 @@ std::vector<Building> WorldGenerator::generateBuildings(Rect region, int level)
 
                 if (building)
                 {
-                    tile->getTileBelow()->setObject(std::make_unique<Object>("StairsUp"));
+                    tile->getTileBelow()->setObject(make_unique<Object>("StairsUp"));
                     buildings.push_back(std::move(*building));
                 }
                 else
@@ -88,7 +88,7 @@ std::vector<Building> WorldGenerator::generateBuildings(Rect region, int level)
     {
         auto& randomRoom = randomElement(randomElement(buildings).getRooms());
         Tile* stairsTile = world.getTile(makeRandomVectorInside(randomRoom.getInnerRegion()), level);
-        stairsTile->setObject(std::make_unique<Object>("StairsDown"));
+        stairsTile->setObject(make_unique<Object>("StairsDown"));
     }
 
     return buildings;
@@ -143,7 +143,7 @@ boost::optional<Room> WorldGenerator::generateRoom(Rect region, int level)
     {
         if (auto* tile = world.getOrCreateTile(position, level))
         {
-            tile->setObject(std::make_unique<Object>(wallId));
+            tile->setObject(make_unique<Object>(wallId));
 
             if (!isCorner(position))
                 nonCornerWalls.push_back(tile);
@@ -164,7 +164,7 @@ boost::optional<Room> WorldGenerator::generateRoom(Rect region, int level)
 
     assert(nonCornerWalls.size() == nonCornerWallCount);
     auto* doorTile = randomElement(nonCornerWalls);
-    doorTile->setObject(std::make_unique<Object>(doorId));
+    doorTile->setObject(make_unique<Object>(doorId));
 
     return Room(region, { doorTile });
 }
@@ -321,10 +321,10 @@ void WorldGenerator::generateItems(Rect region, int level)
         if (itemId == "Corpse")
         {
             std::string creatureId = randomElement(Game::creatureConfig->getToplevelKeys());
-            item = std::make_unique<Corpse>(std::move(creatureId));
+            item = make_unique<Corpse>(std::move(creatureId));
         }
         else
-            item = std::make_unique<Item>(std::move(itemId), getRandomMaterialId(itemId));
+            item = make_unique<Item>(std::move(itemId), getRandomMaterialId(itemId));
 
         Tile* tile = nullptr;
 

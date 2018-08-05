@@ -106,12 +106,12 @@ public:
     bool eat(Item&);
     bool close(Dir8);
 
-    const auto& getTilesUnder() const { return tilesUnder; }
+    const std::vector<Tile*>& getTilesUnder() const { return tilesUnder; }
     Tile& getTileUnder(int index) const { return *tilesUnder[index]; }
     Vector2 getPosition() const;
     int getLevel() const;
-    const auto& getInventory() const { return inventory; }
-    const auto& getEquipment() const { return equipment; }
+    const std::vector<std::unique_ptr<Item>>& getInventory() const { return inventory; }
+    const boost::unordered_map<EquipmentSlot, Item*>& getEquipment() const { return equipment; }
     std::unique_ptr<Item> removeItem(Item& item);
     Item* getEquipment(EquipmentSlot slot) const { return equipment.at(slot); }
     int getInventoryIndex(const Item& item) const;
@@ -124,7 +124,7 @@ public:
     double getMaxHP() const { return maxHP; }
     double getMaxMP() const { return maxMP; }
     double getAttribute(Attribute) const;
-    const auto& getDisplayedAttributes() const { return displayedAttributes; }
+    const std::vector<Attribute>& getDisplayedAttributes() const { return displayedAttributes; }
     int getFieldOfVisionRadius() const;
     template<typename... Args>
     void addMessage(Args&&...);
@@ -152,7 +152,7 @@ private:
     void onDeath();
     static std::vector<Attribute> initDisplayedAttributes(boost::string_ref);
     static std::vector<std::vector<int>> initAttributeIndices(boost::string_ref);
-    const auto& getAttributeIndices(int attribute) const { return attributeIndices[attribute]; }
+    const std::vector<int>& getAttributeIndices(int attribute) const { return attributeIndices[attribute]; }
 
     std::vector<Tile*> tilesUnder;
     mutable boost::unordered_set<Vector3> seenTilePositions;

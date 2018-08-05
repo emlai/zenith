@@ -49,14 +49,14 @@ std::unique_ptr<Item> Item::load(const SaveFile& file)
     if (boost::algorithm::ends_with(itemId, "Corpse"))
     {
         if (file.readBool())
-            item = std::make_unique<Corpse>(std::make_unique<Creature>(file, nullptr));
+            item = make_unique<Corpse>(make_unique<Creature>(file, nullptr));
         else
-            item = std::make_unique<Corpse>(boost::algorithm::erase_last_copy(itemId, "Corpse"));
+            item = make_unique<Corpse>(boost::algorithm::erase_last_copy(itemId, "Corpse"));
     }
     else
     {
         auto materialId = file.readString();
-        item = std::make_unique<Item>(itemId, materialId);
+        item = make_unique<Item>(itemId, materialId);
         item->sprite.setMaterialColor(Color32(file.readUint32()));
     }
 

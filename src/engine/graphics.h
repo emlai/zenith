@@ -25,7 +25,7 @@ public:
     void setScale(double scale);
     double getScale() const;
     void setAnimationFrameRate(int framesPerSecond);
-    auto getAnimationFrameTime() const { return animationFrameTime; }
+    int getAnimationFrameTime() const { return animationFrameTime; }
     void updateScreen();
     SDL_Renderer* getRenderer() const { return renderer.get(); }
     void renderRectangle(Rect rectangle, Color32 color);

@@ -5,7 +5,7 @@
 
 std::unique_ptr<AI> AI::get(boost::string_ref id, Creature& creature)
 {
-    if (id == "AttackNearestEnemy") return std::make_unique<AttackNearestEnemy>(creature);
+    if (id == "AttackNearestEnemy") return make_unique<AttackNearestEnemy>(creature);
 
     throw std::runtime_error("Unknown AI '" + id + "'\n");
 }

@@ -17,7 +17,7 @@ public:
     const Window& getWindow(unsigned index = 0) const { return windows[index]; }
     void reportErrorToUser(boost::string_ref text);
     template<typename StateType>
-    auto execute(StateType& state);
+    auto execute(StateType& state) -> decltype(state.execute());
     void render(Window& window);
 
 private:
@@ -30,7 +30,7 @@ private:
 };
 
 template<typename StateType>
-auto Engine::execute(StateType& state)
+auto Engine::execute(StateType& state) -> decltype(state.execute())
 {
     states.push_back(&state);
     state.engine = this;

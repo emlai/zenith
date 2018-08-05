@@ -3,8 +3,15 @@
 #include <boost/preprocessor/cat.hpp>
 #include <boost/utility/string_ref.hpp>
 #include <ostream>
+#include <memory>
 #include <string>
 #include <vector>
+
+template<typename T, typename... Args>
+std::unique_ptr<T> make_unique(Args&&... args)
+{
+    return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+}
 
 template<typename T>
 std::ostream& operator<<(std::ostream& outputStream, const std::vector<T>& elements)

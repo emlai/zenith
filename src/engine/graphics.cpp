@@ -164,7 +164,7 @@ void GraphicsContext::renderFilledRectangle(Rect rectangle, Color32 color, Blend
                     double srcG = ((*pixel & 0x00FF0000) >> 16) / 255.0;
                     double srcB = ((*pixel & 0x0000FF00) >> 8) / 255.0;
 
-                    auto blendLinearLight = [](auto& src, auto dst)
+                    auto blendLinearLight = [](double& src, double dst)
                     {
                         if (dst > 0.5)
                             src += 2.0 * dst - 1.0;
@@ -176,7 +176,7 @@ void GraphicsContext::renderFilledRectangle(Rect rectangle, Color32 color, Blend
                     blendLinearLight(srcG, dstG);
                     blendLinearLight(srcB, dstB);
 
-                    auto wrap = [](auto& src)
+                    auto wrap = [](double& src)
                     {
                         if (src > 1.0)
                             src = 1.0;

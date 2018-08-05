@@ -67,11 +67,11 @@ struct Vector2Base
     Vector2Base& operator/=(Vector2Base vector) { x /= vector.x; y /= vector.y; return *this; }
     Vector2Base& operator%=(Vector2Base vector) { x %= vector.x; y %= vector.y; return *this; }
 
-    template<typename U, typename = std::enable_if_t<std::is_arithmetic<U>::value>>
+    template<typename U, typename = typename std::enable_if<std::is_arithmetic<U>::value>::type>
     Vector2Base& operator*=(U multiplier) { x *= multiplier; y *= multiplier; return *this; }
-    template<typename U, typename = std::enable_if_t<std::is_arithmetic<U>::value>>
+    template<typename U, typename = typename std::enable_if<std::is_arithmetic<U>::value>::type>
     Vector2Base& operator/=(U divisor) { x /= divisor; y /= divisor; return *this; }
-    template<typename U, typename = std::enable_if_t<std::is_arithmetic<U>::value>>
+    template<typename U, typename = typename std::enable_if<std::is_arithmetic<U>::value>::type>
     Vector2Base& operator%=(U divisor) { x %= divisor; y %= divisor; return *this; }
 
     Vector2Base operator+(Vector2Base vector) const { return Vector2Base(x + vector.x, y + vector.y); }
@@ -80,11 +80,11 @@ struct Vector2Base
     Vector2Base operator/(Vector2Base vector) const { return Vector2Base(x / vector.x, y / vector.y); }
     Vector2Base operator%(Vector2Base vector) const { return Vector2Base(x % vector.x, y % vector.y); }
 
-    template<typename U, typename = std::enable_if_t<std::is_arithmetic<U>::value>>
+    template<typename U, typename = typename std::enable_if<std::is_arithmetic<U>::value>::type>
     Vector2Base operator*(U multiplier) const { return Vector2Base(T(x * multiplier), T(y * multiplier)); }
-    template<typename U, typename = std::enable_if_t<std::is_arithmetic<U>::value>>
+    template<typename U, typename = typename std::enable_if<std::is_arithmetic<U>::value>::type>
     Vector2Base operator/(U divisor) const { return Vector2Base(T(x / divisor), T(y / divisor)); }
-    template<typename U, typename = std::enable_if_t<std::is_arithmetic<U>::value>>
+    template<typename U, typename = typename std::enable_if<std::is_arithmetic<U>::value>::type>
     Vector2Base operator%(U divisor) const { return Vector2Base(T(x % divisor), T(y % divisor)); }
 
     Vector2Base operator+() const { return *this; }
@@ -93,9 +93,9 @@ struct Vector2Base
     bool operator==(Vector2Base vector) const { return x == vector.x && y == vector.y; }
     bool operator!=(Vector2Base vector) const { return x != vector.x || y != vector.y; }
 
-    auto getLength() const { return std::sqrt(getLengthSquared()); }
-    auto getLengthSquared() const { return x * x + y * y; }
-    auto getArea() const { return x * y; }
+    double getLength() const { return std::sqrt(getLengthSquared()); }
+    T getLengthSquared() const { return x * x + y * y; }
+    T getArea() const { return x * y; }
     bool isZero() const { return x == 0 && y == 0; }
     template<typename U>
     bool isWithin(Vector2Base<U>) const;
@@ -148,13 +148,13 @@ inline Vector2Base<T> sign(Vector2Base<T> vector)
 }
 
 template<typename T>
-inline auto getDistanceSquared(Vector2Base<T> a, Vector2Base<T> b)
+inline T getDistanceSquared(Vector2Base<T> a, Vector2Base<T> b)
 {
     return (b - a).getLengthSquared();
 }
 
 template<typename T>
-inline auto getDistance(Vector2Base<T> a, Vector2Base<T> b)
+inline double getDistance(Vector2Base<T> a, Vector2Base<T> b)
 {
     return std::sqrt(getDistanceSquared(a, b));
 }

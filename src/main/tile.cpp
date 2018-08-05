@@ -33,7 +33,7 @@ Tile::Tile(const SaveFile& file, World& world, Vector2 position, int level)
     auto creatureCount = file.readInt32();
     creatures.reserve(size_t(creatureCount));
     for (int i = 0; i < creatureCount; ++i)
-        creatures.push_back(std::make_unique<Creature>(file, this));
+        creatures.push_back(make_unique<Creature>(file, this));
 
     auto itemCount = file.readInt32();
     items.reserve(size_t(itemCount));
@@ -46,7 +46,7 @@ Tile::Tile(const SaveFile& file, World& world, Vector2 position, int level)
         liquids.push_back(Liquid(file));
 
     if (file.readBool())
-        object = std::make_unique<Object>(file);
+        object = make_unique<Object>(file);
 }
 
 void Tile::save(SaveFile& file) const
@@ -222,7 +222,7 @@ std::unique_ptr<Creature> Tile::removeSingleTileCreature(Creature& creature)
 void Tile::removeCreature(Creature& creature)
 {
     auto newEnd = std::remove_if(creatures.begin(), creatures.end(),
-                                 [&](auto& ptr) { return ptr.get() == &creature; });
+                                 [&](const std::unique_ptr<Creature>& ptr) { return ptr.get() == &creature; });
     creatures.erase(newEnd, creatures.end());
 }
 

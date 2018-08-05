@@ -10,7 +10,7 @@ Controller::~Controller() {}
 std::unique_ptr<AIController> AIController::get(boost::string_ref id, Creature& creature)
 {
     auto ai = AI::get(Game::creatureConfig->get<std::string>(id, "ai"), creature);
-    return std::make_unique<AIController>(std::move(ai));
+    return make_unique<AIController>(std::move(ai));
 }
 
 Action AIController::control(Creature& creature)
@@ -75,7 +75,7 @@ Action PlayerController::control(Creature& creature)
                     break;
 
                 int selectedItemIndex = game.showInventory("What do you want to use?", false,
-                                                           nullptr, [](auto& item)
+                                                           nullptr, [](const Item& item)
                 {
                     return item.isUsable();
                 });
@@ -92,7 +92,7 @@ Action PlayerController::control(Creature& creature)
                     break;
 
                 int selectedItemIndex = game.showInventory("What do you want to eat?", false,
-                                                           nullptr, [](auto& item)
+                                                           nullptr, [](const Item& item)
                 {
                     return item.isEdible();
                 });
@@ -157,7 +157,7 @@ Action PlayerController::control(Creature& creature)
                             break;
 
                         auto materialName = game.askForString("Which material do you want to use for the item?");
-                        creature.getTileUnder(0).addItem(std::make_unique<Item>(itemName, materialName));
+                        creature.getTileUnder(0).addItem(make_unique<Item>(itemName, materialName));
                         break;
                     }
 
