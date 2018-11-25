@@ -4,6 +4,9 @@ Zenith is an upcoming open-world roguelike-like game currently in development.
 
 It is written in C++14 using the Boost and SDL2 libraries.
 
+![](https://forum.freegamedev.net/download/file.php?id=10844&mode=view)
+![](https://forum.freegamedev.net/download/file.php?id=10843&mode=view)
+
 ## Building from source
 
 Install the dependencies: CMake, Boost, and SDL2.
