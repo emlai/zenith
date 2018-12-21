@@ -8,20 +8,20 @@ class Item : Entity
     virtual void exist() {}
     Sprite getSprite() { return sprite; }
 
-    Item::Item(string id, string materialId)
+    Item(string id, string materialId)
     :   Item(id, materialId,
              ::getSprite(Game::itemSpriteSheet, Game::itemConfig, id, 0, getMaterialColor(materialId)))
     {
     }
 
-    Item::Item(string id, string materialId, Sprite sprite)
+    Item(string id, string materialId, Sprite sprite)
     :   Entity(id, Game::itemConfig),
         materialId(materialId),
         sprite(sprite)
     {
     }
 
-    Item Item::load(SaveFile file)
+    Item load(SaveFile file)
     {
         var itemId = file.readString();
         Item item;
@@ -46,7 +46,7 @@ class Item : Entity
         return item;
     }
 
-    void Item::save(SaveFile file)
+    void save(SaveFile file)
     {
         file.write(getId());
         file.write(materialId);
@@ -55,7 +55,7 @@ class Item : Entity
             component.save(file);
     }
 
-    bool Item::isUsable()
+    bool isUsable()
     {
         for (var component : getComponents())
             if (component.isUsable())
@@ -64,7 +64,7 @@ class Item : Entity
         return false;
     }
 
-    bool Item::use(Creature user, Game game)
+    bool use(Creature user, Game game)
     {
         assert(isUsable());
         bool returnValue = false;
@@ -76,12 +76,12 @@ class Item : Entity
         return returnValue;
     }
 
-    bool Item::isEdible()
+    bool isEdible()
     {
         return Game::itemConfig.getOptional<bool>(getId(), "isEdible").get_value_or(false);
     }
 
-    EquipmentSlot Item::getEquipmentSlot()
+    EquipmentSlot getEquipmentSlot()
     {
         var slotString = getConfig().getOptional<string>(getId(), "EquipmentSlot").get_value_or("Hand");
 
@@ -95,17 +95,17 @@ class Item : Entity
         return Hand;
     }
 
-    string Item::getNameAdjective()
+    string getNameAdjective()
     {
         return pascalCaseToSentenceCase(materialId);
     }
 
-    void Item::render(Window window, Vector2 position)
+    void render(Window window, Vector2 position)
     {
         sprite.render(window, position);
     }
 
-    void Item::renderEquipped(Window window, Vector2 position)
+    void renderEquipped(Window window, Vector2 position)
     {
         Vector2 equippedSourceOffset(0, Tile::getSize().y);
         sprite.render(window, position, equippedSourceOffset);
