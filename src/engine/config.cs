@@ -51,7 +51,7 @@ private:
     class Value
     {
         using Integer = long long;
-        enum class Type
+        enum Type
         {
             Bool,
             Int,

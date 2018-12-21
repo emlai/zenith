@@ -1,4 +1,4 @@
-enum class BlendMode { Normal, LinearLight }
+enum BlendMode { Normal, LinearLight }
 
 class GraphicsContext
 {
