@@ -1,4 +1,4 @@
-static BitmapFont initFont()
+﻿static BitmapFont initFont()
 {
     BitmapFont font("data/graphics/font-8x10.bmp", Vector2(8, 10));
     font.setDefaultColor(TextColor::White);
@@ -250,44 +250,47 @@ void MainMenu::execute()
     }
 }
 
-int main(int argc, char** argv)
+class Program
 {
-    if (argc == 2 && std::string(argv[1]) == "--version")
+    static void Main(string[] args)
     {
-        std::cout << PROJECT_NAME << ' ' << PROJECT_VERSION << std::endl;
+        if (argc == 2 && std::string(argv[1]) == "--version")
+        {
+            std::cout << PROJECT_NAME << ' ' << PROJECT_VERSION << std::endl;
+            return 0;
+        }
+
+        Engine engine;
+        auto& window = engine.createWindow(Window::getScreenResolution(), PROJECT_NAME, true);
+        window.setAnimationFrameRate(4);
+
+        if (boost::filesystem::exists(preferencesFileName))
+        {
+            Config preferences(preferencesFileName);
+            Sprite::useAsciiGraphics(preferences.getOptional<bool>("ASCIIGraphics").get_value_or(false));
+            window.getGraphicsContext().setScale(preferences.getOptional<double>("GraphicsScale").get_value_or(1));
+            window.setFullscreen(preferences.getOptional<bool>("Fullscreen").get_value_or(true));
+            loadKeyMap(&preferences);
+        }
+        else
+            loadKeyMap(nullptr);
+
+        BitmapFont font = initFont();
+        window.setFont(font);
+        Sprite::setAsciiGraphicsFont(&font);
+        Menu::setDefaultTextColor(TextColor::Gray);
+
+        MainMenu mainMenu;
+
+        try
+        {
+            engine.execute(mainMenu);
+        }
+        catch (const std::exception& exception)
+        {
+            engine.reportErrorToUser(std::string("Unhandled exception: ") + exception.what());
+        }
+
         return 0;
     }
-
-    Engine engine;
-    auto& window = engine.createWindow(Window::getScreenResolution(), PROJECT_NAME, true);
-    window.setAnimationFrameRate(4);
-
-    if (boost::filesystem::exists(preferencesFileName))
-    {
-        Config preferences(preferencesFileName);
-        Sprite::useAsciiGraphics(preferences.getOptional<bool>("ASCIIGraphics").get_value_or(false));
-        window.getGraphicsContext().setScale(preferences.getOptional<double>("GraphicsScale").get_value_or(1));
-        window.setFullscreen(preferences.getOptional<bool>("Fullscreen").get_value_or(true));
-        loadKeyMap(&preferences);
-    }
-    else
-        loadKeyMap(nullptr);
-
-    BitmapFont font = initFont();
-    window.setFont(font);
-    Sprite::setAsciiGraphicsFont(&font);
-    Menu::setDefaultTextColor(TextColor::Gray);
-
-    MainMenu mainMenu;
-
-    try
-    {
-        engine.execute(mainMenu);
-    }
-    catch (const std::exception& exception)
-    {
-        engine.reportErrorToUser(std::string("Unhandled exception: ") + exception.what());
-    }
-
-    return 0;
 }
