@@ -132,7 +132,7 @@ Vector2 BitmapFont::printHelper(Window window, string text, Vector2 position,
 
     if (lineBreakMode == SplitLines)
     {
-        std::istringstream stream(text.to_string());
+        std::istringstream stream(text);
         int currentLineSize = 0;
         int maxLineSize = printArea.getRight() - position.x;
 
@@ -142,7 +142,7 @@ Vector2 BitmapFont::printHelper(Window window, string text, Vector2 position,
             {
                 if (splitText.empty())
                 {
-                    splitText = text.to_string();
+                    splitText = text;
                     break;
                 }
 

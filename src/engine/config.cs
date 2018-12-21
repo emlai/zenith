@@ -9,9 +9,9 @@ class Config
     template<typename ValueType>
     ValueType? getOptional(string type, string attribute);
     List<string> getToplevelKeys();
-    void set(string key, bool value) { data.insert(key.to_string(), Value(value)); }
-    void set(string key, long long value) { data.insert(key.to_string(), Value(value)); }
-    void set(string key, double value) { data.insert(key.to_string(), Value(value)); }
+    void set(string key, bool value) { data.insert(key, Value(value)); }
+    void set(string key, long long value) { data.insert(key, Value(value)); }
+    void set(string key, double value) { data.insert(key, Value(value)); }
     void writeToFile(string filePath);
 
 private:
@@ -218,7 +218,7 @@ struct Config::ConversionTraits<List<ElementType>>
 template<typename ValueType>
 ValueType? Config::getOptional(string key)
 {
-    if (var value = data.getOptional(key.to_string()))
+    if (var value = data.getOptional(key))
         return convert<ValueType>(*value);
 
     return boost::none;
@@ -236,8 +236,8 @@ ValueType Config::get(string type, string attribute)
 template<typename ValueType>
 ValueType? Config::getOptional(string type, string attribute)
 {
-    string current = type.to_string();
-    string key = attribute.to_string();
+    string current = type;
+    string key = attribute;
 
     while (true)
     {
@@ -650,7 +650,7 @@ void Config::printValue(std::ostream stream, Config::Value value)
 
 void Config::writeToFile(string filePath)
 {
-    std::ofstream file(filePath.to_string());
+    std::ofstream file(filePath);
 
     for (var keyAndValue : data)
     {

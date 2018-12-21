@@ -35,7 +35,7 @@ class SaveFile
     }
 
     SaveFile(string filePath, bool writable)
-    :   file(SDL_RWFromFile(filePath.to_string().c_str(), writable ? "wb" : "rb"), closeFile)
+    :   file(SDL_RWFromFile(filePath.c_str(), writable ? "wb" : "rb"), closeFile)
     {
         if (!file)
             throw std::runtime_error(SDL_GetError());

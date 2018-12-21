@@ -66,7 +66,7 @@ Item::Item(string id, string materialId)
 
 Item::Item(string id, string materialId, Sprite sprite)
 :   Entity(id, *Game::itemConfig),
-    materialId(materialId.to_string()),
+    materialId(materialId),
     sprite(std::move(sprite))
 {
 }

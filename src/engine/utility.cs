@@ -53,8 +53,8 @@ string changeFileExtension(string fileName, string newExtension)
 
     if (dotPosition != string::npos)
     {
-        string newFileName = fileName.to_string();
-        newFileName.replace(dotPosition + 1, string::npos, newExtension.to_string());
+        string newFileName = fileName;
+        newFileName.replace(dotPosition + 1, string::npos, newExtension);
         return newFileName;
     }
     else

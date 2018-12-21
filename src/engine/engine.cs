@@ -32,9 +32,9 @@ Window Engine::createWindow(Vector2 size, string title, bool fullscreen)
 
 void Engine::reportErrorToUser(string text)
 {
-    if (SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, getWindow().getTitle().to_string().c_str(),
-                                 text.to_string().c_str(), nullptr) != 0)
-        std::cerr << text.to_string().c_str() << std::endl;
+    if (SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, getWindow().getTitle().c_str(),
+                                 text.c_str(), nullptr) != 0)
+        std::cerr << text.c_str() << std::endl;
 }
 
 void Engine::render(Window window)

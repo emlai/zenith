@@ -306,7 +306,7 @@ void Tile::setObject(std::unique_ptr<Object> newObject)
 
 void Tile::setGround(string groundId)
 {
-    this.groundId = groundId.to_string();
+    this.groundId = groundId;
     groundSprite = getSprite(*Game::groundSpriteSheet, *Game::groundConfig, groundId);
 }
 

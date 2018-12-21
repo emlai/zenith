@@ -58,7 +58,7 @@ class Window
     Window(Engine engine, Vector2 size, string title, bool fullscreen)
     :   engine(engine),
         closeRequestReceived(false),
-        windowHandle(initWindowHandle(size, title.to_string().c_str(), fullscreen), SDL_DestroyWindow),
+        windowHandle(initWindowHandle(size, title.c_str(), fullscreen), SDL_DestroyWindow),
         context(*this)
     {
         SDL_EventState(SDL_WINDOWEVENT_ENTER, SDL_IGNORE);

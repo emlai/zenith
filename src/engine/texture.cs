@@ -27,7 +27,7 @@ class Texture
     }
 
     Texture(string fileName, Color32 transparentColor)
-    :   surface(SDL_LoadBMP(fileName.to_string().c_str()), SDL_FreeSurface)
+    :   surface(SDL_LoadBMP(fileName.c_str()), SDL_FreeSurface)
     {
         if (!surface)
             throw std::runtime_error("Unable to load " + fileName + ": " + SDL_GetError());

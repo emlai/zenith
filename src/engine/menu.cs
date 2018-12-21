@@ -48,7 +48,7 @@ class Menu : State
 
     void addTitle(string text)
     {
-        title = text.to_string();
+        title = text;
     }
 
     int addItem(MenuItem item)

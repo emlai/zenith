@@ -45,7 +45,7 @@ static void reportUnknownComponent(string name)
 {
     static boost::unordered_set<string> reportedNames;
 
-    if (reportedNames.insert(name.to_string()).second)
+    if (reportedNames.insert(name).second)
         std::cerr << "Unknown component '" << name << "'\n";
 }
 
