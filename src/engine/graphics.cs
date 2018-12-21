@@ -5,17 +5,17 @@ class GraphicsContext
 public:
     GraphicsContext(Window);
     void setViewport(Rect viewport);
-    Rect getViewport() const;
+    Rect getViewport();
     void setView(Rect view);
-    Rect getView() const { return view.get_ptr(); }
+    Rect getView() { return view.get_ptr(); }
     void setFont(BitmapFont);
     BitmapFont getFont();
     void setScale(double scale);
-    double getScale() const;
+    double getScale();
     void setAnimationFrameRate(int framesPerSecond);
-    var getAnimationFrameTime() const { return animationFrameTime; }
+    var getAnimationFrameTime() { return animationFrameTime; }
     void updateScreen();
-    SDL_Renderer getRenderer() const { return renderer.get(); }
+    SDL_Renderer getRenderer() { return renderer.get(); }
     void renderRectangle(Rect rectangle, Color32 color);
     void renderFilledRectangle(Rect rectangle, Color32 color, BlendMode blendMode = BlendMode::Normal);
 
@@ -24,8 +24,8 @@ private:
     friend class Window;
 
     void clearScreen();
-    Vector2 mapFromTargetCoordinates(Vector2) const;
-    Rect mapToTargetCoordinates(Rect) const;
+    Vector2 mapFromTargetCoordinates(Vector2);
+    Rect mapToTargetCoordinates(Rect);
 
     Window window;
     std::unique_ptr<SDL_Renderer, void (&)(SDL_Renderer)> renderer;
@@ -59,7 +59,7 @@ void GraphicsContext::setScale(double scale)
     targetTexture = Texture(SDL_PIXELFORMAT_RGBA8888, window.getResolution());
 }
 
-double GraphicsContext::getScale() const
+double GraphicsContext::getScale()
 {
     float scale;
     SDL_RenderGetScale(renderer.get(), scale, nullptr);
@@ -79,7 +79,7 @@ void GraphicsContext::setViewport(Rect viewport)
         this->viewport = boost::none;
 }
 
-Rect GraphicsContext::getViewport() const
+Rect GraphicsContext::getViewport()
 {
     if (viewport)
         return *viewport;
@@ -119,7 +119,7 @@ void GraphicsContext::clearScreen()
     SDL_FillRect(targetTexture.getSurface(), nullptr, 0);
 }
 
-Vector2 GraphicsContext::mapFromTargetCoordinates(Vector2 position) const
+Vector2 GraphicsContext::mapFromTargetCoordinates(Vector2 position)
 {
     position /= getScale();
     position -= getViewport().position;
@@ -130,7 +130,7 @@ Vector2 GraphicsContext::mapFromTargetCoordinates(Vector2 position) const
     return position;
 }
 
-Rect GraphicsContext::mapToTargetCoordinates(Rect rectangle) const
+Rect GraphicsContext::mapToTargetCoordinates(Rect rectangle)
 {
     if (view)
         rectangle.position -= view->position;

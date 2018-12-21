@@ -4,23 +4,23 @@ public:
     Config() {}
     Config(string filePath);
     template<typename ValueType>
-    boost::optional<ValueType> getOptional(string key) const;
+    boost::optional<ValueType> getOptional(string key);
     template<typename ValueType>
-    ValueType get(string type, string attribute) const;
+    ValueType get(string type, string attribute);
     template<typename ValueType>
-    boost::optional<ValueType> getOptional(string type, string attribute) const;
-    List<string> getToplevelKeys() const;
+    boost::optional<ValueType> getOptional(string type, string attribute);
+    List<string> getToplevelKeys();
     void set(string key, bool value) { data.insert(key.to_string(), Value(value)); }
     void set(string key, long long value) { data.insert(key.to_string(), Value(value)); }
     void set(string key, double value) { data.insert(key.to_string(), Value(value)); }
-    void writeToFile(string filePath) const;
+    void writeToFile(string filePath);
 
 private:
     template<typename Value>
     class Group_
     {
     public:
-        Value at(string key) const
+        Value at(string key)
         {
             if (var value = getOptional(key))
                 return *value;
@@ -28,7 +28,7 @@ private:
             throw std::out_of_range(key);
         }
 
-        Value getOptional(string key) const
+        Value getOptional(string key)
         {
             var it = properties.find(key);
 
@@ -38,8 +38,8 @@ private:
             return nullptr;
         }
 
-        var begin() const { return properties.begin(); }
-        var end() const { return properties.end(); }
+        var begin() { return properties.begin(); }
+        var end() { return properties.end(); }
 
         void insert(string key, Value value)
         {
@@ -73,19 +73,19 @@ private:
         Value(Group_<Value> value) : group(std::move(value)), type(Type::Group) {}
         Value(Value value);
         ~Value();
-        Type getType() const { return type; }
-        bool isBool() const { return type == Type::Bool; }
-        bool isInt() const { return type == Type::Int; }
-        bool isFloat() const { return type == Type::Float; }
-        bool isString() const { return type == Type::String; }
-        bool isList() const { return type == Type::List; }
-        bool isGroup() const { return type == Type::Group; }
-        bool getBool() const { return boolean; }
-        Integer getInt() const { return integer; }
-        double getFloat() const { return floatingPoint; }
-        string getString() const { return string; }
-        const List<Value>& getList() const { return list; }
-        const Group_<Value>& getGroup() const { return group; }
+        Type getType() { return type; }
+        bool isBool() { return type == Type::Bool; }
+        bool isInt() { return type == Type::Int; }
+        bool isFloat() { return type == Type::Float; }
+        bool isString() { return type == Type::String; }
+        bool isList() { return type == Type::List; }
+        bool isGroup() { return type == Type::Group; }
+        bool getBool() { return boolean; }
+        Integer getInt() { return integer; }
+        double getFloat() { return floatingPoint; }
+        string getString() { return string; }
+        const List<Value>& getList() { return list; }
+        const Group_<Value>& getGroup() { return group; }
 
     private:
         union
@@ -117,7 +117,7 @@ private:
     Value parseArray(ConfigReader reader);
     Value parseAtomicValue(ConfigReader reader);
     Value parseNumber(ConfigReader reader);
-    void printValue(std::ostream stream, Config::Value value) const;
+    void printValue(std::ostream stream, Config::Value value);
 
     Group data;
 }
@@ -221,7 +221,7 @@ struct Config::ConversionTraits<List<ElementType>>
 }
 
 template<typename ValueType>
-boost::optional<ValueType> Config::getOptional(string key) const
+boost::optional<ValueType> Config::getOptional(string key)
 {
     if (var value = data.getOptional(key.to_string()))
         return convert<ValueType>(*value);
@@ -230,7 +230,7 @@ boost::optional<ValueType> Config::getOptional(string key) const
 }
 
 template<typename ValueType>
-ValueType Config::get(string type, string attribute) const
+ValueType Config::get(string type, string attribute)
 {
     if (var value = getOptional<ValueType>(type, attribute))
         return ValueType(std::move(*value));
@@ -239,7 +239,7 @@ ValueType Config::get(string type, string attribute) const
 }
 
 template<typename ValueType>
-boost::optional<ValueType> Config::getOptional(string type, string attribute) const
+boost::optional<ValueType> Config::getOptional(string type, string attribute)
 {
     string current = type.to_string();
     string key = attribute.to_string();
@@ -290,8 +290,8 @@ public:
     int peek();
     string getId();
     string getDoubleQuotedString();
-    std::runtime_error syntaxError(string message) const;
-    std::runtime_error syntaxError(string expected, char actual) const;
+    std::runtime_error syntaxError(string message);
+    std::runtime_error syntaxError(string expected, char actual);
 
 private:
     string filePath;
@@ -416,18 +416,18 @@ static string charToString(char ch)
     }
 }
 
-std::runtime_error ConfigReader::syntaxError(string message) const
+std::runtime_error ConfigReader::syntaxError(string message)
 {
     return std::runtime_error("Syntax error in " + filePath + " (line " + std::to_string(line) +
                               ", column " + std::to_string(column) + "): " + message);
 }
 
-std::runtime_error ConfigReader::syntaxError(string expected, char actual) const
+std::runtime_error ConfigReader::syntaxError(string expected, char actual)
 {
     return syntaxError("expected " + expected + ", got " + charToString(actual));
 }
 
-List<string> Config::getToplevelKeys() const
+List<string> Config::getToplevelKeys()
 {
     List<string> keys;
 
@@ -619,7 +619,7 @@ Config::Config(string filePath)
     }
 }
 
-void Config::printValue(std::ostream stream, Config::Value value) const
+void Config::printValue(std::ostream stream, Config::Value value)
 {
     switch (value.getType())
     {
@@ -654,7 +654,7 @@ void Config::printValue(std::ostream stream, Config::Value value) const
     }
 }
 
-void Config::writeToFile(string filePath) const
+void Config::writeToFile(string filePath)
 {
     std::ofstream file(filePath.to_string());
 

@@ -3,8 +3,8 @@ class Door : public Component
     bool reactToMovementAttempt() override;
     bool preventsMovement() override { return !isOpen; }
     bool close() override;
-    bool blocksSight() const override { return !isOpen; }
-    void save(SaveFile file) const override;
+    bool blocksSight() override { return !isOpen; }
+    void save(SaveFile file) override;
     void load(SaveFile file) override;
 
 private:
@@ -44,7 +44,7 @@ void Door::setOpen(bool open)
     sprite.setAsciiGlyph(isOpen ? '_' : '#');
 }
 
-void Door::save(SaveFile file) const
+void Door::save(SaveFile file)
 {
     file.write(isOpen);
 }

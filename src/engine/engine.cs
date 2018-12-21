@@ -3,7 +3,7 @@ class Engine
 public:
     Window createWindow(Vector2 size, string title = "", bool fullscreen = true);
     Window getWindow(unsigned index = 0) { return windows[index]; }
-    Window getWindow(unsigned index = 0) const { return windows[index]; }
+    Window getWindow(unsigned index = 0) { return windows[index]; }
     void reportErrorToUser(string text);
     template<typename StateType>
     var execute(StateType state);

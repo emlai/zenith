@@ -51,12 +51,12 @@ public:
     static void setDefaultHoverColor(Color32 color) { defaultHoverColor = color; }
 
 private:
-    bool isValidIndex(unsigned index) const { return index < menuItems.size(); }
-    int calculateMaxTextSize() const;
+    bool isValidIndex(unsigned index) { return index < menuItems.size(); }
+    int calculateMaxTextSize();
     void calculateSize();
     void calculateItemPositions();
-    string getHotkeyPrefix(int index) const;
-    int calculateMainImageColumnWidth() const;
+    string getHotkeyPrefix(int index);
+    int calculateMainImageColumnWidth();
 
     string title;
     List<MenuItem> menuItems;
@@ -181,7 +181,7 @@ int Menu::execute()
     return exitCode;
 }
 
-int Menu::calculateMaxTextSize() const
+int Menu::calculateMaxTextSize()
 {
     int maxSize = 0;
     int indexOfMax = 0;
@@ -247,7 +247,7 @@ void Menu::calculateItemPositions()
     }
 }
 
-int Menu::calculateMainImageColumnWidth() const
+int Menu::calculateMainImageColumnWidth()
 {
     var width = 0;
 
@@ -315,7 +315,7 @@ void Menu::render(Window window)
     }
 }
 
-string Menu::getHotkeyPrefix(int index) const
+string Menu::getHotkeyPrefix(int index)
 {
     switch (hotkeyStyle)
     {

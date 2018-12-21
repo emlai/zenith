@@ -4,11 +4,11 @@ class Message
 {
 public:
     Message(string text, int turn) : text(std::move(text)), turn(turn), count(1) {}
-    string getText() const { return text; }
-    int getTurn() const { return turn; }
-    int getCount() const { return count; }
+    string getText() { return text; }
+    int getTurn() { return turn; }
+    int getCount() { return count; }
     void increaseCount(int currentTurn) { ++count; turn = currentTurn; }
-    void save(SaveFile file) const;
+    void save(SaveFile file);
     static Message load(SaveFile file);
 
 private:
@@ -30,7 +30,7 @@ namespace MessageSystem
     void clearDebugMessageHistory();
 #endif
 }
-void Message::save(SaveFile file) const
+void Message::save(SaveFile file)
 {
     file.write(text);
     file.writeInt32(turn);

@@ -4,8 +4,8 @@ class SaveFile
 {
 public:
     SaveFile(string filePath, bool writable);
-    ulong getSize() const;
-    long getOffset() const;
+    ulong getSize();
+    long getOffset();
     void seek(long offset);
     SaveFile copyToMemory();
 
@@ -26,21 +26,21 @@ public:
     template<typename T>
     void write(const List<T>& vector);
 
-    sbyte readInt8() const { return sbyte(readUint8()); }
-    byte readUint8() const;
-    short readInt16() const { return short(readUint16()); }
-    ushort readUint16() const;
-    int readInt32() const { return int(readUint32()); }
-    uint readUint32() const;
-    long readInt64() const { return long(readUint64()); }
-    ulong readUint64() const;
-    bool readBool() const;
-    double readDouble() const;
-    string readString() const;
-    Vector2 readVector2() const;
-    Vector3 readVector3() const;
+    sbyte readInt8() { return sbyte(readUint8()); }
+    byte readUint8();
+    short readInt16() { return short(readUint16()); }
+    ushort readUint16();
+    int readInt32() { return int(readUint32()); }
+    uint readUint32();
+    long readInt64() { return long(readUint64()); }
+    ulong readUint64();
+    bool readBool();
+    double readDouble();
+    string readString();
+    Vector2 readVector2();
+    Vector3 readVector3();
     template<typename T>
-    void read(List<T>& vector) const;
+    void read(List<T>& vector);
 
 private:
     SaveFile(List<char> buffer);
@@ -49,7 +49,7 @@ private:
     template<typename T>
     void write(T value) { value.save(*this); }
     template<typename T>
-    T read() const { return T::load(*this); }
+    T read() { return T::load(*this); }
 
     List<char> buffer;
     std::unique_ptr<SDL_RWops, void (*)(SDL_RWops)> file;
@@ -65,7 +65,7 @@ void SaveFile::write(const List<T>& vector)
 }
 
 template<typename T>
-void SaveFile::read(List<T>& vector) const
+void SaveFile::read(List<T>& vector)
 {
     var size = readInt32();
     assert(vector.empty());
@@ -76,7 +76,7 @@ void SaveFile::read(List<T>& vector) const
 }
 
 template<>
-inline double SaveFile::read<double>() const
+inline double SaveFile::read<double>()
 {
     return readDouble();
 }
@@ -100,7 +100,7 @@ SaveFile::SaveFile(List<char> buffer)
         throw std::runtime_error(SDL_GetError());
 }
 
-ulong SaveFile::getSize() const
+ulong SaveFile::getSize()
 {
     var size = SDL_RWsize(file.get());
 
@@ -110,7 +110,7 @@ ulong SaveFile::getSize() const
     return ulong(size);
 }
 
-long SaveFile::getOffset() const
+long SaveFile::getOffset()
 {
     return SDL_RWtell(file.get());
 }
@@ -125,7 +125,7 @@ void SaveFile::writeInt8(byte value)
     SDL_WriteU8(file.get(), value);
 }
 
-byte SaveFile::readUint8() const
+byte SaveFile::readUint8()
 {
     return SDL_ReadU8(file.get());
 }
@@ -135,7 +135,7 @@ void SaveFile::writeInt16(ushort value)
     SDL_WriteLE16(file.get(), value);
 }
 
-ushort SaveFile::readUint16() const
+ushort SaveFile::readUint16()
 {
     return SDL_ReadLE16(file.get());
 }
@@ -145,7 +145,7 @@ void SaveFile::writeInt32(uint value)
     SDL_WriteLE32(file.get(), value);
 }
 
-uint SaveFile::readUint32() const
+uint SaveFile::readUint32()
 {
     return SDL_ReadLE32(file.get());
 }
@@ -155,7 +155,7 @@ void SaveFile::writeInt64(ulong value)
     SDL_WriteLE64(file.get(), value);
 }
 
-ulong SaveFile::readUint64() const
+ulong SaveFile::readUint64()
 {
     return SDL_ReadLE64(file.get());
 }
@@ -165,7 +165,7 @@ void SaveFile::write(bool value)
     writeInt8(byte(value));
 }
 
-bool SaveFile::readBool() const
+bool SaveFile::readBool()
 {
     return bool(readUint8());
 }
@@ -178,7 +178,7 @@ void SaveFile::write(double value)
     writeInt64(integer);
 }
 
-double SaveFile::readDouble() const
+double SaveFile::readDouble()
 {
     var integer = readUint64();
     double result;
@@ -195,7 +195,7 @@ void SaveFile::write(string value)
         writeInt8(byte(ch));
 }
 
-string SaveFile::readString() const
+string SaveFile::readString()
 {
     var size = readUint16();
     string string;
@@ -213,7 +213,7 @@ void SaveFile::write(Vector2 value)
     writeInt32(value.y);
 }
 
-Vector2 SaveFile::readVector2() const
+Vector2 SaveFile::readVector2()
 {
     var x = readInt32();
     var y = readInt32();
@@ -227,7 +227,7 @@ void SaveFile::write(Vector3 value)
     writeInt32(value.z);
 }
 
-Vector3 SaveFile::readVector3() const
+Vector3 SaveFile::readVector3()
 {
     var x = readInt32();
     var y = readInt32();

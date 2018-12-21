@@ -3,20 +3,20 @@ class Area
 public:
     Area(World world, Vector2 position, int level);
     Area(SaveFile file, World world, Vector2 position, int level);
-    void save(SaveFile file) const;
+    void save(SaveFile file);
 
 private:
     friend class World;
 
     Tile getRandomTile();
-    Tile getRandomTile() const;
-    World getWorld() const { return world; }
-    Vector2 getPosition() const { return position; }
+    Tile getRandomTile();
+    World getWorld() { return world; }
+    Vector2 getPosition() { return position; }
     static const int size = 64;
     static const Vector2 sizeVector;
 
     Tile getTileAt(Vector2 position);
-    Tile getTileAt(Vector2 position) const;
+    Tile getTileAt(Vector2 position);
 
     List<Tile> tiles;
     World world;
@@ -54,7 +54,7 @@ Area::Area(SaveFile file, World world, Vector2 position, int level)
     }
 }
 
-void Area::save(SaveFile file) const
+void Area::save(SaveFile file)
 {
     for (var tile : tiles)
         tile.save(file);
@@ -67,14 +67,14 @@ Tile Area::getTileAt(Vector2 position)
     return tiles[position.x + size * position.y];
 }
 
-Tile Area::getTileAt(Vector2 position) const
+Tile Area::getTileAt(Vector2 position)
 {
     assert(position.x >= 0 && position.x < size);
     assert(position.y >= 0 && position.y < size);
     return tiles[position.x + size * position.y];
 }
 
-Tile Area::getRandomTile() const
+Tile Area::getRandomTile()
 {
     return getTileAt(makeRandomVector(sizeVector));
 }

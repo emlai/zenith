@@ -5,9 +5,9 @@ class Room
 public:
     Room(Rect region, List<Tile>&& doorTiles)
     :   region(region), doorTiles(std::move(doorTiles)) {}
-    Rect getRegion() const { return region; }
-    Rect getInnerRegion() const { return region.inset(Vector2(1, 1)); }
-    const List<Tile> getDoorTiles() const { return doorTiles; }
+    Rect getRegion() { return region; }
+    Rect getInnerRegion() { return region.inset(Vector2(1, 1)); }
+    const List<Tile> getDoorTiles() { return doorTiles; }
 
 private:
     Rect region;
@@ -18,8 +18,8 @@ class Building
 {
 public:
     Building(List<Room>&& rooms);
-    const List<Room>& getRooms() const { return rooms; }
-    List<Tile> getDoorTiles() const;
+    const List<Room>& getRooms() { return rooms; }
+    List<Tile> getDoorTiles();
 
 private:
     List<Room> rooms;
@@ -36,9 +36,9 @@ private:
     List<Building> generateBuildings(Rect region, int level);
     boost::optional<Building> generateBuilding(Rect region, int level);
     boost::optional<Room> generateRoom(Rect region, int level);
-    Tile findPathStart(Tile tile) const;
+    Tile findPathStart(Tile tile);
     List<Tile> findPathAStar(Tile source, Tile target,
-                                     const std::function<bool(Tile)>& isAllowed) const;
+                                     const std::function<bool(Tile)>& isAllowed);
     void generatePaths(const List<Building>& buildings);
     void generateItems(Rect region, int level);
     void generateCreatures(Rect region, int level);
@@ -51,7 +51,7 @@ Building::Building(List<Room>&& rooms)
     assert(this->rooms.size() >= 1);
 }
 
-List<Tile> Building::getDoorTiles() const
+List<Tile> Building::getDoorTiles()
 {
     List<Tile> doorTiles;
 
@@ -206,7 +206,7 @@ boost::optional<Room> WorldGenerator::generateRoom(Rect region, int level)
     return Room(region, { doorTile });
 }
 
-Tile WorldGenerator::findPathStart(Tile tile) const
+Tile WorldGenerator::findPathStart(Tile tile)
 {
     for (var direction : { North, East, South, West })
     {
@@ -239,7 +239,7 @@ static List<Tile> reconstructPath(const Dictionary<Tile, Tile>& cameFrom, Tile c
 }
 
 List<Tile> WorldGenerator::findPathAStar(Tile source, Tile target,
-                                                 const std::function<bool(Tile)>& isAllowed) const
+                                                 const std::function<bool(Tile)>& isAllowed)
 {
     boost::unordered_set<Tile> closedSet;
     boost::unordered_set<Tile> openSet;

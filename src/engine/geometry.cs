@@ -66,57 +66,57 @@ struct Vector2Base
     template<typename U, typename = std::enable_if_t<std::is_arithmetic<U>::value>>
     Vector2Base operator%=(U divisor) { x %= divisor; y %= divisor; return *this; }
 
-    Vector2Base operator+(Vector2Base vector) const { return Vector2Base(x + vector.x, y + vector.y); }
-    Vector2Base operator-(Vector2Base vector) const { return Vector2Base(x - vector.x, y - vector.y); }
-    Vector2Base operator(Vector2Base vector) const { return Vector2Base(x * vector.x, y * vector.y); }
-    Vector2Base operator/(Vector2Base vector) const { return Vector2Base(x / vector.x, y / vector.y); }
-    Vector2Base operator%(Vector2Base vector) const { return Vector2Base(x % vector.x, y % vector.y); }
+    Vector2Base operator+(Vector2Base vector) { return Vector2Base(x + vector.x, y + vector.y); }
+    Vector2Base operator-(Vector2Base vector) { return Vector2Base(x - vector.x, y - vector.y); }
+    Vector2Base operator(Vector2Base vector) { return Vector2Base(x * vector.x, y * vector.y); }
+    Vector2Base operator/(Vector2Base vector) { return Vector2Base(x / vector.x, y / vector.y); }
+    Vector2Base operator%(Vector2Base vector) { return Vector2Base(x % vector.x, y % vector.y); }
 
     template<typename U, typename = std::enable_if_t<std::is_arithmetic<U>::value>>
-    Vector2Base operator(U multiplier) const { return Vector2Base(T(x * multiplier), T(y * multiplier)); }
+    Vector2Base operator(U multiplier) { return Vector2Base(T(x * multiplier), T(y * multiplier)); }
     template<typename U, typename = std::enable_if_t<std::is_arithmetic<U>::value>>
-    Vector2Base operator/(U divisor) const { return Vector2Base(T(x / divisor), T(y / divisor)); }
+    Vector2Base operator/(U divisor) { return Vector2Base(T(x / divisor), T(y / divisor)); }
     template<typename U, typename = std::enable_if_t<std::is_arithmetic<U>::value>>
-    Vector2Base operator%(U divisor) const { return Vector2Base(T(x % divisor), T(y % divisor)); }
+    Vector2Base operator%(U divisor) { return Vector2Base(T(x % divisor), T(y % divisor)); }
 
-    Vector2Base operator+() const { return *this; }
-    Vector2Base operator-() const { return Vector2Base(-x, -y); }
+    Vector2Base operator+() { return *this; }
+    Vector2Base operator-() { return Vector2Base(-x, -y); }
 
-    bool operator==(Vector2Base vector) const { return x == vector.x && y == vector.y; }
-    bool operator!=(Vector2Base vector) const { return x != vector.x || y != vector.y; }
+    bool operator==(Vector2Base vector) { return x == vector.x && y == vector.y; }
+    bool operator!=(Vector2Base vector) { return x != vector.x || y != vector.y; }
 
-    var getLength() const { return std::sqrt(getLengthSquared()); }
-    var getLengthSquared() const { return x * x + y * y; }
-    var getArea() const { return x * y; }
-    bool isZero() const { return x == 0 && y == 0; }
+    var getLength() { return std::sqrt(getLengthSquared()); }
+    var getLengthSquared() { return x * x + y * y; }
+    var getArea() { return x * y; }
+    bool isZero() { return x == 0 && y == 0; }
     template<typename U>
-    bool isWithin(Vector2Base<U>) const;
-    bool isWithin(struct Rect) const;
+    bool isWithin(Vector2Base<U>);
+    bool isWithin(struct Rect);
 
-    Vector2 divideRoundingDown(int divisor) const
+    Vector2 divideRoundingDown(int divisor)
     {
         return Vector2(::divideRoundingDown(x, divisor), ::divideRoundingDown(y, divisor));
     }
 
-    Vector2 divideRoundingDown(Vector2 divisor) const
+    Vector2 divideRoundingDown(Vector2 divisor)
     {
         return Vector2(::divideRoundingDown(x, divisor.x), ::divideRoundingDown(y, divisor.y));
     }
 
-    Dir8 getDir8() const;
+    Dir8 getDir8();
 
     static const Vector2Base zeroVector;
 }
 
 template<typename T>
 template<typename U>
-inline bool Vector2Base<T>::isWithin(Vector2Base<U> vector) const
+inline bool Vector2Base<T>::isWithin(Vector2Base<U> vector)
 {
     return x >= 0 && U(x) < vector.x && y >= 0 && U(y) < vector.y;
 }
 
 template<typename T>
-Dir8 Vector2Base<T>::getDir8() const
+Dir8 Vector2Base<T>::getDir8()
 {
     if (isZero()) return NoDir;
     double angle = std::atan2(y, x);
@@ -184,7 +184,7 @@ namespace std
     template<>
     struct hash<Vector2>
     {
-        size_t operator()(Vector2 vector) const
+        size_t operator()(Vector2 vector)
         {
             return (vector.x * 73856093) ^ (vector.y * 19349663);
         }
@@ -207,19 +207,19 @@ struct Vector3Base
     Vector3Base operator/=(Vector3Base vector) { x /= vector.x; y /= vector.y; z /= vector.z; return *this; }
     Vector3Base operator%=(Vector3Base vector) { x %= vector.x; y %= vector.y; z %= vector.z; return *this; }
 
-    Vector3Base operator+(Vector3Base vector) const { return Vector3Base(x + vector.x, y + vector.y, z + vector.z); }
-    Vector3Base operator-(Vector3Base vector) const { return Vector3Base(x - vector.x, y - vector.y, z - vector.z); }
-    Vector3Base operator(Vector3Base vector) const { return Vector3Base(x * vector.x, y * vector.y, z * vector.z); }
-    Vector3Base operator/(Vector3Base vector) const { return Vector3Base(x / vector.x, y / vector.y, z / vector.z); }
-    Vector3Base operator%(Vector3Base vector) const { return Vector3Base(x % vector.x, y % vector.y, z % vector.z); }
+    Vector3Base operator+(Vector3Base vector) { return Vector3Base(x + vector.x, y + vector.y, z + vector.z); }
+    Vector3Base operator-(Vector3Base vector) { return Vector3Base(x - vector.x, y - vector.y, z - vector.z); }
+    Vector3Base operator(Vector3Base vector) { return Vector3Base(x * vector.x, y * vector.y, z * vector.z); }
+    Vector3Base operator/(Vector3Base vector) { return Vector3Base(x / vector.x, y / vector.y, z / vector.z); }
+    Vector3Base operator%(Vector3Base vector) { return Vector3Base(x % vector.x, y % vector.y, z % vector.z); }
 
-    Vector3Base operator+() const { return *this; }
-    Vector3Base operator-() const { return Vector3Base(-x, -y, -z); }
+    Vector3Base operator+() { return *this; }
+    Vector3Base operator-() { return Vector3Base(-x, -y, -z); }
 
-    bool operator==(Vector3Base vector) const { return x == vector.x && y == vector.y && z == vector.z; }
-    bool operator!=(Vector3Base vector) const { return x != vector.x || y != vector.y || z != vector.z; }
+    bool operator==(Vector3Base vector) { return x == vector.x && y == vector.y && z == vector.z; }
+    bool operator!=(Vector3Base vector) { return x != vector.x || y != vector.y || z != vector.z; }
 
-    Vector3Base divideRoundingDown(int divisor) const
+    Vector3Base divideRoundingDown(int divisor)
     {
         return Vector3Base(::divideRoundingDown(x, divisor),
                            ::divideRoundingDown(y, divisor),
@@ -232,7 +232,7 @@ namespace boost
     template<>
     struct hash<Vector3>
     {
-        size_t operator()(Vector3 vector) const
+        size_t operator()(Vector3 vector)
         {
             return (size_t(vector.x) * 73856093) ^ (size_t(vector.y) * 19349663) ^ (size_t(vector.z) * 83492791);
         }
@@ -248,22 +248,22 @@ struct Rect
     constexpr Rect(Vector2 position, Vector2 size) : position(position), size(size) {}
     constexpr Rect(int x, int y, int w, int h) : position(x, y), size(w, h) {}
 
-    int getLeft() const { return position.x; }
-    int getRight() const { assert(size.x > 0); return position.x + size.x - 1; }
-    int getTop() const { return position.y; }
-    int getBottom() const { assert(size.y > 0); return position.y + size.y - 1; }
-    Vector2 getCenter() const { return position + size / 2; }
-    int getWidth() const { return size.x; }
-    int getHeight() const { return size.y; }
+    int getLeft() { return position.x; }
+    int getRight() { assert(size.x > 0); return position.x + size.x - 1; }
+    int getTop() { return position.y; }
+    int getBottom() { assert(size.y > 0); return position.y + size.y - 1; }
+    Vector2 getCenter() { return position + size / 2; }
+    int getWidth() { return size.x; }
+    int getHeight() { return size.y; }
 
-    int getArea() const { return size.getArea(); }
-    int getPerimeter() const { return 2 * (size.x + size.y); }
-    bool isSquare() const { return size.x == size.y; }
+    int getArea() { return size.getArea(); }
+    int getPerimeter() { return 2 * (size.x + size.y); }
+    bool isSquare() { return size.x == size.y; }
 
-    Rect offset(Vector2 offset) const { return Rect(position + offset, size); }
-    Rect inset(Vector2 amount) const { return Rect(position + amount, size - amount * 2); }
+    Rect offset(Vector2 offset) { return Rect(position + offset, size); }
+    Rect inset(Vector2 amount) { return Rect(position + amount, size - amount * 2); }
 
-    bool intersects(Rect other) const
+    bool intersects(Rect other)
     {
         return getLeft() < other.getRight() && getRight() > other.getLeft()
             && getTop() < other.getBottom() && getBottom() > other.getTop();
@@ -271,7 +271,7 @@ struct Rect
 }
 
 template<typename T>
-inline bool Vector2Base<T>::isWithin(Rect rect) const
+inline bool Vector2Base<T>::isWithin(Rect rect)
 {
     return x >= rect.getLeft() && x <= rect.getRight() &&
            y >= rect.getTop() && y <= rect.getBottom();

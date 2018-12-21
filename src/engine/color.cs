@@ -26,16 +26,16 @@ struct Color
     explicit Color(T value) : value(value) {}
     Color(int red, int green, int blue, int alpha = max) : value(createValue(red, green, blue, alpha)) {}
 
-    int get(Channel channel) const { return value >> bit[channel] & max; }
+    int get(Channel channel) { return value >> bit[channel] & max; }
     void set(Channel channel, int n) { value = (~(max << bit[channel]) & value) | n << bit[channel]; }
     void edit(Channel channel, int n) { set(channel, limit(get(channel) + n, 0, max)); }
 
-    int getRed() const { return get(Red); }
-    int getGreen() const { return get(Green); }
-    int getBlue() const { return get(Blue); }
-    int getAlpha() const { return get(Alpha); }
+    int getRed() { return get(Red); }
+    int getGreen() { return get(Green); }
+    int getBlue() { return get(Blue); }
+    int getAlpha() { return get(Alpha); }
 
-    double getLuminance() const
+    double getLuminance()
     {
         return (0.299 * getRed() + 0.587 * getGreen() + 0.114 * getBlue()) / max;
     }
@@ -58,12 +58,12 @@ struct Color
         return *this;
     }
 
-    Color operator(double mod) const { return Color(*this) *= mod; }
+    Color operator(double mod) { return Color(*this) *= mod; }
 
-    explicit operator bool() const { return value != 0; }
+    explicit operator bool() { return value != 0; }
 
     template<typename U>
-    operator Color<U>() const
+    operator Color<U>()
     {
         return Color<U>(getRed() * Color<U>::max / max, getGreen() * Color<U>::max / max,
                         getBlue() * Color<U>::max / max, getAlpha() * Color<U>::max / max);

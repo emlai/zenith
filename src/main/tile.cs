@@ -3,50 +3,50 @@ class Tile
 public:
     Tile(World world, Vector2 position, int level, string groundId);
     Tile(SaveFile file, World world, Vector2 position, int level);
-    void save(SaveFile file) const;
+    void save(SaveFile file);
     void exist();
-    void render(Window window, int zIndex, bool fogOfWar, bool renderLight) const;
+    void render(Window window, int zIndex, bool fogOfWar, bool renderLight);
     template<typename... Args>
     Creature spawnCreature(Args...);
-    bool hasCreature() const { return !creatures.empty(); }
-    var getCreatures() const { return creatures; }
-    Creature getCreature(int index) const { return *creatures[index]; }
+    bool hasCreature() { return !creatures.empty(); }
+    var getCreatures() { return creatures; }
+    Creature getCreature(int index) { return *creatures[index]; }
     void transferCreature(Creature, Tile);
     std::unique_ptr<Creature> removeSingleTileCreature(Creature);
     void removeCreature(Creature);
-    bool hasItems() const { return !items.empty(); }
-    const List<std::unique_ptr<Item>>& getItems() const { return items; }
+    bool hasItems() { return !items.empty(); }
+    const List<std::unique_ptr<Item>>& getItems() { return items; }
     std::unique_ptr<Item> removeTopmostItem();
     void addItem(std::unique_ptr<Item> item);
     void addLiquid(string materialId);
-    bool hasObject() const { return bool(object); }
+    bool hasObject() { return bool(object); }
     Object getObject() { return object.get(); }
-    Object getObject() const { return object.get(); }
+    Object getObject() { return object.get(); }
     void setObject(std::unique_ptr<Object>);
-    string getGroundId() const { return groundId; }
+    string getGroundId() { return groundId; }
     void setGround(string groundId);
-    void forEachEntity(const std::function<void(Entity)>& function) const;
-    void forEachLightSource(const std::function<void(LightSource)>& function) const;
-    Color32 getLight() const { return light; }
+    void forEachEntity(const std::function<void(Entity)>& function);
+    void forEachLightSource(const std::function<void(LightSource)>& function);
+    Color32 getLight() { return light; }
     void emitLight();
     void addLight(Color32 light) { this->light.lighten(light); }
     void resetLight();
-    bool blocksSight() const;
-    Tile getAdjacentTile(Dir8) const;
-    Tile getPreExistingAdjacentTile(Dir8) const;
-    Tile getTileBelow() const;
-    Tile getTileAbove() const;
-    World getWorld() const { return world; }
-    Vector2 getPosition() const { return position; }
-    Vector3 getPosition3D() const { return Vector3(position) + Vector3(0, 0, level); }
-    int getLevel() const { return level; }
-    Vector2 getCenterPosition() const { return position * getSize() + getSize() / 2; }
+    bool blocksSight();
+    Tile getAdjacentTile(Dir8);
+    Tile getPreExistingAdjacentTile(Dir8);
+    Tile getTileBelow();
+    Tile getTileAbove();
+    World getWorld() { return world; }
+    Vector2 getPosition() { return position; }
+    Vector3 getPosition3D() { return Vector3(position) + Vector3(0, 0, level); }
+    int getLevel() { return level; }
+    Vector2 getCenterPosition() { return position * getSize() + getSize() / 2; }
     static Vector2 getSize();
     static Vector2 getMaxSize();
     static const Vector2 spriteSize;
 
 private:
-    string getTooltip() const;
+    string getTooltip();
     void addCreature(std::unique_ptr<Creature> creature) { creatures.push_back(std::move(creature)); }
 
     List<std::unique_ptr<Creature>> creatures;
@@ -106,7 +106,7 @@ Tile::Tile(SaveFile file, World world, Vector2 position, int level)
         object = std::make_unique<Object>(file);
 }
 
-void Tile::save(SaveFile file) const
+void Tile::save(SaveFile file)
 {
     file.write(groundId);
     file.write(creatures);
@@ -134,7 +134,7 @@ void Tile::exist()
         item->exist();
 }
 
-void Tile::render(Window window, int zIndex, bool fogOfWar, bool renderLight) const
+void Tile::render(Window window, int zIndex, bool fogOfWar, bool renderLight)
 {
     Vector2 renderPosition = position * getSize();
 
@@ -219,7 +219,7 @@ void Tile::render(Window window, int zIndex, bool fogOfWar, bool renderLight) co
 
 }
 
-string Tile::getTooltip() const
+string Tile::getTooltip()
 {
     string tooltip;
 
@@ -311,7 +311,7 @@ void Tile::setGround(string groundId)
     groundSprite = getSprite(*Game::groundSpriteSheet, *Game::groundConfig, groundId);
 }
 
-void Tile::forEachEntity(const std::function<void(Entity)>& function) const
+void Tile::forEachEntity(const std::function<void(Entity)>& function)
 {
     for (var creature : creatures)
     {
@@ -329,7 +329,7 @@ void Tile::forEachEntity(const std::function<void(Entity)>& function) const
         function(*object);
 }
 
-void Tile::forEachLightSource(const std::function<void(LightSource)>& function) const
+void Tile::forEachLightSource(const std::function<void(LightSource)>& function)
 {
     forEachEntity([&](Entity entity)
     {
@@ -354,27 +354,27 @@ void Tile::resetLight()
         light = Color32::black;
 }
 
-bool Tile::blocksSight() const
+bool Tile::blocksSight()
 {
     return hasObject() && getObject()->blocksSight();
 }
 
-Tile Tile::getAdjacentTile(Dir8 direction) const
+Tile Tile::getAdjacentTile(Dir8 direction)
 {
     return getWorld().getOrCreateTile(getPosition() + direction, level);
 }
 
-Tile Tile::getPreExistingAdjacentTile(Dir8 direction) const
+Tile Tile::getPreExistingAdjacentTile(Dir8 direction)
 {
     return getWorld().getTile(getPosition() + direction, level);
 }
 
-Tile Tile::getTileBelow() const
+Tile Tile::getTileBelow()
 {
     return getWorld().getOrCreateTile(getPosition(), level - 1);
 }
 
-Tile Tile::getTileAbove() const
+Tile Tile::getTileAbove()
 {
     return getWorld().getOrCreateTile(getPosition(), level + 1);
 }

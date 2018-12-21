@@ -23,25 +23,25 @@ public:
     Window(Window window) = default;
     ~Window();
     Event waitForInput();
-    Vector2 getMousePosition() const;
+    Vector2 getMousePosition();
     void setShowCursor(bool show);
     void setFullscreen(bool enable);
     void toggleFullscreen();
-    bool isFullscreen() const;
+    bool isFullscreen();
     void sendCloseRequest();
     void setViewport(Rect viewport) { context.setViewport(viewport); }
     void setView(Rect view) { context.setView(view); }
     void setFont(BitmapFont font) { context.setFont(font); }
     BitmapFont getFont() { return context.getFont(); }
     void setAnimationFrameRate(int fps) { context.setAnimationFrameRate(fps); }
-    var getAnimationFrameTime() const { return context.getAnimationFrameTime(); }
+    var getAnimationFrameTime() { return context.getAnimationFrameTime(); }
     void updateScreen() { context.updateScreen(); }
-    bool shouldClose() const;
-    Vector2 getResolution() const;
-    Vector2 getSize() const;
-    int getWidth() const;
-    int getHeight() const;
-    string getTitle() const;
+    bool shouldClose();
+    Vector2 getResolution();
+    Vector2 getSize();
+    int getWidth();
+    int getHeight();
+    string getTitle();
     GraphicsContext getGraphicsContext() { return context; }
     static Vector2 getScreenResolution();
 
@@ -131,7 +131,7 @@ void Window::toggleFullscreen()
     setFullscreen(!isFullscreen());
 }
 
-bool Window::isFullscreen() const
+bool Window::isFullscreen()
 {
     return SDL_GetWindowFlags(windowHandle.get()) & fullscreenFlag;
 }
@@ -210,12 +210,12 @@ void Window::sendCloseRequest()
     closeRequestReceived = true;
 }
 
-bool Window::shouldClose() const
+bool Window::shouldClose()
 {
     return closeRequestReceived;
 }
 
-Vector2 Window::getMousePosition() const
+Vector2 Window::getMousePosition()
 {
     Vector2 position;
     SDL_GetMouseState(position.x, position.y);
@@ -227,33 +227,33 @@ void Window::setShowCursor(bool show)
     SDL_ShowCursor(show);
 }
 
-Vector2 Window::getResolution() const
+Vector2 Window::getResolution()
 {
     return getSize() / context.getScale();
 }
 
-Vector2 Window::getSize() const
+Vector2 Window::getSize()
 {
     Vector2 size;
     SDL_GetWindowSize(windowHandle.get(), size.x, size.y);
     return size;
 }
 
-int Window::getWidth() const
+int Window::getWidth()
 {
     int width;
     SDL_GetWindowSize(windowHandle.get(), width, nullptr);
     return width;
 }
 
-int Window::getHeight() const
+int Window::getHeight()
 {
     int height;
     SDL_GetWindowSize(windowHandle.get(), nullptr, height);
     return height;
 }
 
-string Window::getTitle() const
+string Window::getTitle()
 {
     return SDL_GetWindowTitle(windowHandle.get());
 }

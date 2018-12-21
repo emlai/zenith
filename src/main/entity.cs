@@ -8,23 +8,23 @@ public:
     Entity operator=(Entity) = default;
     virtual ~Entity() = default;
 
-    string getName() const;
-    string getNameIndefinite() const;
-    string getId() const { return id; }
-    Config getConfig() const { return *config; }
+    string getName();
+    string getNameIndefinite();
+    string getId() { return id; }
+    Config getConfig() { return *config; }
     template<typename ComponentType>
-    List<ComponentType> getComponentsOfType() const;
+    List<ComponentType> getComponentsOfType();
 
     /// Returns true if the entity reacted to the movement attempt.
     bool reactToMovementAttempt();
-    bool preventsMovement() const;
+    bool preventsMovement();
     bool close();
 
 protected:
-    const List<std::unique_ptr<Component>>& getComponents() const { return components; }
+    const List<std::unique_ptr<Component>>& getComponents() { return components; }
 
 private:
-    virtual string getNameAdjective() const { return ""; }
+    virtual string getNameAdjective() { return ""; }
 
     string id;
     Config config;
@@ -32,7 +32,7 @@ private:
 }
 
 template<typename ComponentType>
-List<ComponentType> Entity::getComponentsOfType() const
+List<ComponentType> Entity::getComponentsOfType()
 {
     List<ComponentType> componentsOfType;
 
@@ -66,7 +66,7 @@ Entity::Entity(string id, Config config)
     }
 }
 
-string Entity::getName() const
+string Entity::getName()
 {
     string prefix = std::move(getConfig().getOptional<string>(getId(), "NamePrefix").get_value_or(""));
 
@@ -81,7 +81,7 @@ string Entity::getName() const
     return prefix + adjective + pascalCaseToSentenceCase(id);
 }
 
-string Entity::getNameIndefinite() const
+string Entity::getNameIndefinite()
 {
     var name = getName();
 
@@ -104,7 +104,7 @@ bool Entity::reactToMovementAttempt()
     return returnValue;
 }
 
-bool Entity::preventsMovement() const
+bool Entity::preventsMovement()
 {
     for (var component : components)
         if (component->preventsMovement())

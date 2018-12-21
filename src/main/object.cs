@@ -3,10 +3,10 @@ class Object : public Entity
 public:
     Object(string id);
     Object(SaveFile file);
-    void save(SaveFile file) const;
+    void save(SaveFile file);
     bool close();
-    bool blocksSight() const;
-    void render(Window window, Vector2 position) const;
+    bool blocksSight();
+    void render(Window window, Vector2 position);
     Sprite getSprite() { return sprite; }
 
 private:
@@ -26,7 +26,7 @@ Object::Object(SaveFile file)
         component->load(file);
 }
 
-void Object::save(SaveFile file) const
+void Object::save(SaveFile file)
 {
     file.write(getId());
 
@@ -45,7 +45,7 @@ bool Object::close()
     return returnValue;
 }
 
-bool Object::blocksSight() const
+bool Object::blocksSight()
 {
     for (var component : getComponents())
         if (component->blocksSight())
@@ -54,7 +54,7 @@ bool Object::blocksSight() const
     return Game::objectConfig->get<bool>(getId(), "blocksSight");
 }
 
-void Object::render(Window window, Vector2 position) const
+void Object::render(Window window, Vector2 position)
 {
     sprite.render(window, position);
 }

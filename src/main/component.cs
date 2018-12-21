@@ -3,16 +3,16 @@ class Component
 public:
     virtual ~Component() = 0;
     static std::unique_ptr<Component> get(string name, Entity parent);
-    Entity getParent() const { return *parent; }
+    Entity getParent() { return *parent; }
 
     /// Returns true if the component did react to the movement attempt.
     virtual bool reactToMovementAttempt() { return false; }
     virtual bool preventsMovement() { return false; }
     virtual bool close() { return false; }
-    virtual bool blocksSight() const { return false; }
-    virtual bool isUsable() const { return false; }
+    virtual bool blocksSight() { return false; }
+    virtual bool isUsable() { return false; }
     virtual bool use(Creature, Item, Game) { return false; }
-    virtual void save(SaveFile file) const = 0;
+    virtual void save(SaveFile file) = 0;
     virtual void load(SaveFile file) = 0;
 
 private:

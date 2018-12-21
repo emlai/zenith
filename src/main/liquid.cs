@@ -3,10 +3,10 @@ class Liquid
 public:
     Liquid(string materialId);
     Liquid(SaveFile file);
-    void save(SaveFile file) const;
+    void save(SaveFile file);
     void exist();
-    bool exists() const;
-    void render(Window window, Vector2 position) const;
+    bool exists();
+    void render(Window window, Vector2 position);
 
 private:
     static constexpr double fadeRate = 0.001;
@@ -34,7 +34,7 @@ Liquid::Liquid(SaveFile file)
     fadeLevel = file.readDouble();
 }
 
-void Liquid::save(SaveFile file) const
+void Liquid::save(SaveFile file)
 {
     file.write(materialId);
     file.write(fadeLevel);
@@ -45,12 +45,12 @@ void Liquid::exist()
     fadeLevel = std::max(0.0, fadeLevel - fadeRate);
 }
 
-bool Liquid::exists() const
+bool Liquid::exists()
 {
     return fadeLevel > 0.0;
 }
 
-void Liquid::render(Window window, Vector2 position) const
+void Liquid::render(Window window, Vector2 position)
 {
     SDL_SetSurfaceAlphaMod(texture.getSurface(), uint_t(fadeLevel * 255));
     texture.render(window, position);

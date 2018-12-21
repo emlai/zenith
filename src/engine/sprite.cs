@@ -3,11 +3,11 @@ class Sprite
 public:
     Sprite(Texture texture, Rect textureRegion, char asciiGlyph, Color32 asciiColor,
            Color32 materialColor = Color32::none, int animationFrames = 1);
-    Vector2 getSize() const;
-    int getWidth() const { return getSize().x; }
-    int getHeight() const { return getSize().y; }
-    void render(Window window, Vector2 position, Vector2 sourceOffset = Vector2(0, 0)) const;
-    Color32 getMaterialColor() const { return materialColor; }
+    Vector2 getSize();
+    int getWidth() { return getSize().x; }
+    int getHeight() { return getSize().y; }
+    void render(Window window, Vector2 position, Vector2 sourceOffset = Vector2(0, 0));
+    Color32 getMaterialColor() { return materialColor; }
     void setMaterialColor(Color32 color) { materialColor = color; }
     void setFrame(int newFrame) { frame = newFrame; }
     void setAsciiGlyph(char glyph) { asciiGlyph = glyph; }
@@ -37,7 +37,7 @@ Sprite::Sprite(Texture texture, Rect textureRegion, char asciiGlyph, Color32 asc
 {
 }
 
-Vector2 Sprite::getSize() const
+Vector2 Sprite::getSize()
 {
     if (useAsciiGraphics())
         return getAsciiGraphicsFont()->getCharSize();
@@ -45,7 +45,7 @@ Vector2 Sprite::getSize() const
         return textureRegion.size;
 }
 
-void Sprite::render(Window window, Vector2 position, Vector2 sourceOffset) const
+void Sprite::render(Window window, Vector2 position, Vector2 sourceOffset)
 {
     if (useAsciiGraphics())
     {

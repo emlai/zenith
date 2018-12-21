@@ -35,22 +35,22 @@ public:
     void setShadowPosition(Vector2 position) { shadowPosition = position; }
     void setCharSpacing(int amount) { moveVector.x = charSize.x + amount; }
     void setLineSpacing(int amount) { moveVector.y = charSize.y + amount; }
-    Vector2 getCharSize() const { return charSize; }
-    int getCharWidth() const { return charSize.x; }
-    int getCharHeight() const { return charSize.y; }
-    int getCharSpacing() const { return moveVector.x - charSize.x; }
-    int getLineSpacing() const { return moveVector.y - charSize.y; }
-    int getColumnWidth() const { return moveVector.x; }
-    int getRowHeight() const { return moveVector.y; }
-    Vector2 getTextSize(string text) const;
-    TextLayout getLayout() const { return layout; }
+    Vector2 getCharSize() { return charSize; }
+    int getCharWidth() { return charSize.x; }
+    int getCharHeight() { return charSize.y; }
+    int getCharSpacing() { return moveVector.x - charSize.x; }
+    int getLineSpacing() { return moveVector.y - charSize.y; }
+    int getColumnWidth() { return moveVector.x; }
+    int getRowHeight() { return moveVector.y; }
+    Vector2 getTextSize(string text);
+    TextLayout getLayout() { return layout; }
 
 private:
     using PrintIterator = const char;
     Vector2 printHelper(Window window, string, Vector2 position,
-                        Color32 backgroundColor, LineBreakMode lineBreakMode) const;
+                        Color32 backgroundColor, LineBreakMode lineBreakMode);
     void printLine(Window window, PrintIterator lineBegin, PrintIterator lineEnd,
-                   Rect source, Rect target, Color32 backgroundColor) const;
+                   Rect source, Rect target, Color32 backgroundColor);
     void initCurrentPosition();
 
     Rect printArea;
@@ -123,7 +123,7 @@ void BitmapFont::printWithCursor(Window window, string text, const char cursor,
 }
 
 Vector2 BitmapFont::printHelper(Window window, string text, Vector2 position,
-                                Color32 backgroundColor, LineBreakMode lineBreakMode) const
+                                Color32 backgroundColor, LineBreakMode lineBreakMode)
 {
     Rect source;
     source.size = charSize;
@@ -192,7 +192,7 @@ Vector2 BitmapFont::printHelper(Window window, string text, Vector2 position,
 }
 
 void BitmapFont::printLine(Window window, PrintIterator lineBegin, PrintIterator lineEnd,
-                           Rect source, Rect target, Color32 backgroundColor) const
+                           Rect source, Rect target, Color32 backgroundColor)
 {
     const int lineWidth = int((lineEnd - lineBegin) * moveVector.x);
 
@@ -220,7 +220,7 @@ void BitmapFont::printLine(Window window, PrintIterator lineBegin, PrintIterator
     }
 }
 
-Vector2 BitmapFont::getTextSize(string text) const
+Vector2 BitmapFont::getTextSize(string text)
 {
     int lengthOfLongestLine = 0;
     int currentLineLength = 0;

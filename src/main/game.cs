@@ -11,15 +11,15 @@ public:
     void execute();
     void stop() { gameIsRunning = false; }
     void advanceTurn() { ++turn; }
-    int getTurn() const { return turn; }
+    int getTurn() { return turn; }
     int showInventory(string title, bool showNothingAsOption, Item preselectedItem = nullptr,
                       std::function<bool(Item)> itemFilter = nullptr);
     void showEquipmentMenu();
     void lookMode();
     string askForString(string question);
     boost::optional<Dir8> askForDirection(string question);
-    Creature getPlayer() const { return player; }
-    Window getWindow() const;
+    Creature getPlayer() { return player; }
+    Window getWindow();
 #ifdef DEBUG
     void enterCommandMode(Window);
     static const Key commandModeKey = '`';
@@ -45,9 +45,9 @@ private:
     friend class LookMode;
     void renderAtPosition(Window, Vector2 centerPosition);
     void render(Window window) override;
-    void printPlayerInformation(BitmapFont) const;
-    void printStat(BitmapFont, string, double current, double max, Color16) const;
-    void printAttribute(BitmapFont, string, double current) const;
+    void printPlayerInformation(BitmapFont);
+    void printStat(BitmapFont, string, double current, double max, Color16);
+    void printAttribute(BitmapFont, string, double current);
 
     bool gameIsRunning;
     int turn;
@@ -102,7 +102,7 @@ Game::Game(bool loadSavedGame)
     }
 }
 
-Window Game::getWindow() const
+Window Game::getWindow()
 {
     return getEngine().getWindow();
 }
@@ -260,7 +260,7 @@ public:
 
 private:
     void render(Window) override {} // Rendered by keyboard::readLine() in execute().
-    bool renderPreviousState() const override { return true; }
+    bool renderPreviousState() override { return true; }
 
     string question;
 }
@@ -293,7 +293,7 @@ public:
 
 private:
     void render(Window window) override;
-    bool renderPreviousState() const override { return true; }
+    bool renderPreviousState() override { return true; }
 
     string question;
     Vector2 origin;
@@ -373,7 +373,7 @@ void Game::renderAtPosition(Window window, Vector2 centerPosition)
     }
 }
 
-void Game::printPlayerInformation(BitmapFont font) const
+void Game::printPlayerInformation(BitmapFont font)
 {
     font.setArea(GUI::getSidebarArea(getWindow()));
     printStat(font, "HP", player->getHP(), player->getMaxHP(), TextColor::Red);
@@ -402,7 +402,7 @@ void Game::printPlayerInformation(BitmapFont font) const
 }
 
 void Game::printStat(BitmapFont font, string statName, double currentValue,
-                     double maximumValue, Color16 color) const
+                     double maximumValue, Color16 color)
 {
     int currentValueInt = std::ceil(currentValue);
     int maximumValueInt = std::ceil(maximumValue);
@@ -419,7 +419,7 @@ void Game::printStat(BitmapFont font, string statName, double currentValue,
     font.printLine(getWindow(), string(text).substr(filledColumns), TextColor::White, Color32::none, true, PreserveLines);
 }
 
-void Game::printAttribute(BitmapFont font, string attributeName, double attributeValue) const
+void Game::printAttribute(BitmapFont font, string attributeName, double attributeValue)
 {
     string padding(5 - attributeName.size(), ' ');
     font.printLine(getWindow(), attributeName + padding + std::to_string(int(attributeValue)),

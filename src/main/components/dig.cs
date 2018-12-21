@@ -1,8 +1,8 @@
 class Dig : public Component
 {
-    bool isUsable() const override { return true; }
+    bool isUsable() override { return true; }
     bool use(Creature digger, Item digItem, Game game) override;
-    void save(SaveFile) const override {}
+    void save(SaveFile) override {}
     void load(SaveFile) override {}
 }
 bool Dig::use(Creature digger, Item digItem, Game game)

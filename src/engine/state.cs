@@ -7,12 +7,12 @@ public:
     State operator=(State) = delete;
     State operator=(State) = default;
     virtual ~State() = default;
-    Engine getEngine() const { return *engine; }
+    Engine getEngine() { return *engine; }
 
 private:
     friend class Engine;
     virtual void render(Window window) = 0;
-    virtual bool renderPreviousState() const { return false; }
+    virtual bool renderPreviousState() { return false; }
 
     Engine engine;
 }

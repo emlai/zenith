@@ -58,7 +58,7 @@ namespace std
     template<>
     struct hash<EquipmentSlot>
     {
-        size_t operator()(EquipmentSlot slot) const { return size_t(slot); }
+        size_t operator()(EquipmentSlot slot) { return size_t(slot); }
     }
 }
 
@@ -68,9 +68,9 @@ public:
     Creature(Tile, string id);
     Creature(Tile, string id, std::unique_ptr<Controller> controller);
     Creature(SaveFile file, Tile tile);
-    void save(SaveFile file) const;
+    void save(SaveFile file);
     void exist();
-    void render(Window window, Vector2 position) const;
+    void render(Window window, Vector2 position);
 
     Action tryToMoveOrAttack(Dir8);
     Action tryToMoveTowardsOrAttack(Creature target);
@@ -84,39 +84,39 @@ public:
     bool eat(Item);
     bool close(Dir8);
 
-    var getTilesUnder() const { return tilesUnder; }
-    Tile getTileUnder(int index) const { return *tilesUnder[index]; }
-    Vector2 getPosition() const;
-    int getLevel() const;
-    var getInventory() const { return inventory; }
-    var getEquipment() const { return equipment; }
+    var getTilesUnder() { return tilesUnder; }
+    Tile getTileUnder(int index) { return *tilesUnder[index]; }
+    Vector2 getPosition();
+    int getLevel();
+    var getInventory() { return inventory; }
+    var getEquipment() { return equipment; }
     std::unique_ptr<Item> removeItem(Item item);
-    Item getEquipment(EquipmentSlot slot) const { return equipment.at(slot); }
-    int getInventoryIndex(Item item) const;
-    bool isRunning() const { return running; }
+    Item getEquipment(EquipmentSlot slot) { return equipment.at(slot); }
+    int getInventoryIndex(Item item);
+    bool isRunning() { return running; }
     void setRunning(bool running) { this->running = running; }
-    bool isDead() const { return currentHP <= 0; }
-    double getHP() const { return currentHP; }
-    double getAP() const { return currentAP; }
-    double getMP() const { return currentMP; }
-    double getMaxHP() const { return maxHP; }
-    double getMaxMP() const { return maxMP; }
-    double getAttribute(Attribute) const;
-    var getDisplayedAttributes() const { return displayedAttributes; }
-    int getFieldOfVisionRadius() const;
+    bool isDead() { return currentHP <= 0; }
+    double getHP() { return currentHP; }
+    double getAP() { return currentAP; }
+    double getMP() { return currentMP; }
+    double getMaxHP() { return maxHP; }
+    double getMaxMP() { return maxMP; }
+    double getAttribute(Attribute);
+    var getDisplayedAttributes() { return displayedAttributes; }
+    int getFieldOfVisionRadius();
     template<typename... Args>
     void addMessage(Args...);
-    const List<Message>& getMessages() const { return messages; }
-    bool sees(Tile tile) const;
-    bool remembers(Tile tile) const;
-    List<Creature> getCreaturesCurrentlySeenBy(int maxFieldOfVisionRadius) const;
-    List<Creature> getCurrentlySeenCreatures() const;
-    Creature getNearestEnemy() const;
+    const List<Message>& getMessages() { return messages; }
+    bool sees(Tile tile);
+    bool remembers(Tile tile);
+    List<Creature> getCreaturesCurrentlySeenBy(int maxFieldOfVisionRadius);
+    List<Creature> getCurrentlySeenCreatures();
+    Creature getNearestEnemy();
     void setController(std::unique_ptr<Controller> controller);
 
 private:
-    World getWorld() const;
-    int getTurn() const;
+    World getWorld();
+    int getTurn();
     void moveTo(Tile);
     void attack(Creature);
     void setAttribute(Attribute, double amount);
@@ -130,7 +130,7 @@ private:
     void onDeath();
     static List<Attribute> initDisplayedAttributes(string);
     static List<List<int>> initAttributeIndices(string);
-    var getAttributeIndices(int attribute) const { return attributeIndices[attribute]; }
+    var getAttributeIndices(int attribute) { return attributeIndices[attribute]; }
 
     List<Tile> tilesUnder;
     mutable boost::unordered_set<Vector3> seenTilePositions;
@@ -277,7 +277,7 @@ Creature::Creature(SaveFile file, Tile tile)
     file.read(messages);
 }
 
-void Creature::save(SaveFile file) const
+void Creature::save(SaveFile file)
 {
     file.write(getId());
     for (var component : getComponents())
@@ -326,7 +326,7 @@ void Creature::regenerate()
     editMP(0.1);
 }
 
-void Creature::render(Window window, Vector2 position) const
+void Creature::render(Window window, Vector2 position)
 {
     sprite.render(window, position);
 
@@ -372,7 +372,7 @@ void Creature::calculateDerivedStats()
     currentMP = mpRatio * maxMP;
 }
 
-double Creature::getAttribute(Attribute attribute) const
+double Creature::getAttribute(Attribute attribute)
 {
     double sum = 0;
 
@@ -394,12 +394,12 @@ void Creature::editAttribute(Attribute attribute, double amount)
         attributeValues[index] += amount;
 }
 
-int Creature::getFieldOfVisionRadius() const
+int Creature::getFieldOfVisionRadius()
 {
     return int(getAttribute(Perception) * 2);
 }
 
-bool Creature::sees(Tile tile) const
+bool Creature::sees(Tile tile)
 {
     assert(tile.getLevel() == getLevel());
 
@@ -424,12 +424,12 @@ bool Creature::sees(Tile tile) const
     });
 }
 
-bool Creature::remembers(Tile tile) const
+bool Creature::remembers(Tile tile)
 {
     return seenTilePositions.find(tile.getPosition3D()) != seenTilePositions.end();
 }
 
-List<Creature> Creature::getCreaturesCurrentlySeenBy(int maxFieldOfVisionRadius) const
+List<Creature> Creature::getCreaturesCurrentlySeenBy(int maxFieldOfVisionRadius)
 {
     List<Creature> creatures;
 
@@ -453,7 +453,7 @@ List<Creature> Creature::getCreaturesCurrentlySeenBy(int maxFieldOfVisionRadius)
     return creatures;
 }
 
-List<Creature> Creature::getCurrentlySeenCreatures() const
+List<Creature> Creature::getCurrentlySeenCreatures()
 {
     List<Creature> currentlySeenCreatures;
     var fieldOfVisionRadius = getFieldOfVisionRadius();
@@ -478,7 +478,7 @@ List<Creature> Creature::getCurrentlySeenCreatures() const
     return currentlySeenCreatures;
 }
 
-Creature Creature::getNearestEnemy() const
+Creature Creature::getNearestEnemy()
 {
     // TODO: Optimize by iterating in a spiral starting from this creature's position.
 
@@ -721,7 +721,7 @@ std::unique_ptr<Item> Creature::removeItem(Item itemToRemove)
     return removedItem;
 }
 
-int Creature::getInventoryIndex(Item item) const
+int Creature::getInventoryIndex(Item item)
 {
     for (int i = 0; i < int(inventory.size()); ++i)
         if (&*inventory[i] == item)
@@ -736,22 +736,22 @@ bool Creature::close(Dir8 direction)
     return destination && destination->hasObject() && destination->getObject()->close();
 }
 
-Vector2 Creature::getPosition() const
+Vector2 Creature::getPosition()
 {
     return getTileUnder(0).getPosition();
 }
 
-int Creature::getLevel() const
+int Creature::getLevel()
 {
     return getTileUnder(0).getLevel();
 }
 
-World Creature::getWorld() const
+World Creature::getWorld()
 {
     return getTileUnder(0).getWorld();
 }
 
-int Creature::getTurn() const
+int Creature::getTurn()
 {
     return getWorld().getTurn();
 }

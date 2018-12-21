@@ -7,14 +7,14 @@ public:
     World operator=(World) = delete;
     World operator=(World) = default;
     void load(SaveFile file);
-    void save(SaveFile file) const;
-    int getTurn() const;
+    void save(SaveFile file);
+    int getTurn();
     void exist(Rect region, int level);
     void render(Window, Rect region, int level, Creature player);
     Tile getOrCreateTile(Vector2 position, int level);
     Tile getTile(Vector2 position, int level);
     void forEachTile(Rect region, int level, const std::function<void(Tile)>&);
-    Color32 getSunlight() const { return sunlight; }
+    Color32 getSunlight() { return sunlight; }
 
 private:
     Area getOrCreateArea(Vector3 position);
@@ -42,7 +42,7 @@ void World::load(SaveFile file)
     saveFile = std::make_unique<SaveFile>(file.copyToMemory());
 }
 
-void World::save(SaveFile file) const
+void World::save(SaveFile file)
 {
     file.writeInt32(int(areas.size()));
     var areaPositionsOffset = file.getOffset();
@@ -65,7 +65,7 @@ void World::save(SaveFile file) const
     }
 }
 
-int World::getTurn() const
+int World::getTurn()
 {
     return game->getTurn();
 }

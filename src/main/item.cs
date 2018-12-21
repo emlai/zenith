@@ -5,16 +5,16 @@ class Item : public Entity
 public:
     Item(string id, string materialId);
     static std::unique_ptr<Item> load(SaveFile file);
-    virtual void save(SaveFile file) const;
+    virtual void save(SaveFile file);
     virtual void exist() {}
-    bool isUsable() const;
+    bool isUsable();
     bool use(Creature user, Game game);
-    bool isEdible() const;
-    EquipmentSlot getEquipmentSlot() const;
-    virtual string getNameAdjective() const override;
-    void render(Window window, Vector2 position) const;
-    virtual void renderEquipped(Window window, Vector2 position) const;
-    Sprite getSprite() const { return sprite; }
+    bool isEdible();
+    EquipmentSlot getEquipmentSlot();
+    virtual string getNameAdjective() override;
+    void render(Window window, Vector2 position);
+    virtual void renderEquipped(Window window, Vector2 position);
+    Sprite getSprite() { return sprite; }
 
 protected:
     Item(string id, string materialId, Sprite sprite);
@@ -31,8 +31,8 @@ public:
     Corpse(std::unique_ptr<Creature> creature);
     Corpse(string creatureId);
     void exist() override;
-    void renderEquipped(Window window, Vector2 position) const override;
-    void save(SaveFile file) const override;
+    void renderEquipped(Window window, Vector2 position) override;
+    void save(SaveFile file) override;
 
 private:
     static const int corpseFrame = 2;
@@ -98,7 +98,7 @@ std::unique_ptr<Item> Item::load(SaveFile file)
     return item;
 }
 
-void Item::save(SaveFile file) const
+void Item::save(SaveFile file)
 {
     file.write(getId());
     file.write(materialId);
@@ -107,7 +107,7 @@ void Item::save(SaveFile file) const
         component->save(file);
 }
 
-bool Item::isUsable() const
+bool Item::isUsable()
 {
     for (var component : getComponents())
         if (component->isUsable())
@@ -128,12 +128,12 @@ bool Item::use(Creature user, Game game)
     return returnValue;
 }
 
-bool Item::isEdible() const
+bool Item::isEdible()
 {
     return Game::itemConfig->getOptional<bool>(getId(), "isEdible").get_value_or(false);
 }
 
-EquipmentSlot Item::getEquipmentSlot() const
+EquipmentSlot Item::getEquipmentSlot()
 {
     var slotString = getConfig().getOptional<string>(getId(), "EquipmentSlot").get_value_or("Hand");
 
@@ -147,17 +147,17 @@ EquipmentSlot Item::getEquipmentSlot() const
     return Hand;
 }
 
-string Item::getNameAdjective() const
+string Item::getNameAdjective()
 {
     return pascalCaseToSentenceCase(materialId);
 }
 
-void Item::render(Window window, Vector2 position) const
+void Item::render(Window window, Vector2 position)
 {
     sprite.render(window, position);
 }
 
-void Item::renderEquipped(Window window, Vector2 position) const
+void Item::renderEquipped(Window window, Vector2 position)
 {
     Vector2 equippedSourceOffset(0, Tile::getSize().y);
     sprite.render(window, position, equippedSourceOffset);
@@ -190,12 +190,12 @@ void Corpse::exist()
         creature->exist();
 }
 
-void Corpse::renderEquipped(Window window, Vector2 position) const
+void Corpse::renderEquipped(Window window, Vector2 position)
 {
     render(window, position);
 }
 
-void Corpse::save(SaveFile file) const
+void Corpse::save(SaveFile file)
 {
     file.write(getId());
     file.write(creature != nullptr);

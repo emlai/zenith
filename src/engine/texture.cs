@@ -8,15 +8,15 @@ public:
     Texture(string fileName, Color32 transparentColor = Color32::none);
     Texture(uint pixelFormat, Vector2 size);
     void setBlendMode(bool);
-    void setColor(Color32) const;
-    void render(Window window, Vector2 position, Vector2 size = Vector2::zeroVector) const;
-    void render(Window window, Rect target) const;
-    void render(Window window, Rect source, Rect target) const;
-    void render(Window window, Rect source, Rect target, Color32 materialColor) const;
-    Vector2 getSize() const;
-    int getWidth() const;
-    int getHeight() const;
-    SDL_Surface getSurface() const { return surface.get(); }
+    void setColor(Color32);
+    void render(Window window, Vector2 position, Vector2 size = Vector2::zeroVector);
+    void render(Window window, Rect target);
+    void render(Window window, Rect source, Rect target);
+    void render(Window window, Rect source, Rect target, Color32 materialColor);
+    Vector2 getSize();
+    int getWidth();
+    int getHeight();
+    SDL_Surface getSurface() { return surface.get(); }
 
 private:
     std::unique_ptr<SDL_Surface, void (*)(SDL_Surface)> surface;
@@ -77,7 +77,7 @@ void Texture::setBlendMode(bool state)
     SDL_SetSurfaceBlendMode(surface.get(), state ? SDL_BLENDMODE_BLEND : SDL_BLENDMODE_NONE);
 }
 
-void Texture::render(Window window, Vector2 position, Vector2 size) const
+void Texture::render(Window window, Vector2 position, Vector2 size)
 {
     if (size.isZero())
         size = getSize();
@@ -85,12 +85,12 @@ void Texture::render(Window window, Vector2 position, Vector2 size) const
     render(window, Rect(Vector2::zeroVector, size), Rect(position, size));
 }
 
-void Texture::render(Window window, Rect target) const
+void Texture::render(Window window, Rect target)
 {
     render(window, Rect(Vector2::zeroVector, getSize()), target);
 }
 
-void Texture::render(Window window, Rect source, Rect target) const
+void Texture::render(Window window, Rect source, Rect target)
 {
     target = window.context.mapToTargetCoordinates(target);
 
@@ -101,7 +101,7 @@ void Texture::render(Window window, Rect source, Rect target) const
 }
 
 // TODO: Move this functionality out of the engine to the game.
-void Texture::render(Window window, Rect source, Rect target, Color32 materialColor) const
+void Texture::render(Window window, Rect source, Rect target, Color32 materialColor)
 {
     target = window.context.mapToTargetCoordinates(target);
 
@@ -140,22 +140,22 @@ void Texture::render(Window window, Rect source, Rect target, Color32 materialCo
     }
 }
 
-Vector2 Texture::getSize() const
+Vector2 Texture::getSize()
 {
     return Vector2(surface->w, surface->h);
 }
 
-int Texture::getWidth() const
+int Texture::getWidth()
 {
     return surface->w;
 }
 
-int Texture::getHeight() const
+int Texture::getHeight()
 {
     return surface->h;
 }
 
-void Texture::setColor(Color32 color) const
+void Texture::setColor(Color32 color)
 {
     SDL_SetSurfaceColorMod(surface.get(),
                            byte(color.getRed()),
