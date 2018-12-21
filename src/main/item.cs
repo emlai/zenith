@@ -29,14 +29,14 @@ class Item : Entity
         if (boost::algorithm::ends_with(itemId, "Corpse"))
         {
             if (file.readBool())
-                item = std::make_unique<Corpse>(std::make_unique<Creature>(file, null));
+                item = new Corpse(new Creature(file, null));
             else
-                item = std::make_unique<Corpse>(boost::algorithm::erase_last_copy(itemId, "Corpse"));
+                item = new Corpse(boost::algorithm::erase_last_copy(itemId, "Corpse"));
         }
         else
         {
             var materialId = file.readString();
-            item = std::make_unique<Item>(itemId, materialId);
+            item = new Item(itemId, materialId);
             item.sprite.setMaterialColor(Color32(file.readUint32()));
         }
 

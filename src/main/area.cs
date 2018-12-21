@@ -34,7 +34,7 @@ Area::Area(World world, Vector2 position, int level)
             tiles.emplace_back(world, position * sizeVector + pos, level, groundId);
 
             if (level < 0)
-                tiles.back().setObject(std::make_unique<Object>("Ground"));
+                tiles.back().setObject(new Object("Ground"));
         }
     }
 }

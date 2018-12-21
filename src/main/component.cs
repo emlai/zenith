@@ -23,9 +23,9 @@ Component Component::get(string name, Entity parent)
 {
     Component component;
 
-    if (name == "Dig") component = std::make_unique<Dig>();
-    if (name == "Door") component = std::make_unique<Door>();
-    if (name == "LightSource") component = std::make_unique<LightSource>();
+    if (name == "Dig") component = new Dig();
+    if (name == "Door") component = new Door();
+    if (name == "LightSource") component = new LightSource();
 
     if (component)
         component.parent = parent;

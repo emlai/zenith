@@ -208,7 +208,7 @@ void MainMenu::execute()
                     }
 
                     rng.seed();
-                    game = std::make_unique<Game>(selection == LoadGame);
+                    game = new Game(selection == LoadGame);
                 }
 
                 try

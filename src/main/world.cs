@@ -38,7 +38,7 @@ void World::load(SaveFile file)
         savedAreaOffsets.emplace(position, offset);
     }
 
-    saveFile = std::make_unique<SaveFile>(file.copyToMemory());
+    saveFile = new SaveFile(file.copyToMemory());
 }
 
 void World::save(SaveFile file)

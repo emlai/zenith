@@ -12,7 +12,7 @@ class AIController : Controller
     AIController get(string id, Creature creature)
     {
         var ai = AI::get(Game::creatureConfig.get<string>(id, "ai"), creature);
-        return std::make_unique<AIController>(ai);
+        return new AIController(ai);
     }
 
     Action control(Creature creature)
@@ -166,7 +166,7 @@ class PlayerController : Controller
                                 break;
 
                             var materialName = game.askForString("Which material do you want to use for the item?");
-                            creature.getTileUnder(0).addItem(std::make_unique<Item>(itemName, materialName));
+                            creature.getTileUnder(0).addItem(new Item(itemName, materialName));
                             break;
                         }
 

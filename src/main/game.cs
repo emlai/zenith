@@ -78,25 +78,25 @@ Game::Game(bool loadSavedGame)
     turn(0),
     world(this)
 {
-    creatureConfig = std::make_unique<Config>("data/config/creature.cfg");
-    objectConfig = std::make_unique<Config>("data/config/object.cfg");
-    itemConfig = std::make_unique<Config>("data/config/item.cfg");
-    groundConfig = std::make_unique<Config>("data/config/ground.cfg");
-    materialConfig = std::make_unique<Config>("data/config/material.cfg");
+    creatureConfig = new Config("data/config/creature.cfg");
+    objectConfig = new Config("data/config/object.cfg");
+    itemConfig = new Config("data/config/item.cfg");
+    groundConfig = new Config("data/config/ground.cfg");
+    materialConfig = new Config("data/config/material.cfg");
 
-    creatureSpriteSheet = std::make_unique<Texture>("data/graphics/creature.bmp", transparentColor);
-    objectSpriteSheet = std::make_unique<Texture>("data/graphics/object.bmp", transparentColor);
-    itemSpriteSheet = std::make_unique<Texture>("data/graphics/item.bmp", transparentColor);
-    groundSpriteSheet = std::make_unique<Texture>("data/graphics/ground.bmp");
-    cursorTexture = std::make_unique<Texture>("data/graphics/cursor.bmp", transparentColor);
-    fogOfWarTexture = std::make_unique<Texture>("data/graphics/fow.bmp", transparentColor);
+    creatureSpriteSheet = new Texture("data/graphics/creature.bmp", transparentColor);
+    objectSpriteSheet = new Texture("data/graphics/object.bmp", transparentColor);
+    itemSpriteSheet = new Texture("data/graphics/item.bmp", transparentColor);
+    groundSpriteSheet = new Texture("data/graphics/ground.bmp");
+    cursorTexture = new Texture("data/graphics/cursor.bmp", transparentColor);
+    fogOfWarTexture = new Texture("data/graphics/fow.bmp", transparentColor);
 
     if (loadSavedGame)
         load();
     else
     {
         var tile = world.getOrCreateTile({0, 0}, 0);
-        player = tile.spawnCreature("Human", std::make_unique<PlayerController>(this));
+        player = tile.spawnCreature("Human", new PlayerController(this));
     }
 }
 
@@ -449,7 +449,7 @@ void Game::enterCommandMode(Window window)
 void Game::parseCommand(string command)
 {
     if (command == "respawn")
-        player = Creature(player.getTileUnder(0), "Human", std::make_unique<PlayerController>(this));
+        player = Creature(player.getTileUnder(0), "Human", new PlayerController(this));
     else if (command == "clear")
         MessageSystem::clearDebugMessageHistory();
     else if (command == "info")
@@ -480,5 +480,5 @@ void Game::load()
     world.load(file);
 
     player = world.getTile(playerPosition, playerLevel).getCreature(0);
-    player.setController(std::make_unique<PlayerController>(this));
+    player.setController(new PlayerController(this));
 }

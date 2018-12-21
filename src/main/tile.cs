@@ -63,7 +63,7 @@ private:
 template<typename... Args>
 Creature Tile::spawnCreature(Args... creatureArgs)
 {
-    addCreature(std::make_unique<Creature>(this, std::forward<Args>(creatureArgs)...));
+    addCreature(new Creature(this, std::forward<Args>(creatureArgs)...));
     return creatures.back().get();
 }
 const Vector2 Tile::spriteSize(20, 20);
@@ -89,7 +89,7 @@ Tile::Tile(SaveFile file, World world, Vector2 position, int level)
     var creatureCount = file.readInt32();
     creatures.reserve(size_t(creatureCount));
     for (int i = 0; i < creatureCount; ++i)
-        creatures.push_back(std::make_unique<Creature>(file, this));
+        creatures.push_back(new Creature(file, this));
 
     var itemCount = file.readInt32();
     items.reserve(size_t(itemCount));
@@ -102,7 +102,7 @@ Tile::Tile(SaveFile file, World world, Vector2 position, int level)
         liquids.push_back(Liquid(file));
 
     if (file.readBool())
-        object = std::make_unique<Object>(file);
+        object = new Object(file);
 }
 
 void Tile::save(SaveFile file)

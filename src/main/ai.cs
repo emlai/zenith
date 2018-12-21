@@ -9,7 +9,7 @@ class AI
     AI get(string id, Creature creature)
     {
         if (id == "AttackNearestEnemy")
-            return std::make_unique<AttackNearestEnemy>(creature);
+            return new AttackNearestEnemy(creature);
 
         throw std::runtime_error("Unknown AI '" + id + "'\n");
     }

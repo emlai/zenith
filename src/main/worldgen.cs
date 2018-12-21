@@ -98,7 +98,7 @@ List<Building> WorldGenerator::generateBuildings(Rect region, int level)
 
                 if (building)
                 {
-                    tile.getTileBelow().setObject(std::make_unique<Object>("StairsUp"));
+                    tile.getTileBelow().setObject(new Object("StairsUp"));
                     buildings.push_back(building);
                 }
                 else
@@ -120,7 +120,7 @@ List<Building> WorldGenerator::generateBuildings(Rect region, int level)
     {
         var randomRoom = randomElement(randomElement(buildings).getRooms());
         Tile stairsTile = world.getTile(makeRandomVectorInside(randomRoom.getInnerRegion()), level);
-        stairsTile.setObject(std::make_unique<Object>("StairsDown"));
+        stairsTile.setObject(new Object("StairsDown"));
     }
 
     return buildings;
@@ -175,7 +175,7 @@ Room? WorldGenerator::generateRoom(Rect region, int level)
     {
         if (var tile = world.getOrCreateTile(position, level))
         {
-            tile.setObject(std::make_unique<Object>(wallId));
+            tile.setObject(new Object(wallId));
 
             if (!isCorner(position))
                 nonCornerWalls.push_back(tile);
@@ -196,7 +196,7 @@ Room? WorldGenerator::generateRoom(Rect region, int level)
 
     assert(nonCornerWalls.size() == nonCornerWallCount);
     var doorTile = randomElement(nonCornerWalls);
-    doorTile.setObject(std::make_unique<Object>(doorId));
+    doorTile.setObject(new Object(doorId));
 
     return Room(region, { doorTile });
 }
@@ -353,10 +353,10 @@ void WorldGenerator::generateItems(Rect region, int level)
         if (itemId == "Corpse")
         {
             string creatureId = randomElement(Game::creatureConfig.getToplevelKeys());
-            item = std::make_unique<Corpse>(creatureId);
+            item = new Corpse(creatureId);
         }
         else
-            item = std::make_unique<Item>(itemId, getRandomMaterialId(itemId));
+            item = new Item(itemId, getRandomMaterialId(itemId));
 
         Tile tile = null;
 

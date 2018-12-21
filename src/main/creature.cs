@@ -176,7 +176,7 @@ class Creature : Entity
         {
             for (var itemId : initialEquipment)
             {
-                inventory.push_back(std::make_unique<Item>(itemId, getRandomMaterialId(itemId)));
+                inventory.push_back(new Item(itemId, getRandomMaterialId(itemId)));
                 equip(inventory.back().getEquipmentSlot(), &inventory.back());
             }
         }
@@ -590,7 +590,7 @@ class Creature : Entity
         if (getTilesUnder().size() == 1)
         {
             Creature self = getTileUnder(0).removeSingleTileCreature(this);
-            getTileUnder(0).addItem(std::make_unique<Corpse>(self));
+            getTileUnder(0).addItem(new Corpse(self));
         }
         else
         {
@@ -656,7 +656,7 @@ class Creature : Entity
         assert(itemToEat.isEdible());
 
         if (var leftoverItemId = Game::itemConfig.getOptional<string>(itemToEat.getId(), "leftoverItem"))
-            getTileUnder(0).addItem(std::make_unique<Item>(leftoverItemId, ""));
+            getTileUnder(0).addItem(new Item(leftoverItemId, ""));
 
         addMessage("You eat the ", itemToEat.getName(), ".");
         removeItem(itemToEat);
