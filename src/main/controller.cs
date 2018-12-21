@@ -1,306 +1,292 @@
-enum Action : int;
-
 class Controller
 {
-    virtual ~Controller() = 0;
     virtual Action control(Creature creature) = 0;
 }
 
 class AIController : Controller
 {
-    AIController(AI ai) : ai(ai) {}
-    Action control(Creature creature) override;
-    static AIController get(string id, Creature creature);
-
-private:
     AI ai;
+
+    AIController(AI ai) : ai(ai) {}
+
+    AIController get(string id, Creature creature)
+    {
+        var ai = AI::get(Game::creatureConfig.get<string>(id, "ai"), creature);
+        return std::make_unique<AIController>(ai);
+    }
+
+    Action control(Creature creature)
+    {
+        if (creature.isDead())
+            return Wait;
+
+        var action = ai.control();
+        assert(action != NoAction);
+        return action;
+    }
 }
 
 class PlayerController : Controller
 {
+    Game game;
+
     PlayerController(Game game) : game(game) {}
 
-private:
-    Action control(Creature creature) override;
-
-    Game game;
-}
-
-Action getMappedAction(Key key);
-Key getMappedKey(Action action);
-void mapKey(Key key, Action action);
-// If 'config' is null, loads the default key map.
-void loadKeyMap(Config config);
-void saveKeyMap(Config config);
-Dir8 getDirectionFromEvent(Event event, Vector2 origin);
-Controller::~Controller() {}
-
-AIController AIController::get(string id, Creature creature)
-{
-    var ai = AI::get(Game::creatureConfig.get<string>(id, "ai"), creature);
-    return std::make_unique<AIController>(ai);
-}
-
-Action AIController::control(Creature creature)
-{
-    if (creature.isDead())
-        return Wait;
-
-    var action = ai.control();
-    assert(action != NoAction);
-    return action;
-}
-
-Action PlayerController::control(Creature creature)
-{
-    game.advanceTurn();
-
-    while (true)
+    Action PlayerController::control(Creature creature)
     {
-        Event event = game.getWindow().waitForInput();
+        game.advanceTurn();
 
-        if (!creature.isDead())
-            if (var direction = getDirectionFromEvent(event, creature.getPosition()))
-                if (var action = creature.tryToMoveOrAttack(direction))
-                    return action;
-
-        if (event.type != Event::KeyDown)
-            continue;
-
-        var action = getMappedAction(event.key);
-
-        switch (action)
+        while (true)
         {
-            case GoUpOrDown:
-                if (!creature.isDead() && creature.enter())
-                    return GoUpOrDown;
-                break;
+            Event event = game.getWindow().waitForInput();
 
-            case Wait:
-                return Wait;
+            if (!creature.isDead())
+                if (var direction = getDirectionFromEvent(event, creature.getPosition()))
+                    if (var action = creature.tryToMoveOrAttack(direction))
+                        return action;
 
-            case PickUpItems:
-                if (!creature.isDead() && creature.pickUpItem())
-                    return PickUpItems;
-                break;
+            if (event.type != Event::KeyDown)
+                continue;
 
-            case EnterLookMode:
-                game.lookMode();
-                break;
+            var action = getMappedAction(event.key);
 
-            case OpenInventory:
-                game.showInventory("Inventory", false);
-                break;
-
-            case ShowEquipmentMenu:
-                if (!creature.isDead())
-                    game.showEquipmentMenu();
-                break;
-
-            case UseItem:
+            switch (action)
             {
-                if (creature.isDead())
+                case GoUpOrDown:
+                    if (!creature.isDead() && creature.enter())
+                        return GoUpOrDown;
                     break;
 
-                int selectedItemIndex = game.showInventory("What do you want to use?", false,
-                                                           null, [](var item)
-                {
-                    return item.isUsable();
-                });
+                case Wait:
+                    return Wait;
 
-                if (selectedItemIndex != Menu::Exit)
-                    if (creature.use(creature.getInventory()[selectedItemIndex], game))
-                        return UseItem;
-                break;
-            }
-
-            case EatItem:
-            {
-                if (creature.isDead())
+                case PickUpItems:
+                    if (!creature.isDead() && creature.pickUpItem())
+                        return PickUpItems;
                     break;
 
-                int selectedItemIndex = game.showInventory("What do you want to eat?", false,
-                                                           null, [](var item)
-                {
-                    return item.isEdible();
-                });
-
-                if (selectedItemIndex != Menu::Exit)
-                    if (creature.eat(creature.getInventory()[selectedItemIndex]))
-                        return EatItem;
-                break;
-            }
-
-            case DropItem:
-            {
-                if (creature.isDead())
+                case EnterLookMode:
+                    game.lookMode();
                     break;
 
-                int selectedItemIndex = game.showInventory("What do you want to drop?", false);
+                case OpenInventory:
+                    game.showInventory("Inventory", false);
+                    break;
 
-                if (selectedItemIndex != Menu::Exit)
+                case ShowEquipmentMenu:
+                    if (!creature.isDead())
+                        game.showEquipmentMenu();
+                    break;
+
+                case UseItem:
                 {
-                    creature.drop(creature.getInventory()[selectedItemIndex]);
-                    return DropItem;
+                    if (creature.isDead())
+                        break;
+
+                    int selectedItemIndex = game.showInventory("What do you want to use?", false,
+                                                               null, [](var item)
+                    {
+                        return item.isUsable();
+                    });
+
+                    if (selectedItemIndex != Menu::Exit)
+                        if (creature.use(creature.getInventory()[selectedItemIndex], game))
+                            return UseItem;
+                    break;
                 }
 
-                break;
-            }
-
-            case Close:
-            {
-                if (creature.isDead())
-                    break;
-
-                Dir8? direction = game.askForDirection("What do you want to close?");
-
-                if (direction && creature.close(direction))
-                    return Close;
-                break;
-            }
-
-            case ToggleRunning:
-                creature.setRunning(!creature.isRunning());
-                break;
-
-            default:
-                switch (event.key)
+                case EatItem:
                 {
-                    case Esc:
-                    case 'q':
-                    case NoKey:
-                        game.stop();
-                        return NoAction;
-
-#ifdef DEBUG
-                    case F2:
-                        game.playerSeesEverything = !game.playerSeesEverything;
+                    if (creature.isDead())
                         break;
 
-                    case F3:
+                    int selectedItemIndex = game.showInventory("What do you want to eat?", false,
+                                                               null, [](var item)
                     {
-                        var itemName = game.askForString("Which item do you want to spawn?");
+                        return item.isEdible();
+                    });
 
-                        if (itemName.empty())
-                            break;
+                    if (selectedItemIndex != Menu::Exit)
+                        if (creature.eat(creature.getInventory()[selectedItemIndex]))
+                            return EatItem;
+                    break;
+                }
 
-                        var materialName = game.askForString("Which material do you want to use for the item?");
-                        creature.getTileUnder(0).addItem(std::make_unique<Item>(itemName, materialName));
+                case DropItem:
+                {
+                    if (creature.isDead())
                         break;
+
+                    int selectedItemIndex = game.showInventory("What do you want to drop?", false);
+
+                    if (selectedItemIndex != Menu::Exit)
+                    {
+                        creature.drop(creature.getInventory()[selectedItemIndex]);
+                        return DropItem;
                     }
 
-                    case Game::commandModeKey:
-                        game.enterCommandMode(game.getWindow());
-                        return NoAction;
-#endif
+                    break;
                 }
-                break;
+
+                case Close:
+                {
+                    if (creature.isDead())
+                        break;
+
+                    Dir8? direction = game.askForDirection("What do you want to close?");
+
+                    if (direction && creature.close(direction))
+                        return Close;
+                    break;
+                }
+
+                case ToggleRunning:
+                    creature.setRunning(!creature.isRunning());
+                    break;
+
+                default:
+                    switch (event.key)
+                    {
+                        case Esc:
+                        case 'q':
+                        case NoKey:
+                            game.stop();
+                            return NoAction;
+
+    #ifdef DEBUG
+                        case F2:
+                            game.playerSeesEverything = !game.playerSeesEverything;
+                            break;
+
+                        case F3:
+                        {
+                            var itemName = game.askForString("Which item do you want to spawn?");
+
+                            if (itemName.empty())
+                                break;
+
+                            var materialName = game.askForString("Which material do you want to use for the item?");
+                            creature.getTileUnder(0).addItem(std::make_unique<Item>(itemName, materialName));
+                            break;
+                        }
+
+                        case Game::commandModeKey:
+                            game.enterCommandMode(game.getWindow());
+                            return NoAction;
+    #endif
+                    }
+                    break;
+            }
         }
     }
 }
 
-const int keyMapSize = 128;
-static Action keyMap[keyMapSize];
-
-Action getMappedAction(Key key)
+static class KeyMap
 {
-    if (key >= 0 && key < keyMapSize)
-        return keyMap[key];
+    const int keyMapSize = 128;
+    static Action keyMap[keyMapSize];
 
-    return NoAction;
-}
-
-Key getMappedKey(Action action)
-{
-    for (int i = 0; i < keyMapSize; ++i)
+    Action getMappedAction(Key key)
     {
-        if (keyMap[i] == action)
-            return i;
+        if (key >= 0 && key < keyMapSize)
+            return keyMap[key];
+
+        return NoAction;
     }
 
-    return NoKey;
-}
-
-void mapKey(Key key, Action action)
-{
-    if (key >= 0 && key < keyMapSize)
+    Key getMappedKey(Action action)
     {
-        var oldKey = getMappedKey(action);
-        keyMap[oldKey] = NoAction;
-        keyMap[key] = action;
-    }
-}
+        for (int i = 0; i < keyMapSize; ++i)
+        {
+            if (keyMap[i] == action)
+                return i;
+        }
 
-static Key getDefaultKeyForAction(Action action)
-{
-    switch (action)
-    {
-        case Wait: return '.';
-        case GoUpOrDown: return Enter;
-        case PickUpItems: return ',';
-        case DropItem: return 'd';
-        case UseItem: return 'u';
-        case EatItem: return 'e';
-        case Close: return 'c';
-        case EnterLookMode: return 'l';
-        case OpenInventory: return 'i';
-        case ShowEquipmentMenu: return 'E';
-        case ToggleRunning: return 'r';
-        default: return NoKey;
-    }
-}
-
-void loadKeyMap(Config config)
-{
-    for (int i = NoAction + 1; i < LastAction; ++i)
-    {
-        var action = (Action) i;
-        Key key = config ? config.getOptional<int>(toString(action)).get_value_or(NoKey) : NoKey;
-
-        if (!key)
-            key = getDefaultKeyForAction(action);
-
-        mapKey(key, action);
-    }
-}
-
-void saveKeyMap(Config config)
-{
-    for (int i = NoAction + 1; i < LastAction; ++i)
-    {
-        var action = (Action) i;
-        config.set(toString(action), static_cast<long long>(getMappedKey(action)));
-    }
-}
-
-Dir8 getDirectionFromEvent(Event event, Vector2 origin)
-{
-    switch (event.type)
-    {
-        case Event::MouseButtonDown:
-            if (Game::cursorPosition)
-                if (var direction = (Game::cursorPosition - origin).getDir8())
-                    return direction;
-
-            break;
-
-        case Event::KeyDown:
-            switch (event.key)
-            {
-                case RightArrow:
-                    return East;
-
-                case LeftArrow:
-                    return West;
-
-                case DownArrow:
-                    return South;
-
-                case UpArrow:
-                    return North;
-            }
-            break;
+        return NoKey;
     }
 
-    return Dir8::NoDir;
+    void mapKey(Key key, Action action)
+    {
+        if (key >= 0 && key < keyMapSize)
+        {
+            var oldKey = getMappedKey(action);
+            keyMap[oldKey] = NoAction;
+            keyMap[key] = action;
+        }
+    }
+
+    static Key getDefaultKeyForAction(Action action)
+    {
+        switch (action)
+        {
+            case Wait: return '.';
+            case GoUpOrDown: return Enter;
+            case PickUpItems: return ',';
+            case DropItem: return 'd';
+            case UseItem: return 'u';
+            case EatItem: return 'e';
+            case Close: return 'c';
+            case EnterLookMode: return 'l';
+            case OpenInventory: return 'i';
+            case ShowEquipmentMenu: return 'E';
+            case ToggleRunning: return 'r';
+            default: return NoKey;
+        }
+    }
+
+    // If 'config' is null, loads the default key map.
+    void loadKeyMap(Config config)
+    {
+        for (int i = NoAction + 1; i < LastAction; ++i)
+        {
+            var action = (Action) i;
+            Key key = config ? config.getOptional<int>(toString(action)).get_value_or(NoKey) : NoKey;
+
+            if (!key)
+                key = getDefaultKeyForAction(action);
+
+            mapKey(key, action);
+        }
+    }
+
+    void saveKeyMap(Config config)
+    {
+        for (int i = NoAction + 1; i < LastAction; ++i)
+        {
+            var action = (Action) i;
+            config.set(toString(action), static_cast<long long>(getMappedKey(action)));
+        }
+    }
+
+    Dir8 getDirectionFromEvent(Event event, Vector2 origin)
+    {
+        switch (event.type)
+        {
+            case Event::MouseButtonDown:
+                if (Game::cursorPosition)
+                    if (var direction = (Game::cursorPosition - origin).getDir8())
+                        return direction;
+
+                break;
+
+            case Event::KeyDown:
+                switch (event.key)
+                {
+                    case RightArrow:
+                        return East;
+
+                    case LeftArrow:
+                        return West;
+
+                    case DownArrow:
+                        return South;
+
+                    case UpArrow:
+                        return North;
+                }
+                break;
+        }
+
+        return Dir8::NoDir;
+    }
 }
