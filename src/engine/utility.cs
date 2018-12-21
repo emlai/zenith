@@ -7,7 +7,7 @@ std::ostream operator<<(std::ostream outputStream, const List<T>& elements)
     return outputStream;
 }
 
-string changeFileExtension(boost::string_ref fileName, boost::string_ref newExtension);
+string changeFileExtension(string fileName, string newExtension);
 
 /// Performs integer division, rounding towards negative infinity.
 inline int divideRoundingDown(int dividend, int divisor)
@@ -23,9 +23,9 @@ inline int divideRoundingDown(int dividend, int divisor)
 string toOnOffString(bool value);
 string toStringAvoidingDecimalPlaces(double value);
 
-string operator+(boost::string_ref a, boost::string_ref b);
+string operator+(string a, string b);
 
-string pascalCaseToSentenceCase(boost::string_ref pascalCaseString);
+string pascalCaseToSentenceCase(string pascalCaseString);
 
 bool isVowel(char);
 
@@ -48,7 +48,7 @@ Deferrer<T> operator+(DeferHelper, T deferred)
 }
 
 #define DEFER var BOOST_PP_CAT(defer, __LINE__) = DeferHelper() + [&]
-string changeFileExtension(boost::string_ref fileName, boost::string_ref newExtension)
+string changeFileExtension(string fileName, string newExtension)
 {
     var dotPosition = fileName.rfind(".");
 
@@ -77,7 +77,7 @@ string toStringAvoidingDecimalPlaces(double value)
     return string;
 }
 
-string operator+(boost::string_ref a, boost::string_ref b)
+string operator+(string a, string b)
 {
     string result;
     result.reserve(a.size() + b.size());
@@ -86,7 +86,7 @@ string operator+(boost::string_ref a, boost::string_ref b)
     return result;
 }
 
-string pascalCaseToSentenceCase(boost::string_ref pascalCaseString)
+string pascalCaseToSentenceCase(string pascalCaseString)
 {
     string name;
     name.reserve(pascalCaseString.size());

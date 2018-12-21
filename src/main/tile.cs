@@ -1,7 +1,7 @@
 class Tile
 {
 public:
-    Tile(World world, Vector2 position, int level, boost::string_ref groundId);
+    Tile(World world, Vector2 position, int level, string groundId);
     Tile(SaveFile file, World world, Vector2 position, int level);
     void save(SaveFile file) const;
     void exist();
@@ -18,13 +18,13 @@ public:
     const List<std::unique_ptr<Item>>& getItems() const { return items; }
     std::unique_ptr<Item> removeTopmostItem();
     void addItem(std::unique_ptr<Item> item);
-    void addLiquid(boost::string_ref materialId);
+    void addLiquid(string materialId);
     bool hasObject() const { return bool(object); }
     Object getObject() { return object.get(); }
     Object getObject() const { return object.get(); }
     void setObject(std::unique_ptr<Object>);
-    boost::string_ref getGroundId() const { return groundId; }
-    void setGround(boost::string_ref groundId);
+    string getGroundId() const { return groundId; }
+    void setGround(string groundId);
     void forEachEntity(const std::function<void(Entity)>& function) const;
     void forEachLightSource(const std::function<void(LightSource)>& function) const;
     Color32 getLight() const { return light; }
@@ -69,7 +69,7 @@ Creature Tile::spawnCreature(Args... creatureArgs)
 }
 const Vector2 Tile::spriteSize(20, 20);
 
-Tile::Tile(World world, Vector2 position, int level, boost::string_ref groundId)
+Tile::Tile(World world, Vector2 position, int level, string groundId)
 :   world(world),
     position(position),
     level(level),
@@ -295,7 +295,7 @@ void Tile::addItem(std::unique_ptr<Item> item)
     items.push_back(std::move(item));
 }
 
-void Tile::addLiquid(boost::string_ref materialId)
+void Tile::addLiquid(string materialId)
 {
     liquids.push_back(Liquid(materialId));
 }
@@ -305,7 +305,7 @@ void Tile::setObject(std::unique_ptr<Object> newObject)
     object = std::move(newObject);
 }
 
-void Tile::setGround(boost::string_ref groundId)
+void Tile::setGround(string groundId)
 {
     this->groundId = groundId.to_string();
     groundSprite = getSprite(*Game::groundSpriteSheet, *Game::groundConfig, groundId);

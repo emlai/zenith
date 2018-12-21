@@ -2,7 +2,7 @@ class Component
 {
 public:
     virtual ~Component() = 0;
-    static std::unique_ptr<Component> get(boost::string_ref name, Entity parent);
+    static std::unique_ptr<Component> get(string name, Entity parent);
     Entity getParent() const { return *parent; }
 
     /// Returns true if the component did react to the movement attempt.
@@ -20,7 +20,7 @@ private:
 }
 Component::~Component() {}
 
-std::unique_ptr<Component> Component::get(boost::string_ref name, Entity parent)
+std::unique_ptr<Component> Component::get(string name, Entity parent)
 {
     std::unique_ptr<Component> component;
 

@@ -71,16 +71,16 @@ namespace GUI
 #endif
 }
 
-Sprite getSprite(Texture spriteSheet, Config config, boost::string_ref id,
+Sprite getSprite(Texture spriteSheet, Config config, string id,
                  int frame = 0, Color32 materialColor = Color32::none);
-Rect getSpriteTextureRegion(Config config, boost::string_ref id)
+Rect getSpriteTextureRegion(Config config, string id)
 {
     var components = config.get<List<int>>(id, "spritePosition");
     var offsetX = randInt(config.get<int>(id, "spriteMultiplicity") - 1);
     return Rect(Vector2(components.at(0) + offsetX, components.at(1)) * Tile::spriteSize, Tile::spriteSize);
 }
 
-Sprite getSprite(Texture spriteSheet, Config config, boost::string_ref id,
+Sprite getSprite(Texture spriteSheet, Config config, string id,
                  int frame, Color32 materialColor)
 {
     var asciiSprite = config.getOptional<string>(id, "asciiSprite");

@@ -5,7 +5,7 @@ struct Rect;
 class Texture
 {
 public:
-    Texture(boost::string_ref fileName, Color32 transparentColor = Color32::none);
+    Texture(string fileName, Color32 transparentColor = Color32::none);
     Texture(uint32_t pixelFormat, Vector2 size);
     void setBlendMode(bool);
     void setColor(Color32) const;
@@ -45,7 +45,7 @@ static SDL_Surface createSurfaceWithFormat(uint32_t pixelFormat, Vector2 size)
                                 masks.red, masks.green, masks.blue, masks.alpha);
 }
 
-Texture::Texture(boost::string_ref fileName, Color32 transparentColor)
+Texture::Texture(string fileName, Color32 transparentColor)
 :   surface(SDL_LoadBMP(fileName.to_string().c_str()), SDL_FreeSurface)
 {
     if (!surface)

@@ -42,7 +42,7 @@ enum : Mod
 namespace keyboard
 {
     int readLine(Window, string lineContent, Vector2 position, const std::function<void(Window)>&,
-                 boost::string_ref prefix = "");
+                 string prefix = "");
 }
 string toString(Key key)
 {
@@ -58,7 +58,7 @@ namespace keyboard
 }
 
 int keyboard::readLine(Window window, string line, Vector2 position, const std::function<void(Window)>& render,
-                       boost::string_ref prefix)
+                       string prefix)
 {
     BitmapFont font = window.getFont();
     string::iterator cursor = line.end();

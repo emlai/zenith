@@ -12,7 +12,7 @@ public:
     void stop() { gameIsRunning = false; }
     void advanceTurn() { ++turn; }
     int getTurn() const { return turn; }
-    int showInventory(boost::string_ref title, bool showNothingAsOption, Item preselectedItem = nullptr,
+    int showInventory(string title, bool showNothingAsOption, Item preselectedItem = nullptr,
                       std::function<bool(Item)> itemFilter = nullptr);
     void showEquipmentMenu();
     void lookMode();
@@ -46,8 +46,8 @@ private:
     void renderAtPosition(Window, Vector2 centerPosition);
     void render(Window window) override;
     void printPlayerInformation(BitmapFont) const;
-    void printStat(BitmapFont, boost::string_ref, double current, double max, Color16) const;
-    void printAttribute(BitmapFont, boost::string_ref, double current) const;
+    void printStat(BitmapFont, string, double current, double max, Color16) const;
+    void printAttribute(BitmapFont, string, double current) const;
 
     bool gameIsRunning;
     int turn;
@@ -55,7 +55,7 @@ private:
     Creature player;
 
 #ifdef DEBUG
-    void parseCommand(boost::string_ref);
+    void parseCommand(string);
 
     bool showExtraInfo = true;
 #endif
@@ -110,12 +110,12 @@ Window Game::getWindow() const
 class InventoryMenu : public Menu
 {
 public:
-    InventoryMenu(Window window, Creature player, boost::string_ref title,
+    InventoryMenu(Window window, Creature player, string title,
                   bool showNothingAsOption, Item preselectedItem,
                   std::function<bool(Item)> itemFilter);
 }
 
-InventoryMenu::InventoryMenu(Window window, Creature player, boost::string_ref title,
+InventoryMenu::InventoryMenu(Window window, Creature player, string title,
                              bool showNothingAsOption, Item preselectedItem,
                              std::function<bool(Item)> itemFilter)
 {
@@ -140,7 +140,7 @@ InventoryMenu::InventoryMenu(Window window, Creature player, boost::string_ref t
     }
 }
 
-int Game::showInventory(boost::string_ref title, bool showNothingAsOption, Item preselectedItem,
+int Game::showInventory(string title, bool showNothingAsOption, Item preselectedItem,
                         std::function<bool(Item)> itemFilter)
 {
     InventoryMenu inventoryMenu(getWindow(), *player, title, showNothingAsOption,
@@ -401,7 +401,7 @@ void Game::printPlayerInformation(BitmapFont font) const
 #endif
 }
 
-void Game::printStat(BitmapFont font, boost::string_ref statName, double currentValue,
+void Game::printStat(BitmapFont font, string statName, double currentValue,
                      double maximumValue, Color16 color) const
 {
     int currentValueInt = std::ceil(currentValue);
@@ -415,11 +415,11 @@ void Game::printStat(BitmapFont font, boost::string_ref statName, double current
     var filledColumns = columns * std::max(currentValueInt, 0) / maximumValueInt;
     text.append(columns - text.size(), ' ');
 
-    font.print(getWindow(), boost::string_ref(text).substr(0, filledColumns), TextColor::White, color, true, PreserveLines);
-    font.printLine(getWindow(), boost::string_ref(text).substr(filledColumns), TextColor::White, Color32::none, true, PreserveLines);
+    font.print(getWindow(), string(text).substr(0, filledColumns), TextColor::White, color, true, PreserveLines);
+    font.printLine(getWindow(), string(text).substr(filledColumns), TextColor::White, Color32::none, true, PreserveLines);
 }
 
-void Game::printAttribute(BitmapFont font, boost::string_ref attributeName, double attributeValue) const
+void Game::printAttribute(BitmapFont font, string attributeName, double attributeValue) const
 {
     string padding(5 - attributeName.size(), ' ');
     font.printLine(getWindow(), attributeName + padding + std::to_string(int(attributeValue)),
@@ -453,7 +453,7 @@ void Game::enterCommandMode(Window window)
     }
 }
 
-void Game::parseCommand(boost::string_ref command)
+void Game::parseCommand(string command)
 {
     if (command == "respawn")
         *player = Creature(player->getTileUnder(0), "Human", std::make_unique<PlayerController>(*this));

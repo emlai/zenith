@@ -51,7 +51,7 @@ enum EquipmentSlot : int
 
 const int equipmentSlots = 4;
 
-boost::string_ref toString(EquipmentSlot slot);
+string toString(EquipmentSlot slot);
 
 namespace std
 {
@@ -65,8 +65,8 @@ namespace std
 class Creature final : public Entity
 {
 public:
-    Creature(Tile, boost::string_ref id);
-    Creature(Tile, boost::string_ref id, std::unique_ptr<Controller> controller);
+    Creature(Tile, string id);
+    Creature(Tile, string id, std::unique_ptr<Controller> controller);
     Creature(SaveFile file, Tile tile);
     void save(SaveFile file) const;
     void exist();
@@ -121,15 +121,15 @@ private:
     void attack(Creature);
     void setAttribute(Attribute, double amount);
     void editAttribute(Attribute, double amount);
-    void generateAttributes(boost::string_ref);
+    void generateAttributes(string);
     void calculateDerivedStats();
     void editHP(double amount) { currentHP = std::min(currentHP + amount, maxHP); }
     void editAP(double amount) { currentAP += amount; }
     void editMP(double amount) { currentMP = std::min(currentMP + amount, maxMP); }
     void regenerate();
     void onDeath();
-    static List<Attribute> initDisplayedAttributes(boost::string_ref);
-    static List<List<int>> initAttributeIndices(boost::string_ref);
+    static List<Attribute> initDisplayedAttributes(string);
+    static List<List<int>> initAttributeIndices(string);
     var getAttributeIndices(int attribute) const { return attributeIndices[attribute]; }
 
     List<Tile> tilesUnder;
@@ -164,9 +164,9 @@ void Creature::addMessage(Args... messageParts)
         messages.emplace_back(std::move(message), getTurn());
 }
 
-Attribute stringToAttribute(boost::string_ref);
+Attribute stringToAttribute(string);
 List<Attribute> stringsToAttributes(const List<string>&);
-boost::string_ref toString(EquipmentSlot slot)
+string toString(EquipmentSlot slot)
 {
     switch (slot)
     {
@@ -179,7 +179,7 @@ boost::string_ref toString(EquipmentSlot slot)
     assert(false);
 }
 
-List<Attribute> Creature::initDisplayedAttributes(boost::string_ref id)
+List<Attribute> Creature::initDisplayedAttributes(string id)
 {
     List<Attribute> displayedAttributes;
 
@@ -189,17 +189,17 @@ List<Attribute> Creature::initDisplayedAttributes(boost::string_ref id)
     return displayedAttributes;
 }
 
-List<List<int>> Creature::initAttributeIndices(boost::string_ref id)
+List<List<int>> Creature::initAttributeIndices(string id)
 {
     return Game::creatureConfig->get<List<List<int>>>(id, "AttributeIndices");
 }
 
-Creature::Creature(Tile tile, boost::string_ref id)
+Creature::Creature(Tile tile, string id)
 :   Creature(tile, id, AIController::get(id, *this))
 {
 }
 
-Creature::Creature(Tile tile, boost::string_ref id, std::unique_ptr<Controller> controller)
+Creature::Creature(Tile tile, string id, std::unique_ptr<Controller> controller)
 :   Entity(id, *Game::creatureConfig),
     currentHP(0),
     maxHP(0),
@@ -340,7 +340,7 @@ void Creature::render(Window window, Vector2 position) const
     }
 }
 
-void Creature::generateAttributes(boost::string_ref id)
+void Creature::generateAttributes(string id)
 {
     attributeValues.resize(Game::creatureConfig->get<int>(id, "Attributes"));
 
@@ -349,7 +349,7 @@ void Creature::generateAttributes(boost::string_ref id)
 
     for (var attribute : configAttributes)
     {
-        boost::string_ref attributeName = attributeAbbreviations[attribute];
+        string attributeName = attributeAbbreviations[attribute];
         int baseAttributeValue = Game::creatureConfig->get<int>(id, attributeName);
         setAttribute(attribute, baseAttributeValue + randNormal(2));
     }
@@ -761,7 +761,7 @@ void Creature::setController(std::unique_ptr<Controller> controller)
     this->controller = std::move(controller);
 }
 
-Attribute stringToAttribute(boost::string_ref string)
+Attribute stringToAttribute(string string)
 {
     var it = std::find(std::begin(attributeAbbreviations), std::end(attributeAbbreviations), string);
 

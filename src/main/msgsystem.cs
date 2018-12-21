@@ -4,7 +4,7 @@ class Message
 {
 public:
     Message(string text, int turn) : text(std::move(text)), turn(turn), count(1) {}
-    boost::string_ref getText() const { return text; }
+    string getText() const { return text; }
     int getTurn() const { return turn; }
     int getCount() const { return count; }
     void increaseCount(int currentTurn) { ++count; turn = currentTurn; }
@@ -23,7 +23,7 @@ namespace MessageSystem
                       int currentTurn);
 
 #ifdef DEBUG
-    void addDebugMessage(boost::string_ref message, MessageType = Normal);
+    void addDebugMessage(string message, MessageType = Normal);
     void addToCommandHistory(string command);
     string getPreviousCommand();
     string getNextCommand();
@@ -50,7 +50,7 @@ namespace MessageSystem
 #ifdef DEBUG
     struct DebugMessage
     {
-        DebugMessage(boost::string_ref content, MessageType type = Normal)
+        DebugMessage(string content, MessageType type = Normal)
         :   content(content), type(type)
         {
         }
@@ -90,7 +90,7 @@ void MessageSystem::drawMessages(Window window, BitmapFont font,
 
 #ifdef DEBUG
 
-void MessageSystem::addDebugMessage(boost::string_ref message, MessageType type)
+void MessageSystem::addDebugMessage(string message, MessageType type)
 {
     debugMessages.push_front(DebugMessage(message, type));
 

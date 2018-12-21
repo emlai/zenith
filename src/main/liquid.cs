@@ -1,7 +1,7 @@
 class Liquid
 {
 public:
-    Liquid(boost::string_ref materialId);
+    Liquid(string materialId);
     Liquid(SaveFile file);
     void save(SaveFile file) const;
     void exist();
@@ -15,7 +15,7 @@ private:
     double fadeLevel;
     Texture texture;
 }
-Liquid::Liquid(boost::string_ref materialId)
+Liquid::Liquid(string materialId)
 :   materialId(materialId),
     fadeLevel(1.0),
     texture(SDL_PIXELFORMAT_RGBA8888, Tile::getSize())

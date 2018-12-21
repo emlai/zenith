@@ -19,7 +19,7 @@ public:
 class Window
 {
 public:
-    Window(Engine engine, Vector2 size, boost::string_ref title = "", bool fullscreen = true);
+    Window(Engine engine, Vector2 size, string title = "", bool fullscreen = true);
     Window(Window window) = default;
     ~Window();
     Event waitForInput();
@@ -41,7 +41,7 @@ public:
     Vector2 getSize() const;
     int getWidth() const;
     int getHeight() const;
-    boost::string_ref getTitle() const;
+    string getTitle() const;
     GraphicsContext getGraphicsContext() { return context; }
     static Vector2 getScreenResolution();
 
@@ -94,7 +94,7 @@ SDL_Window Window::initWindowHandle(Vector2 size, string title, bool fullscreen)
     return windowHandle;
 }
 
-Window::Window(Engine engine, Vector2 size, boost::string_ref title, bool fullscreen)
+Window::Window(Engine engine, Vector2 size, string title, bool fullscreen)
 :   engine(engine),
     closeRequestReceived(false),
     windowHandle(initWindowHandle(size, title.to_string().c_str(), fullscreen), SDL_DestroyWindow),
@@ -253,7 +253,7 @@ int Window::getHeight() const
     return height;
 }
 
-boost::string_ref Window::getTitle() const
+string Window::getTitle() const
 {
     return SDL_GetWindowTitle(windowHandle.get());
 }

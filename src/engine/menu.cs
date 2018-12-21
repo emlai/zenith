@@ -1,10 +1,10 @@
 struct MenuItem
 {
-    MenuItem(int id, boost::string_ref text, Key shortcut = NoKey, Sprite image = nullptr)
+    MenuItem(int id, string text, Key shortcut = NoKey, Sprite image = nullptr)
     :   id(id), mainImage(image), mainText(text), secondaryImage(nullptr), shortcut(shortcut)
     {
     }
-    MenuItem(int id, boost::string_ref mainText, boost::string_ref secondaryText, Key shortcut = NoKey,
+    MenuItem(int id, string mainText, string secondaryText, Key shortcut = NoKey,
              Sprite mainImage = nullptr, Sprite secondaryImage = nullptr)
     :   id(id), mainImage(mainImage), mainText(mainText), secondaryImage(secondaryImage),
         secondaryText(secondaryText), shortcut(shortcut)
@@ -27,7 +27,7 @@ public:
     enum { Exit = INT_MIN }
 
     Menu() { clear(); }
-    void addTitle(boost::string_ref text);
+    void addTitle(string text);
     /// Returns the index of the added menu item.
     int addItem(MenuItem item);
     void clear();
@@ -80,7 +80,7 @@ private:
 Color32 Menu::defaultTextColor = Color32::white * 0.6;
 Color32 Menu::defaultHoverColor = Color32::white;
 
-void Menu::addTitle(boost::string_ref text)
+void Menu::addTitle(string text)
 {
     title = text.to_string();
 }

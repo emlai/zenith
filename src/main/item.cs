@@ -3,7 +3,7 @@ enum EquipmentSlot : int;
 class Item : public Entity
 {
 public:
-    Item(boost::string_ref id, boost::string_ref materialId);
+    Item(string id, string materialId);
     static std::unique_ptr<Item> load(SaveFile file);
     virtual void save(SaveFile file) const;
     virtual void exist() {}
@@ -17,19 +17,19 @@ public:
     Sprite getSprite() const { return sprite; }
 
 protected:
-    Item(boost::string_ref id, boost::string_ref materialId, Sprite sprite);
+    Item(string id, string materialId, Sprite sprite);
 
     string materialId;
     Sprite sprite;
 }
 
-string getRandomMaterialId(boost::string_ref itemId);
+string getRandomMaterialId(string itemId);
 
 class Corpse final : public Item
 {
 public:
     Corpse(std::unique_ptr<Creature> creature);
-    Corpse(boost::string_ref creatureId);
+    Corpse(string creatureId);
     void exist() override;
     void renderEquipped(Window window, Vector2 position) const override;
     void save(SaveFile file) const override;
@@ -40,7 +40,7 @@ private:
 
     std::unique_ptr<Creature> creature;
 }
-static Color16 getMaterialColor(boost::string_ref materialId)
+static Color16 getMaterialColor(string materialId)
 {
     if (!materialId.empty())
     {
@@ -60,13 +60,13 @@ static Color16 getMaterialColor(boost::string_ref materialId)
         return Color16::none;
 }
 
-Item::Item(boost::string_ref id, boost::string_ref materialId)
+Item::Item(string id, string materialId)
 :   Item(id, materialId,
          ::getSprite(*Game::itemSpriteSheet, *Game::itemConfig, id, 0, getMaterialColor(materialId)))
 {
 }
 
-Item::Item(boost::string_ref id, boost::string_ref materialId, Sprite sprite)
+Item::Item(string id, string materialId, Sprite sprite)
 :   Entity(id, *Game::itemConfig),
     materialId(materialId.to_string()),
     sprite(std::move(sprite))
@@ -163,7 +163,7 @@ void Item::renderEquipped(Window window, Vector2 position) const
     sprite.render(window, position, equippedSourceOffset);
 }
 
-string getRandomMaterialId(boost::string_ref itemId)
+string getRandomMaterialId(string itemId)
 {
     var materials = Game::itemConfig->get<List<string>>(itemId, "PossibleMaterials");
     return materials.empty() ? "" : randomElement(materials);
@@ -177,7 +177,7 @@ Corpse::Corpse(std::unique_ptr<Creature> creature)
     sprite.setAsciiGlyph(corpseGlyph);
 }
 
-Corpse::Corpse(boost::string_ref creatureId)
+Corpse::Corpse(string creatureId)
 :   Item(creatureId + "Corpse", "", ::getSprite(*Game::creatureSpriteSheet, *Game::creatureConfig,
                                                 creatureId, corpseFrame, Color32::none))
 {

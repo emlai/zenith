@@ -1,10 +1,10 @@
 class Engine
 {
 public:
-    Window createWindow(Vector2 size, boost::string_ref title = "", bool fullscreen = true);
+    Window createWindow(Vector2 size, string title = "", bool fullscreen = true);
     Window getWindow(unsigned index = 0) { return windows[index]; }
     Window getWindow(unsigned index = 0) const { return windows[index]; }
-    void reportErrorToUser(boost::string_ref text);
+    void reportErrorToUser(string text);
     template<typename StateType>
     var execute(StateType state);
     void render(Window window);
@@ -26,13 +26,13 @@ var Engine::execute(StateType state)
     DEFER { states.pop_back(); }
     return state.execute();
 }
-Window Engine::createWindow(Vector2 size, boost::string_ref title, bool fullscreen)
+Window Engine::createWindow(Vector2 size, string title, bool fullscreen)
 {
     windows.emplace_back(*this, size, title, fullscreen);
     return windows.back();
 }
 
-void Engine::reportErrorToUser(boost::string_ref text)
+void Engine::reportErrorToUser(string text)
 {
     if (SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, getWindow().getTitle().to_string().c_str(),
                                  text.to_string().c_str(), nullptr) != 0)

@@ -28,7 +28,7 @@ Area::Area(World world, Vector2 position, int level)
 :   world(world), position(position)
 {
     tiles.reserve(size * size);
-    boost::string_ref groundId = level < 0 ? "DirtFloor" : "Grass";
+    string groundId = level < 0 ? "DirtFloor" : "Grass";
 
     for (Vector2 pos(0, 0); pos.y < size; ++pos.y)
     {

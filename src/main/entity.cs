@@ -1,7 +1,7 @@
 class Entity
 {
 public:
-    Entity(boost::string_ref id, Config config);
+    Entity(string id, Config config);
     Entity(Entity) = delete;
     Entity(Entity) = default;
     Entity operator=(Entity) = delete;
@@ -10,7 +10,7 @@ public:
 
     string getName() const;
     string getNameIndefinite() const;
-    boost::string_ref getId() const { return id; }
+    string getId() const { return id; }
     Config getConfig() const { return *config; }
     template<typename ComponentType>
     List<ComponentType> getComponentsOfType() const;
@@ -42,7 +42,7 @@ List<ComponentType> Entity::getComponentsOfType() const
 
     return componentsOfType;
 }
-static void reportUnknownComponent(boost::string_ref name)
+static void reportUnknownComponent(string name)
 {
     static boost::unordered_set<string> reportedNames;
 
@@ -50,7 +50,7 @@ static void reportUnknownComponent(boost::string_ref name)
         std::cerr << "Unknown component '" << name << "'\n";
 }
 
-Entity::Entity(boost::string_ref id, Config config)
+Entity::Entity(string id, Config config)
 :   id(id),
     config(config)
 {

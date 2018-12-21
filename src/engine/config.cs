@@ -2,18 +2,18 @@ class Config
 {
 public:
     Config() {}
-    Config(boost::string_ref filePath);
+    Config(string filePath);
     template<typename ValueType>
-    boost::optional<ValueType> getOptional(boost::string_ref key) const;
+    boost::optional<ValueType> getOptional(string key) const;
     template<typename ValueType>
-    ValueType get(boost::string_ref type, boost::string_ref attribute) const;
+    ValueType get(string type, string attribute) const;
     template<typename ValueType>
-    boost::optional<ValueType> getOptional(boost::string_ref type, boost::string_ref attribute) const;
+    boost::optional<ValueType> getOptional(string type, string attribute) const;
     List<string> getToplevelKeys() const;
-    void set(boost::string_ref key, bool value) { data.insert(key.to_string(), Value(value)); }
-    void set(boost::string_ref key, long long value) { data.insert(key.to_string(), Value(value)); }
-    void set(boost::string_ref key, double value) { data.insert(key.to_string(), Value(value)); }
-    void writeToFile(boost::string_ref filePath) const;
+    void set(string key, bool value) { data.insert(key.to_string(), Value(value)); }
+    void set(string key, long long value) { data.insert(key.to_string(), Value(value)); }
+    void set(string key, double value) { data.insert(key.to_string(), Value(value)); }
+    void writeToFile(string filePath) const;
 
 private:
     template<typename Value>
@@ -221,7 +221,7 @@ struct Config::ConversionTraits<List<ElementType>>
 }
 
 template<typename ValueType>
-boost::optional<ValueType> Config::getOptional(boost::string_ref key) const
+boost::optional<ValueType> Config::getOptional(string key) const
 {
     if (var value = data.getOptional(key.to_string()))
         return convert<ValueType>(*value);
@@ -230,7 +230,7 @@ boost::optional<ValueType> Config::getOptional(boost::string_ref key) const
 }
 
 template<typename ValueType>
-ValueType Config::get(boost::string_ref type, boost::string_ref attribute) const
+ValueType Config::get(string type, string attribute) const
 {
     if (var value = getOptional<ValueType>(type, attribute))
         return ValueType(std::move(*value));
@@ -239,7 +239,7 @@ ValueType Config::get(boost::string_ref type, boost::string_ref attribute) const
 }
 
 template<typename ValueType>
-boost::optional<ValueType> Config::getOptional(boost::string_ref type, boost::string_ref attribute) const
+boost::optional<ValueType> Config::getOptional(string type, string attribute) const
 {
     string current = type.to_string();
     string key = attribute.to_string();
@@ -284,14 +284,14 @@ boost::optional<ValueType> Config::getOptional(boost::string_ref type, boost::st
 class ConfigReader
 {
 public:
-    ConfigReader(boost::string_ref filePath);
+    ConfigReader(string filePath);
     int get();
     void unget(int);
     int peek();
     string getId();
     string getDoubleQuotedString();
-    std::runtime_error syntaxError(boost::string_ref message) const;
-    std::runtime_error syntaxError(boost::string_ref expected, char actual) const;
+    std::runtime_error syntaxError(string message) const;
+    std::runtime_error syntaxError(string expected, char actual) const;
 
 private:
     string filePath;
@@ -300,7 +300,7 @@ private:
     int column;
 }
 
-ConfigReader::ConfigReader(boost::string_ref filePath)
+ConfigReader::ConfigReader(string filePath)
 :   filePath(filePath), file(this->filePath), line(1), column(0)
 {
     if (!file)
@@ -416,13 +416,13 @@ static string charToString(char ch)
     }
 }
 
-std::runtime_error ConfigReader::syntaxError(boost::string_ref message) const
+std::runtime_error ConfigReader::syntaxError(string message) const
 {
     return std::runtime_error("Syntax error in " + filePath + " (line " + std::to_string(line) +
                               ", column " + std::to_string(column) + "): " + message);
 }
 
-std::runtime_error ConfigReader::syntaxError(boost::string_ref expected, char actual) const
+std::runtime_error ConfigReader::syntaxError(string expected, char actual) const
 {
     return syntaxError("expected " + expected + ", got " + charToString(actual));
 }
@@ -592,7 +592,7 @@ Config::Value Config::parseAtomicValue(ConfigReader reader)
     throw reader.syntaxError("number, id, or double-quoted string", char(ch));
 }
 
-Config::Config(boost::string_ref filePath)
+Config::Config(string filePath)
 {
     ConfigReader reader(filePath);
 
@@ -654,7 +654,7 @@ void Config::printValue(std::ostream stream, Config::Value value) const
     }
 }
 
-void Config::writeToFile(boost::string_ref filePath) const
+void Config::writeToFile(string filePath) const
 {
     std::ofstream file(filePath.to_string());
 

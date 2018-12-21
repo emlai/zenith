@@ -1,7 +1,7 @@
 class Object : public Entity
 {
 public:
-    Object(boost::string_ref id);
+    Object(string id);
     Object(SaveFile file);
     void save(SaveFile file) const;
     bool close();
@@ -12,7 +12,7 @@ public:
 private:
     Sprite sprite;
 }
-Object::Object(boost::string_ref id)
+Object::Object(string id)
 :   Entity(id, *Game::objectConfig),
     sprite(::getSprite(*Game::objectSpriteSheet, *Game::objectConfig, id))
 {

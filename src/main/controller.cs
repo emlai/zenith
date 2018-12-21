@@ -12,7 +12,7 @@ class AIController : public Controller
 public:
     AIController(std::unique_ptr<AI> ai) : ai(std::move(ai)) {}
     Action control(Creature creature) override;
-    static std::unique_ptr<AIController> get(boost::string_ref id, Creature creature);
+    static std::unique_ptr<AIController> get(string id, Creature creature);
 
 private:
     std::unique_ptr<AI> ai;
@@ -38,7 +38,7 @@ void saveKeyMap(Config config);
 Dir8 getDirectionFromEvent(Event event, Vector2 origin);
 Controller::~Controller() {}
 
-std::unique_ptr<AIController> AIController::get(boost::string_ref id, Creature creature)
+std::unique_ptr<AIController> AIController::get(string id, Creature creature)
 {
     var ai = AI::get(Game::creatureConfig->get<string>(id, "ai"), creature);
     return std::make_unique<AIController>(std::move(ai));

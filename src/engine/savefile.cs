@@ -3,7 +3,7 @@ struct SDL_RWops;
 class SaveFile
 {
 public:
-    SaveFile(boost::string_ref filePath, bool writable);
+    SaveFile(string filePath, bool writable);
     uint64_t getSize() const;
     int64_t getOffset() const;
     void seek(int64_t offset);
@@ -21,8 +21,8 @@ public:
     void write(double value);
     void write(Vector2 value);
     void write(Vector3 value);
-    void write(boost::string_ref value);
-    void write(string value) { write(boost::string_ref(value)); }
+    void write(string value);
+    void write(string value) { write(string(value)); }
     template<typename T>
     void write(const List<T>& vector);
 
@@ -85,7 +85,7 @@ static void closeFile(SDL_RWops file)
     SDL_RWclose(file);
 }
 
-SaveFile::SaveFile(boost::string_ref filePath, bool writable)
+SaveFile::SaveFile(string filePath, bool writable)
 :   file(SDL_RWFromFile(filePath.to_string().c_str(), writable ? "wb" : "rb"), closeFile)
 {
     if (!file)
@@ -187,7 +187,7 @@ double SaveFile::readDouble() const
     return result;
 }
 
-void SaveFile::write(boost::string_ref value)
+void SaveFile::write(string value)
 {
     writeInt16(uint16_t(value.size()));
 
