@@ -152,7 +152,7 @@ Action PlayerController::control(Creature creature)
                 if (creature.isDead())
                     break;
 
-                boost::optional<Dir8> direction = game.askForDirection("What do you want to close?");
+                Dir8? direction = game.askForDirection("What do you want to close?");
 
                 if (direction && creature.close(*direction))
                     return Close;

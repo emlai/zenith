@@ -3,11 +3,11 @@ class Config
     Config() {}
     Config(string filePath);
     template<typename ValueType>
-    boost::optional<ValueType> getOptional(string key);
+    ValueType? getOptional(string key);
     template<typename ValueType>
     ValueType get(string type, string attribute);
     template<typename ValueType>
-    boost::optional<ValueType> getOptional(string type, string attribute);
+    ValueType? getOptional(string type, string attribute);
     List<string> getToplevelKeys();
     void set(string key, bool value) { data.insert(key.to_string(), Value(value)); }
     void set(string key, long long value) { data.insert(key.to_string(), Value(value)); }
@@ -101,7 +101,7 @@ private:
 
     template<typename OutputType>
     template<typename OutputType>
-    static boost::optional<OutputType> convert(Value value)
+    static OutputType? convert(Value value)
     {
         return ConversionTraits<OutputType>()(value);
     }
@@ -120,13 +120,13 @@ private:
 template<typename OutputType>
 struct Config::ConversionTraits
 {
-    boost::optional<OutputType> operator()(Value value);
+    OutputType? operator()(Value value);
 }
 
 template<>
 struct Config::ConversionTraits<bool>
 {
-    boost::optional<bool> operator()(Value value)
+    bool? operator()(Value value)
     {
         if (value.isBool())
             return value.getBool();
@@ -138,7 +138,7 @@ struct Config::ConversionTraits<bool>
 template<>
 struct Config::ConversionTraits<int>
 {
-    boost::optional<int> operator()(Value value)
+    int? operator()(Value value)
     {
         if (value.isInt())
             return boost::numeric_cast<int>(value.getInt());
@@ -150,7 +150,7 @@ struct Config::ConversionTraits<int>
 template<>
 struct Config::ConversionTraits<unsigned>
 {
-    boost::optional<unsigned> operator()(Value value)
+    unsigned? operator()(Value value)
     {
         if (value.isInt())
             return boost::numeric_cast<unsigned>(value.getInt());
@@ -162,7 +162,7 @@ struct Config::ConversionTraits<unsigned>
 template<>
 struct Config::ConversionTraits<unsigned short>
 {
-    boost::optional<unsigned short> operator()(Value value)
+    unsigned short? operator()(Value value)
     {
         if (value.isInt())
             return boost::numeric_cast<unsigned short>(value.getInt());
@@ -174,7 +174,7 @@ struct Config::ConversionTraits<unsigned short>
 template<>
 struct Config::ConversionTraits<double>
 {
-    boost::optional<double> operator()(Value value)
+    double? operator()(Value value)
     {
         if (value.isFloat())
             return value.getFloat();
@@ -189,7 +189,7 @@ struct Config::ConversionTraits<double>
 template<>
 struct Config::ConversionTraits<string>
 {
-    boost::optional<string> operator()(Value value)
+    string? operator()(Value value)
     {
         if (value.isString())
             return value.getString();
@@ -201,7 +201,7 @@ struct Config::ConversionTraits<string>
 template<typename ElementType>
 struct Config::ConversionTraits<List<ElementType>>
 {
-    boost::optional<List<ElementType>> operator()(Value value)
+    List<ElementType?> operator()(Value value)
     {
         if (!value.isList())
             return boost::none;
@@ -216,7 +216,7 @@ struct Config::ConversionTraits<List<ElementType>>
 }
 
 template<typename ValueType>
-boost::optional<ValueType> Config::getOptional(string key)
+ValueType? Config::getOptional(string key)
 {
     if (var value = data.getOptional(key.to_string()))
         return convert<ValueType>(*value);
@@ -234,7 +234,7 @@ ValueType Config::get(string type, string attribute)
 }
 
 template<typename ValueType>
-boost::optional<ValueType> Config::getOptional(string type, string attribute)
+ValueType? Config::getOptional(string type, string attribute)
 {
     string current = type.to_string();
     string key = attribute.to_string();

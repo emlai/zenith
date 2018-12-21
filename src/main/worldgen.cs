@@ -29,8 +29,8 @@ class WorldGenerator
 
 private:
     List<Building> generateBuildings(Rect region, int level);
-    boost::optional<Building> generateBuilding(Rect region, int level);
-    boost::optional<Room> generateRoom(Rect region, int level);
+    Building? generateBuilding(Rect region, int level);
+    Room? generateRoom(Rect region, int level);
     Tile findPathStart(Tile tile);
     List<Tile> findPathAStar(Tile source, Tile target,
                                      const std::function<bool(Tile)>& isAllowed);
@@ -126,7 +126,7 @@ List<Building> WorldGenerator::generateBuildings(Rect region, int level)
     return buildings;
 }
 
-boost::optional<Building> WorldGenerator::generateBuilding(Rect region, int level)
+Building? WorldGenerator::generateBuilding(Rect region, int level)
 {
     if (var room = generateRoom(region, level))
     {
@@ -138,7 +138,7 @@ boost::optional<Building> WorldGenerator::generateBuilding(Rect region, int leve
         return boost::none;
 }
 
-boost::optional<Room> WorldGenerator::generateRoom(Rect region, int level)
+Room? WorldGenerator::generateRoom(Rect region, int level)
 {
     bool canGenerateHere = true;
 

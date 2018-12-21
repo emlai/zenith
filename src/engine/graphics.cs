@@ -27,8 +27,8 @@ private:
     std::unique_ptr<SDL_Renderer, void (&)(SDL_Renderer)> renderer;
     std::unique_ptr<SDL_Texture, void (&)(SDL_Texture)> framebuffer;
     Texture targetTexture;
-    boost::optional<Rect> viewport;
-    boost::optional<Rect> view;
+    Rect? viewport;
+    Rect? view;
     BitmapFont font;
     int animationFrameTime;
 }

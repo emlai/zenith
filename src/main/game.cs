@@ -16,14 +16,14 @@ class Game : public State
     void showEquipmentMenu();
     void lookMode();
     string askForString(string question);
-    boost::optional<Dir8> askForDirection(string question);
+    Dir8? askForDirection(string question);
     Creature getPlayer() { return player; }
     Window getWindow();
 #ifdef DEBUG
     void enterCommandMode(Window);
     const Key commandModeKey = '`';
 #endif
-    static boost::optional<Vector2> cursorPosition;
+    static Vector2? cursorPosition;
     bool playerSeesEverything;
 
     static std::unique_ptr<Config> creatureConfig;
@@ -71,7 +71,7 @@ std::unique_ptr<Texture> Game::cursorTexture;
 std::unique_ptr<Texture> Game::fogOfWarTexture;
 
 const Color32 transparentColor(0x5A5268FF);
-boost::optional<Vector2> Game::cursorPosition;
+Vector2? Game::cursorPosition;
 
 Game::Game(bool loadSavedGame)
 :   playerSeesEverything(false),
@@ -282,7 +282,7 @@ string Game::askForString(string question)
 class DirectionQuestion : public State
 {
     DirectionQuestion(string question, Vector2 origin) : question(std::move(question)), origin(origin) {}
-    boost::optional<Dir8> execute();
+    Dir8? execute();
 
 private:
     void render(Window window) override;
@@ -292,7 +292,7 @@ private:
     Vector2 origin;
 }
 
-boost::optional<Dir8> DirectionQuestion::execute()
+Dir8? DirectionQuestion::execute()
 {
     Event event = getEngine().getWindow().waitForInput();
 
@@ -308,7 +308,7 @@ void DirectionQuestion::render(Window window)
     window.getFont().print(window, question);
 }
 
-boost::optional<Dir8> Game::askForDirection(string question)
+Dir8? Game::askForDirection(string question)
 {
     DirectionQuestion directionQuestion(question, player.getPosition());
     return getEngine().execute(directionQuestion);

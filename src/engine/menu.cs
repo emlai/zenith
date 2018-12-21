@@ -12,9 +12,9 @@ struct MenuItem
     }
 
     const int id;
-    Sprite const mainImage;
+    Sprite mainImage;
     const string mainText;
-    Sprite const secondaryImage;
+    Sprite secondaryImage;
     const string secondaryText;
     const Key shortcut;
 }
@@ -34,7 +34,7 @@ class Menu : public State
     TextLayout textLayout;
     ItemLayout itemLayout;
     int itemSpacing;
-    boost::optional<Vector2> itemSize;
+    Vector2? itemSize;
     Vector2 tableCellSpacing;
     HorizontalAlignment secondaryColumnAlignment;
     Color32 textColor;
@@ -297,7 +297,7 @@ class Menu : public State
     void setTextLayout(TextLayout layout) { textLayout = layout; }
     void setItemLayout(ItemLayout layout) { itemLayout = layout; }
     void setItemSpacing(int amount) { itemSpacing = amount; }
-    void setItemSize(boost::optional<Vector2> size) { itemSize = size; }
+    void setItemSize(Vector2? size) { itemSize = size; }
     void setTableCellSpacing(Vector2 spacing) { tableCellSpacing = spacing; }
     void setSecondaryColumnAlignment(HorizontalAlignment alignment) { secondaryColumnAlignment = alignment; }
     void setTextColor(Color32 color) { textColor = color; }
