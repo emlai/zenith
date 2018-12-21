@@ -154,18 +154,6 @@ Vector2Base<T> makeRandomVector(T min, T max)
     return { randInt(min, max), randInt(min, max) }
 }
 
-namespace std
-{
-    template<>
-    struct hash<Vector2>
-    {
-        size_t operator()(Vector2 vector)
-        {
-            return (vector.x * 73856093) ^ (vector.y * 19349663);
-        }
-    }
-}
-
 /// 3D vector structure for representing values with x, y, and z components.
 struct Vector3Base<T>
 {
@@ -198,18 +186,6 @@ struct Vector3Base<T>
         return Vector3Base(::divideRoundingDown(x, divisor),
                            ::divideRoundingDown(y, divisor),
                            ::divideRoundingDown(z, divisor));
-    }
-}
-
-namespace boost
-{
-    template<>
-    struct hash<Vector3>
-    {
-        size_t operator()(Vector3 vector)
-        {
-            return (size_t(vector.x) * 73856093) ^ (size_t(vector.y) * 19349663) ^ (size_t(vector.z) * 83492791);
-        }
     }
 }
 

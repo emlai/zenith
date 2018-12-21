@@ -1,11 +1,11 @@
-namespace GUIColor
+static class GUIColor
 {
     const Color16 White(0xFEEF);
     const Color16 Gray(0x778F);
     const Color16 Black(0x000F);
 }
 
-namespace TextColor
+static class TextColor
 {
     const Color16 White(GUIColor::White);
     const Color16 Gray(GUIColor::Gray);
@@ -16,7 +16,7 @@ namespace TextColor
     const Color16 Brown(0xE71F);
 }
 
-namespace GUI
+static class GUI
 {
     const Vector2 spacing(12, 12);
     const int fontHeight = 12;

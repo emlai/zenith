@@ -28,9 +28,6 @@ class Message
 
 static class MessageSystem
 {
-    void drawMessages(Window window, BitmapFont, List<Message> messages,
-                      int currentTurn);
-
     const int maxMessagesToPrint = 6;
 
 #ifdef DEBUG
