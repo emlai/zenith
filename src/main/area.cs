@@ -5,8 +5,6 @@ class Area
     void save(SaveFile file);
 
 private:
-    friend class World;
-
     Tile getRandomTile();
     Tile getRandomTile();
     World getWorld() { return world; }

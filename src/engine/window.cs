@@ -44,9 +44,6 @@ class Window
     enum { CloseRequest = -2 }
 
 private:
-    friend class GraphicsContext;
-    friend class Texture;
-
     static void initializeSDLVideoSubsystem();
     static SDL_Window initWindowHandle(Vector2 size, string title, bool fullscreen);
     bool handleWindowEvent(int eventType);

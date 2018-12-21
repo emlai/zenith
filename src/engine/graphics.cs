@@ -19,9 +19,6 @@ class GraphicsContext
     void renderFilledRectangle(Rect rectangle, Color32 color, BlendMode blendMode = BlendMode::Normal);
 
 private:
-    friend class Texture;
-    friend class Window;
-
     void clearScreen();
     Vector2 mapFromTargetCoordinates(Vector2);
     Rect mapToTargetCoordinates(Rect);

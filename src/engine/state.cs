@@ -9,7 +9,6 @@ class State
     Engine getEngine() { return *engine; }
 
 private:
-    friend class Engine;
     virtual void render(Window window) = 0;
     virtual bool renderPreviousState() { return false; }
 

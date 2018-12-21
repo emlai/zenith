@@ -9,7 +9,6 @@ class Engine
     void render(Window window);
 
 private:
-    friend class Window;
     State getCurrentState() { return *states.end()[-1]; }
     State getPreviousState() { return *states.end()[-2]; }
 

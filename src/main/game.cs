@@ -41,7 +41,6 @@ class Game : public State
     static constexpr var saveFileName = "zenith.sav";
 
 private:
-    friend class LookMode;
     void renderAtPosition(Window, Vector2 centerPosition);
     void render(Window window) override;
     void printPlayerInformation(BitmapFont);
