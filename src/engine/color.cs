@@ -11,9 +11,9 @@ struct Color<T>
     const int max = (1 << bitsPerChannel) - 1;
     const int bit[channelCount];
     const int temperatureCoefficient = int(0.25 * max);
-    const Color white;
-    const Color black;
-    const Color none;
+    const Color<T> white;
+    const Color<T> black;
+    const Color<T> none;
     static bool modulateTemperature;
 
     T value;
