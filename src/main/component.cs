@@ -28,7 +28,7 @@ std::unique_ptr<Component> Component::get(string name, Entity parent)
     if (name == "LightSource") component = std::make_unique<LightSource>();
 
     if (component)
-        component->parent = parent;
+        component.parent = parent;
 
     return component;
 }

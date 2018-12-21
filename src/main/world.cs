@@ -66,7 +66,7 @@ void World::save(SaveFile file)
 
 int World::getTurn()
 {
-    return game->getTurn();
+    return game.getTurn();
 }
 
 void World::exist(Rect region, int level)
@@ -88,7 +88,7 @@ void World::exist(Rect region, int level)
                             creaturesToUpdate.end());
 
     for (var creature : creaturesToUpdate)
-        creature->exist();
+        creature.exist();
 }
 
 void World::render(Window window, Rect region, int level, Creature player)
@@ -102,7 +102,7 @@ void World::render(Window window, Rect region, int level, Creature player)
 
     forEachTile(region, level, [&](Tile tile)
     {
-        if (game->playerSeesEverything || player.sees(tile))
+        if (game.playerSeesEverything || player.sees(tile))
             tilesToRender.emplace_back(tile, false);
         else if (player.remembers(tile))
             tilesToRender.emplace_back(tile, true);
@@ -110,7 +110,7 @@ void World::render(Window window, Rect region, int level, Creature player)
 
     for (int zIndex = 0; zIndex < 7; ++zIndex)
         for (var tileAndFogOfWar : tilesToRender)
-            tileAndFogOfWar.first->render(window, zIndex, tileAndFogOfWar.second, !game->playerSeesEverything);
+            tileAndFogOfWar.first.render(window, zIndex, tileAndFogOfWar.second, !game.playerSeesEverything);
 }
 
 Area World::getOrCreateArea(Vector3 position)
@@ -118,7 +118,7 @@ Area World::getOrCreateArea(Vector3 position)
     if (var area = getArea(position))
         return area;
 
-    var area = areas.emplace(position, Area(*this, Vector2(position), position.z)).first->second;
+    var area = areas.emplace(position, Area(*this, Vector2(position), position.z)).first.second;
     WorldGenerator generator(*this);
     generator.generateRegion(Rect(Vector2(position) * Area::sizeVector, Area::sizeVector), position.z);
     return area;
@@ -128,13 +128,13 @@ Area World::getArea(Vector3 position)
 {
     var it = areas.find(position);
     if (it != areas.end())
-        return it->second;
+        return it.second;
 
     var offset = savedAreaOffsets.find(position);
     if (offset != savedAreaOffsets.end())
     {
-        saveFile->seek(offset->second);
-        return areas.emplace(position, Area(*saveFile, *this, Vector2(position), position.z)).first->second;
+        saveFile.seek(offset.second);
+        return areas.emplace(position, Area(*saveFile, *this, Vector2(position), position.z)).first.second;
     }
 
     return nullptr;
@@ -156,7 +156,7 @@ Vector2 World::globalPositionToTilePosition(Vector2 position)
 Tile World::getOrCreateTile(Vector2 position, int level)
 {
     if (var area = getOrCreateArea(globalPositionToAreaPosition(position, level)))
-        return area->getTileAt(globalPositionToTilePosition(position));
+        return area.getTileAt(globalPositionToTilePosition(position));
 
     return nullptr;
 }
@@ -164,7 +164,7 @@ Tile World::getOrCreateTile(Vector2 position, int level)
 Tile World::getTile(Vector2 position, int level)
 {
     if (var area = getArea(globalPositionToAreaPosition(position, level)))
-        return area->getTileAt(globalPositionToTilePosition(position));
+        return area.getTileAt(globalPositionToTilePosition(position));
 
     return nullptr;
 }

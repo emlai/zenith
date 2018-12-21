@@ -96,7 +96,7 @@ Game::Game(bool loadSavedGame)
     else
     {
         var tile = world.getOrCreateTile({0, 0}, 0);
-        player = tile->spawnCreature("Human", std::make_unique<PlayerController>(*this));
+        player = tile.spawnCreature("Human", std::make_unique<PlayerController>(*this));
     }
 }
 
@@ -131,7 +131,7 @@ InventoryMenu::InventoryMenu(Window window, Creature player, string title,
     for (var item : player.getInventory())
     {
         if (!itemFilter || itemFilter(*item))
-            addItem(MenuItem(id, item->getName(), NoKey, item->getSprite()));
+            addItem(MenuItem(id, item.getName(), NoKey, item.getSprite()));
 
         ++id;
     }
@@ -169,8 +169,8 @@ void EquipmentMenu::execute()
         for (int i = 0; i < equipmentSlots; ++i)
         {
             var slot = static_cast<EquipmentSlot>(i);
-            var image = player->getEquipment(slot) ? player->getEquipment(slot)->getSprite() : nullptr;
-            var itemName = player->getEquipment(slot) ? player->getEquipment(slot)->getName() : "-";
+            var image = player.getEquipment(slot) ? player.getEquipment(slot).getSprite() : nullptr;
+            var itemName = player.getEquipment(slot) ? player.getEquipment(slot).getName() : "-";
             addItem(MenuItem(i, toString(slot) + ":", itemName, NoKey, nullptr, image));
         }
 
@@ -181,7 +181,7 @@ void EquipmentMenu::execute()
         var selectedSlot = static_cast<EquipmentSlot>(choice);
 
         InventoryMenu inventoryMenu(getEngine().getWindow(), *player, "", true,
-                                    player->getEquipment(selectedSlot), [&](var item)
+                                    player.getEquipment(selectedSlot), [&](var item)
         {
             return item.getEquipmentSlot() == selectedSlot;
         });
@@ -189,9 +189,9 @@ void EquipmentMenu::execute()
         var selectedItemIndex = getEngine().execute(inventoryMenu);
 
         if (selectedItemIndex == -1)
-            player->equip(selectedSlot, nullptr);
+            player.equip(selectedSlot, nullptr);
         else if (selectedItemIndex != Menu::Exit)
-            player->equip(selectedSlot, &*player->getInventory()[selectedItemIndex]);
+            player.equip(selectedSlot, &*player.getInventory()[selectedItemIndex]);
     }
 }
 
@@ -203,7 +203,7 @@ void Game::showEquipmentMenu()
 
 class LookMode : public State
 {
-    LookMode(Game game) : game(game), position(game.player->getPosition()) {}
+    LookMode(Game game) : game(game), position(game.player.getPosition()) {}
     void execute();
 
 private:
@@ -236,7 +236,7 @@ void LookMode::execute()
 
 void LookMode::render(Window window)
 {
-    game->renderAtPosition(window, position);
+    game.renderAtPosition(window, position);
     window.getFont().setArea(GUI::getQuestionArea(window));
     window.getFont().print(window, "Look mode (arrow keys to move around, esc to exit)");
 }
@@ -310,7 +310,7 @@ void DirectionQuestion::render(Window window)
 
 boost::optional<Dir8> Game::askForDirection(string question)
 {
-    DirectionQuestion directionQuestion(question, player->getPosition());
+    DirectionQuestion directionQuestion(question, player.getPosition());
     return getEngine().execute(directionQuestion);
 }
 
@@ -321,21 +321,21 @@ void Game::execute()
     while (gameIsRunning)
     {
         Vector2 updateDistance(64, 64);
-        Rect regionToUpdate(player->getPosition() - updateDistance, updateDistance * 2);
-        world.exist(regionToUpdate, player->getLevel());
+        Rect regionToUpdate(player.getPosition() - updateDistance, updateDistance * 2);
+        world.exist(regionToUpdate, player.getLevel());
     }
 }
 
 void Game::render(Window window)
 {
-    renderAtPosition(window, player->getPosition());
+    renderAtPosition(window, player.getPosition());
 }
 
 void Game::renderAtPosition(Window window, Vector2 centerPosition)
 {
     cursorPosition = boost::none;
     printPlayerInformation(window.getFont());
-    MessageSystem::drawMessages(window, window.getFont(), player->getMessages(), getTurn());
+    MessageSystem::drawMessages(window, window.getFont(), player.getMessages(), getTurn());
 
     Rect worldViewport = GUI::getWorldViewport(getWindow());
 
@@ -346,7 +346,7 @@ void Game::renderAtPosition(Window window, Vector2 centerPosition)
 
     Rect visibleRegion(centerPosition - worldViewport.size / Tile::getSize() / 2,
                        worldViewport.size / Tile::getSize());
-    world.render(window, visibleRegion, player->getLevel(), *player);
+    world.render(window, visibleRegion, player.getLevel(), *player);
 
     window.setView(nullptr);
     window.setViewport(nullptr);
@@ -369,13 +369,13 @@ void Game::renderAtPosition(Window window, Vector2 centerPosition)
 void Game::printPlayerInformation(BitmapFont font)
 {
     font.setArea(GUI::getSidebarArea(getWindow()));
-    printStat(font, "HP", player->getHP(), player->getMaxHP(), TextColor::Red);
-    printStat(font, "MP", player->getMP(), player->getMaxMP(), TextColor::Blue);
+    printStat(font, "HP", player.getHP(), player.getMaxHP(), TextColor::Red);
+    printStat(font, "MP", player.getMP(), player.getMaxMP(), TextColor::Blue);
 
-    for (var attribute : player->getDisplayedAttributes())
-        printAttribute(font, attributeAbbreviations[attribute], player->getAttribute(attribute));
+    for (var attribute : player.getDisplayedAttributes())
+        printAttribute(font, attributeAbbreviations[attribute], player.getAttribute(attribute));
 
-    if (player->isRunning())
+    if (player.isRunning())
     {
         font.printLine(getWindow(), "");
         font.printLine(getWindow(), "Running");
@@ -386,9 +386,9 @@ void Game::printPlayerInformation(BitmapFont font)
     {
         font.printLine(getWindow(), "");
         font.printLine(getWindow(), "Pos " +
-                       std::to_string(player->getPosition().x) + ", " +
-                       std::to_string(player->getPosition().y) + ", " +
-                       std::to_string(player->getLevel()));
+                       std::to_string(player.getPosition().x) + ", " +
+                       std::to_string(player.getPosition().y) + ", " +
+                       std::to_string(player.getLevel()));
         font.printLine(getWindow(), "Turn " + std::to_string(getTurn()));
     }
 #endif
@@ -449,7 +449,7 @@ void Game::enterCommandMode(Window window)
 void Game::parseCommand(string command)
 {
     if (command == "respawn")
-        *player = Creature(player->getTileUnder(0), "Human", std::make_unique<PlayerController>(*this));
+        *player = Creature(player.getTileUnder(0), "Human", std::make_unique<PlayerController>(*this));
     else if (command == "clear")
         MessageSystem::clearDebugMessageHistory();
     else if (command == "info")
@@ -466,8 +466,8 @@ void Game::save()
 {
     SaveFile file(saveFileName, true);
     file.writeInt32(getTurn());
-    file.write(player->getPosition());
-    file.writeInt32(player->getLevel());
+    file.write(player.getPosition());
+    file.writeInt32(player.getLevel());
     world.save(file);
 }
 
@@ -479,6 +479,6 @@ void Game::load()
     var playerLevel = file.readInt32();
     world.load(file);
 
-    player = world.getTile(playerPosition, playerLevel)->getCreature(0);
-    player->setController(std::make_unique<PlayerController>(*this));
+    player = world.getTile(playerPosition, playerLevel).getCreature(0);
+    player.setController(std::make_unique<PlayerController>(*this));
 }

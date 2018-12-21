@@ -93,7 +93,7 @@ class Creature final : public Entity
     Item getEquipment(EquipmentSlot slot) { return equipment.at(slot); }
     int getInventoryIndex(Item item);
     bool isRunning() { return running; }
-    void setRunning(bool running) { this->running = running; }
+    void setRunning(bool running) { this.running = running; }
     bool isDead() { return currentHP <= 0; }
     double getHP() { return currentHP; }
     double getAP() { return currentAP; }
@@ -182,7 +182,7 @@ List<Attribute> Creature::initDisplayedAttributes(string id)
 {
     List<Attribute> displayedAttributes;
 
-    for (var attribute : Game::creatureConfig->get<List<string>>(id, "DisplayedAttributes"))
+    for (var attribute : Game::creatureConfig.get<List<string>>(id, "DisplayedAttributes"))
         displayedAttributes.push_back(stringToAttribute(attribute));
 
     return displayedAttributes;
@@ -190,7 +190,7 @@ List<Attribute> Creature::initDisplayedAttributes(string id)
 
 List<List<int>> Creature::initAttributeIndices(string id)
 {
-    return Game::creatureConfig->get<List<List<int>>>(id, "AttributeIndices");
+    return Game::creatureConfig.get<List<List<int>>>(id, "AttributeIndices");
 }
 
 Creature::Creature(Tile tile, string id)
@@ -226,7 +226,7 @@ Creature::Creature(Tile tile, string id, std::unique_ptr<Controller> controller)
         for (var itemId : *initialEquipment)
         {
             inventory.push_back(std::make_unique<Item>(itemId, getRandomMaterialId(itemId)));
-            equip(inventory.back()->getEquipmentSlot(), &*inventory.back());
+            equip(inventory.back().getEquipmentSlot(), &*inventory.back());
         }
     }
 }
@@ -247,7 +247,7 @@ Creature::Creature(SaveFile file, Tile tile)
         tilesUnder.push_back(tile);
 
     for (var component : getComponents())
-        component->load(file);
+        component.load(file);
 
     var seenTilePositionsCount = file.readInt32();
     seenTilePositions.reserve(size_t(seenTilePositionsCount));
@@ -280,7 +280,7 @@ void Creature::save(SaveFile file)
 {
     file.write(getId());
     for (var component : getComponents())
-        component->save(file);
+        component.save(file);
 
     file.writeInt32(uint(seenTilePositions.size()));
     for (var tilePosition : seenTilePositions)
@@ -309,7 +309,7 @@ void Creature::exist()
 
     while (currentAP >= fullAP || isDead())
     {
-        Action action = controller->control(*this);
+        Action action = controller.control(*this);
 
         if (!action || isDead())
             break;
@@ -334,22 +334,22 @@ void Creature::render(Window window, Vector2 position)
         for (int slot = equipmentSlots - 1; slot >= 0; --slot)
         {
             if (var equipment = getEquipment(static_cast<EquipmentSlot>(slot)))
-                equipment->renderEquipped(window, position);
+                equipment.renderEquipped(window, position);
         }
     }
 }
 
 void Creature::generateAttributes(string id)
 {
-    attributeValues.resize(Game::creatureConfig->get<int>(id, "Attributes"));
+    attributeValues.resize(Game::creatureConfig.get<int>(id, "Attributes"));
 
-    var attributeStrings = Game::creatureConfig->get<List<string>>(id, "ConfigAttributes");
+    var attributeStrings = Game::creatureConfig.get<List<string>>(id, "ConfigAttributes");
     var configAttributes = stringsToAttributes(attributeStrings);
 
     for (var attribute : configAttributes)
     {
         string attributeName = attributeAbbreviations[attribute];
-        int baseAttributeValue = Game::creatureConfig->get<int>(id, attributeName);
+        int baseAttributeValue = Game::creatureConfig.get<int>(id, attributeName);
         setAttribute(attribute, baseAttributeValue + randNormal(2));
     }
 
@@ -412,13 +412,13 @@ bool Creature::sees(Tile tile)
         if (!currentTile)
             return false;
 
-        if (currentTile != tile && currentTile->blocksSight())
+        if (currentTile != tile && currentTile.blocksSight())
             return false;
 
-        if (currentTile->getLight().getLuminance() < 0.3)
+        if (currentTile.getLight().getLuminance() < 0.3)
             return false;
 
-        seenTilePositions.emplace(currentTile->getPosition3D());
+        seenTilePositions.emplace(currentTile.getPosition3D());
         return true;
     });
 }
@@ -441,9 +441,9 @@ List<Creature> Creature::getCreaturesCurrentlySeenBy(int maxFieldOfVisionRadius)
             if (!tile)
                 continue;
 
-            for (var creature : tile->getCreatures())
+            for (var creature : tile.getCreatures())
             {
-                if (creature.get() != this && creature->sees(getTileUnder(0)))
+                if (creature.get() != this && creature.sees(getTileUnder(0)))
                     creatures.push_back(creature.get());
             }
         }
@@ -466,7 +466,7 @@ List<Creature> Creature::getCurrentlySeenCreatures()
             if (!tile || !sees(*tile))
                 continue;
 
-            for (var creature : tile->getCreatures())
+            for (var creature : tile.getCreatures())
             {
                 if (creature.get() != this)
                     currentlySeenCreatures.push_back(creature.get());
@@ -486,10 +486,10 @@ Creature Creature::getNearestEnemy()
 
     for (var other : getCurrentlySeenCreatures())
     {
-        if (other->getId() == getId())
+        if (other.getId() == getId())
             continue;
 
-        int enemyDistance = getDistanceSquared(getPosition(), other->getPosition());
+        int enemyDistance = getDistanceSquared(getPosition(), other.getPosition());
 
         if (enemyDistance < nearestEnemyDistance)
         {
@@ -508,16 +508,16 @@ Action Creature::tryToMoveOrAttack(Dir8 direction)
     if (!destination)
         return NoAction;
 
-    if (!destination->getCreatures().empty())
+    if (!destination.getCreatures().empty())
     {
-        attack(destination->getCreature(0));
+        attack(destination.getCreature(0));
         return Attack;
     }
 
-    if (destination->hasObject())
+    if (destination.hasObject())
     {
-        bool preventsMovement = destination->getObject()->preventsMovement();
-        bool didReactToMovementAttempt = destination->getObject()->reactToMovementAttempt();
+        bool preventsMovement = destination.getObject().preventsMovement();
+        bool didReactToMovementAttempt = destination.getObject().reactToMovementAttempt();
 
         if (preventsMovement)
             return didReactToMovementAttempt ? Wait : NoAction;
@@ -543,39 +543,39 @@ void Creature::moveTo(Tile destination)
 
     for (var tile : getTilesUnder())
     {
-        if (tile->hasItems())
+        if (tile.hasItems())
         {
-            if (itemOnTile || tile->getItems().size() > 1)
+            if (itemOnTile || tile.getItems().size() > 1)
             {
                 addMessage("Many items are lying here.");
                 itemOnTile = nullptr;
                 break;
             }
 
-            itemOnTile = tile->getItems()[0].get();
+            itemOnTile = tile.getItems()[0].get();
         }
     }
 
     if (itemOnTile)
-        addMessage(itemOnTile->getNameIndefinite(), " is lying here.");
+        addMessage(itemOnTile.getNameIndefinite(), " is lying here.");
 }
 
 bool Creature::enter()
 {
     for (Tile tile : getTilesUnder())
     {
-        if (!tile->hasObject())
+        if (!tile.hasObject())
             continue;
 
-        if (tile->getObject()->getId() == "StairsDown")
+        if (tile.getObject().getId() == "StairsDown")
         {
-            moveTo(*tile->getTileBelow());
+            moveTo(*tile.getTileBelow());
             return true;
         }
 
-        if (tile->getObject()->getId() == "StairsUp")
+        if (tile.getObject().getId() == "StairsUp")
         {
-            moveTo(*tile->getTileAbove());
+            moveTo(*tile.getTileAbove());
             return true;
         }
     }
@@ -594,8 +594,8 @@ void Creature::attack(Creature target)
 
     if (var weapon = getEquipment(Hand))
     {
-        attackerMessage << " with the " << weapon->getName();
-        targetMessage << " with the " << weapon->getName();
+        attackerMessage << " with the " << weapon.getName();
+        targetMessage << " with the " << weapon.getName();
     }
 
     attackerMessage << ".";
@@ -634,7 +634,7 @@ void Creature::onDeath()
     addMessage("You die.");
 
     for (var observer : getCreaturesCurrentlySeenBy(20))
-        observer->addMessage("The ", getName(), " dies.");
+        observer.addMessage("The ", getName(), " dies.");
 
     if (getTilesUnder().size() == 1)
     {
@@ -645,7 +645,7 @@ void Creature::onDeath()
     {
         // TODO: Implement multi-tile creature corpses.
         for (var tile : getTilesUnder())
-            tile->removeCreature(*this);
+            tile.removeCreature(*this);
     }
 }
 
@@ -661,7 +661,7 @@ void Creature::bleed()
             break;
 
         for (var tile : getTilesUnder())
-            tile->addLiquid("Blood");
+            tile.addLiquid("Blood");
     }
 }
 
@@ -669,9 +669,9 @@ bool Creature::pickUpItem()
 {
     for (var tile : tilesUnder)
     {
-        if (tile->hasItems())
+        if (tile.hasItems())
         {
-            inventory.push_back(tile->removeTopmostItem());
+            inventory.push_back(tile.removeTopmostItem());
             return true;
         }
     }
@@ -704,7 +704,7 @@ bool Creature::eat(Item itemToEat)
 {
     assert(itemToEat.isEdible());
 
-    if (var leftoverItemId = Game::itemConfig->getOptional<string>(itemToEat.getId(), "leftoverItem"))
+    if (var leftoverItemId = Game::itemConfig.getOptional<string>(itemToEat.getId(), "leftoverItem"))
         getTileUnder(0).addItem(std::make_unique<Item>(*leftoverItemId, ""));
 
     addMessage("You eat the ", itemToEat.getName(), ".");
@@ -732,7 +732,7 @@ int Creature::getInventoryIndex(Item item)
 bool Creature::close(Dir8 direction)
 {
     Tile destination = getTileUnder(0).getAdjacentTile(direction);
-    return destination && destination->hasObject() && destination->getObject()->close();
+    return destination && destination.hasObject() && destination.getObject().close();
 }
 
 Vector2 Creature::getPosition()
@@ -757,7 +757,7 @@ int Creature::getTurn()
 
 void Creature::setController(std::unique_ptr<Controller> controller)
 {
-    this->controller = std::move(controller);
+    this.controller = std::move(controller);
 }
 
 Attribute stringToAttribute(string string)

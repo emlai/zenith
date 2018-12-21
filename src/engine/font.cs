@@ -27,7 +27,7 @@ class BitmapFont
                          Color32 mainColor = Color32::none, Color32 cursorColor = Color32::none,
                          Color32 backgroundColor = Color32::none);
     void setArea(Rect area) { printArea = area; initCurrentPosition(); }
-    void setLayout(TextLayout layout) { this->layout = layout; initCurrentPosition(); }
+    void setLayout(TextLayout layout) { this.layout = layout; initCurrentPosition(); }
     void setDefaultColor(Color32 color) { defaultColor = color; }
     void setDrawShadows(bool state) { drawShadows = state; }
     void setShadowColorMod(double mod) { shadowColorMod = mod; }

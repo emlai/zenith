@@ -43,7 +43,7 @@ private:
 Building::Building(List<Room>&& rooms)
 :   rooms(std::move(rooms))
 {
-    assert(this->rooms.size() >= 1);
+    assert(this.rooms.size() >= 1);
 }
 
 List<Tile> Building::getDoorTiles()
@@ -85,7 +85,7 @@ List<Building> WorldGenerator::generateBuildings(Rect region, int level)
     {
         world.forEachTile(region, level + 1, [&](Tile tile)
         {
-            if (tile.hasObject() && tile.getObject()->getId() == "StairsDown")
+            if (tile.hasObject() && tile.getObject().getId() == "StairsDown")
             {
                 // TODO: Make this building exactly the same size as the one above it, so that the
                 // generation of the building always succeeds, so that we don't have to remove any
@@ -98,7 +98,7 @@ List<Building> WorldGenerator::generateBuildings(Rect region, int level)
 
                 if (building)
                 {
-                    tile.getTileBelow()->setObject(std::make_unique<Object>("StairsUp"));
+                    tile.getTileBelow().setObject(std::make_unique<Object>("StairsUp"));
                     buildings.push_back(std::move(*building));
                 }
                 else
@@ -120,7 +120,7 @@ List<Building> WorldGenerator::generateBuildings(Rect region, int level)
     {
         var randomRoom = randomElement(randomElement(buildings).getRooms());
         Tile stairsTile = world.getTile(makeRandomVectorInside(randomRoom.getInnerRegion()), level);
-        stairsTile->setObject(std::make_unique<Object>("StairsDown"));
+        stairsTile.setObject(std::make_unique<Object>("StairsDown"));
     }
 
     return buildings;
@@ -175,7 +175,7 @@ boost::optional<Room> WorldGenerator::generateRoom(Rect region, int level)
     {
         if (var tile = world.getOrCreateTile(position, level))
         {
-            tile->setObject(std::make_unique<Object>(wallId));
+            tile.setObject(std::make_unique<Object>(wallId));
 
             if (!isCorner(position))
                 nonCornerWalls.push_back(tile);
@@ -196,7 +196,7 @@ boost::optional<Room> WorldGenerator::generateRoom(Rect region, int level)
 
     assert(nonCornerWalls.size() == nonCornerWallCount);
     var doorTile = randomElement(nonCornerWalls);
-    doorTile->setObject(std::make_unique<Object>(doorId));
+    doorTile.setObject(std::make_unique<Object>(doorId));
 
     return Room(region, { doorTile });
 }
@@ -207,7 +207,7 @@ Tile WorldGenerator::findPathStart(Tile tile)
     {
         var adjacentTile = tile.getAdjacentTile(direction);
 
-        if (adjacentTile && adjacentTile->getGroundId() != "WoodenFloor")
+        if (adjacentTile && adjacentTile.getGroundId() != "WoodenFloor")
             return adjacentTile;
     }
 
@@ -260,7 +260,7 @@ List<Tile> WorldGenerator::findPathAStar(Tile source, Tile target,
 
         for (var direction : { North, East, South, West })
         {
-            Tile neighbor = current->getPreExistingAdjacentTile(direction);
+            Tile neighbor = current.getPreExistingAdjacentTile(direction);
 
             if (!neighbor || !isAllowed(*neighbor))
                 continue;
@@ -269,14 +269,14 @@ List<Tile> WorldGenerator::findPathAStar(Tile source, Tile target,
                 continue;
 
             var it = costs.find(current);
-            var tentativeCost = (it == costs.end() ? INT_MAX - 1 : it->second) + 1;
+            var tentativeCost = (it == costs.end() ? INT_MAX - 1 : it.second) + 1;
 
             if (openSet.find(neighbor) == openSet.end())
                 openSet.insert(neighbor);
             else
             {
                 var it = costs.find(neighbor);
-                var neighborCost = it == costs.end() ? INT_MAX - 1 : it->second;
+                var neighborCost = it == costs.end() ? INT_MAX - 1 : it.second;
 
                 if (tentativeCost >= neighborCost)
                     continue;
@@ -286,7 +286,7 @@ List<Tile> WorldGenerator::findPathAStar(Tile source, Tile target,
             costs.emplace(neighbor, tentativeCost);
 
             var neighborIt = costs.find(neighbor);
-            var neighborCost = neighborIt == costs.end() ? INT_MAX - 1 : neighborIt->second;
+            var neighborCost = neighborIt == costs.end() ? INT_MAX - 1 : neighborIt.second;
             estimatedCosts.emplace(neighbor, neighborCost + heuristicCostEstimate(*neighbor, target));
         }
     }
@@ -322,8 +322,8 @@ void WorldGenerator::generatePaths(const List<Building>& buildings)
 
                 var path = findPathAStar(*pathStart, *pathEnd, [](Tile tile)
                 {
-                    return !tile.hasObject() || tile.getObject()->getId() == "Door"
-                        || tile.getObject()->getId().starts_with("Stairs");
+                    return !tile.hasObject() || tile.getObject().getId() == "Door"
+                        || tile.getObject().getId().starts_with("Stairs");
                 });
 
                 if (!path.empty())
@@ -331,11 +331,11 @@ void WorldGenerator::generatePaths(const List<Building>& buildings)
 
                 path = findPathAStar(*pathStart, *pathEnd, [](Tile tile)
                 {
-                    return !tile.hasObject() || tile.getObject()->getId() != "BrickWall";
+                    return !tile.hasObject() || tile.getObject().getId() != "BrickWall";
                 });
 
                 for (var pathTile : path)
-                    pathTile->setObject(nullptr);
+                    pathTile.setObject(nullptr);
             }
         }
     }
@@ -347,12 +347,12 @@ void WorldGenerator::generateItems(Rect region, int level)
 
     while (randFloat() < density)
     {
-        string itemId = randomElement(Game::itemConfig->getToplevelKeys());
+        string itemId = randomElement(Game::itemConfig.getToplevelKeys());
         std::unique_ptr<Item> item;
 
         if (itemId == "Corpse")
         {
-            string creatureId = randomElement(Game::creatureConfig->getToplevelKeys());
+            string creatureId = randomElement(Game::creatureConfig.getToplevelKeys());
             item = std::make_unique<Corpse>(std::move(creatureId));
         }
         else
@@ -360,10 +360,10 @@ void WorldGenerator::generateItems(Rect region, int level)
 
         Tile tile = nullptr;
 
-        while (!tile || tile->hasObject())
+        while (!tile || tile.hasObject())
             tile = world.getTile(makeRandomVectorInside(region), level);
 
-        tile->addItem(std::move(item));
+        tile.addItem(std::move(item));
     }
 }
 
@@ -375,9 +375,9 @@ void WorldGenerator::generateCreatures(Rect region, int level)
     {
         Tile tile = nullptr;
 
-        while (!tile || tile->hasObject())
+        while (!tile || tile.hasObject())
             tile = world.getTile(makeRandomVectorInside(region), level);
 
-        tile->spawnCreature("Bat");
+        tile.spawnCreature("Bat");
     }
 }

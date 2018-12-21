@@ -26,13 +26,13 @@ std::unique_ptr<AI> AI::get(string id, Creature creature)
 
 Action AttackNearestEnemy::control()
 {
-    assert(!creature->isDead());
+    assert(!creature.isDead());
     Action action;
 
-    if (var nearestEnemy = creature->getNearestEnemy())
-        action = creature->tryToMoveTowardsOrAttack(*nearestEnemy);
+    if (var nearestEnemy = creature.getNearestEnemy())
+        action = creature.tryToMoveTowardsOrAttack(*nearestEnemy);
     else
-        action = creature->tryToMoveOrAttack(randomDir8());
+        action = creature.tryToMoveOrAttack(randomDir8());
 
     if (!action) // TODO: Implement proper AI so action is never NoAction.
         return Wait;

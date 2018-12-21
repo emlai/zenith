@@ -31,7 +31,7 @@ class Sprite
     Vector2 getSize()
     {
         if (useAsciiGraphics())
-            return getAsciiGraphicsFont()->getCharSize();
+            return getAsciiGraphicsFont().getCharSize();
         else
             return textureRegion.size;
     }
@@ -42,8 +42,8 @@ class Sprite
         {
             bool blend = false;
             var font = getAsciiGraphicsFont();
-            font->setArea(Rect(position, getSize()));
-            font->print(window, string(asciiGlyph, 1), asciiColor, Color32::none, blend);
+            font.setArea(Rect(position, getSize()));
+            font.print(window, string(asciiGlyph, 1), asciiColor, Color32::none, blend);
         }
         else
         {
@@ -54,9 +54,9 @@ class Sprite
             Rect target(position, textureRegion.size);
 
             if (materialColor)
-                texture->render(window, source, target, materialColor);
+                texture.render(window, source, target, materialColor);
             else
-                texture->render(window, source, target);
+                texture.render(window, source, target);
         }
     }
 }

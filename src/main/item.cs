@@ -44,11 +44,11 @@ static Color16 getMaterialColor(string materialId)
     {
         try
         {
-            return Color16(static_cast<ushort>(Game::materialConfig->get<int>(materialId, "Color")));
+            return Color16(static_cast<ushort>(Game::materialConfig.get<int>(materialId, "Color")));
         }
         catch (std::runtime_error)
         {
-            if (Game::materialConfig->get<string>(materialId, "Color") == "Random")
+            if (Game::materialConfig.get<string>(materialId, "Color") == "Random")
                 return Color16(randInt(Color16::max / 2), randInt(Color16::max / 2), randInt(Color16::max / 2));
             else
                 throw;
@@ -87,11 +87,11 @@ std::unique_ptr<Item> Item::load(SaveFile file)
     {
         var materialId = file.readString();
         item = std::make_unique<Item>(itemId, materialId);
-        item->sprite.setMaterialColor(Color32(file.readUint32()));
+        item.sprite.setMaterialColor(Color32(file.readUint32()));
     }
 
-    for (var component : item->getComponents())
-        component->load(file);
+    for (var component : item.getComponents())
+        component.load(file);
 
     return item;
 }
@@ -102,13 +102,13 @@ void Item::save(SaveFile file)
     file.write(materialId);
     file.writeInt32(sprite.getMaterialColor().value);
     for (var component : getComponents())
-        component->save(file);
+        component.save(file);
 }
 
 bool Item::isUsable()
 {
     for (var component : getComponents())
-        if (component->isUsable())
+        if (component.isUsable())
             return true;
 
     return false;
@@ -120,7 +120,7 @@ bool Item::use(Creature user, Game game)
     bool returnValue = false;
 
     for (var component : getComponents())
-        if (component->use(user, *this, game))
+        if (component.use(user, *this, game))
             returnValue = true;
 
     return returnValue;
@@ -128,7 +128,7 @@ bool Item::use(Creature user, Game game)
 
 bool Item::isEdible()
 {
-    return Game::itemConfig->getOptional<bool>(getId(), "isEdible").get_value_or(false);
+    return Game::itemConfig.getOptional<bool>(getId(), "isEdible").get_value_or(false);
 }
 
 EquipmentSlot Item::getEquipmentSlot()
@@ -163,13 +163,13 @@ void Item::renderEquipped(Window window, Vector2 position)
 
 string getRandomMaterialId(string itemId)
 {
-    var materials = Game::itemConfig->get<List<string>>(itemId, "PossibleMaterials");
+    var materials = Game::itemConfig.get<List<string>>(itemId, "PossibleMaterials");
     return materials.empty() ? "" : randomElement(materials);
 }
 
 Corpse::Corpse(std::unique_ptr<Creature> creature)
-:   Item(creature->getId() + "Corpse", "", ::getSprite(*Game::creatureSpriteSheet, *Game::creatureConfig,
-                                                       creature->getId(), corpseFrame, Color32::none)),
+:   Item(creature.getId() + "Corpse", "", ::getSprite(*Game::creatureSpriteSheet, *Game::creatureConfig,
+                                                       creature.getId(), corpseFrame, Color32::none)),
     creature(std::move(creature))
 {
     sprite.setAsciiGlyph(corpseGlyph);
@@ -185,7 +185,7 @@ Corpse::Corpse(string creatureId)
 void Corpse::exist()
 {
     if (creature)
-        creature->exist();
+        creature.exist();
 }
 
 void Corpse::renderEquipped(Window window, Vector2 position)
@@ -198,5 +198,5 @@ void Corpse::save(SaveFile file)
     file.write(getId());
     file.write(creature != nullptr);
     if (creature)
-        creature->save(file);
+        creature.save(file);
 }

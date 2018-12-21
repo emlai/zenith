@@ -11,14 +11,14 @@ bool Dig::use(Creature digger, Item digItem, Game game)
     {
         var tileToDig = digger.getTileUnder(0).getAdjacentTile(*direction);
 
-        if (tileToDig->hasObject())
+        if (tileToDig.hasObject())
         {
-            digger.addMessage("You dig the ", tileToDig->getObject()->getName(), ".");
-            tileToDig->setObject(nullptr);
+            digger.addMessage("You dig the ", tileToDig.getObject().getName(), ".");
+            tileToDig.setObject(nullptr);
         }
-        else if (tileToDig->hasCreature())
+        else if (tileToDig.hasCreature())
         {
-            digger.addMessage("You can't dig the ", tileToDig->getCreature(0).getName(), ".");
+            digger.addMessage("You can't dig the ", tileToDig.getCreature(0).getName(), ".");
             return false;
         }
         else

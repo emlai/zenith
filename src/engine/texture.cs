@@ -37,7 +37,7 @@ class Texture
 
         if (transparentColor)
         {
-            var colorKey = SDL_MapRGB(surface->format,
+            var colorKey = SDL_MapRGB(surface.format,
                                        static_cast<byte>(transparentColor.getRed()),
                                        static_cast<byte>(transparentColor.getGreen()),
                                        static_cast<byte>(transparentColor.getBlue()));
@@ -87,10 +87,10 @@ class Texture
         target = window.context.mapToTargetCoordinates(target);
 
         SDL_Surface targetSurface = window.context.targetTexture.getSurface();
-        const uint sourcePixels = static_cast<const uint>(surface->pixels);
-        uint targetPixels = static_cast<uint>(targetSurface->pixels);
-        var sourceWidth = surface->w;
-        var targetWidth = targetSurface->w;
+        const uint sourcePixels = static_cast<const uint>(surface.pixels);
+        uint targetPixels = static_cast<uint>(targetSurface.pixels);
+        var sourceWidth = surface.w;
+        var targetWidth = targetSurface.w;
 
         uint transparentColor;
         if (SDL_GetColorKey(surface.get(), transparentColor) != 0)
@@ -123,17 +123,17 @@ class Texture
 
     Vector2 getSize()
     {
-        return Vector2(surface->w, surface->h);
+        return Vector2(surface.w, surface.h);
     }
 
     int getWidth()
     {
-        return surface->w;
+        return surface.w;
     }
 
     int getHeight()
     {
-        return surface->h;
+        return surface.h;
     }
 
     void setColor(Color32 color)

@@ -97,7 +97,7 @@ bool Entity::reactToMovementAttempt()
     bool returnValue = false;
 
     for (var component : components)
-        if (component->reactToMovementAttempt())
+        if (component.reactToMovementAttempt())
             returnValue = true;
 
     return returnValue;
@@ -106,8 +106,8 @@ bool Entity::reactToMovementAttempt()
 bool Entity::preventsMovement()
 {
     for (var component : components)
-        if (component->preventsMovement())
+        if (component.preventsMovement())
             return true;
 
-    return config->get<bool>(id, "preventsMovement");
+    return config.get<bool>(id, "preventsMovement");
 }

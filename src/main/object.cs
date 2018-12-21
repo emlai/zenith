@@ -22,7 +22,7 @@ Object::Object(SaveFile file)
     sprite(::getSprite(*Game::objectSpriteSheet, *Game::objectConfig, getId()))
 {
     for (var component : getComponents())
-        component->load(file);
+        component.load(file);
 }
 
 void Object::save(SaveFile file)
@@ -30,7 +30,7 @@ void Object::save(SaveFile file)
     file.write(getId());
 
     for (var component : getComponents())
-        component->save(file);
+        component.save(file);
 }
 
 bool Object::close()
@@ -38,7 +38,7 @@ bool Object::close()
     bool returnValue = false;
 
     for (var component : getComponents())
-        if (component->close())
+        if (component.close())
             returnValue = true;
 
     return returnValue;
@@ -47,10 +47,10 @@ bool Object::close()
 bool Object::blocksSight()
 {
     for (var component : getComponents())
-        if (component->blocksSight())
+        if (component.blocksSight())
             return true;
 
-    return Game::objectConfig->get<bool>(getId(), "blocksSight");
+    return Game::objectConfig.get<bool>(getId(), "blocksSight");
 }
 
 void Object::render(Window window, Vector2 position)

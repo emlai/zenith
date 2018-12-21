@@ -31,7 +31,7 @@ private:
             var it = properties.find(key);
 
             if (it != properties.end())
-                return it->second;
+                return it.second;
 
             return nullptr;
         }
@@ -246,7 +246,7 @@ boost::optional<ValueType> Config::getOptional(string type, string attribute)
         if (!groupValue)
             return boost::none;
 
-        var group = groupValue->getGroup();
+        var group = groupValue.getGroup();
 
         if (var value = group.getOptional(key))
         {
@@ -262,9 +262,9 @@ boost::optional<ValueType> Config::getOptional(string type, string attribute)
         if (!baseType)
             return boost::none;
 
-        if (baseType->isString())
+        if (baseType.isString())
         {
-            var baseTypeString = baseType->getString();
+            var baseTypeString = baseType.getString();
 
             if (data.getOptional(baseTypeString) == nullptr)
                 throw std::runtime_error("BaseType \"" + baseTypeString + "\" doesn't exist!");
@@ -295,7 +295,7 @@ private:
 }
 
 ConfigReader::ConfigReader(string filePath)
-:   filePath(filePath), file(this->filePath), line(1), column(0)
+:   filePath(filePath), file(this.filePath), line(1), column(0)
 {
     if (!file)
         throw std::runtime_error("Couldn't open \"" + filePath + "\"!");
@@ -428,7 +428,7 @@ List<string> Config::getToplevelKeys()
     for (var keyAndValue : data)
     {
         if (var it = keyAndValue.second.getGroup().getOptional("isAbstract"))
-            if (it->isBool() && it->getBool())
+            if (it.isBool() && it.getBool())
                 continue;
 
         keys.push_back(keyAndValue.first);

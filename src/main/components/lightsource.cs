@@ -28,13 +28,13 @@ void LightSource::emitLight(World world, Vector2 position, int level)
             bool isLit = raycastIntegerBresenham(position, targetPosition, [&](Vector2 vector)
             {
                 var tile = world.getTile(vector, level);
-                return tile && (tile->getPosition() == targetPosition || !tile->blocksSight());
+                return tile && (tile.getPosition() == targetPosition || !tile.blocksSight());
             });
 
             if (isLit)
             {
                 var intensity = 1.0 - reverseIntensity;
-                world.getTile(targetPosition, level)->addLight(color * intensity);
+                world.getTile(targetPosition, level).addLight(color * intensity);
             }
         }
     }

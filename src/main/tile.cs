@@ -28,7 +28,7 @@ class Tile
     void forEachLightSource(const std::function<void(LightSource)>& function);
     Color32 getLight() { return light; }
     void emitLight();
-    void addLight(Color32 light) { this->light.lighten(light); }
+    void addLight(Color32 light) { this.light.lighten(light); }
     void resetLight();
     bool blocksSight();
     Tile getAdjacentTile(Dir8);
@@ -113,16 +113,16 @@ void Tile::save(SaveFile file)
     file.write(liquids);
     file.write(object != nullptr);
     if (object)
-        object->save(file);
+        object.save(file);
 }
 
 void Tile::exist()
 {
     for (var it = liquids.begin(); it != liquids.end();)
     {
-        if (it->exists())
+        if (it.exists())
         {
-            it->exist();
+            it.exist();
             ++it;
         }
         else
@@ -130,7 +130,7 @@ void Tile::exist()
     }
 
     for (var item : items)
-        item->exist();
+        item.exist();
 }
 
 void Tile::render(Window window, int zIndex, bool fogOfWar, bool renderLight)
@@ -147,18 +147,18 @@ void Tile::render(Window window, int zIndex, bool fogOfWar, bool renderLight)
             break;
         case 1:
             for (var item : items)
-                item->render(window, renderPosition);
+                item.render(window, renderPosition);
             break;
         case 2:
             if (object)
-                object->render(window, renderPosition);
+                object.render(window, renderPosition);
             break;
         case 3:
             if (fogOfWar)
                 break;
 
             for (var creature : creatures)
-                creature->render(window, renderPosition);
+                creature.render(window, renderPosition);
             break;
         case 4:
             if (fogOfWar || !renderLight)
@@ -169,7 +169,7 @@ void Tile::render(Window window, int zIndex, bool fogOfWar, bool renderLight)
             break;
         case 5:
             if (fogOfWar)
-                Game::fogOfWarTexture->render(window, renderPosition, getSize());
+                Game::fogOfWarTexture.render(window, renderPosition, getSize());
             break;
         case 6:
         {
@@ -187,8 +187,8 @@ void Tile::render(Window window, int zIndex, bool fogOfWar, bool renderLight)
                     double maxAlpha = 0.5;
                     double currentAlpha = minAlpha + (sine + 1) / 2 * (maxAlpha - minAlpha);
                     Color32 cursorColor = Color32(0xFF, 0xFF, 0xFF, currentAlpha * 0xFF);
-                    Game::cursorTexture->setColor(cursorColor);
-                    Game::cursorTexture->render(window, tileRect);
+                    Game::cursorTexture.setColor(cursorColor);
+                    Game::cursorTexture.render(window, tileRect);
 
                     var tooltip = getTooltip();
                     if (!tooltip.empty())
@@ -224,19 +224,19 @@ string Tile::getTooltip()
 
     for (var creature : creatures)
     {
-        tooltip += creature->getName();
+        tooltip += creature.getName();
         tooltip += '\n';
     }
 
     for (var item : boost::adaptors::reverse(items))
     {
-        tooltip += item->getName();
+        tooltip += item.getName();
         tooltip += '\n';
     }
 
     if (object)
     {
-        tooltip += object->getName();
+        tooltip += object.getName();
         tooltip += '\n';
     }
 
@@ -247,7 +247,7 @@ void Tile::transferCreature(Creature creature, Tile destination)
 {
     for (var it = creatures.begin(); it != creatures.end(); ++it)
     {
-        if (it->get() == creature)
+        if (it.get() == creature)
         {
             destination.addCreature(std::move(*it));
             creatures.erase(it);
@@ -264,7 +264,7 @@ std::unique_ptr<Creature> Tile::removeSingleTileCreature(Creature creature)
 
     for (var it = creatures.begin(); it != creatures.end(); ++it)
     {
-        if (it->get() == creature)
+        if (it.get() == creature)
         {
             var removed = std::move(*it);
             creatures.erase(it);
@@ -306,7 +306,7 @@ void Tile::setObject(std::unique_ptr<Object> newObject)
 
 void Tile::setGround(string groundId)
 {
-    this->groundId = groundId.to_string();
+    this.groundId = groundId.to_string();
     groundSprite = getSprite(*Game::groundSpriteSheet, *Game::groundConfig, groundId);
 }
 
@@ -316,7 +316,7 @@ void Tile::forEachEntity(const std::function<void(Entity)>& function)
     {
         function(*creature);
 
-        for (var slotAndItem : creature->getEquipment())
+        for (var slotAndItem : creature.getEquipment())
             if (slotAndItem.second)
                 function(*slotAndItem.second);
     }
@@ -341,7 +341,7 @@ void Tile::emitLight()
 {
     forEachLightSource([&](var lightSource)
     {
-        lightSource.emitLight(world, this->getCenterPosition(), level);
+        lightSource.emitLight(world, this.getCenterPosition(), level);
     });
 }
 
@@ -355,7 +355,7 @@ void Tile::resetLight()
 
 bool Tile::blocksSight()
 {
-    return hasObject() && getObject()->blocksSight();
+    return hasObject() && getObject().blocksSight();
 }
 
 Tile Tile::getAdjacentTile(Dir8 direction)
@@ -381,13 +381,13 @@ Tile Tile::getTileAbove()
 Vector2 Tile::getSize()
 {
     if (Sprite::useAsciiGraphics())
-        return Sprite::getAsciiGraphicsFont()->getCharSize();
+        return Sprite::getAsciiGraphicsFont().getCharSize();
     else
         return spriteSize;
 }
 
 Vector2 Tile::getMaxSize()
 {
-    return Vector2(std::max(Sprite::getAsciiGraphicsFont()->getCharSize().x, spriteSize.x),
-                   std::max(Sprite::getAsciiGraphicsFont()->getCharSize().y, spriteSize.y));
+    return Vector2(std::max(Sprite::getAsciiGraphicsFont().getCharSize().x, spriteSize.x),
+                   std::max(Sprite::getAsciiGraphicsFont().getCharSize().y, spriteSize.y));
 }

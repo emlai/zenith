@@ -37,7 +37,7 @@ Controller::~Controller() {}
 
 std::unique_ptr<AIController> AIController::get(string id, Creature creature)
 {
-    var ai = AI::get(Game::creatureConfig->get<string>(id, "ai"), creature);
+    var ai = AI::get(Game::creatureConfig.get<string>(id, "ai"), creature);
     return std::make_unique<AIController>(std::move(ai));
 }
 
@@ -46,7 +46,7 @@ Action AIController::control(Creature creature)
     if (creature.isDead())
         return Wait;
 
-    var action = ai->control();
+    var action = ai.control();
     assert(action != NoAction);
     return action;
 }
@@ -255,7 +255,7 @@ void loadKeyMap(Config config)
     for (int i = NoAction + 1; i < LastAction; ++i)
     {
         var action = static_cast<Action>(i);
-        Key key = config ? config->getOptional<int>(toString(action)).get_value_or(NoKey) : NoKey;
+        Key key = config ? config.getOptional<int>(toString(action)).get_value_or(NoKey) : NoKey;
 
         if (!key)
             key = getDefaultKeyForAction(action);

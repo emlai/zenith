@@ -135,9 +135,9 @@ class Menu : public State
             // Handle custom shortcuts.
             for (var item = menuItems.begin(); item != menuItems.end(); ++item)
             {
-                if (input == item->shortcut)
+                if (input == item.shortcut)
                 {
-                    exitCode = item->id;
+                    exitCode = item.id;
                     break;
                 }
             }
@@ -196,9 +196,9 @@ class Menu : public State
         Vector2 size;
 
         if (itemLayout == Vertical)
-            size = Vector2(area.size.x, itemSize ? itemSize->y : area.size.y / menuItems.size());
+            size = Vector2(area.size.x, itemSize ? itemSize.y : area.size.y / menuItems.size());
         else
-            size = Vector2(itemSize ? itemSize->x : area.size.x / menuItems.size(), area.size.y);
+            size = Vector2(itemSize ? itemSize.x : area.size.x / menuItems.size(), area.size.y);
 
         Vector2 position = area.position;
 
@@ -220,7 +220,7 @@ class Menu : public State
         for (var item : menuItems)
         {
             if (item.mainImage)
-                width = std::max(width, item.mainImage->getWidth());
+                width = std::max(width, item.mainImage.getWidth());
         }
 
         return width + tableCellSpacing.x;
@@ -243,39 +243,39 @@ class Menu : public State
 
         for (var item = menuItems.begin(); item != menuItems.end(); ++item, ++position, ++index)
         {
-            Vector2 itemPosition = position->position;
-            bool isHovered = window.getMousePosition().isWithin(Rect(itemPosition, position->size));
+            Vector2 itemPosition = position.position;
+            bool isHovered = window.getMousePosition().isWithin(Rect(itemPosition, position.size));
             var color = isHovered ? hoverColor : textColor;
 
             var hotkeyPrefix = getHotkeyPrefix(index);
-            font.setArea(Rect(itemPosition, position->size));
+            font.setArea(Rect(itemPosition, position.size));
             font.print(window, hotkeyPrefix, color);
             itemPosition.x += hotkeyPrefix.size() * font.getColumnWidth() + tableCellSpacing.x;
 
-            if (item->mainImage)
-                item->mainImage->render(window, itemPosition);
+            if (item.mainImage)
+                item.mainImage.render(window, itemPosition);
 
             if (mainImageColumnWidth > 0)
             {
                 itemPosition.x += mainImageColumnWidth;
-                font.setArea(Rect(itemPosition, position->size));
+                font.setArea(Rect(itemPosition, position.size));
             }
 
-            font.print(window, item->mainText, color);
+            font.print(window, item.mainText, color);
             itemPosition.x += calculateMaxTextSize() * font.getColumnWidth() + tableCellSpacing.x;
 
-            if (item->secondaryImage)
+            if (item.secondaryImage)
             {
-                item->secondaryImage->render(window, itemPosition);
-                itemPosition.x += item->secondaryImage->getWidth() + tableCellSpacing.x;
+                item.secondaryImage.render(window, itemPosition);
+                itemPosition.x += item.secondaryImage.getWidth() + tableCellSpacing.x;
             }
 
-            if (!item->secondaryText.empty())
+            if (!item.secondaryText.empty())
             {
                 var oldLayout = font.getLayout();
                 font.setLayout(TextLayout(secondaryColumnAlignment, font.getLayout().verticalAlignment));
-                font.setArea(Rect(itemPosition, position->size - Vector2(itemPosition.x - position->position.x, 0)));
-                font.print(window, item->secondaryText, color);
+                font.setArea(Rect(itemPosition, position.size - Vector2(itemPosition.x - position.position.x, 0)));
+                font.print(window, item.secondaryText, color);
                 font.setLayout(oldLayout);
             }
         }
@@ -302,7 +302,7 @@ class Menu : public State
     void setSecondaryColumnAlignment(HorizontalAlignment alignment) { secondaryColumnAlignment = alignment; }
     void setTextColor(Color32 color) { textColor = color; }
     void setHoverColor(Color32 color) { hoverColor = color; }
-    void setArea(Rect area) { this->area = area; }
+    void setArea(Rect area) { this.area = area; }
     void setArea(Vector2 position, Vector2 size) { area = Rect(position, size); }
     void setArea(int x, int y, int width, int height) { area = Rect(x, y, width, height); }
     static void setDefaultTextColor(Color32 color) { defaultTextColor = color; }

@@ -217,11 +217,11 @@ void MainMenu::execute()
                 }
                 catch (...)
                 {
-                    game->save();
+                    game.save();
                     throw;
                 }
 
-                if (game->getPlayer()->isDead())
+                if (game.getPlayer().isDead())
                 {
                     std::remove(Game::saveFileName);
                     game = nullptr;
@@ -241,7 +241,7 @@ void MainMenu::execute()
                 {
                     LoadingScreen loadingScreen("Saving game...");
                     getEngine().execute(loadingScreen);
-                    game->save();
+                    game.save();
                 }
                 return;
         }

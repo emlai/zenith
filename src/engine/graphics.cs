@@ -70,9 +70,9 @@ void GraphicsContext::setAnimationFrameRate(int framesPerSecond)
 void GraphicsContext::setViewport(Rect viewport)
 {
     if (viewport)
-        this->viewport = *viewport;
+        this.viewport = *viewport;
     else
-        this->viewport = boost::none;
+        this.viewport = boost::none;
 }
 
 Rect GraphicsContext::getViewport()
@@ -86,14 +86,14 @@ Rect GraphicsContext::getViewport()
 void GraphicsContext::setView(Rect view)
 {
     if (view)
-        this->view = *view;
+        this.view = *view;
     else
-        this->view = boost::none;
+        this.view = boost::none;
 }
 
 void GraphicsContext::setFont(BitmapFont font)
 {
-    this->font = font;
+    this.font = font;
 }
 
 BitmapFont GraphicsContext::getFont()
@@ -104,7 +104,7 @@ BitmapFont GraphicsContext::getFont()
 void GraphicsContext::updateScreen()
 {
     SDL_Surface surface = targetTexture.getSurface();
-    SDL_UpdateTexture(framebuffer.get(), nullptr, surface->pixels, surface->pitch);
+    SDL_UpdateTexture(framebuffer.get(), nullptr, surface.pixels, surface.pitch);
     SDL_RenderCopy(renderer.get(), framebuffer.get(), nullptr, nullptr);
     SDL_RenderPresent(renderer.get());
     clearScreen();
@@ -121,7 +121,7 @@ Vector2 GraphicsContext::mapFromTargetCoordinates(Vector2 position)
     position -= getViewport().position;
 
     if (view)
-        position += view->position;
+        position += view.position;
 
     return position;
 }
@@ -129,7 +129,7 @@ Vector2 GraphicsContext::mapFromTargetCoordinates(Vector2 position)
 Rect GraphicsContext::mapToTargetCoordinates(Rect rectangle)
 {
     if (view)
-        rectangle.position -= view->position;
+        rectangle.position -= view.position;
 
     rectangle.position += getViewport().position;
     // TODO: Clip based on viewport size.
@@ -164,14 +164,14 @@ void GraphicsContext::renderFilledRectangle(Rect rectangle, Color32 color, Blend
             SDL_Surface targetSurface = targetTexture.getSurface();
 
             if (rectangle.getLeft() < 0 || rectangle.getTop() < 0
-                || rectangle.getRight() >= targetSurface->w || rectangle.getBottom() >= targetSurface->h)
+                || rectangle.getRight() >= targetSurface.w || rectangle.getBottom() >= targetSurface.h)
                 return;
 
             double dstR = color.getRed() / 255.0;
             double dstG = color.getGreen() / 255.0;
             double dstB = color.getBlue() / 255.0;
-            uint pixels = static_cast<uint>(targetSurface->pixels);
-            var targetWidth = targetSurface->w;
+            uint pixels = static_cast<uint>(targetSurface.pixels);
+            var targetWidth = targetSurface.w;
 
             for (var y = rectangle.getTop(); y <= rectangle.getBottom(); ++y)
             {

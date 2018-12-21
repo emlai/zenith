@@ -43,7 +43,7 @@ class SaveFile
 
     SaveFile(List<char> buffer)
     :   buffer(std::move(buffer)),
-        file(SDL_RWFromMem(this->buffer.data(), this->buffer.size()), closeFile)
+        file(SDL_RWFromMem(this.buffer.data(), this.buffer.size()), closeFile)
     {
         if (!file)
             throw std::runtime_error(SDL_GetError());
@@ -214,7 +214,7 @@ class SaveFile
     long readInt64() { return long(readUint64()); }
 
     template<typename T>
-    void write(const std::unique_ptr<T>& value) { value->save(*this); }
+    void write(const std::unique_ptr<T>& value) { value.save(*this); }
     template<typename T>
     void write(T value) { value.save(*this); }
     template<typename T>
