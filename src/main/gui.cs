@@ -22,39 +22,39 @@ namespace GUI
     const int fontHeight = 12;
     const int questionAreaHeight = spacing.y + fontHeight + spacing.y;
 
-    inline Rect getSidebarArea(Window window)
+    Rect getSidebarArea(Window window)
     {
         var height = (window.getResolution().y - questionAreaHeight) / 2 - spacing.y / 2;
         var width = height * 3 / 4;
         return Rect(window.getResolution().x - width - spacing.x, questionAreaHeight, width, height);
     }
 
-    inline Rect getQuestionArea(Window window)
+    Rect getQuestionArea(Window window)
     {
         return Rect(spacing.x, spacing.y, window.getResolution().x - spacing.x * 2, fontHeight);
     }
 
-    inline Rect getWorldViewport(Window window)
+    Rect getWorldViewport(Window window)
     {
         var top = questionAreaHeight;
         return Rect(0, top, window.getResolution().x - getSidebarArea(window).getWidth() - spacing.x * 2,
                     window.getResolution().y - top);
     }
 
-    inline Rect getMessageArea(Window window)
+    Rect getMessageArea(Window window)
     {
         var sidebarArea = getSidebarArea(window);
         return Rect(sidebarArea.getLeft(), sidebarArea.getBottom() + spacing.y,
                     sidebarArea.getWidth(), sidebarArea.getHeight());
     }
 
-    inline Rect getInventoryArea(Window window)
+    Rect getInventoryArea(Window window)
     {
         return getWorldViewport(window).inset(spacing);
     }
 
 #ifdef DEBUG
-    inline Rect getCommandLineArea(Window window)
+    Rect getCommandLineArea(Window window)
     {
         var worldViewport = getWorldViewport(window);
         var questionArea = getQuestionArea(window);
@@ -62,7 +62,7 @@ namespace GUI
                     worldViewport.getWidth() - spacing.x * 2, questionArea.getHeight());
     }
 
-    inline Rect getDebugMessageArea(Window window)
+    Rect getDebugMessageArea(Window window)
     {
         var commandLineArea = getCommandLineArea(window);
         return Rect(commandLineArea.getLeft(), commandLineArea.getBottom() + spacing.y,

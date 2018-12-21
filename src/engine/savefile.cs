@@ -76,7 +76,7 @@ void SaveFile::read(List<T>& vector)
 }
 
 template<>
-inline double SaveFile::read<double>()
+double SaveFile::read<double>()
 {
     return readDouble();
 }

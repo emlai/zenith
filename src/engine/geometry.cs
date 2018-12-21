@@ -11,7 +11,7 @@ enum Dir8
     NorthEast
 }
 
-inline Dir8 randomDir8()
+Dir8 randomDir8()
 {
     switch (randInt(7))
     {
@@ -104,7 +104,7 @@ struct Vector2Base<T>
 
 template<typename T>
 template<typename U>
-inline bool Vector2Base<T>::isWithin(Vector2Base<U> vector)
+bool Vector2Base<T>::isWithin(Vector2Base<U> vector)
 {
     return x >= 0 && U(x) < vector.x && y >= 0 && U(y) < vector.y;
 }
@@ -122,52 +122,52 @@ template<typename T>
 const Vector2Base<T> Vector2Base<T>::zeroVector = Vector2Base<T>(0, 0);
 
 template<typename T>
-inline Vector2Base<T> abs(Vector2Base<T> vector)
+Vector2Base<T> abs(Vector2Base<T> vector)
 {
     return Vector2Base<T>(abs(vector.x), abs(vector.y));
 }
 
 template<typename T>
-inline Vector2Base<T> sign(Vector2Base<T> vector)
+Vector2Base<T> sign(Vector2Base<T> vector)
 {
     return Vector2Base<T>(sign(vector.x), sign(vector.y));
 }
 
 template<typename T>
-inline var getDistanceSquared(Vector2Base<T> a, Vector2Base<T> b)
+var getDistanceSquared(Vector2Base<T> a, Vector2Base<T> b)
 {
     return (b - a).getLengthSquared();
 }
 
 template<typename T>
-inline var getDistance(Vector2Base<T> a, Vector2Base<T> b)
+var getDistance(Vector2Base<T> a, Vector2Base<T> b)
 {
     return std::sqrt(getDistanceSquared(a, b));
 }
 
 template<typename T>
-inline Vector2Base<T> makeRandomVector(Vector2Base<T> max)
+Vector2Base<T> makeRandomVector(Vector2Base<T> max)
 {
     // TODO: Add support for floating-point numbers.
     return { randInt(max.x), randInt(max.y) }
 }
 
 template<typename T>
-inline Vector2Base<T> makeRandomVector(Vector2Base<T> min, Vector2Base<T> max)
+Vector2Base<T> makeRandomVector(Vector2Base<T> min, Vector2Base<T> max)
 {
     // TODO: Add support for floating-point numbers.
     return { randInt(min.x, max.x), randInt(min.y, max.y) }
 }
 
 template<typename T>
-inline Vector2Base<T> makeRandomVector(T max)
+Vector2Base<T> makeRandomVector(T max)
 {
     // TODO: Add support for floating-point numbers.
     return { randInt(max), randInt(max) }
 }
 
 template<typename T>
-inline Vector2Base<T> makeRandomVector(T min, T max)
+Vector2Base<T> makeRandomVector(T min, T max)
 {
     // TODO: Add support for floating-point numbers.
     return { randInt(min, max), randInt(min, max) }
@@ -264,13 +264,13 @@ struct Rect
 }
 
 template<typename T>
-inline bool Vector2Base<T>::isWithin(Rect rect)
+bool Vector2Base<T>::isWithin(Rect rect)
 {
     return x >= rect.getLeft() && x <= rect.getRight() &&
            y >= rect.getTop() && y <= rect.getBottom();
 }
 
-inline Vector2 makeRandomVectorInside(Rect rect)
+Vector2 makeRandomVectorInside(Rect rect)
 {
     return Vector2(randInt(rect.getLeft(), rect.getRight()),
                    randInt(rect.getTop(), rect.getBottom()));

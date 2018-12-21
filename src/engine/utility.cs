@@ -10,7 +10,7 @@ std::ostream operator<<(std::ostream outputStream, const List<T>& elements)
 string changeFileExtension(string fileName, string newExtension);
 
 /// Performs integer division, rounding towards negative infinity.
-inline int divideRoundingDown(int dividend, int divisor)
+int divideRoundingDown(int dividend, int divisor)
 {
     const int quotient = dividend / divisor;
 
