@@ -93,7 +93,7 @@ class Creature : Entity
     double getMaxHP() { return maxHP; }
     double getMaxMP() { return maxMP; }
     var getDisplayedAttributes() { return displayedAttributes; }
-    const List<Message>& getMessages() { return messages; }
+    List<Message> getMessages() { return messages; }
 
     void editHP(double amount) { currentHP = std::min(currentHP + amount, maxHP); }
     void editAP(double amount) { currentAP += amount; }
@@ -116,7 +116,7 @@ class Creature : Entity
     }
 
     Attribute stringToAttribute(string);
-    List<Attribute> stringsToAttributes(const List<string>&);
+    List<Attribute> stringsToAttributes(List<string>);
 
     List<Attribute> initDisplayedAttributes(string id)
     {
@@ -710,7 +710,7 @@ class Creature : Entity
         throw std::invalid_argument("string didn't match any attribute.");
     }
 
-    List<Attribute> stringsToAttributes(const List<string>& strings)
+    List<Attribute> stringsToAttributes(List<string> strings)
     {
         List<Attribute> attributes;
 

@@ -80,8 +80,8 @@ private:
         Integer getInt() { return integer; }
         double getFloat() { return floatingPoint; }
         string getString() { return string; }
-        const List<Value>& getList() { return list; }
-        const Group_<Value>& getGroup() { return group; }
+        List<Value> getList() { return list; }
+        Group_<Value> getGroup() { return group; }
 
     private:
         union

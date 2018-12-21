@@ -1,6 +1,6 @@
 class Room
 {
-    Room(Rect region, List<Tile>&& doorTiles)
+    Room(Rect region, List<Tile> doorTiles)
     :   region(region), doorTiles(doorTiles) {}
     Rect getRegion() { return region; }
     Rect getInnerRegion() { return region.inset(Vector2(1, 1)); }
@@ -16,9 +16,9 @@ class Building
     List<Room> rooms;
     List<Tile> doorTiles;
 
-    const List<Room>& getRooms() { return rooms; }
+    List<Room> getRooms() { return rooms; }
 
-    Building(List<Room>&& rooms)
+    Building(List<Room> rooms)
         :   rooms(rooms)
     {
         assert(this.rooms.size() >= 1);
@@ -277,7 +277,7 @@ class WorldGenerator
         return {}
     }
 
-    void generatePaths(const List<Building>& buildings)
+    void generatePaths(List<Building> buildings)
     {
         if (buildings.empty())
             return;

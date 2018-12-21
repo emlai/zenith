@@ -1,5 +1,5 @@
 template<typename T>
-std::ostream operator<<(std::ostream outputStream, const List<T>& elements)
+std::ostream operator<<(std::ostream outputStream, List<T> elements)
 {
     foreach (var element in elements)
         outputStream << element;

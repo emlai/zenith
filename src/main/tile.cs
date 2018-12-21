@@ -14,7 +14,7 @@ class Tile
     Creature removeSingleTileCreature(Creature);
     void removeCreature(Creature);
     bool hasItems() { return !items.empty(); }
-    const List<Item>& getItems() { return items; }
+    List<Item> getItems() { return items; }
     Item removeTopmostItem();
     void addItem(Item item);
     void addLiquid(string materialId);

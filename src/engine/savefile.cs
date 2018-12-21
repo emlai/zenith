@@ -5,7 +5,7 @@ class SaveFile
 
 
     template<typename T>
-    void write(const List<T>& vector)
+    void write(List<T> vector)
     {
         writeInt32(int(vector.size()));
 
@@ -14,7 +14,7 @@ class SaveFile
     }
 
     template<typename T>
-    void read(List<T>& vector)
+    void read(List<T> vector)
     {
         var size = readInt32();
         assert(vector.empty());

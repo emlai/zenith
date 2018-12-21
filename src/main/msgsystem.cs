@@ -18,7 +18,7 @@ private:
 
 namespace MessageSystem
 {
-    void drawMessages(Window window, BitmapFont, const List<Message>& messages,
+    void drawMessages(Window window, BitmapFont, List<Message> messages,
                       int currentTurn);
 
 #ifdef DEBUG
@@ -66,7 +66,7 @@ namespace MessageSystem
 }
 
 void MessageSystem::drawMessages(Window window, BitmapFont font,
-                                 const List<Message>& messages, int currentTurn)
+                                 List<Message> messages, int currentTurn)
 {
     font.setArea(GUI::getMessageArea(window));
     for (int end = int(messages.size()), i = std::max(0, end - maxMessagesToPrint); i < end; ++i)

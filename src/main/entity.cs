@@ -20,7 +20,7 @@ class Entity
     bool close();
 
 protected:
-    const List<Component>& getComponents() { return components; }
+    List<Component> getComponents() { return components; }
 
 private:
     virtual string getNameAdjective() { return ""; }
