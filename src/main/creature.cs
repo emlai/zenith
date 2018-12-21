@@ -60,7 +60,7 @@ namespace std
     }
 }
 
-class Creature final : Entity
+class Creature : Entity
 {
     List<Tile> tilesUnder;
     mutable boost::unordered_set<Vector3> seenTilePositions;

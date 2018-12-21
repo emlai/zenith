@@ -24,20 +24,47 @@ protected:
 
 string getRandomMaterialId(string itemId);
 
-class Corpse final : Item
+class Corpse : Item
 {
-    Corpse(Creature creature);
-    Corpse(string creatureId);
-    void exist() override;
-    void renderEquipped(Window window, Vector2 position) override;
-    void save(SaveFile file) override;
-
-private:
+    Creature creature;
     const int corpseFrame = 2;
     const char corpseGlyph = ',';
 
-    Creature creature;
+    Corpse(Creature creature)
+    :   Item(creature.getId() + "Corpse", "", ::getSprite(Game::creatureSpriteSheet, Game::creatureConfig,
+        creature.getId(), corpseFrame, Color32::none)),
+    creature(creature)
+    {
+        sprite.setAsciiGlyph(corpseGlyph);
+    }
+
+    Corpse(string creatureId)
+    :   Item(creatureId + "Corpse", "", ::getSprite(Game::creatureSpriteSheet, Game::creatureConfig,
+        creatureId, corpseFrame, Color32::none))
+    {
+        sprite.setAsciiGlyph(corpseGlyph);
+    }
+
+    void exist()
+    {
+        if (creature)
+            creature.exist();
+    }
+
+    void renderEquipped(Window window, Vector2 position)
+    {
+        render(window, position);
+    }
+
+    void save(SaveFile file)
+    {
+        file.write(getId());
+        file.write(creature != null);
+        if (creature)
+            creature.save(file);
+    }
 }
+
 static Color16 getMaterialColor(string materialId)
 {
     if (!materialId.empty())
@@ -167,36 +194,3 @@ string getRandomMaterialId(string itemId)
     return materials.empty() ? "" : randomElement(materials);
 }
 
-Corpse::Corpse(Creature creature)
-:   Item(creature.getId() + "Corpse", "", ::getSprite(Game::creatureSpriteSheet, Game::creatureConfig,
-                                                       creature.getId(), corpseFrame, Color32::none)),
-    creature(creature)
-{
-    sprite.setAsciiGlyph(corpseGlyph);
-}
-
-Corpse::Corpse(string creatureId)
-:   Item(creatureId + "Corpse", "", ::getSprite(Game::creatureSpriteSheet, Game::creatureConfig,
-                                                creatureId, corpseFrame, Color32::none))
-{
-    sprite.setAsciiGlyph(corpseGlyph);
-}
-
-void Corpse::exist()
-{
-    if (creature)
-        creature.exist();
-}
-
-void Corpse::renderEquipped(Window window, Vector2 position)
-{
-    render(window, position);
-}
-
-void Corpse::save(SaveFile file)
-{
-    file.write(getId());
-    file.write(creature != null);
-    if (creature)
-        creature.save(file);
-}
