@@ -1,6 +1,3 @@
-class BitmapFont;
-class Window;
-
 enum class BlendMode { Normal, LinearLight };
 
 class GraphicsContext

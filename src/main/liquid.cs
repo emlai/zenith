@@ -1,6 +1,3 @@
-class SaveFile;
-class Window;
-
 class Liquid
 {
 public:

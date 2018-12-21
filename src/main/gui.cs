@@ -1,6 +1,3 @@
-class Config;
-class Sprite;
-
 namespace GUIColor
 {
     const Color16 White(0xFEEF);

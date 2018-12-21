@@ -1,5 +1,3 @@
-class World;
-
 class LightSource : public Component
 {
 public:

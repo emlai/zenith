@@ -1,7 +1,3 @@
-class BitmapFont;
-class Texture;
-class Window;
-
 class Sprite
 {
 public:

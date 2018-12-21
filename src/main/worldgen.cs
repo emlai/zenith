@@ -1,5 +1,3 @@
-class Tile;
-class World;
 struct Rect;
 
 class Room

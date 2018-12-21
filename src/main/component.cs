@@ -1,9 +1,3 @@
-class Creature;
-class Entity;
-class Game;
-class Item;
-class SaveFile;
-
 class Component
 {
 public:

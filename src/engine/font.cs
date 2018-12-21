@@ -1,5 +1,3 @@
-class Window;
-
 enum HorizontalAlignment { LeftAlign, HorizontalCenter, RightAlign };
 enum VerticalAlignment { TopAlign, VerticalCenter, BottomAlign };
 enum LineBreakMode { PreserveLines, SplitLines };

@@ -1,7 +1,3 @@
-class Config;
-class Creature;
-class Game;
-class Event;
 enum Action : int;
 
 class Controller

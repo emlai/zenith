@@ -1,4 +1,3 @@
-class Engine;
 struct SDL_Window;
 
 class Event

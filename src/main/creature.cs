@@ -1,9 +1,3 @@
-class Item;
-class Message;
-class SaveFile;
-class Tile;
-class Window;
-class World;
 enum Action : int;
 
 enum Attribute

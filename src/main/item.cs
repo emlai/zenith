@@ -1,6 +1,3 @@
-class Creature;
-class SaveFile;
-class Window;
 enum EquipmentSlot : int;
 
 class Item : public Entity

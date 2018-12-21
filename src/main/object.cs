@@ -1,5 +1,3 @@
-class SaveFile;
-
 class Object : public Entity
 {
 public:

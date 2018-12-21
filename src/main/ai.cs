@@ -1,4 +1,3 @@
-class Creature;
 enum Action : int;
 
 class AI

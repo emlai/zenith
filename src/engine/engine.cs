@@ -1,5 +1,3 @@
-class Window;
-
 class Engine
 {
 public:

@@ -2,8 +2,6 @@ struct SDL_Renderer;
 struct SDL_Surface;
 
 struct Rect;
-class Window;
-
 class Texture
 {
 public:

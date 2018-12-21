@@ -1,8 +1,3 @@
-class SaveFile;
-class Tile;
-class Window;
-class World;
-
 class Area
 {
 public:

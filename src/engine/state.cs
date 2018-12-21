@@ -1,6 +1,3 @@
-class Engine;
-class Window;
-
 class State
 {
 public:

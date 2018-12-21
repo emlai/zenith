@@ -1,8 +1,3 @@
-class Creature;
-class Game;
-class SaveFile;
-class Tile;
-
 class World
 {
 public:

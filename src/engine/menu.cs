@@ -1,6 +1,3 @@
-class Sprite;
-class Window;
-
 struct MenuItem
 {
     MenuItem(int id, boost::string_ref text, Key shortcut = NoKey, const Sprite* image = nullptr)

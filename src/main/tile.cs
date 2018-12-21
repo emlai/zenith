@@ -1,10 +1,3 @@
-class Area;
-class LightSource;
-class Object;
-class SaveFile;
-class Window;
-class World;
-
 class Tile
 {
 public:

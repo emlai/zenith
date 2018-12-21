@@ -1,5 +1,3 @@
-class Window;
-
 using Key = decltype(SDL_Keysym::sym);
 using Mod = decltype(SDL_Keysym::mod);
 

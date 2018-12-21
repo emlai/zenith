@@ -1,5 +1,3 @@
-class ConfigReader;
-
 class Config
 {
 public:
