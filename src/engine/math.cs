@@ -1,5 +1,3 @@
-#pragma once
-
 #include <algorithm>
 #include <cassert>
 #include <functional>

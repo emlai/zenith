@@ -1,5 +1,3 @@
-#pragma once
-
 #include "geometry.h"
 #include <boost/utility/string_ref.hpp>
 #include <fstream>

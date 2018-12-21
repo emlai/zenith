@@ -1,5 +1,3 @@
-#pragma once
-
 #include "geometry.h"
 #include <SDL.h>
 #include <boost/utility/string_ref.hpp>

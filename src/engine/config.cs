@@ -1,5 +1,3 @@
-#pragma once
-
 #include "utility.h"
 #include <boost/optional.hpp>
 #include <boost/numeric/conversion/cast.hpp>

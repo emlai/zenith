@@ -1,5 +1,3 @@
-#pragma once
-
 #include "entity.h"
 #include "engine/geometry.h"
 #include "engine/sprite.h"

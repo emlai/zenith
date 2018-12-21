@@ -1,5 +1,3 @@
-#pragma once
-
 #include "component.h"
 #include "engine/config.h"
 #include <boost/utility/string_ref.hpp>

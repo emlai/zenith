@@ -1,5 +1,3 @@
-#pragma once
-
 #include "entity.h"
 #include "engine/sprite.h"
 #include <boost/utility/string_ref.hpp>

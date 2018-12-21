@@ -1,5 +1,3 @@
-#pragma once
-
 #include "engine/geometry.h"
 #include <boost/optional.hpp>
 #include <vector>

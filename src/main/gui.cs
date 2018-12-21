@@ -1,5 +1,3 @@
-#pragma once
-
 #include "engine/color.h"
 #include "engine/geometry.h"
 #include "engine/window.h"

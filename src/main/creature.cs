@@ -1,5 +1,3 @@
-#pragma once
-
 #include "controller.h"
 #include "entity.h"
 #include "msgsystem.h"

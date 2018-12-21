@@ -1,5 +1,3 @@
-#pragma once
-
 #include "engine/texture.h"
 #include <boost/utility/string_ref.hpp>
 

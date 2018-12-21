@@ -1,5 +1,3 @@
-#pragma once
-
 #include "ai.h"
 #include "engine/geometry.h"
 #include "engine/keyboard.h"

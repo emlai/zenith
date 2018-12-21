@@ -1,5 +1,3 @@
-#pragma once
-
 #include "texture.h"
 #include "graphics.h"
 #include "keyboard.h"

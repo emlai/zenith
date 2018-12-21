@@ -1,5 +1,3 @@
-#pragma once
-
 #include "math.h"
 #include "utility.h"
 #include <boost/functional/hash.hpp>

@@ -1,5 +1,3 @@
-#pragma once
-
 #include "creature.h"
 #include "world.h"
 #include "engine/config.h"

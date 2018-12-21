@@ -1,5 +1,3 @@
-#pragma once
-
 #include "../component.h"
 
 class Dig : public Component

@@ -1,5 +1,3 @@
-#pragma once
-
 #include <boost/preprocessor/cat.hpp>
 #include <boost/utility/string_ref.hpp>
 #include <ostream>

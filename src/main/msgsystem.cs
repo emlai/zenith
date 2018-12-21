@@ -1,5 +1,3 @@
-#pragma once
-
 #include "gui.h"
 #include "engine/font.h"
 #include "engine/savefile.h"

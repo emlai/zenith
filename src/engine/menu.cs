@@ -1,5 +1,3 @@
-#pragma once
-
 #include "color.h"
 #include "font.h"
 #include "keyboard.h"

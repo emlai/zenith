@@ -1,5 +1,3 @@
-#pragma once
-
 class Creature;
 
 enum Action : int

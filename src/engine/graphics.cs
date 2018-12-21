@@ -1,5 +1,3 @@
-#pragma once
-
 #include "color.h"
 #include "geometry.h"
 #include "texture.h"

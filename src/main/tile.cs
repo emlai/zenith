@@ -1,5 +1,3 @@
-#pragma once
-
 #include "entity.h"
 #include "creature.h"
 #include "item.h"
