@@ -100,7 +100,7 @@ class Creature final : Entity
     var getAttributeIndices(int attribute) { return attributeIndices[attribute]; }
 
     template<typename... Args>
-    void Creature::addMessage(Args... messageParts)
+    void addMessage(Args... messageParts)
     {
         stringstream stream;
         var expansion = { (stream << messageParts, 0)... }
@@ -129,7 +129,7 @@ class Creature final : Entity
         assert(false);
     }
 
-    List<Attribute> Creature::initDisplayedAttributes(string id)
+    List<Attribute> initDisplayedAttributes(string id)
     {
         List<Attribute> displayedAttributes;
 
@@ -139,17 +139,17 @@ class Creature final : Entity
         return displayedAttributes;
     }
 
-    List<List<int>> Creature::initAttributeIndices(string id)
+    List<List<int>> initAttributeIndices(string id)
     {
         return Game::creatureConfig.get<List<List<int>>>(id, "AttributeIndices");
     }
 
-    Creature::Creature(Tile tile, string id)
+    Creature(Tile tile, string id)
     :   Creature(tile, id, AIController::get(id, this))
     {
     }
 
-    Creature::Creature(Tile tile, string id, Controller controller)
+    Creature(Tile tile, string id, Controller controller)
     :   Entity(id, Game::creatureConfig),
         currentHP(0),
         maxHP(0),
@@ -182,7 +182,7 @@ class Creature final : Entity
         }
     }
 
-    Creature::Creature(SaveFile file, Tile tile)
+    Creature(SaveFile file, Tile tile)
     :   Entity(file.readString(), Game::creatureConfig),
         displayedAttributes(initDisplayedAttributes(getId())),
         attributeIndices(initAttributeIndices(getId())),
@@ -227,7 +227,7 @@ class Creature final : Entity
         file.read(messages);
     }
 
-    void Creature::save(SaveFile file)
+    void save(SaveFile file)
     {
         file.write(getId());
         for (var component : getComponents())
@@ -250,7 +250,7 @@ class Creature final : Entity
         file.write(messages);
     }
 
-    void Creature::exist()
+    void exist()
     {
         if (!isDead())
         {
@@ -269,14 +269,14 @@ class Creature final : Entity
         }
     }
 
-    void Creature::regenerate()
+    void regenerate()
     {
         editHP(0.1);
         editAP(1);
         editMP(0.1);
     }
 
-    void Creature::render(Window window, Vector2 position)
+    void render(Window window, Vector2 position)
     {
         sprite.render(window, position);
 
@@ -290,7 +290,7 @@ class Creature final : Entity
         }
     }
 
-    void Creature::generateAttributes(string id)
+    void generateAttributes(string id)
     {
         attributeValues.resize(Game::creatureConfig.get<int>(id, "Attributes"));
 
@@ -310,7 +310,7 @@ class Creature final : Entity
         currentMP = maxMP;
     }
 
-    void Creature::calculateDerivedStats()
+    void calculateDerivedStats()
     {
         double hpRatio = currentHP / maxHP;
         double mpRatio = currentMP / maxMP;
@@ -322,7 +322,7 @@ class Creature final : Entity
         currentMP = mpRatio * maxMP;
     }
 
-    double Creature::getAttribute(Attribute attribute)
+    double getAttribute(Attribute attribute)
     {
         double sum = 0;
 
@@ -332,24 +332,24 @@ class Creature final : Entity
         return sum / getAttributeIndices(attribute).size();
     }
 
-    void Creature::setAttribute(Attribute attribute, double amount)
+    void setAttribute(Attribute attribute, double amount)
     {
         for (var index : getAttributeIndices(attribute))
             attributeValues[index] = amount;
     }
 
-    void Creature::editAttribute(Attribute attribute, double amount)
+    void editAttribute(Attribute attribute, double amount)
     {
         for (var index : getAttributeIndices(attribute))
             attributeValues[index] += amount;
     }
 
-    int Creature::getFieldOfVisionRadius()
+    int getFieldOfVisionRadius()
     {
         return int(getAttribute(Perception) * 2);
     }
 
-    bool Creature::sees(Tile tile)
+    bool sees(Tile tile)
     {
         assert(tile.getLevel() == getLevel());
 
@@ -374,12 +374,12 @@ class Creature final : Entity
         });
     }
 
-    bool Creature::remembers(Tile tile)
+    bool remembers(Tile tile)
     {
         return seenTilePositions.find(tile.getPosition3D()) != seenTilePositions.end();
     }
 
-    List<Creature> Creature::getCreaturesCurrentlySeenBy(int maxFieldOfVisionRadius)
+    List<Creature> getCreaturesCurrentlySeenBy(int maxFieldOfVisionRadius)
     {
         List<Creature> creatures;
 
@@ -403,7 +403,7 @@ class Creature final : Entity
         return creatures;
     }
 
-    List<Creature> Creature::getCurrentlySeenCreatures()
+    List<Creature> getCurrentlySeenCreatures()
     {
         List<Creature> currentlySeenCreatures;
         var fieldOfVisionRadius = getFieldOfVisionRadius();
@@ -428,7 +428,7 @@ class Creature final : Entity
         return currentlySeenCreatures;
     }
 
-    Creature Creature::getNearestEnemy()
+    Creature getNearestEnemy()
     {
         // TODO: Optimize by iterating in a spiral starting from this creature's position.
 
@@ -452,7 +452,7 @@ class Creature final : Entity
         return nearestEnemy;
     }
 
-    Action Creature::tryToMoveOrAttack(Dir8 direction)
+    Action tryToMoveOrAttack(Dir8 direction)
     {
         Tile destination = getTileUnder(0).getAdjacentTile(direction);
 
@@ -478,13 +478,13 @@ class Creature final : Entity
         return Move;
     }
 
-    Action Creature::tryToMoveTowardsOrAttack(Creature target)
+    Action tryToMoveTowardsOrAttack(Creature target)
     {
         var directionVector = target.getPosition() - getPosition();
         return tryToMoveOrAttack(directionVector.getDir8());
     }
 
-    void Creature::moveTo(Tile destination)
+    void moveTo(Tile destination)
     {
         getTileUnder(0).transferCreature(this, destination);
         tilesUnder.clear();
@@ -511,7 +511,7 @@ class Creature final : Entity
             addMessage(itemOnTile.getNameIndefinite(), " is lying here.");
     }
 
-    bool Creature::enter()
+    bool enter()
     {
         for (Tile tile : getTilesUnder())
         {
@@ -534,7 +534,7 @@ class Creature final : Entity
         return false;
     }
 
-    void Creature::attack(Creature target)
+    void attack(Creature target)
     {
         double damage = std::max(0.0, getAttribute(ArmStrength) / 2 + randNormal());
 
@@ -567,7 +567,7 @@ class Creature final : Entity
         target.takeDamage(damage);
     }
 
-    void Creature::takeDamage(double amount)
+    void takeDamage(double amount)
     {
         assert(!isDead());
 
@@ -580,7 +580,7 @@ class Creature final : Entity
         }
     }
 
-    void Creature::onDeath()
+    void onDeath()
     {
         addMessage("You die.");
 
@@ -600,7 +600,7 @@ class Creature final : Entity
         }
     }
 
-    void Creature::bleed()
+    void bleed()
     {
         var chance = 1.0 - std::max(0.0, currentHP / maxHP);
 
@@ -616,7 +616,7 @@ class Creature final : Entity
         }
     }
 
-    bool Creature::pickUpItem()
+    bool pickUpItem()
     {
         for (var tile : tilesUnder)
         {
@@ -630,18 +630,18 @@ class Creature final : Entity
         return false;
     }
 
-    void Creature::equip(EquipmentSlot slot, Item itemToEquip)
+    void equip(EquipmentSlot slot, Item itemToEquip)
     {
         equipment.at(slot) = itemToEquip;
     }
 
-    bool Creature::use(Item itemToUse, Game game)
+    bool use(Item itemToUse, Game game)
     {
         assert(itemToUse.isUsable());
         return itemToUse.use(this, game);
     }
 
-    void Creature::drop(Item itemToDrop)
+    void drop(Item itemToDrop)
     {
         EquipmentSlot equipmentSlot = itemToDrop.getEquipmentSlot();
 
@@ -651,7 +651,7 @@ class Creature final : Entity
         getTileUnder(0).addItem(removeItem(itemToDrop));
     }
 
-    bool Creature::eat(Item itemToEat)
+    bool eat(Item itemToEat)
     {
         assert(itemToEat.isEdible());
 
@@ -663,7 +663,7 @@ class Creature final : Entity
         return true;
     }
 
-    Item Creature::removeItem(Item itemToRemove)
+    Item removeItem(Item itemToRemove)
     {
         var index = getInventoryIndex(itemToRemove);
         var removedItem = inventory[index];
@@ -671,7 +671,7 @@ class Creature final : Entity
         return removedItem;
     }
 
-    int Creature::getInventoryIndex(Item item)
+    int getInventoryIndex(Item item)
     {
         for (int i = 0; i < int(inventory.size()); ++i)
             if (&inventory[i] == item)
@@ -680,33 +680,33 @@ class Creature final : Entity
         assert(false);
     }
 
-    bool Creature::close(Dir8 direction)
+    bool close(Dir8 direction)
     {
         Tile destination = getTileUnder(0).getAdjacentTile(direction);
         return destination && destination.hasObject() && destination.getObject().close();
     }
 
-    Vector2 Creature::getPosition()
+    Vector2 getPosition()
     {
         return getTileUnder(0).getPosition();
     }
 
-    int Creature::getLevel()
+    int getLevel()
     {
         return getTileUnder(0).getLevel();
     }
 
-    World Creature::getWorld()
+    World getWorld()
     {
         return getTileUnder(0).getWorld();
     }
 
-    int Creature::getTurn()
+    int getTurn()
     {
         return getWorld().getTurn();
     }
 
-    void Creature::setController(Controller controller)
+    void setController(Controller controller)
     {
         this.controller = controller;
     }
