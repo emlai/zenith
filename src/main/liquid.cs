@@ -14,7 +14,7 @@ private:
     std::string materialId;
     double fadeLevel;
     Texture texture;
-};
+}
 Liquid::Liquid(boost::string_ref materialId)
 :   materialId(materialId),
     fadeLevel(1.0),
@@ -23,7 +23,7 @@ Liquid::Liquid(boost::string_ref materialId)
     int width = 3;
     int height = 3;
     Vector2 position(randInt(Tile::getSize().x - width), randInt(Tile::getSize().y - height));
-    SDL_Rect liquidRectangle = { position.x, position.y, width, height };
+    SDL_Rect liquidRectangle = { position.x, position.y, width, height }
     Color32 color = Color16(Game::materialConfig->get<uint16_t>(materialId, "Color"));
     SDL_FillRect(texture.getSurface(), &liquidRectangle, color.value);
 }

@@ -15,7 +15,7 @@ enum Action : int
     ShowEquipmentMenu,
     ToggleRunning,
     LastAction
-};
+}
 
 const char* toString(Action action);
 double getAPCost(Action action, const Creature& actor);

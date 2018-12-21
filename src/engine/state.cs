@@ -15,4 +15,4 @@ private:
     virtual bool renderPreviousState() const { return false; }
 
     Engine* engine;
-};
+}

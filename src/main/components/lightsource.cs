@@ -6,7 +6,7 @@ public:
     void load(const SaveFile&) override {}
 
     static const int maxRadius = 20;
-};
+}
 void LightSource::emitLight(World& world, Vector2 position, int level) const
 {
     position = position.divideRoundingDown(Tile::getSize());

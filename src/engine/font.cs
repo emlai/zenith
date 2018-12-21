@@ -1,6 +1,6 @@
-enum HorizontalAlignment { LeftAlign, HorizontalCenter, RightAlign };
-enum VerticalAlignment { TopAlign, VerticalCenter, BottomAlign };
-enum LineBreakMode { PreserveLines, SplitLines };
+enum HorizontalAlignment { LeftAlign, HorizontalCenter, RightAlign }
+enum VerticalAlignment { TopAlign, VerticalCenter, BottomAlign }
+enum LineBreakMode { PreserveLines, SplitLines }
 
 struct TextLayout
 {
@@ -12,7 +12,7 @@ struct TextLayout
 
     HorizontalAlignment horizontalAlignment;
     VerticalAlignment verticalAlignment;
-};
+}
 
 class BitmapFont
 {
@@ -66,7 +66,7 @@ private:
     Texture texture;
     static const Vector2 dimensions;
     static const int chars = 96;
-};
+}
 const Vector2 BitmapFont::dimensions = Vector2(16, 6);
 
 BitmapFont::BitmapFont(boost::string_ref fileName, Vector2 charSize)

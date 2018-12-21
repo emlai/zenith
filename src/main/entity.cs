@@ -29,7 +29,7 @@ private:
     std::string id;
     const Config* config;
     std::vector<std::unique_ptr<Component>> components;
-};
+}
 
 template<typename ComponentType>
 std::vector<ComponentType*> Entity::getComponentsOfType() const

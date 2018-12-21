@@ -3,7 +3,7 @@ struct SDL_Window;
 class Event
 {
 public:
-    enum Type { KeyDown, MouseButtonDown };
+    enum Type { KeyDown, MouseButtonDown }
 
     Event(Key key) : type(KeyDown), key(key) {}
     Event(Vector2 mousePosition) : type(MouseButtonDown), mousePosition(mousePosition) {}
@@ -13,8 +13,8 @@ public:
     {
         Key key;
         Vector2 mousePosition;
-    };
-};
+    }
+}
 
 class Window
 {
@@ -45,7 +45,7 @@ public:
     GraphicsContext& getGraphicsContext() { return context; }
     static Vector2 getScreenResolution();
 
-    enum { CloseRequest = -2 };
+    enum { CloseRequest = -2 }
 
 private:
     friend class GraphicsContext;
@@ -62,7 +62,7 @@ private:
     static int windowCount;
     static bool sdlVideoInitialized;
     static const int fullscreenFlag;
-};
+}
 int Window::windowCount = 0;
 bool Window::sdlVideoInitialized = false;
 const int Window::fullscreenFlag = SDL_WINDOW_FULLSCREEN_DESKTOP;

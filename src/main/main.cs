@@ -29,7 +29,7 @@ public:
 
 private:
     std::string text;
-};
+}
 
 static var preferencesFileName = "prefs.cfg";
 
@@ -58,11 +58,11 @@ class KeyMapMenu : public Menu
 {
 public:
     void execute();
-};
+}
 
 void KeyMapMenu::execute()
 {
-    enum { ResetDefaults };
+    enum { ResetDefaults }
     var window = getEngine().getWindow();
 
     while (true)
@@ -111,11 +111,11 @@ class PrefsMenu : public Menu
 {
 public:
     void execute();
-};
+}
 
 void PrefsMenu::execute()
 {
-    enum { AsciiGraphics, GraphicsScale, Fullscreen, KeyMap };
+    enum { AsciiGraphics, GraphicsScale, Fullscreen, KeyMap }
     var window = getEngine().getWindow();
 
     while (true)
@@ -170,11 +170,11 @@ class MainMenu : public Menu
 {
 public:
     void execute();
-};
+}
 
 void MainMenu::execute()
 {
-    enum { NewGame, LoadGame, Preferences };
+    enum { NewGame, LoadGame, Preferences }
 
     std::unique_ptr<Game> game;
 

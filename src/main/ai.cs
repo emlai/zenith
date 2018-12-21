@@ -10,14 +10,14 @@ public:
 
 protected:
     Creature* creature;
-};
+}
 
 class AttackNearestEnemy : public AI
 {
 private:
     using AI::AI;
     Action control() override;
-};
+}
 std::unique_ptr<AI> AI::get(boost::string_ref id, Creature& creature)
 {
     if (id == "AttackNearestEnemy") return std::make_unique<AttackNearestEnemy>(creature);

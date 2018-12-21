@@ -11,7 +11,7 @@ private:
     void setOpen(bool open);
 
     bool isOpen = false;
-};
+}
 bool Door::reactToMovementAttempt()
 {
     if (!isOpen)

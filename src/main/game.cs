@@ -59,7 +59,7 @@ private:
 
     bool showExtraInfo = true;
 #endif
-};
+}
 std::unique_ptr<Config> Game::creatureConfig;
 std::unique_ptr<Config> Game::objectConfig;
 std::unique_ptr<Config> Game::itemConfig;
@@ -113,7 +113,7 @@ public:
     InventoryMenu(Window& window, const Creature& player, boost::string_ref title,
                   bool showNothingAsOption, Item* preselectedItem,
                   std::function<bool(const Item&)> itemFilter);
-};
+}
 
 InventoryMenu::InventoryMenu(Window& window, const Creature& player, boost::string_ref title,
                              bool showNothingAsOption, Item* preselectedItem,
@@ -156,7 +156,7 @@ public:
 
 private:
     Creature* player;
-};
+}
 
 void EquipmentMenu::execute()
 {
@@ -216,7 +216,7 @@ private:
 
     Game* game;
     Vector2 position;
-};
+}
 
 void LookMode::execute()
 {
@@ -263,7 +263,7 @@ private:
     bool renderPreviousState() const override { return true; }
 
     std::string question;
-};
+}
 
 std::string StringQuestion::execute()
 {
@@ -297,7 +297,7 @@ private:
 
     std::string question;
     Vector2 origin;
-};
+}
 
 boost::optional<Dir8> DirectionQuestion::execute()
 {

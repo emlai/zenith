@@ -21,7 +21,7 @@ protected:
 
     std::string materialId;
     Sprite sprite;
-};
+}
 
 std::string getRandomMaterialId(boost::string_ref itemId);
 
@@ -39,7 +39,7 @@ private:
     static const char corpseGlyph = ',';
 
     std::unique_ptr<Creature> creature;
-};
+}
 static Color16 getMaterialColor(boost::string_ref materialId)
 {
     if (!materialId.empty())

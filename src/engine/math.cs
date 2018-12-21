@@ -24,13 +24,13 @@ struct Xorshift1024Star
     uint64_t operator()();
     uint64_t state[16];
     int index = 0;
-};
+}
 
 struct Xorshift64Star
 {
     uint64_t operator()();
     uint64_t state;
-};
+}
 
 class RNG
 {
@@ -49,7 +49,7 @@ public:
 private:
     Generator algorithm;
     result_type currentSeed;
-};
+}
 
 extern RNG rng;
 
@@ -87,7 +87,7 @@ bool raycastIntegerBresenham(Vector2 source, Vector2 target, const std::function
 const Vector2 directionVectors[] =
 {
     {0, 0}, {1, 0}, {1, 1}, {0, 1}, {-1, 1}, {-1, 0}, {-1, -1}, {0, -1}, {1, -1}
-};
+}
 
 RNG rng = RNG(Xorshift1024Star());
 
@@ -101,7 +101,7 @@ void RNG::seed(RNG::result_type seed)
 {
     currentSeed = seed;
 
-    Xorshift64Star seedGenerator{seed};
+    Xorshift64Star seedGenerator{seed}
     std::generate(std::begin(algorithm.state), std::end(algorithm.state), seedGenerator);
 }
 

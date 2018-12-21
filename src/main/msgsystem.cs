@@ -1,4 +1,4 @@
-enum MessageType { Normal, Warning };
+enum MessageType { Normal, Warning }
 
 class Message
 {
@@ -15,7 +15,7 @@ private:
     std::string text;
     int turn;
     int count;
-};
+}
 
 namespace MessageSystem
 {
@@ -56,10 +56,10 @@ namespace MessageSystem
         }
         const std::string content;
         const MessageType type;
-    };
+    }
 
     static const int debugMessageLimit = 16;
-    static const Color16 messageColors[] = { TextColor::White, TextColor::Red };
+    static const Color16 messageColors[] = { TextColor::White, TextColor::Red }
     static std::deque<DebugMessage> debugMessages;
     static std::vector<std::string> commandHistory;
     static std::vector<std::string>::iterator commandIterator = commandHistory.end();

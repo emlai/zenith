@@ -15,7 +15,7 @@ enum : Key
     UpArrow = SDLK_UP,
     F2 = SDLK_F2,
     F3 = SDLK_F3
-};
+}
 
 std::string toString(Key key);
 
@@ -37,7 +37,7 @@ enum : Mod
     Shift = LeftShift | RightShift,
     Ctrl = LeftCtrl | RightCtrl,
     Alt = LeftAlt | RightAlt
-};
+}
 
 namespace keyboard
 {

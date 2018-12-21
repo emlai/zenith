@@ -1,4 +1,4 @@
-enum class BlendMode { Normal, LinearLight };
+enum class BlendMode { Normal, LinearLight }
 
 class GraphicsContext
 {
@@ -35,7 +35,7 @@ private:
     boost::optional<Rect> view;
     BitmapFont* font;
     int animationFrameTime;
-};
+}
 GraphicsContext::GraphicsContext(const Window& window)
 :   window(window),
     renderer(SDL_CreateRenderer(window.windowHandle.get(), -1, 0), SDL_DestroyRenderer),
@@ -144,10 +144,10 @@ Rect GraphicsContext::mapToTargetCoordinates(Rect rectangle) const
 void GraphicsContext::renderRectangle(Rect rectangle, Color32 color)
 {
     rectangle = mapToTargetCoordinates(rectangle);
-    SDL_Rect topLine = { rectangle.getLeft(), rectangle.getTop(), rectangle.getWidth(), 1 };
-    SDL_Rect bottomLine = { rectangle.getLeft(), rectangle.getBottom(), rectangle.getWidth(), 1 };
-    SDL_Rect leftLine = { rectangle.getLeft(), rectangle.getTop(), 1, rectangle.getHeight() };
-    SDL_Rect rightLine = { rectangle.getRight(), rectangle.getTop(), 1, rectangle.getHeight() };
+    SDL_Rect topLine = { rectangle.getLeft(), rectangle.getTop(), rectangle.getWidth(), 1 }
+    SDL_Rect bottomLine = { rectangle.getLeft(), rectangle.getBottom(), rectangle.getWidth(), 1 }
+    SDL_Rect leftLine = { rectangle.getLeft(), rectangle.getTop(), 1, rectangle.getHeight() }
+    SDL_Rect rightLine = { rectangle.getRight(), rectangle.getTop(), 1, rectangle.getHeight() }
     SDL_FillRect(targetTexture.getSurface(), &topLine, color.value);
     SDL_FillRect(targetTexture.getSurface(), &bottomLine, color.value);
     SDL_FillRect(targetTexture.getSurface(), &leftLine, color.value);
@@ -192,7 +192,7 @@ void GraphicsContext::renderFilledRectangle(Rect rectangle, Color32 color, Blend
                             src += 2.0 * dst - 1.0;
                         else
                             src = src + 2.0 * dst - 1.0;
-                    };
+                    }
 
                     blendLinearLight(srcR, dstR);
                     blendLinearLight(srcG, dstG);
@@ -204,7 +204,7 @@ void GraphicsContext::renderFilledRectangle(Rect rectangle, Color32 color, Blend
                             src = 1.0;
                         else if (src < 0.0)
                             src = 0.0;
-                    };
+                    }
 
                     wrap(srcR);
                     wrap(srcG);

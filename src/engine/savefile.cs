@@ -53,7 +53,7 @@ private:
 
     std::vector<char> buffer;
     std::unique_ptr<SDL_RWops, void (*)(SDL_RWops*)> file;
-};
+}
 
 template<typename T>
 void SaveFile::write(const std::vector<T>& vector)

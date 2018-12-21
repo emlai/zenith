@@ -5,7 +5,7 @@ class Controller
 public:
     virtual ~Controller() = 0;
     virtual Action control(Creature& creature) = 0;
-};
+}
 
 class AIController : public Controller
 {
@@ -16,7 +16,7 @@ public:
 
 private:
     std::unique_ptr<AI> ai;
-};
+}
 
 class PlayerController : public Controller
 {
@@ -27,7 +27,7 @@ private:
     Action control(Creature& creature) override;
 
     Game& game;
-};
+}
 
 Action getMappedAction(Key key);
 Key getMappedKey(Action action);

@@ -9,7 +9,7 @@ enum Dir8
     NorthWest,
     North,
     NorthEast
-};
+}
 
 inline Dir8 randomDir8()
 {
@@ -106,7 +106,7 @@ struct Vector2Base
     Dir8 getDir8() const;
 
     static const Vector2Base zeroVector;
-};
+}
 
 template<typename T>
 template<typename U>
@@ -155,28 +155,28 @@ template<typename T>
 inline Vector2Base<T> makeRandomVector(Vector2Base<T> max)
 {
     // TODO: Add support for floating-point numbers.
-    return { randInt(max.x), randInt(max.y) };
+    return { randInt(max.x), randInt(max.y) }
 }
 
 template<typename T>
 inline Vector2Base<T> makeRandomVector(Vector2Base<T> min, Vector2Base<T> max)
 {
     // TODO: Add support for floating-point numbers.
-    return { randInt(min.x, max.x), randInt(min.y, max.y) };
+    return { randInt(min.x, max.x), randInt(min.y, max.y) }
 }
 
 template<typename T>
 inline Vector2Base<T> makeRandomVector(T max)
 {
     // TODO: Add support for floating-point numbers.
-    return { randInt(max), randInt(max) };
+    return { randInt(max), randInt(max) }
 }
 
 template<typename T>
 inline Vector2Base<T> makeRandomVector(T min, T max)
 {
     // TODO: Add support for floating-point numbers.
-    return { randInt(min, max), randInt(min, max) };
+    return { randInt(min, max), randInt(min, max) }
 }
 
 namespace std
@@ -188,7 +188,7 @@ namespace std
         {
             return (vector.x * 73856093) ^ (vector.y * 19349663);
         }
-    };
+    }
 }
 
 /// 3D vector structure for representing values with x, y, and z components.
@@ -225,7 +225,7 @@ struct Vector3Base
                            ::divideRoundingDown(y, divisor),
                            ::divideRoundingDown(z, divisor));
     }
-};
+}
 
 namespace boost
 {
@@ -236,7 +236,7 @@ namespace boost
         {
             return (size_t(vector.x) * 73856093) ^ (size_t(vector.y) * 19349663) ^ (size_t(vector.z) * 83492791);
         }
-    };
+    }
 }
 
 struct Rect
@@ -268,7 +268,7 @@ struct Rect
         return getLeft() < other.getRight() && getRight() > other.getLeft()
             && getTop() < other.getBottom() && getBottom() > other.getTop();
     }
-};
+}
 
 template<typename T>
 inline bool Vector2Base<T>::isWithin(Rect rect) const

@@ -23,7 +23,7 @@ enum Attribute
     Intelligence,
     Psyche,
     Charisma
-};
+}
 
 const int attributes = 21;
 
@@ -31,15 +31,15 @@ const std::string attributeNames[] =
 {
     "strength", "arm strength", "leg strength", "", "", "", "", "dexterity", "", "", "agility",
     "", "", "endurance", "perception", "", "", "", "intelligence", "psyche", "charisma"
-};
+}
 
 const std::string attributeAbbreviations[] =
 {
     "Str", "AStr", "LStr", "", "", "", "", "Dex", "", "", "Agi",
     "", "", "End", "Per", "", "", "", "Int", "Psy", "Cha"
-};
+}
 
-const std::string statNames[] = { "HP", "AP", "MP" };
+const std::string statNames[] = { "HP", "AP", "MP" }
 
 enum EquipmentSlot : int
 {
@@ -47,7 +47,7 @@ enum EquipmentSlot : int
     Head,
     Torso,
     Legs
-};
+}
 
 const int equipmentSlots = 4;
 
@@ -59,7 +59,7 @@ namespace std
     struct hash<EquipmentSlot>
     {
         size_t operator()(EquipmentSlot slot) const { return size_t(slot); }
-    };
+    }
 }
 
 class Creature final : public Entity
@@ -147,13 +147,13 @@ private:
 
     static constexpr double fullAP = 1.0;
     static const int configAttributes[8];
-};
+}
 
 template<typename... Args>
 void Creature::addMessage(Args&&... messageParts)
 {
     std::stringstream stream;
-    var expansion = { (stream << messageParts, 0)... };
+    var expansion = { (stream << messageParts, 0)... }
     (void) expansion;
     std::string message = stream.str();
     message[0] = char(std::toupper(message[0]));

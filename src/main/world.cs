@@ -27,7 +27,7 @@ private:
     boost::unordered_map<Vector3, int64_t> savedAreaOffsets;
     std::unique_ptr<SaveFile> saveFile;
     Color32 sunlight;
-};
+}
 void World::load(SaveFile& file)
 {
     var areaCount = file.readInt32();

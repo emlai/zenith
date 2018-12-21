@@ -26,7 +26,7 @@ private:
     Color32 asciiColor;
     static bool asciiGraphics;
     static BitmapFont* asciiGraphicsFont;
-};
+}
 bool Sprite::asciiGraphics;
 BitmapFont* Sprite::asciiGraphicsFont;
 

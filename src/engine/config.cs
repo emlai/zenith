@@ -48,7 +48,7 @@ private:
 
     private:
         boost::unordered_map<std::string, Value> properties;
-    };
+    }
 
     class Value
     {
@@ -63,7 +63,7 @@ private:
             String,
             List,
             Group
-        };
+        }
 
         Value(bool value) : boolean(value), type(Type::Bool) {}
         Value(Integer value) : integer(value), type(Type::Int) {}
@@ -96,10 +96,10 @@ private:
             std::string string;
             std::vector<Value> list;
             Group_<Value> group;
-        };
+        }
 
         Type type;
-    };
+    }
 
     using Group = Group_<Value>;
 
@@ -120,13 +120,13 @@ private:
     void printValue(std::ostream& stream, const Config::Value& value) const;
 
     Group data;
-};
+}
 
 template<typename OutputType>
 struct Config::ConversionTraits
 {
     boost::optional<OutputType> operator()(const Value& value);
-};
+}
 
 template<>
 struct Config::ConversionTraits<bool>
@@ -138,7 +138,7 @@ struct Config::ConversionTraits<bool>
 
         return boost::none;
     }
-};
+}
 
 template<>
 struct Config::ConversionTraits<int>
@@ -150,7 +150,7 @@ struct Config::ConversionTraits<int>
 
         return boost::none;
     }
-};
+}
 
 template<>
 struct Config::ConversionTraits<unsigned>
@@ -162,7 +162,7 @@ struct Config::ConversionTraits<unsigned>
 
         return boost::none;
     }
-};
+}
 
 template<>
 struct Config::ConversionTraits<unsigned short>
@@ -174,7 +174,7 @@ struct Config::ConversionTraits<unsigned short>
 
         return boost::none;
     }
-};
+}
 
 template<>
 struct Config::ConversionTraits<double>
@@ -189,7 +189,7 @@ struct Config::ConversionTraits<double>
 
         return boost::none;
     }
-};
+}
 
 template<>
 struct Config::ConversionTraits<std::string>
@@ -201,7 +201,7 @@ struct Config::ConversionTraits<std::string>
 
         return boost::none;
     }
-};
+}
 
 template<typename ElementType>
 struct Config::ConversionTraits<std::vector<ElementType>>
@@ -218,7 +218,7 @@ struct Config::ConversionTraits<std::vector<ElementType>>
 
         return outputData;
     }
-};
+}
 
 template<typename ValueType>
 boost::optional<ValueType> Config::getOptional(boost::string_ref key) const
@@ -298,7 +298,7 @@ private:
     std::ifstream file;
     int line;
     int column;
-};
+}
 
 ConfigReader::ConfigReader(boost::string_ref filePath)
 :   filePath(filePath), file(this->filePath), line(1), column(0)

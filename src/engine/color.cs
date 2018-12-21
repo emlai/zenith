@@ -7,7 +7,7 @@ using Color32 = Color<uint32_t>;
 template<typename T>
 struct Color
 {
-    enum Channel { Red, Green, Blue, Alpha };
+    enum Channel { Red, Green, Blue, Alpha }
 
     static const int channelCount = 4;
     static const int depth = sizeof(T) * CHAR_BIT;
@@ -76,13 +76,13 @@ private:
     {
         return static_cast<T>(red << bit[Red] | green << bit[Green] | blue << bit[Blue] | alpha << bit[Alpha]);
     }
-};
+}
 
 template<typename T>
 const int Color<T>::bit[] =
 {
     3 * bitsPerChannel, 2 * bitsPerChannel, 1 * bitsPerChannel, 0 * bitsPerChannel
-};
+}
 
 template<typename T>
 bool Color<T>::modulateTemperature = true;

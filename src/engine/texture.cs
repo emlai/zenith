@@ -21,11 +21,11 @@ public:
 private:
     std::unique_ptr<SDL_Surface, void (*)(SDL_Surface*)> surface;
     std::vector<Color32> pixelData;
-};
+}
 struct PixelFormatMasks
 {
     uint32_t red, green, blue, alpha;
-};
+}
 
 static PixelFormatMasks pixelFormatEnumToMasks(uint32_t pixelFormat)
 {

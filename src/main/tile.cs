@@ -59,7 +59,7 @@ private:
     std::string groundId;
     Sprite groundSprite;
     Color32 light;
-};
+}
 
 template<typename... Args>
 Creature* Tile::spawnCreature(Args&&... creatureArgs)

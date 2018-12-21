@@ -37,9 +37,9 @@ struct Deferrer
     Deferrer(T deferred) : deferred(std::move(deferred)) {}
     Deferrer(Deferrer&&) = default;
     ~Deferrer() { deferred(); }
-};
+}
 
-struct DeferHelper {};
+struct DeferHelper {}
 
 template<typename T>
 Deferrer<T> operator+(DeferHelper, T deferred)

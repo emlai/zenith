@@ -17,7 +17,7 @@ public:
 
 private:
     Entity* parent;
-};
+}
 Component::~Component() {}
 
 std::unique_ptr<Component> Component::get(boost::string_ref name, Entity& parent)

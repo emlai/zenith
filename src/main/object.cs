@@ -11,7 +11,7 @@ public:
 
 private:
     Sprite sprite;
-};
+}
 Object::Object(boost::string_ref id)
 :   Entity(id, *Game::objectConfig),
     sprite(::getSprite(*Game::objectSpriteSheet, *Game::objectConfig, id))

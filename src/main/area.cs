@@ -21,7 +21,7 @@ private:
     std::vector<Tile> tiles;
     World& world;
     Vector2 position;
-};
+}
 const Vector2 Area::sizeVector = Vector2(Area::size, Area::size);
 
 Area::Area(World& world, Vector2 position, int level)

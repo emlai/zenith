@@ -12,7 +12,7 @@ public:
 private:
     Rect region;
     std::vector<Tile*> doorTiles;
-};
+}
 
 class Building
 {
@@ -24,7 +24,7 @@ public:
 private:
     std::vector<Room> rooms;
     std::vector<Tile*> doorTiles;
-};
+}
 
 class WorldGenerator
 {
@@ -44,7 +44,7 @@ private:
     void generateCreatures(Rect region, int level);
 
     World& world;
-};
+}
 Building::Building(std::vector<Room>&& rooms)
 :   rooms(std::move(rooms))
 {
@@ -174,7 +174,7 @@ boost::optional<Room> WorldGenerator::generateRoom(Rect region, int level)
     {
         return (position.x == region.getLeft() || position.x == region.getRight())
             && (position.y == region.getTop() || position.y == region.getBottom());
-    };
+    }
 
     var generateWall = [&](Vector2 position)
     {
@@ -185,7 +185,7 @@ boost::optional<Room> WorldGenerator::generateRoom(Rect region, int level)
             if (!isCorner(position))
                 nonCornerWalls.push_back(tile);
         }
-    };
+    }
 
     for (int x = region.getLeft(); x <= region.getRight(); ++x)
     {
@@ -227,7 +227,7 @@ static int heuristicCostEstimate(const Tile& a, const Tile& b)
 
 static std::vector<Tile*> reconstructPath(const boost::unordered_map<Tile*, Tile*>& cameFrom, Tile* current)
 {
-    std::vector<Tile*> totalPath = { current };
+    std::vector<Tile*> totalPath = { current }
 
     while (cameFrom.find(current) != cameFrom.end())
     {
@@ -250,7 +250,7 @@ std::vector<Tile*> WorldGenerator::findPathAStar(Tile& source, Tile& target,
     boost::unordered_map<Tile*, int> estimatedCosts;
     estimatedCosts.emplace(&source, heuristicCostEstimate(source, target));
 
-    var comparator = [&](Tile* a, Tile* b) { return estimatedCosts.at(a) < estimatedCosts.at(b); };
+    var comparator = [&](Tile* a, Tile* b) { return estimatedCosts.at(a) < estimatedCosts.at(b); }
 
     while (!openSet.empty())
     {
@@ -296,7 +296,7 @@ std::vector<Tile*> WorldGenerator::findPathAStar(Tile& source, Tile& target,
         }
     }
 
-    return {};
+    return {}
 }
 
 void WorldGenerator::generatePaths(const std::vector<Building>& buildings)

@@ -17,14 +17,14 @@ struct MenuItem
     const Sprite* const secondaryImage;
     const std::string secondaryText;
     const Key shortcut;
-};
+}
 
 class Menu : public State
 {
 public:
-    enum ItemLayout { Vertical, Horizontal };
-    enum HotkeyStyle { CustomHotkeys, NumberHotkeys, LetterHotkeys };
-    enum { Exit = INT_MIN };
+    enum ItemLayout { Vertical, Horizontal }
+    enum HotkeyStyle { CustomHotkeys, NumberHotkeys, LetterHotkeys }
+    enum { Exit = INT_MIN }
 
     Menu() { clear(); }
     void addTitle(boost::string_ref text);
@@ -76,7 +76,7 @@ private:
     Vector2 size;
     static Color32 defaultTextColor;
     static Color32 defaultHoverColor;
-};
+}
 Color32 Menu::defaultTextColor = Color32::white * 0.6;
 Color32 Menu::defaultHoverColor = Color32::white;
 

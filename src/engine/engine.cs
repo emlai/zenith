@@ -16,14 +16,14 @@ private:
 
     std::vector<Window> windows;
     std::vector<State*> states;
-};
+}
 
 template<typename StateType>
 var Engine::execute(StateType& state)
 {
     states.push_back(&state);
     state.engine = this;
-    DEFER { states.pop_back(); };
+    DEFER { states.pop_back(); }
     return state.execute();
 }
 Window& Engine::createWindow(Vector2 size, boost::string_ref title, bool fullscreen)
