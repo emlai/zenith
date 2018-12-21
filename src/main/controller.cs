@@ -103,7 +103,7 @@ Action PlayerController::control(Creature creature)
                     break;
 
                 int selectedItemIndex = game.showInventory("What do you want to use?", false,
-                                                           nullptr, [](var item)
+                                                           null, [](var item)
                 {
                     return item.isUsable();
                 });
@@ -120,7 +120,7 @@ Action PlayerController::control(Creature creature)
                     break;
 
                 int selectedItemIndex = game.showInventory("What do you want to eat?", false,
-                                                           nullptr, [](var item)
+                                                           null, [](var item)
                 {
                     return item.isEdible();
                 });

@@ -33,7 +33,7 @@ private:
             if (it != properties.end())
                 return it.second;
 
-            return nullptr;
+            return null;
         }
 
         var begin() { return properties.begin(); }
@@ -131,7 +131,7 @@ struct Config::ConversionTraits<bool>
         if (value.isBool())
             return value.getBool();
 
-        return boost::none;
+        return null;
     }
 }
 
@@ -143,7 +143,7 @@ struct Config::ConversionTraits<int>
         if (value.isInt())
             return boost::numeric_cast<int>(value.getInt());
 
-        return boost::none;
+        return null;
     }
 }
 
@@ -155,7 +155,7 @@ struct Config::ConversionTraits<unsigned>
         if (value.isInt())
             return boost::numeric_cast<unsigned>(value.getInt());
 
-        return boost::none;
+        return null;
     }
 }
 
@@ -167,7 +167,7 @@ struct Config::ConversionTraits<unsigned short>
         if (value.isInt())
             return boost::numeric_cast<unsigned short>(value.getInt());
 
-        return boost::none;
+        return null;
     }
 }
 
@@ -182,7 +182,7 @@ struct Config::ConversionTraits<double>
         if (value.isInt())
             return boost::numeric_cast<double>(value.getInt());
 
-        return boost::none;
+        return null;
     }
 }
 
@@ -194,7 +194,7 @@ struct Config::ConversionTraits<string>
         if (value.isString())
             return value.getString();
 
-        return boost::none;
+        return null;
     }
 }
 
@@ -204,7 +204,7 @@ struct Config::ConversionTraits<List<ElementType>>
     List<ElementType?> operator()(Value value)
     {
         if (!value.isList())
-            return boost::none;
+            return null;
 
         List<ElementType> outputData;
 
@@ -221,7 +221,7 @@ ValueType? Config::getOptional(string key)
     if (var value = data.getOptional(key))
         return convert<ValueType>(*value);
 
-    return boost::none;
+    return null;
 }
 
 template<typename ValueType>
@@ -244,7 +244,7 @@ ValueType? Config::getOptional(string type, string attribute)
         var groupValue = data.getOptional(current);
 
         if (!groupValue)
-            return boost::none;
+            return null;
 
         var group = groupValue.getGroup();
 
@@ -260,13 +260,13 @@ ValueType? Config::getOptional(string type, string attribute)
         var baseType = group.getOptional("BaseType");
 
         if (!baseType)
-            return boost::none;
+            return null;
 
         if (baseType.isString())
         {
             var baseTypeString = baseType.getString();
 
-            if (data.getOptional(baseTypeString) == nullptr)
+            if (data.getOptional(baseTypeString) == null)
                 throw std::runtime_error("BaseType \"" + baseTypeString + "\" doesn't exist!");
 
             current = baseTypeString;
@@ -555,7 +555,7 @@ Config::Value Config::parseNumber(ConfigReader reader)
     if (hasDot)
         return std::stod(value);
     else if (isHex)
-        return std::stoll(value, nullptr, 16);
+        return std::stoll(value, null, 16);
     else
         return std::stoll(value);
 }

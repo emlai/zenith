@@ -211,10 +211,10 @@ Creature::Creature(Tile tile, string id, Controller controller)
     sprite(getSprite(*Game::creatureSpriteSheet, *Game::creatureConfig, id)),
     controller(std::move(controller))
 {
-    equipment[Head] = nullptr;
-    equipment[Torso] = nullptr;
-    equipment[Hand] = nullptr;
-    equipment[Legs] = nullptr;
+    equipment[Head] = null;
+    equipment[Torso] = null;
+    equipment[Hand] = null;
+    equipment[Legs] = null;
 
     if (tile)
         tilesUnder.push_back(tile);
@@ -238,10 +238,10 @@ Creature::Creature(SaveFile file, Tile tile)
     sprite(getSprite(*Game::creatureSpriteSheet, *Game::creatureConfig, getId())),
     controller(AIController::get(getId(), *this))
 {
-    equipment[Head] = nullptr;
-    equipment[Torso] = nullptr;
-    equipment[Hand] = nullptr;
-    equipment[Legs] = nullptr;
+    equipment[Head] = null;
+    equipment[Torso] = null;
+    equipment[Hand] = null;
+    equipment[Legs] = null;
 
     if (tile)
         tilesUnder.push_back(tile);
@@ -481,7 +481,7 @@ Creature Creature::getNearestEnemy()
 {
     // TODO: Optimize by iterating in a spiral starting from this creature's position.
 
-    Creature nearestEnemy = nullptr;
+    Creature nearestEnemy = null;
     int nearestEnemyDistance = INT_MAX;
 
     for (var other : getCurrentlySeenCreatures())
@@ -539,7 +539,7 @@ void Creature::moveTo(Tile destination)
     tilesUnder.clear();
     tilesUnder.push_back(destination);
 
-    Item itemOnTile = nullptr;
+    Item itemOnTile = null;
 
     for (var tile : getTilesUnder())
     {
@@ -548,7 +548,7 @@ void Creature::moveTo(Tile destination)
             if (itemOnTile || tile.getItems().size() > 1)
             {
                 addMessage("Many items are lying here.");
-                itemOnTile = nullptr;
+                itemOnTile = null;
                 break;
             }
 
@@ -695,7 +695,7 @@ void Creature::drop(Item itemToDrop)
     EquipmentSlot equipmentSlot = itemToDrop.getEquipmentSlot();
 
     if (getEquipment(equipmentSlot) == itemToDrop)
-        equip(equipmentSlot, nullptr);
+        equip(equipmentSlot, null);
 
     getTileUnder(0).addItem(removeItem(itemToDrop));
 }

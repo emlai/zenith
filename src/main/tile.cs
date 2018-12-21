@@ -111,7 +111,7 @@ void Tile::save(SaveFile file)
     file.write(creatures);
     file.write(items);
     file.write(liquids);
-    file.write(object != nullptr);
+    file.write(object != null);
     if (object)
         object.save(file);
 }

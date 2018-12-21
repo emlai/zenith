@@ -79,7 +79,7 @@ Item Item::load(SaveFile file)
     if (boost::algorithm::ends_with(itemId, "Corpse"))
     {
         if (file.readBool())
-            item = std::make_unique<Corpse>(std::make_unique<Creature>(file, nullptr));
+            item = std::make_unique<Corpse>(std::make_unique<Creature>(file, null));
         else
             item = std::make_unique<Corpse>(boost::algorithm::erase_last_copy(itemId, "Corpse"));
     }
@@ -196,7 +196,7 @@ void Corpse::renderEquipped(Window window, Vector2 position)
 void Corpse::save(SaveFile file)
 {
     file.write(getId());
-    file.write(creature != nullptr);
+    file.write(creature != null);
     if (creature)
         creature.save(file);
 }

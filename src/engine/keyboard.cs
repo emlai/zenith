@@ -59,7 +59,7 @@ static class keyboard
             render(window);
             font.setArea(Rect(position, window.getResolution() - position));
             font.print(window, prefix);
-            font.printWithCursor(window, line, cursor == line.end() ? nullptr : &*cursor);
+            font.printWithCursor(window, line, cursor == line.end() ? null : &*cursor);
             window.updateScreen();
             SDL_WaitEvent(event);
 

@@ -203,14 +203,14 @@ class Window
     int getWidth()
     {
         int width;
-        SDL_GetWindowSize(windowHandle.get(), width, nullptr);
+        SDL_GetWindowSize(windowHandle.get(), width, null);
         return width;
     }
 
     int getHeight()
     {
         int height;
-        SDL_GetWindowSize(windowHandle.get(), nullptr, height);
+        SDL_GetWindowSize(windowHandle.get(), null, height);
         return height;
     }
 

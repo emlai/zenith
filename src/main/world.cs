@@ -137,7 +137,7 @@ Area World::getArea(Vector3 position)
         return areas.emplace(position, Area(*saveFile, *this, Vector2(position), position.z)).first.second;
     }
 
-    return nullptr;
+    return null;
 }
 
 Vector3 World::globalPositionToAreaPosition(Vector2 position, int level)
@@ -158,7 +158,7 @@ Tile World::getOrCreateTile(Vector2 position, int level)
     if (var area = getOrCreateArea(globalPositionToAreaPosition(position, level)))
         return area.getTileAt(globalPositionToTilePosition(position));
 
-    return nullptr;
+    return null;
 }
 
 Tile World::getTile(Vector2 position, int level)
@@ -166,7 +166,7 @@ Tile World::getTile(Vector2 position, int level)
     if (var area = getArea(globalPositionToAreaPosition(position, level)))
         return area.getTileAt(globalPositionToTilePosition(position));
 
-    return nullptr;
+    return null;
 }
 
 void World::forEachTile(Rect region, int level, const std::function<void(Tile)>& function)

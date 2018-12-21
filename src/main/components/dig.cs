@@ -14,7 +14,7 @@ bool Dig::use(Creature digger, Item digItem, Game game)
         if (tileToDig.hasObject())
         {
             digger.addMessage("You dig the ", tileToDig.getObject().getName(), ".");
-            tileToDig.setObject(nullptr);
+            tileToDig.setObject(null);
         }
         else if (tileToDig.hasCreature())
         {

@@ -90,7 +90,7 @@ void KeyMapMenu::execute()
         switch (selection)
         {
             case ResetDefaults:
-                loadKeyMap(nullptr);
+                loadKeyMap(null);
                 break;
 
             case Menu::Exit:
@@ -224,7 +224,7 @@ void MainMenu::execute()
                 if (game.getPlayer().isDead())
                 {
                     std::remove(Game::saveFileName);
-                    game = nullptr;
+                    game = null;
                 }
                 break;
 
@@ -271,7 +271,7 @@ class Program
             loadKeyMap(preferences);
         }
         else
-            loadKeyMap(nullptr);
+            loadKeyMap(null);
 
         BitmapFont font = initFont();
         window.setFont(font);

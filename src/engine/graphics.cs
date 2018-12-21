@@ -42,7 +42,7 @@ class GraphicsContext
     double getScale()
     {
         float scale;
-        SDL_RenderGetScale(renderer.get(), scale, nullptr);
+        SDL_RenderGetScale(renderer.get(), scale, null);
         return double(scale);
     }
 
@@ -56,7 +56,7 @@ class GraphicsContext
         if (viewport)
             this.viewport = *viewport;
         else
-            this.viewport = boost::none;
+            this.viewport = null;
     }
 
     Rect getViewport()
@@ -72,7 +72,7 @@ class GraphicsContext
         if (view)
             this.view = *view;
         else
-            this.view = boost::none;
+            this.view = null;
     }
 
     void setFont(BitmapFont font)
@@ -88,15 +88,15 @@ class GraphicsContext
     void updateScreen()
     {
         SDL_Surface surface = targetTexture.getSurface();
-        SDL_UpdateTexture(framebuffer.get(), nullptr, surface.pixels, surface.pitch);
-        SDL_RenderCopy(renderer.get(), framebuffer.get(), nullptr, nullptr);
+        SDL_UpdateTexture(framebuffer.get(), null, surface.pixels, surface.pitch);
+        SDL_RenderCopy(renderer.get(), framebuffer.get(), null, null);
         SDL_RenderPresent(renderer.get());
         clearScreen();
     }
 
     void clearScreen()
     {
-        SDL_FillRect(targetTexture.getSurface(), nullptr, 0);
+        SDL_FillRect(targetTexture.getSurface(), null, 0);
     }
 
     Vector2 mapFromTargetCoordinates(Vector2 position)

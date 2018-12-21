@@ -1,11 +1,11 @@
 struct MenuItem
 {
-    MenuItem(int id, string text, Key shortcut = NoKey, Sprite image = nullptr)
-    :   id(id), mainImage(image), mainText(text), secondaryImage(nullptr), shortcut(shortcut)
+    MenuItem(int id, string text, Key shortcut = NoKey, Sprite image = null)
+    :   id(id), mainImage(image), mainText(text), secondaryImage(null), shortcut(shortcut)
     {
     }
     MenuItem(int id, string mainText, string secondaryText, Key shortcut = NoKey,
-             Sprite mainImage = nullptr, Sprite secondaryImage = nullptr)
+             Sprite mainImage = null, Sprite secondaryImage = null)
     :   id(id), mainImage(mainImage), mainText(mainText), secondaryImage(secondaryImage),
         secondaryText(secondaryText), shortcut(shortcut)
     {
@@ -65,7 +65,7 @@ class Menu : State
         hotkeySuffix = ")";
         itemLayout = Vertical;
         itemSpacing = 1;
-        itemSize = boost::none;
+        itemSize = null;
         tableCellSpacing = Vector2(0, 0);
         secondaryColumnAlignment = LeftAlign;
         textColor = defaultTextColor;

@@ -81,7 +81,7 @@ List<Building> WorldGenerator::generateBuildings(Rect region, int level)
 
     List<Building> buildings;
 
-    if (world.getTile(region.position, level + 1) != nullptr)
+    if (world.getTile(region.position, level + 1) != null)
     {
         world.forEachTile(region, level + 1, [&](Tile tile)
         {
@@ -102,7 +102,7 @@ List<Building> WorldGenerator::generateBuildings(Rect region, int level)
                     buildings.push_back(std::move(*building));
                 }
                 else
-                    tile.setObject(nullptr);
+                    tile.setObject(null);
             }
         });
     }
@@ -135,7 +135,7 @@ Building? WorldGenerator::generateBuilding(Rect region, int level)
         return Building(std::move(rooms));
     }
     else
-        return boost::none;
+        return null;
 }
 
 Room? WorldGenerator::generateRoom(Rect region, int level)
@@ -149,7 +149,7 @@ Room? WorldGenerator::generateRoom(Rect region, int level)
     });
 
     if (!canGenerateHere)
-        return boost::none;
+        return null;
 
     var wallId = "BrickWall";
     var floorId = "WoodenFloor";
@@ -158,7 +158,7 @@ Room? WorldGenerator::generateRoom(Rect region, int level)
     world.forEachTile(region, level, [&](Tile tile)
     {
         tile.setGround(floorId);
-        tile.setObject(nullptr);
+        tile.setObject(null);
     });
 
     List<Tile> nonCornerWalls;
@@ -211,7 +211,7 @@ Tile WorldGenerator::findPathStart(Tile tile)
             return adjacentTile;
     }
 
-    return nullptr;
+    return null;
 }
 
 static int heuristicCostEstimate(Tile a, Tile b)
@@ -335,7 +335,7 @@ void WorldGenerator::generatePaths(const List<Building>& buildings)
                 });
 
                 for (var pathTile : path)
-                    pathTile.setObject(nullptr);
+                    pathTile.setObject(null);
             }
         }
     }
@@ -358,7 +358,7 @@ void WorldGenerator::generateItems(Rect region, int level)
         else
             item = std::make_unique<Item>(std::move(itemId), getRandomMaterialId(itemId));
 
-        Tile tile = nullptr;
+        Tile tile = null;
 
         while (!tile || tile.hasObject())
             tile = world.getTile(makeRandomVectorInside(region), level);
@@ -373,7 +373,7 @@ void WorldGenerator::generateCreatures(Rect region, int level)
 
     while (randFloat() < density)
     {
-        Tile tile = nullptr;
+        Tile tile = null;
 
         while (!tile || tile.hasObject())
             tile = world.getTile(makeRandomVectorInside(region), level);

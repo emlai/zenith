@@ -11,8 +11,8 @@ class Game : State
     void stop() { gameIsRunning = false; }
     void advanceTurn() { ++turn; }
     int getTurn() { return turn; }
-    int showInventory(string title, bool showNothingAsOption, Item preselectedItem = nullptr,
-                      std::function<bool(Item)> itemFilter = nullptr);
+    int showInventory(string title, bool showNothingAsOption, Item preselectedItem = null,
+                      std::function<bool(Item)> itemFilter = null);
     void showEquipmentMenu();
     void lookMode();
     string askForString(string question);
@@ -169,9 +169,9 @@ void EquipmentMenu::execute()
         for (int i = 0; i < equipmentSlots; ++i)
         {
             var slot = static_cast<EquipmentSlot>(i);
-            var image = player.getEquipment(slot) ? player.getEquipment(slot).getSprite() : nullptr;
+            var image = player.getEquipment(slot) ? player.getEquipment(slot).getSprite() : null;
             var itemName = player.getEquipment(slot) ? player.getEquipment(slot).getName() : "-";
-            addItem(MenuItem(i, toString(slot) + ":", itemName, NoKey, nullptr, image));
+            addItem(MenuItem(i, toString(slot) + ":", itemName, NoKey, null, image));
         }
 
         var choice = Menu::execute();
@@ -189,7 +189,7 @@ void EquipmentMenu::execute()
         var selectedItemIndex = getEngine().execute(inventoryMenu);
 
         if (selectedItemIndex == -1)
-            player.equip(selectedSlot, nullptr);
+            player.equip(selectedSlot, null);
         else if (selectedItemIndex != Menu::Exit)
             player.equip(selectedSlot, &*player.getInventory()[selectedItemIndex]);
     }
@@ -299,7 +299,7 @@ Dir8? DirectionQuestion::execute()
     if (var direction = getDirectionFromEvent(event, origin))
         return direction;
 
-    return boost::none;
+    return null;
 }
 
 void DirectionQuestion::render(Window window)
@@ -333,7 +333,7 @@ void Game::render(Window window)
 
 void Game::renderAtPosition(Window window, Vector2 centerPosition)
 {
-    cursorPosition = boost::none;
+    cursorPosition = null;
     printPlayerInformation(window.getFont());
     MessageSystem::drawMessages(window, window.getFont(), player.getMessages(), getTurn());
 
@@ -348,8 +348,8 @@ void Game::renderAtPosition(Window window, Vector2 centerPosition)
                        worldViewport.size / Tile::getSize());
     world.render(window, visibleRegion, player.getLevel(), *player);
 
-    window.setView(nullptr);
-    window.setViewport(nullptr);
+    window.setView(null);
+    window.setViewport(null);
 
     bool enableGUIDebugRectangles = false;
     if (enableGUIDebugRectangles)
