@@ -30,7 +30,7 @@ Action AttackNearestEnemy::control()
     Action action;
 
     if (var nearestEnemy = creature.getNearestEnemy())
-        action = creature.tryToMoveTowardsOrAttack(*nearestEnemy);
+        action = creature.tryToMoveTowardsOrAttack(nearestEnemy);
     else
         action = creature.tryToMoveOrAttack(randomDir8());
 

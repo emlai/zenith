@@ -9,7 +9,7 @@ class Tile
     Creature spawnCreature(Args...);
     bool hasCreature() { return !creatures.empty(); }
     var getCreatures() { return creatures; }
-    Creature getCreature(int index) { return *creatures[index]; }
+    Creature getCreature(int index) { return creatures[index]; }
     void transferCreature(Creature, Tile);
     Creature removeSingleTileCreature(Creature);
     void removeCreature(Creature);
@@ -73,7 +73,7 @@ Tile::Tile(World world, Vector2 position, int level, string groundId)
     position(position),
     level(level),
     groundId(groundId),
-    groundSprite(getSprite(*Game::groundSpriteSheet, *Game::groundConfig, groundId)),
+    groundSprite(getSprite(Game::groundSpriteSheet, Game::groundConfig, groundId)),
     light(Color32::black)
 {
 }
@@ -83,7 +83,7 @@ Tile::Tile(SaveFile file, World world, Vector2 position, int level)
     position(position),
     level(level),
     groundId(file.readString()),
-    groundSprite(getSprite(*Game::groundSpriteSheet, *Game::groundConfig, groundId)),
+    groundSprite(getSprite(Game::groundSpriteSheet, Game::groundConfig, groundId)),
     light(Color32::black)
 {
     var creatureCount = file.readInt32();
@@ -249,7 +249,7 @@ void Tile::transferCreature(Creature creature, Tile destination)
     {
         if (it.get() == creature)
         {
-            destination.addCreature(std::move(*it));
+            destination.addCreature(std::move(it));
             creatures.erase(it);
             return;
         }
@@ -266,7 +266,7 @@ Creature Tile::removeSingleTileCreature(Creature creature)
     {
         if (it.get() == creature)
         {
-            var removed = std::move(*it);
+            var removed = std::move(it);
             creatures.erase(it);
             return removed;
         }
@@ -307,25 +307,25 @@ void Tile::setObject(Object newObject)
 void Tile::setGround(string groundId)
 {
     this.groundId = groundId;
-    groundSprite = getSprite(*Game::groundSpriteSheet, *Game::groundConfig, groundId);
+    groundSprite = getSprite(Game::groundSpriteSheet, Game::groundConfig, groundId);
 }
 
 void Tile::forEachEntity(const std::function<void(Entity)>& function)
 {
     for (var creature : creatures)
     {
-        function(*creature);
+        function(creature);
 
         for (var slotAndItem : creature.getEquipment())
             if (slotAndItem.second)
-                function(*slotAndItem.second);
+                function(slotAndItem.second);
     }
 
     for (var item : items)
-        function(*item);
+        function(item);
 
     if (object)
-        function(*object);
+        function(object);
 }
 
 void Tile::forEachLightSource(const std::function<void(LightSource)>& function)
@@ -333,7 +333,7 @@ void Tile::forEachLightSource(const std::function<void(LightSource)>& function)
     forEachEntity([&](Entity entity)
     {
         for (var lightSource : entity.getComponentsOfType<LightSource>())
-            function(*lightSource);
+            function(lightSource);
     });
 }
 

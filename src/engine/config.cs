@@ -21,7 +21,7 @@ private:
         Value at(string key)
         {
             if (var value = getOptional(key))
-                return *value;
+                return value;
 
             throw std::out_of_range(key);
         }
@@ -209,7 +209,7 @@ struct Config::ConversionTraits<List<ElementType>>
         List<ElementType> outputData;
 
         for (var element : value.getList())
-            outputData.push_back(*convert<ElementType>(element));
+            outputData.push_back(convert<ElementType>(element));
 
         return outputData;
     }
@@ -219,7 +219,7 @@ template<typename ValueType>
 ValueType? Config::getOptional(string key)
 {
     if (var value = data.getOptional(key))
-        return convert<ValueType>(*value);
+        return convert<ValueType>(value);
 
     return null;
 }
@@ -228,7 +228,7 @@ template<typename ValueType>
 ValueType Config::get(string type, string attribute)
 {
     if (var value = getOptional<ValueType>(type, attribute))
-        return ValueType(std::move(*value));
+        return ValueType(std::move(value));
     else
         throw std::runtime_error("attribute \"" + attribute + "\" not found for \"" + type + "\"!");
 }
@@ -250,8 +250,8 @@ ValueType? Config::getOptional(string type, string attribute)
 
         if (var value = group.getOptional(key))
         {
-            if (var converted = convert<ValueType>(*value))
-                return *converted;
+            if (var converted = convert<ValueType>(value))
+                return converted;
             else
                 throw std::runtime_error("attribute \"" + attribute + "\" of class \"" + current +
                                          "\" has wrong type!");

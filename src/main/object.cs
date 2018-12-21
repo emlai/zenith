@@ -12,14 +12,14 @@ private:
     Sprite sprite;
 }
 Object::Object(string id)
-:   Entity(id, *Game::objectConfig),
-    sprite(::getSprite(*Game::objectSpriteSheet, *Game::objectConfig, id))
+:   Entity(id, Game::objectConfig),
+    sprite(::getSprite(Game::objectSpriteSheet, Game::objectConfig, id))
 {
 }
 
 Object::Object(SaveFile file)
-:   Entity(file.readString(), *Game::objectConfig),
-    sprite(::getSprite(*Game::objectSpriteSheet, *Game::objectConfig, getId()))
+:   Entity(file.readString(), Game::objectConfig),
+    sprite(::getSprite(Game::objectSpriteSheet, Game::objectConfig, getId()))
 {
     for (var component : getComponents())
         component.load(file);

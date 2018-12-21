@@ -109,7 +109,7 @@ Action PlayerController::control(Creature creature)
                 });
 
                 if (selectedItemIndex != Menu::Exit)
-                    if (creature.use(*creature.getInventory()[selectedItemIndex], game))
+                    if (creature.use(creature.getInventory()[selectedItemIndex], game))
                         return UseItem;
                 break;
             }
@@ -126,7 +126,7 @@ Action PlayerController::control(Creature creature)
                 });
 
                 if (selectedItemIndex != Menu::Exit)
-                    if (creature.eat(*creature.getInventory()[selectedItemIndex]))
+                    if (creature.eat(creature.getInventory()[selectedItemIndex]))
                         return EatItem;
                 break;
             }
@@ -140,7 +140,7 @@ Action PlayerController::control(Creature creature)
 
                 if (selectedItemIndex != Menu::Exit)
                 {
-                    creature.drop(*creature.getInventory()[selectedItemIndex]);
+                    creature.drop(creature.getInventory()[selectedItemIndex]);
                     return DropItem;
                 }
 
@@ -154,7 +154,7 @@ Action PlayerController::control(Creature creature)
 
                 Dir8? direction = game.askForDirection("What do you want to close?");
 
-                if (direction && creature.close(*direction))
+                if (direction && creature.close(direction))
                     return Close;
                 break;
             }
@@ -279,7 +279,7 @@ Dir8 getDirectionFromEvent(Event event, Vector2 origin)
     {
         case Event::MouseButtonDown:
             if (Game::cursorPosition)
-                if (var direction = (*Game::cursorPosition - origin).getDir8())
+                if (var direction = (Game::cursorPosition - origin).getDir8())
                     return direction;
 
             break;

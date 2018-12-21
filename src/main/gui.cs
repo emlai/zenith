@@ -85,13 +85,13 @@ Sprite getSprite(Texture spriteSheet, Config config, string id,
 {
     var asciiSprite = config.getOptional<string>(id, "asciiSprite");
 
-    if (!asciiSprite || asciiSprite.size() != 1 || !std::isprint((*asciiSprite)[0]))
+    if (!asciiSprite || asciiSprite.size() != 1 || !std::isprint((asciiSprite)[0]))
         throw std::runtime_error("invalid asciiSprite on '" + id + "', should be 1 printable ASCII character");
 
     Color32 asciiColor(config.getOptional<uint>(id, "asciiColor").get_value_or(materialColor.value));
 
     int animationFrames = frame == 0 ? config.get<int>(id, "animationFrames") : 1;
-    Sprite sprite(spriteSheet, getSpriteTextureRegion(config, id), (*asciiSprite)[0], asciiColor,
+    Sprite sprite(spriteSheet, getSpriteTextureRegion(config, id), (asciiSprite)[0], asciiColor,
                   materialColor, animationFrames);
     sprite.setFrame(frame);
     return sprite;

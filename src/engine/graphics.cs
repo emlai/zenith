@@ -54,7 +54,7 @@ class GraphicsContext
     void setViewport(Rect viewport)
     {
         if (viewport)
-            this.viewport = *viewport;
+            this.viewport = viewport;
         else
             this.viewport = null;
     }
@@ -62,7 +62,7 @@ class GraphicsContext
     Rect getViewport()
     {
         if (viewport)
-            return *viewport;
+            return viewport;
 
         return Rect(Vector2(0, 0), targetTexture.getSize());
     }
@@ -70,7 +70,7 @@ class GraphicsContext
     void setView(Rect view)
     {
         if (view)
-            this.view = *view;
+            this.view = view;
         else
             this.view = null;
     }
@@ -82,7 +82,7 @@ class GraphicsContext
 
     BitmapFont getFont()
     {
-        return *font;
+        return font;
     }
 
     void updateScreen()
@@ -162,9 +162,9 @@ class GraphicsContext
                     for (var x = rectangle.getLeft(); x <= rectangle.getRight(); ++x)
                     {
                         uint pixel = pixels + (y * targetWidth + x);
-                        double srcR = ((*pixel & 0xFF000000) >> 24) / 255.0;
-                        double srcG = ((*pixel & 0x00FF0000) >> 16) / 255.0;
-                        double srcB = ((*pixel & 0x0000FF00) >> 8) / 255.0;
+                        double srcR = ((pixel & 0xFF000000) >> 24) / 255.0;
+                        double srcG = ((pixel & 0x00FF0000) >> 16) / 255.0;
+                        double srcB = ((pixel & 0x0000FF00) >> 8) / 255.0;
 
                         var blendLinearLight = [](var src, var dst)
                         {
@@ -190,7 +190,7 @@ class GraphicsContext
                         wrap(srcG);
                         wrap(srcB);
 
-                        *pixel = int(255 * srcR) << 24 | int(255 * srcG) << 16 | int(255 * srcB) << 8 | 255;
+                        pixel = int(255 * srcR) << 24 | int(255 * srcG) << 16 | int(255 * srcB) << 8 | 255;
                     }
                 }
                 break;

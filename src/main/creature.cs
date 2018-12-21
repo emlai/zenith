@@ -84,7 +84,7 @@ class Creature final : Entity
     bool close(Dir8);
 
     var getTilesUnder() { return tilesUnder; }
-    Tile getTileUnder(int index) { return *tilesUnder[index]; }
+    Tile getTileUnder(int index) { return tilesUnder[index]; }
     Vector2 getPosition();
     int getLevel();
     var getInventory() { return inventory; }
@@ -194,12 +194,12 @@ List<List<int>> Creature::initAttributeIndices(string id)
 }
 
 Creature::Creature(Tile tile, string id)
-:   Creature(tile, id, AIController::get(id, *this))
+:   Creature(tile, id, AIController::get(id, this))
 {
 }
 
 Creature::Creature(Tile tile, string id, Controller controller)
-:   Entity(id, *Game::creatureConfig),
+:   Entity(id, Game::creatureConfig),
     currentHP(0),
     maxHP(0),
     currentAP(0),
@@ -208,7 +208,7 @@ Creature::Creature(Tile tile, string id, Controller controller)
     running(false),
     displayedAttributes(initDisplayedAttributes(id)),
     attributeIndices(initAttributeIndices(id)),
-    sprite(getSprite(*Game::creatureSpriteSheet, *Game::creatureConfig, id)),
+    sprite(getSprite(Game::creatureSpriteSheet, Game::creatureConfig, id)),
     controller(std::move(controller))
 {
     equipment[Head] = null;
@@ -223,20 +223,20 @@ Creature::Creature(Tile tile, string id, Controller controller)
 
     if (var initialEquipment = getConfig().getOptional<List<string>>(getId(), "Equipment"))
     {
-        for (var itemId : *initialEquipment)
+        for (var itemId : initialEquipment)
         {
             inventory.push_back(std::make_unique<Item>(itemId, getRandomMaterialId(itemId)));
-            equip(inventory.back().getEquipmentSlot(), &*inventory.back());
+            equip(inventory.back().getEquipmentSlot(), &inventory.back());
         }
     }
 }
 
 Creature::Creature(SaveFile file, Tile tile)
-:   Entity(file.readString(), *Game::creatureConfig),
+:   Entity(file.readString(), Game::creatureConfig),
     displayedAttributes(initDisplayedAttributes(getId())),
     attributeIndices(initAttributeIndices(getId())),
-    sprite(getSprite(*Game::creatureSpriteSheet, *Game::creatureConfig, getId())),
-    controller(AIController::get(getId(), *this))
+    sprite(getSprite(Game::creatureSpriteSheet, Game::creatureConfig, getId())),
+    controller(AIController::get(getId(), this))
 {
     equipment[Head] = null;
     equipment[Torso] = null;
@@ -264,7 +264,7 @@ Creature::Creature(SaveFile file, Tile tile)
         var itemIndex = file.readInt16();
 
         if (itemIndex != -1)
-            slotAndItem.second = &*inventory[size_t(itemIndex)];
+            slotAndItem.second = &inventory[size_t(itemIndex)];
     }
 
     file.read(attributeValues);
@@ -289,7 +289,7 @@ void Creature::save(SaveFile file)
     file.write(inventory);
 
     for (var slotAndItem : equipment)
-        file.writeInt16(short(slotAndItem.second ? getInventoryIndex(*slotAndItem.second) : -1));
+        file.writeInt16(short(slotAndItem.second ? getInventoryIndex(slotAndItem.second) : -1));
 
     file.write(attributeValues);
     file.write(currentHP);
@@ -309,12 +309,12 @@ void Creature::exist()
 
     while (currentAP >= fullAP || isDead())
     {
-        Action action = controller.control(*this);
+        Action action = controller.control(this);
 
         if (!action || isDead())
             break;
 
-        currentAP -= getAPCost(action, *this);
+        currentAP -= getAPCost(action, this);
     }
 }
 
@@ -463,7 +463,7 @@ List<Creature> Creature::getCurrentlySeenCreatures()
         {
             var tile = getWorld().getTile(getPosition() + Vector2(x, y), getLevel());
 
-            if (!tile || !sees(*tile))
+            if (!tile || !sees(tile))
                 continue;
 
             for (var creature : tile.getCreatures())
@@ -523,7 +523,7 @@ Action Creature::tryToMoveOrAttack(Dir8 direction)
             return didReactToMovementAttempt ? Wait : NoAction;
     }
 
-    moveTo(*destination);
+    moveTo(destination);
     return Move;
 }
 
@@ -535,7 +535,7 @@ Action Creature::tryToMoveTowardsOrAttack(Creature target)
 
 void Creature::moveTo(Tile destination)
 {
-    getTileUnder(0).transferCreature(*this, destination);
+    getTileUnder(0).transferCreature(this, destination);
     tilesUnder.clear();
     tilesUnder.push_back(destination);
 
@@ -569,13 +569,13 @@ bool Creature::enter()
 
         if (tile.getObject().getId() == "StairsDown")
         {
-            moveTo(*tile.getTileBelow());
+            moveTo(tile.getTileBelow());
             return true;
         }
 
         if (tile.getObject().getId() == "StairsUp")
         {
-            moveTo(*tile.getTileAbove());
+            moveTo(tile.getTileAbove());
             return true;
         }
     }
@@ -638,14 +638,14 @@ void Creature::onDeath()
 
     if (getTilesUnder().size() == 1)
     {
-        Creature self = getTileUnder(0).removeSingleTileCreature(*this);
+        Creature self = getTileUnder(0).removeSingleTileCreature(this);
         getTileUnder(0).addItem(std::make_unique<Corpse>(std::move(self)));
     }
     else
     {
         // TODO: Implement multi-tile creature corpses.
         for (var tile : getTilesUnder())
-            tile.removeCreature(*this);
+            tile.removeCreature(this);
     }
 }
 
@@ -687,7 +687,7 @@ void Creature::equip(EquipmentSlot slot, Item itemToEquip)
 bool Creature::use(Item itemToUse, Game game)
 {
     assert(itemToUse.isUsable());
-    return itemToUse.use(*this, game);
+    return itemToUse.use(this, game);
 }
 
 void Creature::drop(Item itemToDrop)
@@ -705,7 +705,7 @@ bool Creature::eat(Item itemToEat)
     assert(itemToEat.isEdible());
 
     if (var leftoverItemId = Game::itemConfig.getOptional<string>(itemToEat.getId(), "leftoverItem"))
-        getTileUnder(0).addItem(std::make_unique<Item>(*leftoverItemId, ""));
+        getTileUnder(0).addItem(std::make_unique<Item>(leftoverItemId, ""));
 
     addMessage("You eat the ", itemToEat.getName(), ".");
     removeItem(itemToEat);
@@ -723,7 +723,7 @@ Item Creature::removeItem(Item itemToRemove)
 int Creature::getInventoryIndex(Item item)
 {
     for (int i = 0; i < int(inventory.size()); ++i)
-        if (&*inventory[i] == item)
+        if (&inventory[i] == item)
             return i;
 
     assert(false);

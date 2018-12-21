@@ -113,7 +113,7 @@ string MessageSystem::getPreviousCommand()
     if (commandIterator != commandHistory.begin())
         --commandIterator;
 
-    return *commandIterator;
+    return commandIterator;
 }
 
 string MessageSystem::getNextCommand()
@@ -121,7 +121,7 @@ string MessageSystem::getNextCommand()
     if (commandIterator == commandHistory.end() || ++commandIterator == commandHistory.end())
         return "";
 
-    return *commandIterator;
+    return commandIterator;
 }
 
 void MessageSystem::clearDebugMessageHistory()

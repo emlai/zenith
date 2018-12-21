@@ -214,10 +214,10 @@ class SaveFile
     long readInt64() { return long(readUint64()); }
 
     template<typename T>
-    void write(const T& value) { value.save(*this); }
+    void write(const T& value) { value.save(this); }
     template<typename T>
-    void write(T value) { value.save(*this); }
+    void write(T value) { value.save(this); }
     template<typename T>
-    T read() { return T::load(*this); }
+    T read() { return T::load(this); }
 }
 

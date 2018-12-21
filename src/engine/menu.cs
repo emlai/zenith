@@ -234,7 +234,7 @@ class Menu : State
 
         if (!title.empty())
         {
-            font.setArea(*position);
+            font.setArea(position);
             font.print(window, title, textColor);
             ++position;
         }

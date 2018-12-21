@@ -83,7 +83,7 @@ void KeyMapMenu::execute()
         }
 
         addItem(MenuItem(ResetDefaults, "Reset defaults"));
-        setPrefsMenuCommonOptions(*this, window);
+        setPrefsMenuCommonOptions(this, window);
 
         var selection = Menu::execute();
 
@@ -132,7 +132,7 @@ void PrefsMenu::execute()
         addItem(MenuItem(Fullscreen, "Fullscreen", toOnOffString(window.isFullscreen())));
         addItem(MenuItem(KeyMap, "Key map"));
 
-        setPrefsMenuCommonOptions(*this, window);
+        setPrefsMenuCommonOptions(this, window);
 
         var selection = Menu::execute();
 
@@ -213,7 +213,7 @@ void MainMenu::execute()
 
                 try
                 {
-                    getEngine().execute(*game);
+                    getEngine().execute(game);
                 }
                 catch (...)
                 {

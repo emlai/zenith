@@ -99,7 +99,7 @@ List<Building> WorldGenerator::generateBuildings(Rect region, int level)
                 if (building)
                 {
                     tile.getTileBelow().setObject(std::make_unique<Object>("StairsUp"));
-                    buildings.push_back(std::move(*building));
+                    buildings.push_back(std::move(building));
                 }
                 else
                     tile.setObject(null);
@@ -113,7 +113,7 @@ List<Building> WorldGenerator::generateBuildings(Rect region, int level)
         var topLeftPosition = region.position + makeRandomVector(region.size - size);
 
         if (var building = generateBuilding(Rect(topLeftPosition, size), level))
-            buildings.push_back(std::move(*building));
+            buildings.push_back(std::move(building));
     }
 
     if (!buildings.empty())
@@ -131,7 +131,7 @@ Building? WorldGenerator::generateBuilding(Rect region, int level)
     if (var room = generateRoom(region, level))
     {
         List<Room> rooms;
-        rooms.push_back(std::move(*room));
+        rooms.push_back(std::move(room));
         return Building(std::move(rooms));
     }
     else
@@ -250,7 +250,7 @@ List<Tile> WorldGenerator::findPathAStar(Tile source, Tile target,
     while (!openSet.empty())
     {
         var iteratorToCurrent = std::min_element(openSet.begin(), openSet.end(), comparator);
-        var current = *iteratorToCurrent;
+        var current = iteratorToCurrent;
 
         if (current == target)
             return reconstructPath(sources, current);
@@ -262,7 +262,7 @@ List<Tile> WorldGenerator::findPathAStar(Tile source, Tile target,
         {
             Tile neighbor = current.getPreExistingAdjacentTile(direction);
 
-            if (!neighbor || !isAllowed(*neighbor))
+            if (!neighbor || !isAllowed(neighbor))
                 continue;
 
             if (closedSet.find(neighbor) != closedSet.end())
@@ -287,7 +287,7 @@ List<Tile> WorldGenerator::findPathAStar(Tile source, Tile target,
 
             var neighborIt = costs.find(neighbor);
             var neighborCost = neighborIt == costs.end() ? INT_MAX - 1 : neighborIt.second;
-            estimatedCosts.emplace(neighbor, neighborCost + heuristicCostEstimate(*neighbor, target));
+            estimatedCosts.emplace(neighbor, neighborCost + heuristicCostEstimate(neighbor, target));
         }
     }
 
@@ -308,19 +308,19 @@ void WorldGenerator::generatePaths(const List<Building>& buildings)
 
         for (var doorA : buildingA.getDoorTiles())
         {
-            var pathStart = findPathStart(*doorA);
+            var pathStart = findPathStart(doorA);
 
             if (!pathStart)
                 continue;
 
             for (var doorB : buildingB.getDoorTiles())
             {
-                var pathEnd = findPathStart(*doorB);
+                var pathEnd = findPathStart(doorB);
 
                 if (!pathEnd)
                     continue;
 
-                var path = findPathAStar(*pathStart, *pathEnd, [](Tile tile)
+                var path = findPathAStar(pathStart, pathEnd, [](Tile tile)
                 {
                     return !tile.hasObject() || tile.getObject().getId() == "Door"
                         || tile.getObject().getId().starts_with("Stairs");
@@ -329,7 +329,7 @@ void WorldGenerator::generatePaths(const List<Building>& buildings)
                 if (!path.empty())
                     continue;
 
-                path = findPathAStar(*pathStart, *pathEnd, [](Tile tile)
+                path = findPathAStar(pathStart, pathEnd, [](Tile tile)
                 {
                     return !tile.hasObject() || tile.getObject().getId() != "BrickWall";
                 });

@@ -60,12 +60,12 @@ static Color16 getMaterialColor(string materialId)
 
 Item::Item(string id, string materialId)
 :   Item(id, materialId,
-         ::getSprite(*Game::itemSpriteSheet, *Game::itemConfig, id, 0, getMaterialColor(materialId)))
+         ::getSprite(Game::itemSpriteSheet, Game::itemConfig, id, 0, getMaterialColor(materialId)))
 {
 }
 
 Item::Item(string id, string materialId, Sprite sprite)
-:   Entity(id, *Game::itemConfig),
+:   Entity(id, Game::itemConfig),
     materialId(materialId),
     sprite(std::move(sprite))
 {
@@ -120,7 +120,7 @@ bool Item::use(Creature user, Game game)
     bool returnValue = false;
 
     for (var component : getComponents())
-        if (component.use(user, *this, game))
+        if (component.use(user, this, game))
             returnValue = true;
 
     return returnValue;
@@ -168,7 +168,7 @@ string getRandomMaterialId(string itemId)
 }
 
 Corpse::Corpse(Creature creature)
-:   Item(creature.getId() + "Corpse", "", ::getSprite(*Game::creatureSpriteSheet, *Game::creatureConfig,
+:   Item(creature.getId() + "Corpse", "", ::getSprite(Game::creatureSpriteSheet, Game::creatureConfig,
                                                        creature.getId(), corpseFrame, Color32::none)),
     creature(std::move(creature))
 {
@@ -176,7 +176,7 @@ Corpse::Corpse(Creature creature)
 }
 
 Corpse::Corpse(string creatureId)
-:   Item(creatureId + "Corpse", "", ::getSprite(*Game::creatureSpriteSheet, *Game::creatureConfig,
+:   Item(creatureId + "Corpse", "", ::getSprite(Game::creatureSpriteSheet, Game::creatureConfig,
                                                 creatureId, corpseFrame, Color32::none))
 {
     sprite.setAsciiGlyph(corpseGlyph);

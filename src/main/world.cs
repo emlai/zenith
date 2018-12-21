@@ -118,8 +118,8 @@ Area World::getOrCreateArea(Vector3 position)
     if (var area = getArea(position))
         return area;
 
-    var area = areas.emplace(position, Area(*this, Vector2(position), position.z)).first.second;
-    WorldGenerator generator(*this);
+    var area = areas.emplace(position, Area(this, Vector2(position), position.z)).first.second;
+    WorldGenerator generator(this);
     generator.generateRegion(Rect(Vector2(position) * Area::sizeVector, Area::sizeVector), position.z);
     return area;
 }
@@ -134,7 +134,7 @@ Area World::getArea(Vector3 position)
     if (offset != savedAreaOffsets.end())
     {
         saveFile.seek(offset.second);
-        return areas.emplace(position, Area(*saveFile, *this, Vector2(position), position.z)).first.second;
+        return areas.emplace(position, Area(saveFile, this, Vector2(position), position.z)).first.second;
     }
 
     return null;
@@ -174,5 +174,5 @@ void World::forEachTile(Rect region, int level, const std::function<void(Tile)>&
     for (int x = region.getLeft(); x <= region.getRight(); ++x)
         for (int y = region.getTop(); y <= region.getBottom(); ++y)
             if (var tile = getOrCreateTile(Vector2(x, y), level))
-                function(*tile);
+                function(tile);
 }

@@ -76,7 +76,7 @@ Vector2? Game::cursorPosition;
 Game::Game(bool loadSavedGame)
 :   playerSeesEverything(false),
     turn(0),
-    world(*this)
+    world(this)
 {
     creatureConfig = std::make_unique<Config>("data/config/creature.cfg");
     objectConfig = std::make_unique<Config>("data/config/object.cfg");
@@ -96,7 +96,7 @@ Game::Game(bool loadSavedGame)
     else
     {
         var tile = world.getOrCreateTile({0, 0}, 0);
-        player = tile.spawnCreature("Human", std::make_unique<PlayerController>(*this));
+        player = tile.spawnCreature("Human", std::make_unique<PlayerController>(this));
     }
 }
 
@@ -130,7 +130,7 @@ InventoryMenu::InventoryMenu(Window window, Creature player, string title,
 
     for (var item : player.getInventory())
     {
-        if (!itemFilter || itemFilter(*item))
+        if (!itemFilter || itemFilter(item))
             addItem(MenuItem(id, item.getName(), NoKey, item.getSprite()));
 
         ++id;
@@ -140,7 +140,7 @@ InventoryMenu::InventoryMenu(Window window, Creature player, string title,
 int Game::showInventory(string title, bool showNothingAsOption, Item preselectedItem,
                         std::function<bool(Item)> itemFilter)
 {
-    InventoryMenu inventoryMenu(getWindow(), *player, title, showNothingAsOption,
+    InventoryMenu inventoryMenu(getWindow(), player, title, showNothingAsOption,
                                 preselectedItem, std::move(itemFilter));
     return getEngine().execute(inventoryMenu);
 }
@@ -180,7 +180,7 @@ void EquipmentMenu::execute()
 
         var selectedSlot = static_cast<EquipmentSlot>(choice);
 
-        InventoryMenu inventoryMenu(getEngine().getWindow(), *player, "", true,
+        InventoryMenu inventoryMenu(getEngine().getWindow(), player, "", true,
                                     player.getEquipment(selectedSlot), [&](var item)
         {
             return item.getEquipmentSlot() == selectedSlot;
@@ -191,13 +191,13 @@ void EquipmentMenu::execute()
         if (selectedItemIndex == -1)
             player.equip(selectedSlot, null);
         else if (selectedItemIndex != Menu::Exit)
-            player.equip(selectedSlot, &*player.getInventory()[selectedItemIndex]);
+            player.equip(selectedSlot, &player.getInventory()[selectedItemIndex]);
     }
 }
 
 void Game::showEquipmentMenu()
 {
-    EquipmentMenu equipmentMenu(*player);
+    EquipmentMenu equipmentMenu(player);
     getEngine().execute(equipmentMenu);
 }
 
@@ -243,7 +243,7 @@ void LookMode::render(Window window)
 
 void Game::lookMode()
 {
-    LookMode lookMode(*this);
+    LookMode lookMode(this);
     getEngine().execute(lookMode);
 }
 
@@ -346,7 +346,7 @@ void Game::renderAtPosition(Window window, Vector2 centerPosition)
 
     Rect visibleRegion(centerPosition - worldViewport.size / Tile::getSize() / 2,
                        worldViewport.size / Tile::getSize());
-    world.render(window, visibleRegion, player.getLevel(), *player);
+    world.render(window, visibleRegion, player.getLevel(), player);
 
     window.setView(null);
     window.setViewport(null);
@@ -449,7 +449,7 @@ void Game::enterCommandMode(Window window)
 void Game::parseCommand(string command)
 {
     if (command == "respawn")
-        *player = Creature(player.getTileUnder(0), "Human", std::make_unique<PlayerController>(*this));
+        player = Creature(player.getTileUnder(0), "Human", std::make_unique<PlayerController>(this));
     else if (command == "clear")
         MessageSystem::clearDebugMessageHistory();
     else if (command == "info")
@@ -480,5 +480,5 @@ void Game::load()
     world.load(file);
 
     player = world.getTile(playerPosition, playerLevel).getCreature(0);
-    player.setController(std::make_unique<PlayerController>(*this));
+    player.setController(std::make_unique<PlayerController>(this));
 }

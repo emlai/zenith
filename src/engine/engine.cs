@@ -9,8 +9,8 @@ class Engine
     void render(Window window);
 
 private:
-    State getCurrentState() { return *states.end()[-1]; }
-    State getPreviousState() { return *states.end()[-2]; }
+    State getCurrentState() { return states.end()[-1]; }
+    State getPreviousState() { return states.end()[-2]; }
 
     List<Window> windows;
     List<State> states;
@@ -26,7 +26,7 @@ var Engine::execute(StateType state)
 }
 Window Engine::createWindow(Vector2 size, string title, bool fullscreen)
 {
-    windows.emplace_back(*this, size, title, fullscreen);
+    windows.emplace_back(this, size, title, fullscreen);
     return windows.back();
 }
 

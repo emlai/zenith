@@ -2,7 +2,7 @@ class Component
 {
     virtual ~Component() = 0;
     static Component get(string name, Entity parent);
-    Entity getParent() { return *parent; }
+    Entity getParent() { return parent; }
 
     /// Returns true if the component did react to the movement attempt.
     virtual bool reactToMovementAttempt() { return false; }

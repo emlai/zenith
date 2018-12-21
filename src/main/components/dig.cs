@@ -9,7 +9,7 @@ bool Dig::use(Creature digger, Item digItem, Game game)
 {
     if (var direction = game.askForDirection("Where do you want to dig?"))
     {
-        var tileToDig = digger.getTileUnder(0).getAdjacentTile(*direction);
+        var tileToDig = digger.getTileUnder(0).getAdjacentTile(direction);
 
         if (tileToDig.hasObject())
         {

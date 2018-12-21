@@ -10,7 +10,7 @@ class Entity
     string getName();
     string getNameIndefinite();
     string getId() { return id; }
-    Config getConfig() { return *config; }
+    Config getConfig() { return config; }
     template<typename ComponentType>
     List<ComponentType> getComponentsOfType();
 
@@ -55,9 +55,9 @@ Entity::Entity(string id, Config config)
 {
     if (var componentNames = config.getOptional<List<string>>(id, "components"))
     {
-        for (var componentName : *componentNames)
+        for (var componentName : componentNames)
         {
-            if (var component = Component::get(componentName, *this))
+            if (var component = Component::get(componentName, this))
                 components.push_back(std::move(component));
             else
                 reportUnknownComponent(componentName);

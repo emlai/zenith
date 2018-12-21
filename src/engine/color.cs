@@ -51,10 +51,10 @@ struct Color<T>
         int green = int(limit(int(getGreen() * mod + 0.5), 0, int(max)));
         int blue = int(limit(int(getBlue() * mod + 0.5 + delta), 0, int(max)));
         value = createValue(red, green, blue, getAlpha());
-        return *this;
+        return this;
     }
 
-    Color operator*(double mod) { return Color(*this) *= mod; }
+    Color operator*(double mod) { return Color(this) *= mod; }
 
     explicit operator bool() { return value != 0; }
 

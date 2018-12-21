@@ -6,7 +6,7 @@ class State
     State operator=(State) = delete;
     State operator=(State) {}
     virtual ~State() {}
-    Engine getEngine() { return *engine; }
+    Engine getEngine() { return engine; }
 
 private:
     virtual void render(Window window) = 0;

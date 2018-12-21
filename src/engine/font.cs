@@ -174,7 +174,7 @@ Vector2 BitmapFont::printHelper(Window window, string text, Vector2 position,
 
     for (var character = text.begin(), lineBegin = text.begin();; ++character)
     {
-        if (*character == '\n' || character == text.end())
+        if (character == '\n' || character == text.end())
         {
             printLine(window, lineBegin, character, source, target, backgroundColor);
 
@@ -207,9 +207,9 @@ void BitmapFont::printLine(Window window, PrintIterator lineBegin, PrintIterator
 
     for (var character = lineBegin; character != lineEnd; ++character)
     {
-        if (*character >= ' ')
+        if (character >= ' ')
         {
-            var index = *character - ' ';
+            var index = character - ' ';
             source.position = charSize * Vector2(index % dimensions.x, index / dimensions.x);
             window.getGraphicsContext().renderFilledRectangle(target, backgroundColor);
             texture.render(window, source, target);

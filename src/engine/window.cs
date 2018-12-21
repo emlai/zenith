@@ -59,7 +59,7 @@ class Window
     :   engine(engine),
         closeRequestReceived(false),
         windowHandle(initWindowHandle(size, title.c_str(), fullscreen), SDL_DestroyWindow),
-        context(*this)
+        context(this)
     {
         SDL_EventState(SDL_WINDOWEVENT_ENTER, SDL_IGNORE);
         SDL_EventState(SDL_WINDOWEVENT_LEAVE, SDL_IGNORE);
@@ -112,7 +112,7 @@ class Window
 
         while (true)
         {
-            engine.render(*this);
+            engine.render(this);
             updateScreen();
 
             if (!SDL_PollEvent(event))
