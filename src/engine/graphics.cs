@@ -3,8 +3,8 @@ enum BlendMode { Normal, LinearLight }
 class GraphicsContext
 {
     Window window;
-    std::unique_ptr<SDL_Renderer, void (&)(SDL_Renderer)> renderer;
-    std::unique_ptr<SDL_Texture, void (&)(SDL_Texture)> framebuffer;
+    SDL_Renderer renderer;
+    SDL_Texture framebuffer;
     Texture targetTexture;
     Rect? viewport;
     Rect? view;

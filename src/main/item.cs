@@ -3,7 +3,7 @@ enum EquipmentSlot : int;
 class Item : Entity
 {
     Item(string id, string materialId);
-    static std::unique_ptr<Item> load(SaveFile file);
+    static Item load(SaveFile file);
     virtual void save(SaveFile file);
     virtual void exist() {}
     bool isUsable();
@@ -26,7 +26,7 @@ string getRandomMaterialId(string itemId);
 
 class Corpse final : Item
 {
-    Corpse(std::unique_ptr<Creature> creature);
+    Corpse(Creature creature);
     Corpse(string creatureId);
     void exist() override;
     void renderEquipped(Window window, Vector2 position) override;
@@ -36,7 +36,7 @@ private:
     const int corpseFrame = 2;
     const char corpseGlyph = ',';
 
-    std::unique_ptr<Creature> creature;
+    Creature creature;
 }
 static Color16 getMaterialColor(string materialId)
 {
@@ -71,10 +71,10 @@ Item::Item(string id, string materialId, Sprite sprite)
 {
 }
 
-std::unique_ptr<Item> Item::load(SaveFile file)
+Item Item::load(SaveFile file)
 {
     var itemId = file.readString();
-    std::unique_ptr<Item> item;
+    Item item;
 
     if (boost::algorithm::ends_with(itemId, "Corpse"))
     {
@@ -167,7 +167,7 @@ string getRandomMaterialId(string itemId)
     return materials.empty() ? "" : randomElement(materials);
 }
 
-Corpse::Corpse(std::unique_ptr<Creature> creature)
+Corpse::Corpse(Creature creature)
 :   Item(creature.getId() + "Corpse", "", ::getSprite(*Game::creatureSpriteSheet, *Game::creatureConfig,
                                                        creature.getId(), corpseFrame, Color32::none)),
     creature(std::move(creature))

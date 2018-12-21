@@ -26,17 +26,17 @@ class Game : State
     static Vector2? cursorPosition;
     bool playerSeesEverything;
 
-    static std::unique_ptr<Config> creatureConfig;
-    static std::unique_ptr<Config> objectConfig;
-    static std::unique_ptr<Config> itemConfig;
-    static std::unique_ptr<Config> groundConfig;
-    static std::unique_ptr<Config> materialConfig;
-    static std::unique_ptr<Texture> creatureSpriteSheet;
-    static std::unique_ptr<Texture> objectSpriteSheet;
-    static std::unique_ptr<Texture> itemSpriteSheet;
-    static std::unique_ptr<Texture> groundSpriteSheet;
-    static std::unique_ptr<Texture> cursorTexture;
-    static std::unique_ptr<Texture> fogOfWarTexture;
+    static Config creatureConfig;
+    static Config objectConfig;
+    static Config itemConfig;
+    static Config groundConfig;
+    static Config materialConfig;
+    static Texture creatureSpriteSheet;
+    static Texture objectSpriteSheet;
+    static Texture itemSpriteSheet;
+    static Texture groundSpriteSheet;
+    static Texture cursorTexture;
+    static Texture fogOfWarTexture;
 
     constexpr var saveFileName = "zenith.sav";
 
@@ -58,17 +58,17 @@ private:
     bool showExtraInfo = true;
 #endif
 }
-std::unique_ptr<Config> Game::creatureConfig;
-std::unique_ptr<Config> Game::objectConfig;
-std::unique_ptr<Config> Game::itemConfig;
-std::unique_ptr<Config> Game::groundConfig;
-std::unique_ptr<Config> Game::materialConfig;
-std::unique_ptr<Texture> Game::creatureSpriteSheet;
-std::unique_ptr<Texture> Game::objectSpriteSheet;
-std::unique_ptr<Texture> Game::itemSpriteSheet;
-std::unique_ptr<Texture> Game::groundSpriteSheet;
-std::unique_ptr<Texture> Game::cursorTexture;
-std::unique_ptr<Texture> Game::fogOfWarTexture;
+Config Game::creatureConfig;
+Config Game::objectConfig;
+Config Game::itemConfig;
+Config Game::groundConfig;
+Config Game::materialConfig;
+Texture Game::creatureSpriteSheet;
+Texture Game::objectSpriteSheet;
+Texture Game::itemSpriteSheet;
+Texture Game::groundSpriteSheet;
+Texture Game::cursorTexture;
+Texture Game::fogOfWarTexture;
 
 const Color32 transparentColor(0x5A5268FF);
 Vector2? Game::cursorPosition;

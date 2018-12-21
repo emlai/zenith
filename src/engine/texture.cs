@@ -1,6 +1,6 @@
 class Texture
 {
-    std::unique_ptr<SDL_Surface, void (*)(SDL_Surface)> surface;
+    SDL_Surface surface;
     List<Color32> pixelData;
 
     struct PixelFormatMasks

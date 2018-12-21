@@ -114,7 +114,7 @@ static class keyboard
             case 'v':
                 if (event.key.keysym.mod & Ctrl)
                 {
-                    std::unique_ptr<char[], decltype(SDL_free)&> clipboardText(SDL_GetClipboardText(),
+                    char clipboardText(SDL_GetClipboardText(),
                                                                                SDL_free);
                     var clipboardTextSize = strlen(clipboardText.get());
                     var maxToAdd = maxBufferSize - line.size();

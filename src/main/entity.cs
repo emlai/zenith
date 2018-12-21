@@ -20,14 +20,14 @@ class Entity
     bool close();
 
 protected:
-    const List<std::unique_ptr<Component>>& getComponents() { return components; }
+    const List<Component>& getComponents() { return components; }
 
 private:
     virtual string getNameAdjective() { return ""; }
 
     string id;
     Config config;
-    List<std::unique_ptr<Component>> components;
+    List<Component> components;
 }
 
 template<typename ComponentType>

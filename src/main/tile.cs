@@ -11,17 +11,17 @@ class Tile
     var getCreatures() { return creatures; }
     Creature getCreature(int index) { return *creatures[index]; }
     void transferCreature(Creature, Tile);
-    std::unique_ptr<Creature> removeSingleTileCreature(Creature);
+    Creature removeSingleTileCreature(Creature);
     void removeCreature(Creature);
     bool hasItems() { return !items.empty(); }
-    const List<std::unique_ptr<Item>>& getItems() { return items; }
-    std::unique_ptr<Item> removeTopmostItem();
-    void addItem(std::unique_ptr<Item> item);
+    const List<Item>& getItems() { return items; }
+    Item removeTopmostItem();
+    void addItem(Item item);
     void addLiquid(string materialId);
     bool hasObject() { return bool(object); }
     Object getObject() { return object.get(); }
     Object getObject() { return object.get(); }
-    void setObject(std::unique_ptr<Object>);
+    void setObject(Object);
     string getGroundId() { return groundId; }
     void setGround(string groundId);
     void forEachEntity(const std::function<void(Entity)>& function);
@@ -46,12 +46,12 @@ class Tile
 
 private:
     string getTooltip();
-    void addCreature(std::unique_ptr<Creature> creature) { creatures.push_back(std::move(creature)); }
+    void addCreature(Creature creature) { creatures.push_back(std::move(creature)); }
 
-    List<std::unique_ptr<Creature>> creatures;
-    List<std::unique_ptr<Item>> items;
+    List<Creature> creatures;
+    List<Item> items;
     List<Liquid> liquids;
-    std::unique_ptr<Object> object;
+    Object object;
     World world;
     Vector2 position;
     int level;
@@ -258,7 +258,7 @@ void Tile::transferCreature(Creature creature, Tile destination)
     assert(false);
 }
 
-std::unique_ptr<Creature> Tile::removeSingleTileCreature(Creature creature)
+Creature Tile::removeSingleTileCreature(Creature creature)
 {
     assert(creature.getTilesUnder().size() == 1);
 
@@ -282,14 +282,14 @@ void Tile::removeCreature(Creature creature)
     creatures.erase(newEnd, creatures.end());
 }
 
-std::unique_ptr<Item> Tile::removeTopmostItem()
+Item Tile::removeTopmostItem()
 {
     var item = std::move(items.back());
     items.pop_back();
     return item;
 }
 
-void Tile::addItem(std::unique_ptr<Item> item)
+void Tile::addItem(Item item)
 {
     items.push_back(std::move(item));
 }
@@ -299,7 +299,7 @@ void Tile::addLiquid(string materialId)
     liquids.push_back(Liquid(materialId));
 }
 
-void Tile::setObject(std::unique_ptr<Object> newObject)
+void Tile::setObject(Object newObject)
 {
     object = std::move(newObject);
 }

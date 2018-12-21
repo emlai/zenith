@@ -174,7 +174,7 @@ void MainMenu::execute()
 {
     enum { NewGame, LoadGame, Preferences }
 
-    std::unique_ptr<Game> game;
+    Game game;
 
     while (true)
     {

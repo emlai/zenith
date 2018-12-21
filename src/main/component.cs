@@ -1,7 +1,7 @@
 class Component
 {
     virtual ~Component() = 0;
-    static std::unique_ptr<Component> get(string name, Entity parent);
+    static Component get(string name, Entity parent);
     Entity getParent() { return *parent; }
 
     /// Returns true if the component did react to the movement attempt.
@@ -19,9 +19,9 @@ private:
 }
 Component::~Component() {}
 
-std::unique_ptr<Component> Component::get(string name, Entity parent)
+Component Component::get(string name, Entity parent)
 {
-    std::unique_ptr<Component> component;
+    Component component;
 
     if (name == "Dig") component = std::make_unique<Dig>();
     if (name == "Door") component = std::make_unique<Door>();

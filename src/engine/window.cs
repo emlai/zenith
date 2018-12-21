@@ -19,7 +19,7 @@ class Window
 
     Engine engine;
     bool closeRequestReceived;
-    std::unique_ptr<SDL_Window, void (&)(SDL_Window)> windowHandle;
+    SDL_Window windowHandle;
     GraphicsContext context;
     static int windowCount;
     static bool sdlVideoInitialized;

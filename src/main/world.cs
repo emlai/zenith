@@ -24,7 +24,7 @@ private:
     Game game;
     Dictionary<Vector3, Area> areas;
     Dictionary<Vector3, long> savedAreaOffsets;
-    std::unique_ptr<SaveFile> saveFile;
+    SaveFile saveFile;
     Color32 sunlight;
 }
 void World::load(SaveFile file)

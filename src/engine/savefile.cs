@@ -1,7 +1,7 @@
 class SaveFile
 {
     List<char> buffer;
-    std::unique_ptr<SDL_RWops, void (*)(SDL_RWops)> file;
+    SDL_RWops file;
 
 
     template<typename T>
@@ -214,7 +214,7 @@ class SaveFile
     long readInt64() { return long(readUint64()); }
 
     template<typename T>
-    void write(const std::unique_ptr<T>& value) { value.save(*this); }
+    void write(const T& value) { value.save(*this); }
     template<typename T>
     void write(T value) { value.save(*this); }
     template<typename T>

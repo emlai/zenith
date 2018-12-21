@@ -5,7 +5,7 @@ class AI
     AI(Creature creature) : creature(creature) {}
     virtual ~AI() {}
     virtual Action control() = 0;
-    static std::unique_ptr<AI> get(string id, Creature creature);
+    static AI get(string id, Creature creature);
 
 protected:
     Creature creature;
@@ -17,7 +17,7 @@ private:
     using AI::AI;
     Action control() override;
 }
-std::unique_ptr<AI> AI::get(string id, Creature creature)
+AI AI::get(string id, Creature creature)
 {
     if (id == "AttackNearestEnemy") return std::make_unique<AttackNearestEnemy>(creature);
 

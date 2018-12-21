@@ -65,7 +65,7 @@ namespace std
 class Creature final : Entity
 {
     Creature(Tile, string id);
-    Creature(Tile, string id, std::unique_ptr<Controller> controller);
+    Creature(Tile, string id, Controller controller);
     Creature(SaveFile file, Tile tile);
     void save(SaveFile file);
     void exist();
@@ -89,7 +89,7 @@ class Creature final : Entity
     int getLevel();
     var getInventory() { return inventory; }
     var getEquipment() { return equipment; }
-    std::unique_ptr<Item> removeItem(Item item);
+    Item removeItem(Item item);
     Item getEquipment(EquipmentSlot slot) { return equipment.at(slot); }
     int getInventoryIndex(Item item);
     bool isRunning() { return running; }
@@ -111,7 +111,7 @@ class Creature final : Entity
     List<Creature> getCreaturesCurrentlySeenBy(int maxFieldOfVisionRadius);
     List<Creature> getCurrentlySeenCreatures();
     Creature getNearestEnemy();
-    void setController(std::unique_ptr<Controller> controller);
+    void setController(Controller controller);
 
 private:
     World getWorld();
@@ -133,7 +133,7 @@ private:
 
     List<Tile> tilesUnder;
     mutable boost::unordered_set<Vector3> seenTilePositions;
-    List<std::unique_ptr<Item>> inventory;
+    List<Item> inventory;
     Dictionary<EquipmentSlot, Item> equipment;
     double currentHP, maxHP, currentAP, currentMP, maxMP;
     bool running;
@@ -141,7 +141,7 @@ private:
     List<Attribute> displayedAttributes;
     List<List<int>> attributeIndices;
     Sprite sprite;
-    std::unique_ptr<Controller> controller;
+    Controller controller;
     List<Message> messages;
 
     constexpr double fullAP = 1.0;
@@ -198,7 +198,7 @@ Creature::Creature(Tile tile, string id)
 {
 }
 
-Creature::Creature(Tile tile, string id, std::unique_ptr<Controller> controller)
+Creature::Creature(Tile tile, string id, Controller controller)
 :   Entity(id, *Game::creatureConfig),
     currentHP(0),
     maxHP(0),
@@ -638,7 +638,7 @@ void Creature::onDeath()
 
     if (getTilesUnder().size() == 1)
     {
-        std::unique_ptr<Creature> self = getTileUnder(0).removeSingleTileCreature(*this);
+        Creature self = getTileUnder(0).removeSingleTileCreature(*this);
         getTileUnder(0).addItem(std::make_unique<Corpse>(std::move(self)));
     }
     else
@@ -712,7 +712,7 @@ bool Creature::eat(Item itemToEat)
     return true;
 }
 
-std::unique_ptr<Item> Creature::removeItem(Item itemToRemove)
+Item Creature::removeItem(Item itemToRemove)
 {
     var index = getInventoryIndex(itemToRemove);
     var removedItem = std::move(inventory[index]);
@@ -755,7 +755,7 @@ int Creature::getTurn()
     return getWorld().getTurn();
 }
 
-void Creature::setController(std::unique_ptr<Controller> controller)
+void Creature::setController(Controller controller)
 {
     this.controller = std::move(controller);
 }
