@@ -115,7 +115,7 @@ Dir8 Vector2Base<T>::getDir8()
     if (isZero()) return NoDir;
     double angle = std::atan2(y, x);
     int octant = static_cast<int>(std::round(8 * angle / (2 * pi) + 8)) % 8;
-    return static_cast<Dir8>(octant + 1);
+    return (Dir8) octant + 1;
 }
 
 template<typename T>

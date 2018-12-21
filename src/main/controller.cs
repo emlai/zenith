@@ -254,7 +254,7 @@ void loadKeyMap(Config config)
 {
     for (int i = NoAction + 1; i < LastAction; ++i)
     {
-        var action = static_cast<Action>(i);
+        var action = (Action) i;
         Key key = config ? config.getOptional<int>(toString(action)).get_value_or(NoKey) : NoKey;
 
         if (!key)
@@ -268,7 +268,7 @@ void saveKeyMap(Config config)
 {
     for (int i = NoAction + 1; i < LastAction; ++i)
     {
-        var action = static_cast<Action>(i);
+        var action = (Action) i;
         config.set(toString(action), static_cast<long long>(getMappedKey(action)));
     }
 }

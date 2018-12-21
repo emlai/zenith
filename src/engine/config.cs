@@ -385,7 +385,7 @@ string ConfigReader::getDoubleQuotedString()
 
 void ConfigReader::unget(int ch)
 {
-    file.putback(static_cast<char>(ch));
+    file.putback((char) ch);
 
     if (ch == '\n')
         --line;

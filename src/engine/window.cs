@@ -100,7 +100,7 @@ class Window
     static int filterKeyRepeatEvents(void userdata, SDL_Event event)
     {
         if (event.type == SDL_KEYDOWN && event.key.repeat
-            && event.key.keysym.sym == static_cast<SDL_Event>(userdata).key.keysym.sym)
+            && event.key.keysym.sym == (SDL_Event) userdata.key.keysym.sym)
             return 0;
 
         return 1;

@@ -87,8 +87,8 @@ class Texture
         target = window.context.mapToTargetCoordinates(target);
 
         SDL_Surface targetSurface = window.context.targetTexture.getSurface();
-        const uint sourcePixels = static_cast<const uint>(surface.pixels);
-        uint targetPixels = static_cast<uint>(targetSurface.pixels);
+        uint sourcePixels = (uint) surface.pixels;
+        uint targetPixels = (uint) targetSurface.pixels;
         var sourceWidth = surface.w;
         var targetWidth = targetSurface.w;
 
@@ -105,7 +105,7 @@ class Texture
                 if (pixel == transparentColor)
                     continue;
 
-                const byte abgr = reinterpret_cast<const byte>(sourcePixels[y * sourceWidth + x]);
+                byte abgr = reinterpret_cast<byte>(sourcePixels[y * sourceWidth + x]);
                 bool isMagenta = abgr[3] > 0 && abgr[3] == abgr[1] && abgr[2] == 0;
 
                 if (isMagenta)

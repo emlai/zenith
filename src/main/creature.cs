@@ -333,7 +333,7 @@ void Creature::render(Window window, Vector2 position)
     {
         for (int slot = equipmentSlots - 1; slot >= 0; --slot)
         {
-            if (var equipment = getEquipment(static_cast<EquipmentSlot>(slot)))
+            if (var equipment = getEquipment((EquipmentSlot) slot))
                 equipment.renderEquipped(window, position);
         }
     }

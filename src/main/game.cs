@@ -168,7 +168,7 @@ void EquipmentMenu::execute()
 
         for (int i = 0; i < equipmentSlots; ++i)
         {
-            var slot = static_cast<EquipmentSlot>(i);
+            var slot = (EquipmentSlot) i;
             var image = player.getEquipment(slot) ? player.getEquipment(slot).getSprite() : null;
             var itemName = player.getEquipment(slot) ? player.getEquipment(slot).getName() : "-";
             addItem(MenuItem(i, toString(slot) + ":", itemName, NoKey, null, image));
@@ -178,7 +178,7 @@ void EquipmentMenu::execute()
         if (choice == Menu::Exit)
             break;
 
-        var selectedSlot = static_cast<EquipmentSlot>(choice);
+        var selectedSlot = (EquipmentSlot) choice;
 
         InventoryMenu inventoryMenu(getEngine().getWindow(), player, "", true,
                                     player.getEquipment(selectedSlot), [&](var item)

@@ -72,7 +72,7 @@ void KeyMapMenu::execute()
 
         for (int i = NoAction + 1; i < LastAction; ++i)
         {
-            var action = static_cast<Action>(i);
+            var action = (Action) i;
 
             if (var key = getMappedKey(action))
             {
@@ -100,7 +100,7 @@ void KeyMapMenu::execute()
                 var event = window.waitForInput();
 
                 if (event.type == Event::KeyDown && getMappedAction(event.key) == NoAction)
-                    mapKey(event.key, static_cast<Action>(selection));
+                    mapKey(event.key, (Action) selection);
 
                 break;
         }

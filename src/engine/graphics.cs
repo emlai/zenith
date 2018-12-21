@@ -154,7 +154,7 @@ class GraphicsContext
                 double dstR = color.getRed() / 255.0;
                 double dstG = color.getGreen() / 255.0;
                 double dstB = color.getBlue() / 255.0;
-                uint pixels = static_cast<uint>(targetSurface.pixels);
+                uint pixels = (uint) targetSurface.pixels;
                 var targetWidth = targetSurface.w;
 
                 for (var y = rectangle.getTop(); y <= rectangle.getBottom(); ++y)
