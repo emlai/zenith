@@ -3,27 +3,27 @@ struct Rect;
 class Room
 {
 public:
-    Room(Rect region, std::vector<Tile>&& doorTiles)
+    Room(Rect region, List<Tile>&& doorTiles)
     :   region(region), doorTiles(std::move(doorTiles)) {}
     Rect getRegion() const { return region; }
     Rect getInnerRegion() const { return region.inset(Vector2(1, 1)); }
-    const std::vector<Tile> getDoorTiles() const { return doorTiles; }
+    const List<Tile> getDoorTiles() const { return doorTiles; }
 
 private:
     Rect region;
-    std::vector<Tile> doorTiles;
+    List<Tile> doorTiles;
 }
 
 class Building
 {
 public:
-    Building(std::vector<Room>&& rooms);
-    const std::vector<Room>& getRooms() const { return rooms; }
-    std::vector<Tile> getDoorTiles() const;
+    Building(List<Room>&& rooms);
+    const List<Room>& getRooms() const { return rooms; }
+    List<Tile> getDoorTiles() const;
 
 private:
-    std::vector<Room> rooms;
-    std::vector<Tile> doorTiles;
+    List<Room> rooms;
+    List<Tile> doorTiles;
 }
 
 class WorldGenerator
@@ -33,27 +33,27 @@ public:
     void generateRegion(Rect region, int level);
 
 private:
-    std::vector<Building> generateBuildings(Rect region, int level);
+    List<Building> generateBuildings(Rect region, int level);
     boost::optional<Building> generateBuilding(Rect region, int level);
     boost::optional<Room> generateRoom(Rect region, int level);
     Tile findPathStart(Tile tile) const;
-    std::vector<Tile> findPathAStar(Tile source, Tile target,
+    List<Tile> findPathAStar(Tile source, Tile target,
                                      const std::function<bool(Tile)>& isAllowed) const;
-    void generatePaths(const std::vector<Building>& buildings);
+    void generatePaths(const List<Building>& buildings);
     void generateItems(Rect region, int level);
     void generateCreatures(Rect region, int level);
 
     World world;
 }
-Building::Building(std::vector<Room>&& rooms)
+Building::Building(List<Room>&& rooms)
 :   rooms(std::move(rooms))
 {
     assert(this->rooms.size() >= 1);
 }
 
-std::vector<Tile> Building::getDoorTiles() const
+List<Tile> Building::getDoorTiles() const
 {
-    std::vector<Tile> doorTiles;
+    List<Tile> doorTiles;
 
     for (var room : rooms)
         for (var doorTile : room.getDoorTiles())
@@ -78,13 +78,13 @@ void WorldGenerator::generateRegion(Rect region, int level)
     generateCreatures(region, level);
 }
 
-std::vector<Building> WorldGenerator::generateBuildings(Rect region, int level)
+List<Building> WorldGenerator::generateBuildings(Rect region, int level)
 {
     var minSize = 4;
     var maxSize = 10;
     unsigned buildingsToGenerate = randInt(1, 10);
 
-    std::vector<Building> buildings;
+    List<Building> buildings;
 
     if (world.getTile(region.position, level + 1) != nullptr)
     {
@@ -135,7 +135,7 @@ boost::optional<Building> WorldGenerator::generateBuilding(Rect region, int leve
 {
     if (var room = generateRoom(region, level))
     {
-        std::vector<Room> rooms;
+        List<Room> rooms;
         rooms.push_back(std::move(*room));
         return Building(std::move(rooms));
     }
@@ -166,7 +166,7 @@ boost::optional<Room> WorldGenerator::generateRoom(Rect region, int level)
         tile.setObject(nullptr);
     });
 
-    std::vector<Tile> nonCornerWalls;
+    List<Tile> nonCornerWalls;
     const unsigned nonCornerWallCount = region.getPerimeter() - 8;
     nonCornerWalls.reserve(nonCornerWallCount);
 
@@ -225,9 +225,9 @@ static int heuristicCostEstimate(Tile a, Tile b)
     return distance.x * distance.y;
 }
 
-static std::vector<Tile> reconstructPath(const boost::unordered_map<Tile, Tile>& cameFrom, Tile current)
+static List<Tile> reconstructPath(const boost::unordered_map<Tile, Tile>& cameFrom, Tile current)
 {
-    std::vector<Tile> totalPath = { current }
+    List<Tile> totalPath = { current }
 
     while (cameFrom.find(current) != cameFrom.end())
     {
@@ -238,7 +238,7 @@ static std::vector<Tile> reconstructPath(const boost::unordered_map<Tile, Tile>&
     return totalPath;
 }
 
-std::vector<Tile> WorldGenerator::findPathAStar(Tile source, Tile target,
+List<Tile> WorldGenerator::findPathAStar(Tile source, Tile target,
                                                  const std::function<bool(Tile)>& isAllowed) const
 {
     boost::unordered_set<Tile> closedSet;
@@ -299,7 +299,7 @@ std::vector<Tile> WorldGenerator::findPathAStar(Tile source, Tile target,
     return {}
 }
 
-void WorldGenerator::generatePaths(const std::vector<Building>& buildings)
+void WorldGenerator::generatePaths(const List<Building>& buildings)
 {
     if (buildings.empty())
         return;

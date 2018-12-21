@@ -106,11 +106,11 @@ public:
     int getFieldOfVisionRadius() const;
     template<typename... Args>
     void addMessage(Args...);
-    const std::vector<Message>& getMessages() const { return messages; }
+    const List<Message>& getMessages() const { return messages; }
     bool sees(Tile tile) const;
     bool remembers(Tile tile) const;
-    std::vector<Creature> getCreaturesCurrentlySeenBy(int maxFieldOfVisionRadius) const;
-    std::vector<Creature> getCurrentlySeenCreatures() const;
+    List<Creature> getCreaturesCurrentlySeenBy(int maxFieldOfVisionRadius) const;
+    List<Creature> getCurrentlySeenCreatures() const;
     Creature getNearestEnemy() const;
     void setController(std::unique_ptr<Controller> controller);
 
@@ -128,22 +128,22 @@ private:
     void editMP(double amount) { currentMP = std::min(currentMP + amount, maxMP); }
     void regenerate();
     void onDeath();
-    static std::vector<Attribute> initDisplayedAttributes(boost::string_ref);
-    static std::vector<std::vector<int>> initAttributeIndices(boost::string_ref);
+    static List<Attribute> initDisplayedAttributes(boost::string_ref);
+    static List<List<int>> initAttributeIndices(boost::string_ref);
     var getAttributeIndices(int attribute) const { return attributeIndices[attribute]; }
 
-    std::vector<Tile> tilesUnder;
+    List<Tile> tilesUnder;
     mutable boost::unordered_set<Vector3> seenTilePositions;
-    std::vector<std::unique_ptr<Item>> inventory;
+    List<std::unique_ptr<Item>> inventory;
     boost::unordered_map<EquipmentSlot, Item> equipment;
     double currentHP, maxHP, currentAP, currentMP, maxMP;
     bool running;
-    std::vector<double> attributeValues;
-    std::vector<Attribute> displayedAttributes;
-    std::vector<std::vector<int>> attributeIndices;
+    List<double> attributeValues;
+    List<Attribute> displayedAttributes;
+    List<List<int>> attributeIndices;
     Sprite sprite;
     std::unique_ptr<Controller> controller;
-    std::vector<Message> messages;
+    List<Message> messages;
 
     static constexpr double fullAP = 1.0;
     static const int configAttributes[8];
@@ -165,7 +165,7 @@ void Creature::addMessage(Args... messageParts)
 }
 
 Attribute stringToAttribute(boost::string_ref);
-std::vector<Attribute> stringsToAttributes(const std::vector<string>&);
+List<Attribute> stringsToAttributes(const List<string>&);
 boost::string_ref toString(EquipmentSlot slot)
 {
     switch (slot)
@@ -179,19 +179,19 @@ boost::string_ref toString(EquipmentSlot slot)
     assert(false);
 }
 
-std::vector<Attribute> Creature::initDisplayedAttributes(boost::string_ref id)
+List<Attribute> Creature::initDisplayedAttributes(boost::string_ref id)
 {
-    std::vector<Attribute> displayedAttributes;
+    List<Attribute> displayedAttributes;
 
-    for (var attribute : Game::creatureConfig->get<std::vector<string>>(id, "DisplayedAttributes"))
+    for (var attribute : Game::creatureConfig->get<List<string>>(id, "DisplayedAttributes"))
         displayedAttributes.push_back(stringToAttribute(attribute));
 
     return displayedAttributes;
 }
 
-std::vector<std::vector<int>> Creature::initAttributeIndices(boost::string_ref id)
+List<List<int>> Creature::initAttributeIndices(boost::string_ref id)
 {
-    return Game::creatureConfig->get<std::vector<std::vector<int>>>(id, "AttributeIndices");
+    return Game::creatureConfig->get<List<List<int>>>(id, "AttributeIndices");
 }
 
 Creature::Creature(Tile tile, boost::string_ref id)
@@ -222,7 +222,7 @@ Creature::Creature(Tile tile, boost::string_ref id, std::unique_ptr<Controller> 
 
     generateAttributes(id);
 
-    if (var initialEquipment = getConfig().getOptional<std::vector<string>>(getId(), "Equipment"))
+    if (var initialEquipment = getConfig().getOptional<List<string>>(getId(), "Equipment"))
     {
         for (var itemId : *initialEquipment)
         {
@@ -344,7 +344,7 @@ void Creature::generateAttributes(boost::string_ref id)
 {
     attributeValues.resize(Game::creatureConfig->get<int>(id, "Attributes"));
 
-    var attributeStrings = Game::creatureConfig->get<std::vector<string>>(id, "ConfigAttributes");
+    var attributeStrings = Game::creatureConfig->get<List<string>>(id, "ConfigAttributes");
     var configAttributes = stringsToAttributes(attributeStrings);
 
     for (var attribute : configAttributes)
@@ -429,9 +429,9 @@ bool Creature::remembers(Tile tile) const
     return seenTilePositions.find(tile.getPosition3D()) != seenTilePositions.end();
 }
 
-std::vector<Creature> Creature::getCreaturesCurrentlySeenBy(int maxFieldOfVisionRadius) const
+List<Creature> Creature::getCreaturesCurrentlySeenBy(int maxFieldOfVisionRadius) const
 {
-    std::vector<Creature> creatures;
+    List<Creature> creatures;
 
     for (int x = -maxFieldOfVisionRadius; x <= maxFieldOfVisionRadius; ++x)
     {
@@ -453,9 +453,9 @@ std::vector<Creature> Creature::getCreaturesCurrentlySeenBy(int maxFieldOfVision
     return creatures;
 }
 
-std::vector<Creature> Creature::getCurrentlySeenCreatures() const
+List<Creature> Creature::getCurrentlySeenCreatures() const
 {
-    std::vector<Creature> currentlySeenCreatures;
+    List<Creature> currentlySeenCreatures;
     var fieldOfVisionRadius = getFieldOfVisionRadius();
 
     for (int x = -fieldOfVisionRadius; x <= fieldOfVisionRadius; ++x)
@@ -771,9 +771,9 @@ Attribute stringToAttribute(boost::string_ref string)
     throw std::invalid_argument("string didn't match any attribute.");
 }
 
-std::vector<Attribute> stringsToAttributes(const std::vector<string>& strings)
+List<Attribute> stringsToAttributes(const List<string>& strings)
 {
-    std::vector<Attribute> attributes;
+    List<Attribute> attributes;
 
     for (var string : strings)
         attributes.push_back(stringToAttribute(string));

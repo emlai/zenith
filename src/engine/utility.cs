@@ -1,5 +1,5 @@
 template<typename T>
-std::ostream operator<<(std::ostream outputStream, const std::vector<T>& elements)
+std::ostream operator<<(std::ostream outputStream, const List<T>& elements)
 {
     for (var element : elements)
         outputStream << element;

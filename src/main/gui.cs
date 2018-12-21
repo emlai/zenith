@@ -75,7 +75,7 @@ Sprite getSprite(Texture spriteSheet, Config config, boost::string_ref id,
                  int frame = 0, Color32 materialColor = Color32::none);
 Rect getSpriteTextureRegion(Config config, boost::string_ref id)
 {
-    var components = config.get<std::vector<int>>(id, "spritePosition");
+    var components = config.get<List<int>>(id, "spritePosition");
     var offsetX = randInt(config.get<int>(id, "spriteMultiplicity") - 1);
     return Rect(Vector2(components.at(0) + offsetX, components.at(1)) * Tile::spriteSize, Tile::spriteSize);
 }

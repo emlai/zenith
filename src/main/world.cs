@@ -73,7 +73,7 @@ int World::getTurn() const
 void World::exist(Rect region, int level)
 {
     // Collect the creatures into a vector to avoid updating the same creature more than once.
-    std::vector<Creature> creaturesToUpdate;
+    List<Creature> creaturesToUpdate;
 
     forEachTile(region, level, [&](Tile tile)
     {
@@ -98,7 +98,7 @@ void World::render(Window window, Rect region, int level, Creature player)
     forEachTile(lightRegion, level, [&](Tile tile) { tile.resetLight(); });
     forEachTile(lightRegion, level, [&](Tile tile) { tile.emitLight(); });
 
-    std::vector<std::pair<Tile, bool>> tilesToRender;
+    List<std::pair<Tile, bool>> tilesToRender;
     tilesToRender.reserve(region.getArea());
 
     forEachTile(region, level, [&](Tile tile)

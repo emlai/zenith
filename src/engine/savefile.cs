@@ -24,7 +24,7 @@ public:
     void write(boost::string_ref value);
     void write(string value) { write(boost::string_ref(value)); }
     template<typename T>
-    void write(const std::vector<T>& vector);
+    void write(const List<T>& vector);
 
     int8_t readInt8() const { return int8_t(readUint8()); }
     uint8_t readUint8() const;
@@ -40,10 +40,10 @@ public:
     Vector2 readVector2() const;
     Vector3 readVector3() const;
     template<typename T>
-    void read(std::vector<T>& vector) const;
+    void read(List<T>& vector) const;
 
 private:
-    SaveFile(std::vector<char> buffer);
+    SaveFile(List<char> buffer);
     template<typename T>
     void write(const std::unique_ptr<T>& value) { value->save(*this); }
     template<typename T>
@@ -51,12 +51,12 @@ private:
     template<typename T>
     T read() const { return T::load(*this); }
 
-    std::vector<char> buffer;
+    List<char> buffer;
     std::unique_ptr<SDL_RWops, void (*)(SDL_RWops)> file;
 }
 
 template<typename T>
-void SaveFile::write(const std::vector<T>& vector)
+void SaveFile::write(const List<T>& vector)
 {
     writeInt32(int32_t(vector.size()));
 
@@ -65,7 +65,7 @@ void SaveFile::write(const std::vector<T>& vector)
 }
 
 template<typename T>
-void SaveFile::read(std::vector<T>& vector) const
+void SaveFile::read(List<T>& vector) const
 {
     var size = readInt32();
     assert(vector.empty());
@@ -92,7 +92,7 @@ SaveFile::SaveFile(boost::string_ref filePath, bool writable)
         throw std::runtime_error(SDL_GetError());
 }
 
-SaveFile::SaveFile(std::vector<char> buffer)
+SaveFile::SaveFile(List<char> buffer)
 :   buffer(std::move(buffer)),
     file(SDL_RWFromMem(this->buffer.data(), this->buffer.size()), closeFile)
 {
@@ -240,7 +240,7 @@ SaveFile SaveFile::copyToMemory()
     var offset = getOffset();
     seek(0);
     var size = getSize();
-    std::vector<char> buffer(size);
+    List<char> buffer(size);
     size_t bytesRead = SDL_RWread(file.get(), buffer.data(), 1, size);
 
     if (bytesRead == 0)

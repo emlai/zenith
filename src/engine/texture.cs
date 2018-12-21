@@ -20,7 +20,7 @@ public:
 
 private:
     std::unique_ptr<SDL_Surface, void (*)(SDL_Surface)> surface;
-    std::vector<Color32> pixelData;
+    List<Color32> pixelData;
 }
 struct PixelFormatMasks
 {

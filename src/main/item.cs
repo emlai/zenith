@@ -165,7 +165,7 @@ void Item::renderEquipped(Window window, Vector2 position) const
 
 string getRandomMaterialId(boost::string_ref itemId)
 {
-    var materials = Game::itemConfig->get<std::vector<string>>(itemId, "PossibleMaterials");
+    var materials = Game::itemConfig->get<List<string>>(itemId, "PossibleMaterials");
     return materials.empty() ? "" : randomElement(materials);
 }
 

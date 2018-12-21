@@ -9,7 +9,7 @@ public:
     ValueType get(boost::string_ref type, boost::string_ref attribute) const;
     template<typename ValueType>
     boost::optional<ValueType> getOptional(boost::string_ref type, boost::string_ref attribute) const;
-    std::vector<string> getToplevelKeys() const;
+    List<string> getToplevelKeys() const;
     void set(boost::string_ref key, bool value) { data.insert(key.to_string(), Value(value)); }
     void set(boost::string_ref key, long long value) { data.insert(key.to_string(), Value(value)); }
     void set(boost::string_ref key, double value) { data.insert(key.to_string(), Value(value)); }
@@ -69,7 +69,7 @@ private:
         Value(Integer value) : integer(value), type(Type::Int) {}
         Value(double value) : floatingPoint(value), type(Type::Float) {}
         Value(string value) : string(std::move(value)), type(Type::String) {}
-        Value(std::vector<Value> value) : list(std::move(value)), type(Type::List) {}
+        Value(List<Value> value) : list(std::move(value)), type(Type::List) {}
         Value(Group_<Value> value) : group(std::move(value)), type(Type::Group) {}
         Value(Value value);
         ~Value();
@@ -84,7 +84,7 @@ private:
         Integer getInt() const { return integer; }
         double getFloat() const { return floatingPoint; }
         string getString() const { return string; }
-        const std::vector<Value>& getList() const { return list; }
+        const List<Value>& getList() const { return list; }
         const Group_<Value>& getGroup() const { return group; }
 
     private:
@@ -94,7 +94,7 @@ private:
             Integer integer;
             double floatingPoint;
             string string;
-            std::vector<Value> list;
+            List<Value> list;
             Group_<Value> group;
         }
 
@@ -204,14 +204,14 @@ struct Config::ConversionTraits<string>
 }
 
 template<typename ElementType>
-struct Config::ConversionTraits<std::vector<ElementType>>
+struct Config::ConversionTraits<List<ElementType>>
 {
-    boost::optional<std::vector<ElementType>> operator()(Value value)
+    boost::optional<List<ElementType>> operator()(Value value)
     {
         if (!value.isList())
             return boost::none;
 
-        std::vector<ElementType> outputData;
+        List<ElementType> outputData;
 
         for (var element : value.getList())
             outputData.push_back(*convert<ElementType>(element));
@@ -427,9 +427,9 @@ std::runtime_error ConfigReader::syntaxError(boost::string_ref expected, char ac
     return syntaxError("expected " + expected + ", got " + charToString(actual));
 }
 
-std::vector<string> Config::getToplevelKeys() const
+List<string> Config::getToplevelKeys() const
 {
-    std::vector<string> keys;
+    List<string> keys;
 
     for (var keyAndValue : data)
     {
@@ -491,7 +491,7 @@ Config::Value Config::parseArray(ConfigReader reader)
 {
     assert(reader.peek() == '[');
     reader.get();
-    std::vector<Value> values;
+    List<Value> values;
 
     if (reader.peek() == ']')
     {

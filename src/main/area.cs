@@ -18,7 +18,7 @@ private:
     Tile getTileAt(Vector2 position);
     Tile getTileAt(Vector2 position) const;
 
-    std::vector<Tile> tiles;
+    List<Tile> tiles;
     World world;
     Vector2 position;
 }

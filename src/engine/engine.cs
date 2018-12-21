@@ -14,8 +14,8 @@ private:
     State getCurrentState() { return *states.end()[-1]; }
     State getPreviousState() { return *states.end()[-2]; }
 
-    std::vector<Window> windows;
-    std::vector<State> states;
+    List<Window> windows;
+    List<State> states;
 }
 
 template<typename StateType>

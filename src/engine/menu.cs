@@ -59,8 +59,8 @@ private:
     int calculateMainImageColumnWidth() const;
 
     string title;
-    std::vector<MenuItem> menuItems;
-    std::vector<Rect> itemPositions;
+    List<MenuItem> menuItems;
+    List<Rect> itemPositions;
     bool wrapEnabled;
     HotkeyStyle hotkeyStyle;
     string hotkeySuffix;

@@ -15,7 +15,7 @@ public:
     std::unique_ptr<Creature> removeSingleTileCreature(Creature);
     void removeCreature(Creature);
     bool hasItems() const { return !items.empty(); }
-    const std::vector<std::unique_ptr<Item>>& getItems() const { return items; }
+    const List<std::unique_ptr<Item>>& getItems() const { return items; }
     std::unique_ptr<Item> removeTopmostItem();
     void addItem(std::unique_ptr<Item> item);
     void addLiquid(boost::string_ref materialId);
@@ -49,9 +49,9 @@ private:
     string getTooltip() const;
     void addCreature(std::unique_ptr<Creature> creature) { creatures.push_back(std::move(creature)); }
 
-    std::vector<std::unique_ptr<Creature>> creatures;
-    std::vector<std::unique_ptr<Item>> items;
-    std::vector<Liquid> liquids;
+    List<std::unique_ptr<Creature>> creatures;
+    List<std::unique_ptr<Item>> items;
+    List<Liquid> liquids;
     std::unique_ptr<Object> object;
     World world;
     Vector2 position;

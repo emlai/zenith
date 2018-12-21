@@ -19,7 +19,7 @@ private:
 
 namespace MessageSystem
 {
-    void drawMessages(Window window, BitmapFont, const std::vector<Message>& messages,
+    void drawMessages(Window window, BitmapFont, const List<Message>& messages,
                       int currentTurn);
 
 #ifdef DEBUG
@@ -61,13 +61,13 @@ namespace MessageSystem
     static const int debugMessageLimit = 16;
     static const Color16 messageColors[] = { TextColor::White, TextColor::Red }
     static std::deque<DebugMessage> debugMessages;
-    static std::vector<string> commandHistory;
-    static std::vector<string>::iterator commandIterator = commandHistory.end();
+    static List<string> commandHistory;
+    static List<string>::iterator commandIterator = commandHistory.end();
 #endif
 }
 
 void MessageSystem::drawMessages(Window window, BitmapFont font,
-                                 const std::vector<Message>& messages, int currentTurn)
+                                 const List<Message>& messages, int currentTurn)
 {
     font.setArea(GUI::getMessageArea(window));
     for (int end = int(messages.size()), i = std::max(0, end - maxMessagesToPrint); i < end; ++i)
