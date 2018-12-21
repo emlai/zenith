@@ -46,7 +46,7 @@ public:
     static const Vector2 spriteSize;
 
 private:
-    std::string getTooltip() const;
+    string getTooltip() const;
     void addCreature(std::unique_ptr<Creature> creature) { creatures.push_back(std::move(creature)); }
 
     std::vector<std::unique_ptr<Creature>> creatures;
@@ -56,7 +56,7 @@ private:
     World world;
     Vector2 position;
     int level;
-    std::string groundId;
+    string groundId;
     Sprite groundSprite;
     Color32 light;
 }
@@ -219,9 +219,9 @@ void Tile::render(Window window, int zIndex, bool fogOfWar, bool renderLight) co
 
 }
 
-std::string Tile::getTooltip() const
+string Tile::getTooltip() const
 {
-    std::string tooltip;
+    string tooltip;
 
     for (var creature : creatures)
     {

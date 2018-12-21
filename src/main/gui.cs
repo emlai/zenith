@@ -83,7 +83,7 @@ Rect getSpriteTextureRegion(Config config, boost::string_ref id)
 Sprite getSprite(Texture spriteSheet, Config config, boost::string_ref id,
                  int frame, Color32 materialColor)
 {
-    var asciiSprite = config.getOptional<std::string>(id, "asciiSprite");
+    var asciiSprite = config.getOptional<string>(id, "asciiSprite");
 
     if (!asciiSprite || asciiSprite->size() != 1 || !std::isprint((*asciiSprite)[0]))
         throw std::runtime_error("invalid asciiSprite on '" + id + "', should be 1 printable ASCII character");

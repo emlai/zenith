@@ -129,7 +129,7 @@ Vector2 BitmapFont::printHelper(Window window, boost::string_ref text, Vector2 p
     source.size = charSize;
     Rect target(position, charSize);
 
-    std::string splitText;
+    string splitText;
 
     if (lineBreakMode == SplitLines)
     {
@@ -137,7 +137,7 @@ Vector2 BitmapFont::printHelper(Window window, boost::string_ref text, Vector2 p
         int currentLineSize = 0;
         int maxLineSize = printArea.getRight() - position.x;
 
-        for (std::string word; stream >> word;)
+        for (string word; stream >> word;)
         {
             if ((currentLineSize + int(word.size())) * moveVector.x > maxLineSize)
             {

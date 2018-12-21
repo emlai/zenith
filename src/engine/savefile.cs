@@ -22,7 +22,7 @@ public:
     void write(Vector2 value);
     void write(Vector3 value);
     void write(boost::string_ref value);
-    void write(std::string value) { write(boost::string_ref(value)); }
+    void write(string value) { write(boost::string_ref(value)); }
     template<typename T>
     void write(const std::vector<T>& vector);
 
@@ -36,7 +36,7 @@ public:
     uint64_t readUint64() const;
     bool readBool() const;
     double readDouble() const;
-    std::string readString() const;
+    string readString() const;
     Vector2 readVector2() const;
     Vector3 readVector3() const;
     template<typename T>
@@ -195,10 +195,10 @@ void SaveFile::write(boost::string_ref value)
         writeInt8(uint8_t(ch));
 }
 
-std::string SaveFile::readString() const
+string SaveFile::readString() const
 {
     var size = readUint16();
-    std::string string;
+    string string;
     string.reserve(size);
 
     for (int i = 0; i < size; ++i)

@@ -352,12 +352,12 @@ void WorldGenerator::generateItems(Rect region, int level)
 
     while (randFloat() < density)
     {
-        std::string itemId = randomElement(Game::itemConfig->getToplevelKeys());
+        string itemId = randomElement(Game::itemConfig->getToplevelKeys());
         std::unique_ptr<Item> item;
 
         if (itemId == "Corpse")
         {
-            std::string creatureId = randomElement(Game::creatureConfig->getToplevelKeys());
+            string creatureId = randomElement(Game::creatureConfig->getToplevelKeys());
             item = std::make_unique<Corpse>(std::move(creatureId));
         }
         else

@@ -3,7 +3,7 @@ enum MessageType { Normal, Warning }
 class Message
 {
 public:
-    Message(std::string text, int turn) : text(std::move(text)), turn(turn), count(1) {}
+    Message(string text, int turn) : text(std::move(text)), turn(turn), count(1) {}
     boost::string_ref getText() const { return text; }
     int getTurn() const { return turn; }
     int getCount() const { return count; }
@@ -12,7 +12,7 @@ public:
     static Message load(SaveFile file);
 
 private:
-    std::string text;
+    string text;
     int turn;
     int count;
 }
@@ -24,9 +24,9 @@ namespace MessageSystem
 
 #ifdef DEBUG
     void addDebugMessage(boost::string_ref message, MessageType = Normal);
-    void addToCommandHistory(std::string command);
-    std::string getPreviousCommand();
-    std::string getNextCommand();
+    void addToCommandHistory(string command);
+    string getPreviousCommand();
+    string getNextCommand();
     void clearDebugMessageHistory();
 #endif
 }
@@ -54,15 +54,15 @@ namespace MessageSystem
         :   content(content), type(type)
         {
         }
-        const std::string content;
+        const string content;
         const MessageType type;
     }
 
     static const int debugMessageLimit = 16;
     static const Color16 messageColors[] = { TextColor::White, TextColor::Red }
     static std::deque<DebugMessage> debugMessages;
-    static std::vector<std::string> commandHistory;
-    static std::vector<std::string>::iterator commandIterator = commandHistory.end();
+    static std::vector<string> commandHistory;
+    static std::vector<string>::iterator commandIterator = commandHistory.end();
 #endif
 }
 
@@ -75,7 +75,7 @@ void MessageSystem::drawMessages(Window window, BitmapFont font,
         bool isNewMessage = messages[i].getTurn() >= currentTurn - 1;
         var color = isNewMessage ? TextColor::White : TextColor::Gray;
         font.print(window, "- ", color);
-        std::string text(messages[i].getText());
+        string text(messages[i].getText());
         if (messages[i].getCount() > 1)
             text += " (x" + std::to_string(messages[i].getCount()) + ")";
         font.printLine(window, text, color);
@@ -98,7 +98,7 @@ void MessageSystem::addDebugMessage(boost::string_ref message, MessageType type)
         debugMessages.pop_back();
 }
 
-void MessageSystem::addToCommandHistory(std::string command)
+void MessageSystem::addToCommandHistory(string command)
 {
     if (commandHistory.empty() || commandHistory.back() != command)
         commandHistory.push_back(std::move(command));
@@ -106,7 +106,7 @@ void MessageSystem::addToCommandHistory(std::string command)
     commandIterator = commandHistory.end();
 }
 
-std::string MessageSystem::getPreviousCommand()
+string MessageSystem::getPreviousCommand()
 {
     if (commandHistory.empty())
         return "";
@@ -117,7 +117,7 @@ std::string MessageSystem::getPreviousCommand()
     return *commandIterator;
 }
 
-std::string MessageSystem::getNextCommand()
+string MessageSystem::getNextCommand()
 {
     if (commandIterator == commandHistory.end() || ++commandIterator == commandHistory.end())
         return "";

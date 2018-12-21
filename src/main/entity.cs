@@ -8,8 +8,8 @@ public:
     Entity operator=(Entity) = default;
     virtual ~Entity() = default;
 
-    std::string getName() const;
-    std::string getNameIndefinite() const;
+    string getName() const;
+    string getNameIndefinite() const;
     boost::string_ref getId() const { return id; }
     Config getConfig() const { return *config; }
     template<typename ComponentType>
@@ -24,9 +24,9 @@ protected:
     const std::vector<std::unique_ptr<Component>>& getComponents() const { return components; }
 
 private:
-    virtual std::string getNameAdjective() const { return ""; }
+    virtual string getNameAdjective() const { return ""; }
 
-    std::string id;
+    string id;
     Config config;
     std::vector<std::unique_ptr<Component>> components;
 }
@@ -44,7 +44,7 @@ std::vector<ComponentType> Entity::getComponentsOfType() const
 }
 static void reportUnknownComponent(boost::string_ref name)
 {
-    static boost::unordered_set<std::string> reportedNames;
+    static boost::unordered_set<string> reportedNames;
 
     if (reportedNames.insert(name.to_string()).second)
         std::cerr << "Unknown component '" << name << "'\n";
@@ -54,7 +54,7 @@ Entity::Entity(boost::string_ref id, Config config)
 :   id(id),
     config(config)
 {
-    if (var componentNames = config.getOptional<std::vector<std::string>>(id, "components"))
+    if (var componentNames = config.getOptional<std::vector<string>>(id, "components"))
     {
         for (var componentName : *componentNames)
         {
@@ -66,14 +66,14 @@ Entity::Entity(boost::string_ref id, Config config)
     }
 }
 
-std::string Entity::getName() const
+string Entity::getName() const
 {
-    std::string prefix = std::move(getConfig().getOptional<std::string>(getId(), "NamePrefix").get_value_or(""));
+    string prefix = std::move(getConfig().getOptional<string>(getId(), "NamePrefix").get_value_or(""));
 
     if (!prefix.empty())
         prefix += ' ';
 
-    std::string adjective = getNameAdjective();
+    string adjective = getNameAdjective();
 
     if (!adjective.empty())
         adjective += ' ';
@@ -81,7 +81,7 @@ std::string Entity::getName() const
     return prefix + adjective + pascalCaseToSentenceCase(id);
 }
 
-std::string Entity::getNameIndefinite() const
+string Entity::getNameIndefinite() const
 {
     var name = getName();
 

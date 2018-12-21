@@ -17,7 +17,7 @@ enum : Key
     F3 = SDLK_F3
 }
 
-std::string toString(Key key);
+string toString(Key key);
 
 enum : Mod
 {
@@ -41,27 +41,27 @@ enum : Mod
 
 namespace keyboard
 {
-    int readLine(Window, std::string lineContent, Vector2 position, const std::function<void(Window)>&,
+    int readLine(Window, string lineContent, Vector2 position, const std::function<void(Window)>&,
                  boost::string_ref prefix = "");
 }
-std::string toString(Key key)
+string toString(Key key)
 {
     if (key > 0 && key <= UCHAR_MAX && std::islower(key))
-        return std::string(1, char(key));
+        return string(1, char(key));
 
     return SDL_GetKeyName(key);
 }
 
 namespace keyboard
 {
-    int readLineProcessKey(SDL_Event, std::string line, std::string::iterator cursor);
+    int readLineProcessKey(SDL_Event, string line, string::iterator cursor);
 }
 
-int keyboard::readLine(Window window, std::string line, Vector2 position, const std::function<void(Window)>& render,
+int keyboard::readLine(Window window, string line, Vector2 position, const std::function<void(Window)>& render,
                        boost::string_ref prefix)
 {
     BitmapFont font = window.getFont();
-    std::string::iterator cursor = line.end();
+    string::iterator cursor = line.end();
     SDL_Event event;
 
     while (true)
@@ -78,7 +78,7 @@ int keyboard::readLine(Window window, std::string line, Vector2 position, const 
     }
 }
 
-int keyboard::readLineProcessKey(SDL_Event event, std::string line, std::string::iterator cursor)
+int keyboard::readLineProcessKey(SDL_Event event, string line, string::iterator cursor)
 {
     static const int maxBufferSize = 4096;
 

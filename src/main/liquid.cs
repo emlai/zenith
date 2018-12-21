@@ -11,7 +11,7 @@ public:
 private:
     static constexpr double fadeRate = 0.001;
 
-    std::string materialId;
+    string materialId;
     double fadeLevel;
     Texture texture;
 }

@@ -16,8 +16,8 @@ public:
                       std::function<bool(Item)> itemFilter = nullptr);
     void showEquipmentMenu();
     void lookMode();
-    std::string askForString(std::string question);
-    boost::optional<Dir8> askForDirection(std::string question);
+    string askForString(string question);
+    boost::optional<Dir8> askForDirection(string question);
     Creature getPlayer() const { return player; }
     Window getWindow() const;
 #ifdef DEBUG
@@ -255,20 +255,20 @@ void Game::lookMode()
 class StringQuestion : public State
 {
 public:
-    StringQuestion(std::string question) : question(std::move(question)) {}
-    std::string execute();
+    StringQuestion(string question) : question(std::move(question)) {}
+    string execute();
 
 private:
     void render(Window) override {} // Rendered by keyboard::readLine() in execute().
     bool renderPreviousState() const override { return true; }
 
-    std::string question;
+    string question;
 }
 
-std::string StringQuestion::execute()
+string StringQuestion::execute()
 {
     var window = getEngine().getWindow();
-    std::string input;
+    string input;
 
     int result = keyboard::readLine(window, input, GUI::getQuestionArea(window).position,
                                     std::bind(Engine::render, getEngine(), std::placeholders::_1),
@@ -279,7 +279,7 @@ std::string StringQuestion::execute()
     return input;
 }
 
-std::string Game::askForString(std::string question)
+string Game::askForString(string question)
 {
     StringQuestion stringQuestion(question);
     return getEngine().execute(stringQuestion);
@@ -288,14 +288,14 @@ std::string Game::askForString(std::string question)
 class DirectionQuestion : public State
 {
 public:
-    DirectionQuestion(std::string question, Vector2 origin) : question(std::move(question)), origin(origin) {}
+    DirectionQuestion(string question, Vector2 origin) : question(std::move(question)), origin(origin) {}
     boost::optional<Dir8> execute();
 
 private:
     void render(Window window) override;
     bool renderPreviousState() const override { return true; }
 
-    std::string question;
+    string question;
     Vector2 origin;
 }
 
@@ -315,7 +315,7 @@ void DirectionQuestion::render(Window window)
     window.getFont().print(window, question);
 }
 
-boost::optional<Dir8> Game::askForDirection(std::string question)
+boost::optional<Dir8> Game::askForDirection(string question)
 {
     DirectionQuestion directionQuestion(question, player->getPosition());
     return getEngine().execute(directionQuestion);
@@ -406,8 +406,8 @@ void Game::printStat(BitmapFont font, boost::string_ref statName, double current
 {
     int currentValueInt = std::ceil(currentValue);
     int maximumValueInt = std::ceil(maximumValue);
-    std::string currentValueString = std::to_string(currentValueInt);
-    std::string padding(std::max(0, 4 - int(currentValueString.size())), ' ');
+    string currentValueString = std::to_string(currentValueInt);
+    string padding(std::max(0, 4 - int(currentValueString.size())), ' ');
     var text = statName + padding + currentValueString + "/" + std::to_string(maximumValueInt);
 
     var sidebarArea = GUI::getSidebarArea(getWindow());
@@ -421,7 +421,7 @@ void Game::printStat(BitmapFont font, boost::string_ref statName, double current
 
 void Game::printAttribute(BitmapFont font, boost::string_ref attributeName, double attributeValue) const
 {
-    std::string padding(5 - attributeName.size(), ' ');
+    string padding(5 - attributeName.size(), ' ');
     font.printLine(getWindow(), attributeName + padding + std::to_string(int(attributeValue)),
                    Color32::none, Color32::none, true, PreserveLines);
 }
@@ -430,14 +430,14 @@ void Game::printAttribute(BitmapFont font, boost::string_ref attributeName, doub
 
 void Game::enterCommandMode(Window window)
 {
-    for (std::string command;;)
+    for (string command;;)
     {
         int result = keyboard::readLine(window, command, GUI::getCommandLineArea(window).position,
                                         std::bind(Game::render, this, std::placeholders::_1), ">> ");
 
         if (result == Enter && !command.empty())
         {
-            MessageSystem::addToCommandHistory(std::string(command));
+            MessageSystem::addToCommandHistory(string(command));
             parseCommand(command);
             command.clear();
         }

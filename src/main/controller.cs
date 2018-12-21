@@ -40,7 +40,7 @@ Controller::~Controller() {}
 
 std::unique_ptr<AIController> AIController::get(boost::string_ref id, Creature creature)
 {
-    var ai = AI::get(Game::creatureConfig->get<std::string>(id, "ai"), creature);
+    var ai = AI::get(Game::creatureConfig->get<string>(id, "ai"), creature);
     return std::make_unique<AIController>(std::move(ai));
 }
 

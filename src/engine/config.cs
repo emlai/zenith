@@ -9,7 +9,7 @@ public:
     ValueType get(boost::string_ref type, boost::string_ref attribute) const;
     template<typename ValueType>
     boost::optional<ValueType> getOptional(boost::string_ref type, boost::string_ref attribute) const;
-    std::vector<std::string> getToplevelKeys() const;
+    std::vector<string> getToplevelKeys() const;
     void set(boost::string_ref key, bool value) { data.insert(key.to_string(), Value(value)); }
     void set(boost::string_ref key, long long value) { data.insert(key.to_string(), Value(value)); }
     void set(boost::string_ref key, double value) { data.insert(key.to_string(), Value(value)); }
@@ -20,7 +20,7 @@ private:
     class Group_
     {
     public:
-        Value at(std::string key) const
+        Value at(string key) const
         {
             if (var value = getOptional(key))
                 return *value;
@@ -28,7 +28,7 @@ private:
             throw std::out_of_range(key);
         }
 
-        Value getOptional(std::string key) const
+        Value getOptional(string key) const
         {
             var it = properties.find(key);
 
@@ -41,13 +41,13 @@ private:
         var begin() const { return properties.begin(); }
         var end() const { return properties.end(); }
 
-        void insert(std::string key, Value value)
+        void insert(string key, Value value)
         {
             properties.emplace(std::move(key), std::move(value));
         }
 
     private:
-        boost::unordered_map<std::string, Value> properties;
+        boost::unordered_map<string, Value> properties;
     }
 
     class Value
@@ -68,7 +68,7 @@ private:
         Value(bool value) : boolean(value), type(Type::Bool) {}
         Value(Integer value) : integer(value), type(Type::Int) {}
         Value(double value) : floatingPoint(value), type(Type::Float) {}
-        Value(std::string value) : string(std::move(value)), type(Type::String) {}
+        Value(string value) : string(std::move(value)), type(Type::String) {}
         Value(std::vector<Value> value) : list(std::move(value)), type(Type::List) {}
         Value(Group_<Value> value) : group(std::move(value)), type(Type::Group) {}
         Value(Value value);
@@ -83,7 +83,7 @@ private:
         bool getBool() const { return boolean; }
         Integer getInt() const { return integer; }
         double getFloat() const { return floatingPoint; }
-        std::string getString() const { return string; }
+        string getString() const { return string; }
         const std::vector<Value>& getList() const { return list; }
         const Group_<Value>& getGroup() const { return group; }
 
@@ -93,7 +93,7 @@ private:
             bool boolean;
             Integer integer;
             double floatingPoint;
-            std::string string;
+            string string;
             std::vector<Value> list;
             Group_<Value> group;
         }
@@ -192,9 +192,9 @@ struct Config::ConversionTraits<double>
 }
 
 template<>
-struct Config::ConversionTraits<std::string>
+struct Config::ConversionTraits<string>
 {
-    boost::optional<std::string> operator()(Value value)
+    boost::optional<string> operator()(Value value)
     {
         if (value.isString())
             return value.getString();
@@ -241,8 +241,8 @@ ValueType Config::get(boost::string_ref type, boost::string_ref attribute) const
 template<typename ValueType>
 boost::optional<ValueType> Config::getOptional(boost::string_ref type, boost::string_ref attribute) const
 {
-    std::string current = type.to_string();
-    std::string key = attribute.to_string();
+    string current = type.to_string();
+    string key = attribute.to_string();
 
     while (true)
     {
@@ -288,13 +288,13 @@ public:
     int get();
     void unget(int);
     int peek();
-    std::string getId();
-    std::string getDoubleQuotedString();
+    string getId();
+    string getDoubleQuotedString();
     std::runtime_error syntaxError(boost::string_ref message) const;
     std::runtime_error syntaxError(boost::string_ref expected, char actual) const;
 
 private:
-    std::string filePath;
+    string filePath;
     std::ifstream file;
     int line;
     int column;
@@ -328,14 +328,14 @@ int ConfigReader::get()
     }
 }
 
-std::string ConfigReader::getId()
+string ConfigReader::getId()
 {
     var ch = get();
 
     if (!std::isalpha(ch))
         throw syntaxError("id", char(ch));
 
-    std::string string(1, char(ch));
+    string string(1, char(ch));
 
     while (true)
     {
@@ -359,14 +359,14 @@ std::string ConfigReader::getId()
     }
 }
 
-std::string ConfigReader::getDoubleQuotedString()
+string ConfigReader::getDoubleQuotedString()
 {
     var ch = file.get();
 
     if (ch != '"')
         throw syntaxError("'\"'", char(ch));
 
-    std::string string;
+    string string;
 
     while (true)
     {
@@ -407,12 +407,12 @@ int ConfigReader::peek()
     return file.peek();
 }
 
-static std::string charToString(char ch)
+static string charToString(char ch)
 {
     switch (ch)
     {
         case '\n': return "newline";
-        default: return "'" + std::string(1, ch) + "'";
+        default: return "'" + string(1, ch) + "'";
     }
 }
 
@@ -427,9 +427,9 @@ std::runtime_error ConfigReader::syntaxError(boost::string_ref expected, char ac
     return syntaxError("expected " + expected + ", got " + charToString(actual));
 }
 
-std::vector<std::string> Config::getToplevelKeys() const
+std::vector<string> Config::getToplevelKeys() const
 {
-    std::vector<std::string> keys;
+    std::vector<string> keys;
 
     for (var keyAndValue : data)
     {
@@ -522,7 +522,7 @@ Config::Value Config::parseArray(ConfigReader reader)
 
 Config::Value Config::parseNumber(ConfigReader reader)
 {
-    std::string value;
+    string value;
     bool hasDot = false;
     bool isHex = false;
     int ch;
@@ -601,7 +601,7 @@ Config::Config(boost::string_ref filePath)
         if (reader.peek() == EOF)
             break;
 
-        std::string id = reader.getId();
+        string id = reader.getId();
         var ch = reader.get();
 
         switch (ch)

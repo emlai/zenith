@@ -11,7 +11,7 @@ public:
     bool use(Creature user, Game game);
     bool isEdible() const;
     EquipmentSlot getEquipmentSlot() const;
-    virtual std::string getNameAdjective() const override;
+    virtual string getNameAdjective() const override;
     void render(Window window, Vector2 position) const;
     virtual void renderEquipped(Window window, Vector2 position) const;
     Sprite getSprite() const { return sprite; }
@@ -19,11 +19,11 @@ public:
 protected:
     Item(boost::string_ref id, boost::string_ref materialId, Sprite sprite);
 
-    std::string materialId;
+    string materialId;
     Sprite sprite;
 }
 
-std::string getRandomMaterialId(boost::string_ref itemId);
+string getRandomMaterialId(boost::string_ref itemId);
 
 class Corpse final : public Item
 {
@@ -50,7 +50,7 @@ static Color16 getMaterialColor(boost::string_ref materialId)
         }
         catch (std::runtime_error)
         {
-            if (Game::materialConfig->get<std::string>(materialId, "Color") == "Random")
+            if (Game::materialConfig->get<string>(materialId, "Color") == "Random")
                 return Color16(randInt(Color16::max / 2), randInt(Color16::max / 2), randInt(Color16::max / 2));
             else
                 throw;
@@ -135,7 +135,7 @@ bool Item::isEdible() const
 
 EquipmentSlot Item::getEquipmentSlot() const
 {
-    var slotString = getConfig().getOptional<std::string>(getId(), "EquipmentSlot").get_value_or("Hand");
+    var slotString = getConfig().getOptional<string>(getId(), "EquipmentSlot").get_value_or("Hand");
 
     if (slotString == "Head") return Head;
     if (slotString == "Torso") return Torso;
@@ -147,7 +147,7 @@ EquipmentSlot Item::getEquipmentSlot() const
     return Hand;
 }
 
-std::string Item::getNameAdjective() const
+string Item::getNameAdjective() const
 {
     return pascalCaseToSentenceCase(materialId);
 }
@@ -163,9 +163,9 @@ void Item::renderEquipped(Window window, Vector2 position) const
     sprite.render(window, position, equippedSourceOffset);
 }
 
-std::string getRandomMaterialId(boost::string_ref itemId)
+string getRandomMaterialId(boost::string_ref itemId)
 {
-    var materials = Game::itemConfig->get<std::vector<std::string>>(itemId, "PossibleMaterials");
+    var materials = Game::itemConfig->get<std::vector<string>>(itemId, "PossibleMaterials");
     return materials.empty() ? "" : randomElement(materials);
 }
 

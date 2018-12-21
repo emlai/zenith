@@ -7,7 +7,7 @@ std::ostream operator<<(std::ostream outputStream, const std::vector<T>& element
     return outputStream;
 }
 
-std::string changeFileExtension(boost::string_ref fileName, boost::string_ref newExtension);
+string changeFileExtension(boost::string_ref fileName, boost::string_ref newExtension);
 
 /// Performs integer division, rounding towards negative infinity.
 inline int divideRoundingDown(int dividend, int divisor)
@@ -20,12 +20,12 @@ inline int divideRoundingDown(int dividend, int divisor)
         return quotient;
 }
 
-std::string toOnOffString(bool value);
-std::string toStringAvoidingDecimalPlaces(double value);
+string toOnOffString(bool value);
+string toStringAvoidingDecimalPlaces(double value);
 
-std::string operator+(boost::string_ref a, boost::string_ref b);
+string operator+(boost::string_ref a, boost::string_ref b);
 
-std::string pascalCaseToSentenceCase(boost::string_ref pascalCaseString);
+string pascalCaseToSentenceCase(boost::string_ref pascalCaseString);
 
 bool isVowel(char);
 
@@ -48,26 +48,26 @@ Deferrer<T> operator+(DeferHelper, T deferred)
 }
 
 #define DEFER var BOOST_PP_CAT(defer, __LINE__) = DeferHelper() + [&]
-std::string changeFileExtension(boost::string_ref fileName, boost::string_ref newExtension)
+string changeFileExtension(boost::string_ref fileName, boost::string_ref newExtension)
 {
     var dotPosition = fileName.rfind(".");
 
-    if (dotPosition != std::string::npos)
+    if (dotPosition != string::npos)
     {
-        std::string newFileName = fileName.to_string();
-        newFileName.replace(dotPosition + 1, std::string::npos, newExtension.to_string());
+        string newFileName = fileName.to_string();
+        newFileName.replace(dotPosition + 1, string::npos, newExtension.to_string());
         return newFileName;
     }
     else
         return fileName + "." + newExtension;
 }
 
-std::string toOnOffString(bool value)
+string toOnOffString(bool value)
 {
     return value ? "on" : "off";
 }
 
-std::string toStringAvoidingDecimalPlaces(double value)
+string toStringAvoidingDecimalPlaces(double value)
 {
     var string = std::to_string(value);
 
@@ -77,18 +77,18 @@ std::string toStringAvoidingDecimalPlaces(double value)
     return string;
 }
 
-std::string operator+(boost::string_ref a, boost::string_ref b)
+string operator+(boost::string_ref a, boost::string_ref b)
 {
-    std::string result;
+    string result;
     result.reserve(a.size() + b.size());
     result.append(a.data(), a.size());
     result.append(b.data(), b.size());
     return result;
 }
 
-std::string pascalCaseToSentenceCase(boost::string_ref pascalCaseString)
+string pascalCaseToSentenceCase(boost::string_ref pascalCaseString)
 {
-    std::string name;
+    string name;
     name.reserve(pascalCaseString.size());
 
     for (char ch : pascalCaseString)

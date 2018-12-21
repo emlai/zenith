@@ -27,19 +27,19 @@ enum Attribute
 
 const int attributes = 21;
 
-const std::string attributeNames[] =
+const string attributeNames[] =
 {
     "strength", "arm strength", "leg strength", "", "", "", "", "dexterity", "", "", "agility",
     "", "", "endurance", "perception", "", "", "", "intelligence", "psyche", "charisma"
 }
 
-const std::string attributeAbbreviations[] =
+const string attributeAbbreviations[] =
 {
     "Str", "AStr", "LStr", "", "", "", "", "Dex", "", "", "Agi",
     "", "", "End", "Per", "", "", "", "Int", "Psy", "Cha"
 }
 
-const std::string statNames[] = { "HP", "AP", "MP" }
+const string statNames[] = { "HP", "AP", "MP" }
 
 enum EquipmentSlot : int
 {
@@ -152,10 +152,10 @@ private:
 template<typename... Args>
 void Creature::addMessage(Args... messageParts)
 {
-    std::stringstream stream;
+    stringstream stream;
     var expansion = { (stream << messageParts, 0)... }
     (void) expansion;
-    std::string message = stream.str();
+    string message = stream.str();
     message[0] = char(std::toupper(message[0]));
 
     if (!messages.empty() && messages.back().getText() == message)
@@ -165,7 +165,7 @@ void Creature::addMessage(Args... messageParts)
 }
 
 Attribute stringToAttribute(boost::string_ref);
-std::vector<Attribute> stringsToAttributes(const std::vector<std::string>&);
+std::vector<Attribute> stringsToAttributes(const std::vector<string>&);
 boost::string_ref toString(EquipmentSlot slot)
 {
     switch (slot)
@@ -183,7 +183,7 @@ std::vector<Attribute> Creature::initDisplayedAttributes(boost::string_ref id)
 {
     std::vector<Attribute> displayedAttributes;
 
-    for (var attribute : Game::creatureConfig->get<std::vector<std::string>>(id, "DisplayedAttributes"))
+    for (var attribute : Game::creatureConfig->get<std::vector<string>>(id, "DisplayedAttributes"))
         displayedAttributes.push_back(stringToAttribute(attribute));
 
     return displayedAttributes;
@@ -222,7 +222,7 @@ Creature::Creature(Tile tile, boost::string_ref id, std::unique_ptr<Controller> 
 
     generateAttributes(id);
 
-    if (var initialEquipment = getConfig().getOptional<std::vector<std::string>>(getId(), "Equipment"))
+    if (var initialEquipment = getConfig().getOptional<std::vector<string>>(getId(), "Equipment"))
     {
         for (var itemId : *initialEquipment)
         {
@@ -344,7 +344,7 @@ void Creature::generateAttributes(boost::string_ref id)
 {
     attributeValues.resize(Game::creatureConfig->get<int>(id, "Attributes"));
 
-    var attributeStrings = Game::creatureConfig->get<std::vector<std::string>>(id, "ConfigAttributes");
+    var attributeStrings = Game::creatureConfig->get<std::vector<string>>(id, "ConfigAttributes");
     var configAttributes = stringsToAttributes(attributeStrings);
 
     for (var attribute : configAttributes)
@@ -705,7 +705,7 @@ bool Creature::eat(Item itemToEat)
 {
     assert(itemToEat.isEdible());
 
-    if (var leftoverItemId = Game::itemConfig->getOptional<std::string>(itemToEat.getId(), "leftoverItem"))
+    if (var leftoverItemId = Game::itemConfig->getOptional<string>(itemToEat.getId(), "leftoverItem"))
         getTileUnder(0).addItem(std::make_unique<Item>(*leftoverItemId, ""));
 
     addMessage("You eat the ", itemToEat.getName(), ".");
@@ -771,7 +771,7 @@ Attribute stringToAttribute(boost::string_ref string)
     throw std::invalid_argument("string didn't match any attribute.");
 }
 
-std::vector<Attribute> stringsToAttributes(const std::vector<std::string>& strings)
+std::vector<Attribute> stringsToAttributes(const std::vector<string>& strings)
 {
     std::vector<Attribute> attributes;
 

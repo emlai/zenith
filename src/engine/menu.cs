@@ -13,9 +13,9 @@ struct MenuItem
 
     const int id;
     Sprite const mainImage;
-    const std::string mainText;
+    const string mainText;
     Sprite const secondaryImage;
-    const std::string secondaryText;
+    const string secondaryText;
     const Key shortcut;
 }
 
@@ -35,7 +35,7 @@ public:
     void render(Window window) override;
     void setWrap(bool state) { wrapEnabled = state; }
     void setHotkeyStyle(HotkeyStyle style) { hotkeyStyle = style; }
-    void setHotkeySuffix(std::string string) { hotkeySuffix = std::move(string); }
+    void setHotkeySuffix(string string) { hotkeySuffix = std::move(string); }
     void setTextLayout(TextLayout layout) { textLayout = layout; }
     void setItemLayout(ItemLayout layout) { itemLayout = layout; }
     void setItemSpacing(int amount) { itemSpacing = amount; }
@@ -55,15 +55,15 @@ private:
     int calculateMaxTextSize() const;
     void calculateSize();
     void calculateItemPositions();
-    std::string getHotkeyPrefix(int index) const;
+    string getHotkeyPrefix(int index) const;
     int calculateMainImageColumnWidth() const;
 
-    std::string title;
+    string title;
     std::vector<MenuItem> menuItems;
     std::vector<Rect> itemPositions;
     bool wrapEnabled;
     HotkeyStyle hotkeyStyle;
-    std::string hotkeySuffix;
+    string hotkeySuffix;
     TextLayout textLayout;
     ItemLayout itemLayout;
     int itemSpacing;
@@ -315,7 +315,7 @@ void Menu::render(Window window)
     }
 }
 
-std::string Menu::getHotkeyPrefix(int index) const
+string Menu::getHotkeyPrefix(int index) const
 {
     switch (hotkeyStyle)
     {

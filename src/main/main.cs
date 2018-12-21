@@ -9,7 +9,7 @@
 class LoadingScreen : public State
 {
 public:
-    LoadingScreen(std::string text) : text(std::move(text)) {}
+    LoadingScreen(string text) : text(std::move(text)) {}
 
     void render(Window window) override
     {
@@ -28,7 +28,7 @@ public:
     }
 
 private:
-    std::string text;
+    string text;
 }
 
 static var preferencesFileName = "prefs.cfg";
@@ -254,7 +254,7 @@ class Program
 {
     static void Main(string[] args)
     {
-        if (argc == 2 && std::string(argv[1]) == "--version")
+        if (argc == 2 && string(argv[1]) == "--version")
         {
             std::cout << PROJECT_NAME << ' ' << PROJECT_VERSION << std::endl;
             return 0;
@@ -288,7 +288,7 @@ class Program
         }
         catch (std::exception exception)
         {
-            engine.reportErrorToUser(std::string("Unhandled exception: ") + exception.what());
+            engine.reportErrorToUser(string("Unhandled exception: ") + exception.what());
         }
 
         return 0;
