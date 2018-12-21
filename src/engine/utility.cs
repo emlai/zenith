@@ -1,9 +1,3 @@
-#include <boost/preprocessor/cat.hpp>
-#include <boost/utility/string_ref.hpp>
-#include <ostream>
-#include <string>
-#include <vector>
-
 template<typename T>
 std::ostream& operator<<(std::ostream& outputStream, const std::vector<T>& elements)
 {
@@ -54,9 +48,6 @@ Deferrer<T> operator+(DeferHelper, T deferred)
 }
 
 #define DEFER auto BOOST_PP_CAT(defer, __LINE__) = DeferHelper() + [&]
-#include "utility.h"
-#include <cctype>
-
 std::string changeFileExtension(boost::string_ref fileName, boost::string_ref newExtension)
 {
     auto dotPosition = fileName.rfind(".");

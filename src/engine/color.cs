@@ -1,6 +1,3 @@
-#include "math.h"
-#include <climits>
-
 template<typename T>
 struct Color;
 

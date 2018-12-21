@@ -21,9 +21,6 @@ enum Action : int
 
 const char* toString(Action action);
 double getAPCost(Action action, const Creature& actor);
-#include "action.h"
-#include "creature.h"
-
 static bool isMovementAction(Action action)
 {
     return action == Move || action == GoUpOrDown;

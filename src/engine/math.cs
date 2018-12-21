@@ -1,8 +1,3 @@
-#include <algorithm>
-#include <cassert>
-#include <functional>
-#include <limits>
-
 template<typename T>
 struct Vector2Base;
 
@@ -89,11 +84,6 @@ auto& randomElement(IndexableContainer&& container)
 /// line algorithm. Stops processing and returns false if `process` returns false. Otherwise returns
 /// true after processing all points.
 bool raycastIntegerBresenham(Vector2 source, Vector2 target, const std::function<bool(Vector2)>& process);
-#include "math.h"
-#include "geometry.h"
-#include <random>
-#include <algorithm>
-
 const Vector2 directionVectors[] =
 {
     {0, 0}, {1, 0}, {1, 1}, {0, 1}, {-1, 1}, {-1, 0}, {-1, -1}, {0, -1}, {1, -1}

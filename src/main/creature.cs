@@ -1,17 +1,3 @@
-#include "controller.h"
-#include "entity.h"
-#include "msgsystem.h"
-#include "engine/geometry.h"
-#include "engine/sprite.h"
-#include "engine/utility.h"
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
-#include <cctype>
-#include <memory>
-#include <sstream>
-#include <string>
-#include <vector>
-
 class Item;
 class Message;
 class SaveFile;
@@ -186,18 +172,6 @@ void Creature::addMessage(Args&&... messageParts)
 
 Attribute stringToAttribute(boost::string_ref);
 std::vector<Attribute> stringsToAttributes(const std::vector<std::string>&);
-#include "creature.h"
-#include "action.h"
-#include "controller.h"
-#include "game.h"
-#include "msgsystem.h"
-#include "tile.h"
-#include "engine/savefile.h"
-#include <cassert>
-#include <cctype>
-#include <iomanip>
-#include <sstream>
-
 boost::string_ref toString(EquipmentSlot slot)
 {
     switch (slot)

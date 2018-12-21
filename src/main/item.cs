@@ -1,9 +1,3 @@
-#include "entity.h"
-#include "engine/geometry.h"
-#include "engine/sprite.h"
-#include <boost/utility/string_ref.hpp>
-#include <memory>
-
 class Creature;
 class SaveFile;
 class Window;
@@ -49,16 +43,6 @@ private:
 
     std::unique_ptr<Creature> creature;
 };
-#include "item.h"
-#include "creature.h"
-#include "game.h"
-#include "gui.h"
-#include "tile.h"
-#include "engine/savefile.h"
-#include <boost/algorithm/string/erase.hpp>
-#include <boost/algorithm/string/predicate.hpp>
-#include <iostream>
-
 static Color16 getMaterialColor(boost::string_ref materialId)
 {
     if (!materialId.empty())

@@ -1,9 +1,3 @@
-#include "ai.h"
-#include "engine/geometry.h"
-#include "engine/keyboard.h"
-#include <boost/utility/string_ref.hpp>
-#include <memory>
-
 class Config;
 class Creature;
 class Game;
@@ -46,13 +40,6 @@ void mapKey(Key key, Action action);
 void loadKeyMap(const Config* config);
 void saveKeyMap(Config& config);
 Dir8 getDirectionFromEvent(Event event, Vector2 origin);
-#include "controller.h"
-#include "action.h"
-#include "creature.h"
-#include "game.h"
-#include "engine/menu.h"
-#include "engine/window.h"
-
 Controller::~Controller() {}
 
 std::unique_ptr<AIController> AIController::get(boost::string_ref id, Creature& creature)

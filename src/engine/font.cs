@@ -1,8 +1,3 @@
-#include "texture.h"
-#include "color.h"
-#include "geometry.h"
-#include <boost/utility/string_ref.hpp>
-
 class Window;
 
 enum HorizontalAlignment { LeftAlign, HorizontalCenter, RightAlign };
@@ -74,12 +69,6 @@ private:
     static const Vector2 dimensions;
     static const int chars = 96;
 };
-#include "font.h"
-#include "geometry.h"
-#include "window.h"
-#include <algorithm>
-#include <sstream>
-
 const Vector2 BitmapFont::dimensions = Vector2(16, 6);
 
 BitmapFont::BitmapFont(boost::string_ref fileName, Vector2 charSize)

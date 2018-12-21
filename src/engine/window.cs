@@ -1,8 +1,3 @@
-#include "texture.h"
-#include "graphics.h"
-#include "keyboard.h"
-#include <memory>
-
 class Engine;
 struct SDL_Window;
 
@@ -69,16 +64,6 @@ private:
     static bool sdlVideoInitialized;
     static const int fullscreenFlag;
 };
-#include "window.h"
-#include "engine.h"
-#include "geometry.h"
-#include "keyboard.h"
-#include "texture.h"
-#include <SDL.h>
-#include <cctype>
-#include <climits>
-#include <stdexcept>
-
 int Window::windowCount = 0;
 bool Window::sdlVideoInitialized = false;
 const int Window::fullscreenFlag = SDL_WINDOW_FULLSCREEN_DESKTOP;

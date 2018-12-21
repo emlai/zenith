@@ -1,7 +1,3 @@
-#include "../component.h"
-#include "engine/color.h"
-#include "engine/geometry.h"
-
 class World;
 
 class LightSource : public Component
@@ -13,11 +9,6 @@ public:
 
     static const int maxRadius = 20;
 };
-#include "lightsource.h"
-#include "../tile.h"
-#include "../world.h"
-#include "engine/window.h"
-
 void LightSource::emitLight(World& world, Vector2 position, int level) const
 {
     position = position.divideRoundingDown(Tile::getSize());

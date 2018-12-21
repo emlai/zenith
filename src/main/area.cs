@@ -1,7 +1,3 @@
-#include "tile.h"
-#include "engine/geometry.h"
-#include <vector>
-
 class SaveFile;
 class Tile;
 class Window;
@@ -31,10 +27,6 @@ private:
     World& world;
     Vector2 position;
 };
-#include "area.h"
-#include "tile.h"
-#include "engine/savefile.h"
-
 const Vector2 Area::sizeVector = Vector2(Area::size, Area::size);
 
 Area::Area(World& world, Vector2 position, int level)

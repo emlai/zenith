@@ -1,5 +1,3 @@
-#include "../component.h"
-
 class Dig : public Component
 {
     bool isUsable() const override { return true; }
@@ -7,10 +5,6 @@ class Dig : public Component
     void save(SaveFile&) const override {}
     void load(const SaveFile&) override {}
 };
-#include "dig.h"
-#include "../game.h"
-#include "../tile.h"
-
 bool Dig::use(Creature& digger, Item& digItem, Game& game)
 {
     if (auto direction = game.askForDirection("Where do you want to dig?"))

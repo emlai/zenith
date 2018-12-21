@@ -1,9 +1,3 @@
-#include "geometry.h"
-#include <SDL.h>
-#include <boost/utility/string_ref.hpp>
-#include <functional>
-#include <string>
-
 class Window;
 
 using Key = decltype(SDL_Keysym::sym);
@@ -52,15 +46,6 @@ namespace keyboard
     int readLine(Window&, std::string& lineContent, Vector2 position, const std::function<void(Window&)>&,
                  boost::string_ref prefix = "");
 }
-#include "keyboard.h"
-#include "font.h"
-#include "geometry.h"
-#include "window.h"
-#include <SDL.h>
-#include <cctype>
-#include <cassert>
-#include <climits>
-
 std::string toString(Key key)
 {
     if (key > 0 && key <= UCHAR_MAX && std::islower(key))

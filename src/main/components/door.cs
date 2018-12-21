@@ -1,5 +1,3 @@
-#include "../component.h"
-
 class Door : public Component
 {
     bool reactToMovementAttempt() override;
@@ -14,10 +12,6 @@ private:
 
     bool isOpen = false;
 };
-#include "door.h"
-#include "../object.h"
-#include "engine/savefile.h"
-
 bool Door::reactToMovementAttempt()
 {
     if (!isOpen)

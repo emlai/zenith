@@ -1,17 +1,3 @@
-#include "action.h"
-#include "game.h"
-#include "gui.h"
-#include "engine/engine.h"
-#include "engine/menu.h"
-#include "engine/geometry.h"
-#include "engine/utility.h"
-#include "engine/window.h"
-#include <boost/filesystem.hpp>
-#include <cassert>
-#include <cstdio>
-#include <iostream>
-#include <memory>
-
 static BitmapFont initFont()
 {
     BitmapFont font("data/graphics/font-8x10.bmp", Vector2(8, 10));

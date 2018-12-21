@@ -1,7 +1,3 @@
-#include <boost/utility/string_ref.hpp>
-#include <cassert>
-#include <memory>
-
 class Creature;
 class Entity;
 class Game;
@@ -28,11 +24,6 @@ public:
 private:
     Entity* parent;
 };
-#include "component.h"
-#include "components/dig.h"
-#include "components/door.h"
-#include "components/lightsource.h"
-
 Component::~Component() {}
 
 std::unique_ptr<Component> Component::get(boost::string_ref name, Entity& parent)

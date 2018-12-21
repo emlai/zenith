@@ -1,9 +1,3 @@
-#include "geometry.h"
-#include <boost/utility/string_ref.hpp>
-#include <fstream>
-#include <memory>
-#include <vector>
-
 struct SDL_RWops;
 
 class SaveFile
@@ -86,11 +80,6 @@ inline double SaveFile::read<double>() const
 {
     return readDouble();
 }
-#include "savefile.h"
-#include <SDL.h>
-#include <cstring>
-#include <stdexcept>
-
 static void closeFile(SDL_RWops* file)
 {
     SDL_RWclose(file);

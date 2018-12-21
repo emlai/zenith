@@ -1,15 +1,3 @@
-#include "entity.h"
-#include "creature.h"
-#include "item.h"
-#include "liquid.h"
-#include "object.h"
-#include "engine/color.h"
-#include "engine/geometry.h"
-#include "engine/sprite.h"
-#include <boost/utility/string_ref.hpp>
-#include <memory>
-#include <vector>
-
 class Area;
 class LightSource;
 class Object;
@@ -86,18 +74,6 @@ Creature* Tile::spawnCreature(Args&&... creatureArgs)
     addCreature(std::make_unique<Creature>(this, std::forward<Args>(creatureArgs)...));
     return creatures.back().get();
 }
-#include "tile.h"
-#include "area.h"
-#include "game.h"
-#include "gui.h"
-#include "world.h"
-#include "components/lightsource.h"
-#include "engine/savefile.h"
-#include "engine/texture.h"
-#include <boost/range/adaptor/reversed.hpp>
-#include <cassert>
-#include <cmath>
-
 const Vector2 Tile::spriteSize(20, 20);
 
 Tile::Tile(World& world, Vector2 position, int level, boost::string_ref groundId)

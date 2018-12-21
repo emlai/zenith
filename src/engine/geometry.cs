@@ -1,9 +1,3 @@
-#include "math.h"
-#include "utility.h"
-#include <boost/functional/hash.hpp>
-#include <cassert>
-#include <cmath>
-
 enum Dir8
 {
     NoDir,

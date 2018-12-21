@@ -1,13 +1,3 @@
-#include "utility.h"
-#include <boost/optional.hpp>
-#include <boost/numeric/conversion/cast.hpp>
-#include <boost/unordered_map.hpp>
-#include <fstream>
-#include <functional>
-#include <stdexcept>
-#include <string>
-#include <vector>
-
 class ConfigReader;
 
 class Config
@@ -292,10 +282,6 @@ boost::optional<ValueType> Config::getOptional(boost::string_ref type, boost::st
             throw std::runtime_error("BaseType of \"" + current + "\" has wrong type!");
     }
 }
-#include "config.h"
-#include <cctype>
-#include <fstream>
-
 /// Wrapper around std::ifstream that keeps track of the current line and column.
 class ConfigReader
 {

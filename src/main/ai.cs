@@ -1,6 +1,3 @@
-#include <boost/utility/string_ref.hpp>
-#include <memory>
-
 class Creature;
 enum Action : int;
 
@@ -22,11 +19,6 @@ private:
     using AI::AI;
     Action control() override;
 };
-#include "ai.h"
-#include "action.h"
-#include "creature.h"
-#include <stdexcept>
-
 std::unique_ptr<AI> AI::get(boost::string_ref id, Creature& creature)
 {
     if (id == "AttackNearestEnemy") return std::make_unique<AttackNearestEnemy>(creature);

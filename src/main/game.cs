@@ -1,13 +1,3 @@
-#include "creature.h"
-#include "world.h"
-#include "engine/config.h"
-#include "engine/color.h"
-#include "engine/keyboard.h"
-#include "engine/state.h"
-#include "engine/window.h"
-#include <boost/optional.hpp>
-#include <string>
-
 class Game : public State
 {
 public:
@@ -70,20 +60,6 @@ private:
     bool showExtraInfo = true;
 #endif
 };
-#include "game.h"
-#include "gui.h"
-#include "item.h"
-#include "msgsystem.h"
-#include "tile.h"
-#include "engine/engine.h"
-#include "engine/keyboard.h"
-#include "engine/math.h"
-#include "engine/menu.h"
-#include "engine/savefile.h"
-#include <cmath>
-#include <fstream>
-#include <functional>
-
 std::unique_ptr<Config> Game::creatureConfig;
 std::unique_ptr<Config> Game::objectConfig;
 std::unique_ptr<Config> Game::itemConfig;

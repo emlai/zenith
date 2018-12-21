@@ -1,10 +1,3 @@
-#include "gui.h"
-#include "engine/font.h"
-#include "engine/savefile.h"
-#include <boost/utility/string_ref.hpp>
-#include <deque>
-#include <string>
-
 enum MessageType { Normal, Warning };
 
 class Message
@@ -37,10 +30,6 @@ namespace MessageSystem
     void clearDebugMessageHistory();
 #endif
 }
-#include "msgsystem.h"
-#include "gui.h"
-#include "engine/color.h"
-
 void Message::save(SaveFile& file) const
 {
     file.write(text);

@@ -1,10 +1,3 @@
-#include "component.h"
-#include "engine/config.h"
-#include <boost/utility/string_ref.hpp>
-#include <memory>
-#include <string>
-#include <vector>
-
 class Entity
 {
 public:
@@ -49,10 +42,6 @@ std::vector<ComponentType*> Entity::getComponentsOfType() const
 
     return componentsOfType;
 }
-#include "entity.h"
-#include <boost/unordered_set.hpp>
-#include <iostream>
-
 static void reportUnknownComponent(boost::string_ref name)
 {
     static boost::unordered_set<std::string> reportedNames;

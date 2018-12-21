@@ -1,6 +1,3 @@
-#include "engine/texture.h"
-#include <boost/utility/string_ref.hpp>
-
 class SaveFile;
 class Window;
 
@@ -21,10 +18,6 @@ private:
     double fadeLevel;
     Texture texture;
 };
-#include "liquid.h"
-#include "game.h"
-#include "tile.h"
-
 Liquid::Liquid(boost::string_ref materialId)
 :   materialId(materialId),
     fadeLevel(1.0),

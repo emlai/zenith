@@ -1,9 +1,3 @@
-#include "color.h"
-#include "geometry.h"
-#include <SDL.h>
-#include <memory>
-#include <vector>
-
 struct SDL_Renderer;
 struct SDL_Surface;
 
@@ -30,12 +24,6 @@ private:
     std::unique_ptr<SDL_Surface, void (*)(SDL_Surface*)> surface;
     std::vector<Color32> pixelData;
 };
-#include "texture.h"
-#include "geometry.h"
-#include "window.h"
-#include <SDL.h>
-#include <stdexcept>
-
 struct PixelFormatMasks
 {
     uint32_t red, green, blue, alpha;

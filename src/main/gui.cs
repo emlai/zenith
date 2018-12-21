@@ -1,10 +1,3 @@
-#include "engine/color.h"
-#include "engine/geometry.h"
-#include "engine/window.h"
-#include <boost/utility/string_ref.hpp>
-#include <memory>
-#include <vector>
-
 class Config;
 class Sprite;
 
@@ -83,12 +76,6 @@ namespace GUI
 
 Sprite getSprite(const Texture& spriteSheet, const Config& config, boost::string_ref id,
                  int frame = 0, Color32 materialColor = Color32::none);
-#include "gui.h"
-#include "tile.h"
-#include "engine/config.h"
-#include <cctype>
-#include <stdexcept>
-
 Rect getSpriteTextureRegion(const Config& config, boost::string_ref id)
 {
     auto components = config.get<std::vector<int>>(id, "spritePosition");

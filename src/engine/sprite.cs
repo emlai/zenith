@@ -1,6 +1,3 @@
-#include "color.h"
-#include "geometry.h"
-
 class BitmapFont;
 class Texture;
 class Window;
@@ -34,13 +31,6 @@ private:
     static bool asciiGraphics;
     static BitmapFont* asciiGraphicsFont;
 };
-#include "sprite.h"
-#include "font.h"
-#include "geometry.h"
-#include "texture.h"
-#include "window.h"
-#include <SDL.h>
-
 bool Sprite::asciiGraphics;
 BitmapFont* Sprite::asciiGraphicsFont;
 

@@ -1,10 +1,3 @@
-#include "geometry.h"
-#include "keyboard.h"
-#include "state.h"
-#include "utility.h"
-#include <boost/utility/string_ref.hpp>
-#include <vector>
-
 class Window;
 
 class Engine
@@ -35,13 +28,6 @@ auto Engine::execute(StateType& state)
     DEFER { states.pop_back(); };
     return state.execute();
 }
-#include "engine.h"
-#include "keyboard.h"
-#include "state.h"
-#include "window.h"
-#include <functional>
-#include <iostream>
-
 Window& Engine::createWindow(Vector2 size, boost::string_ref title, bool fullscreen)
 {
     windows.emplace_back(*this, size, title, fullscreen);

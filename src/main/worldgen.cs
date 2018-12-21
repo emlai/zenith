@@ -1,7 +1,3 @@
-#include "engine/geometry.h"
-#include <boost/optional.hpp>
-#include <vector>
-
 class Tile;
 class World;
 struct Rect;
@@ -51,16 +47,6 @@ private:
 
     World& world;
 };
-#include "worldgen.h"
-#include "game.h"
-#include "object.h"
-#include "tile.h"
-#include "world.h"
-#include "engine/geometry.h"
-#include "engine/math.h"
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
-
 Building::Building(std::vector<Room>&& rooms)
 :   rooms(std::move(rooms))
 {

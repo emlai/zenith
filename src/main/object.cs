@@ -1,8 +1,3 @@
-#include "entity.h"
-#include "engine/sprite.h"
-#include <boost/utility/string_ref.hpp>
-#include <memory>
-
 class SaveFile;
 
 class Object : public Entity
@@ -19,10 +14,6 @@ public:
 private:
     Sprite sprite;
 };
-#include "object.h"
-#include "game.h"
-#include "gui.h"
-
 Object::Object(boost::string_ref id)
 :   Entity(id, *Game::objectConfig),
     sprite(::getSprite(*Game::objectSpriteSheet, *Game::objectConfig, id))

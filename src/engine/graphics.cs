@@ -1,10 +1,3 @@
-#include "color.h"
-#include "geometry.h"
-#include "texture.h"
-#include <SDL.h>
-#include <boost/optional.hpp>
-#include <memory>
-
 class BitmapFont;
 class Window;
 
@@ -46,13 +39,6 @@ private:
     BitmapFont* font;
     int animationFrameTime;
 };
-#include "graphics.h"
-#include "texture.h"
-#include "color.h"
-#include "font.h"
-#include "geometry.h"
-#include "window.h"
-
 GraphicsContext::GraphicsContext(const Window& window)
 :   window(window),
     renderer(SDL_CreateRenderer(window.windowHandle.get(), -1, 0), SDL_DestroyRenderer),

@@ -1,11 +1,3 @@
-#include "color.h"
-#include "font.h"
-#include "keyboard.h"
-#include "geometry.h"
-#include "state.h"
-#include <boost/optional.hpp>
-#include <vector>
-
 class Sprite;
 class Window;
 
@@ -88,14 +80,6 @@ private:
     static Color32 defaultTextColor;
     static Color32 defaultHoverColor;
 };
-#include "menu.h"
-#include "engine.h"
-#include "font.h"
-#include "window.h"
-#include "sprite.h"
-#include <algorithm>
-#include <cctype>
-
 Color32 Menu::defaultTextColor = Color32::white * 0.6;
 Color32 Menu::defaultHoverColor = Color32::white;
 

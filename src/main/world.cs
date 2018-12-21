@@ -1,11 +1,3 @@
-#include "area.h"
-#include "engine/color.h"
-#include "engine/geometry.h"
-#include <boost/unordered_map.hpp>
-#include <fstream>
-#include <functional>
-#include <memory>
-
 class Creature;
 class Game;
 class SaveFile;
@@ -41,13 +33,6 @@ private:
     std::unique_ptr<SaveFile> saveFile;
     Color32 sunlight;
 };
-#include "world.h"
-#include "game.h"
-#include "tile.h"
-#include "worldgen.h"
-#include "components/lightsource.h"
-#include "engine/savefile.h"
-
 void World::load(SaveFile& file)
 {
     auto areaCount = file.readInt32();
