@@ -62,12 +62,12 @@ struct Vector2Base<T>
 
     Vector2Base operator+(Vector2Base vector) { return Vector2Base(x + vector.x, y + vector.y); }
     Vector2Base operator-(Vector2Base vector) { return Vector2Base(x - vector.x, y - vector.y); }
-    Vector2Base operator(Vector2Base vector) { return Vector2Base(x * vector.x, y * vector.y); }
+    Vector2Base operator*(Vector2Base vector) { return Vector2Base(x * vector.x, y * vector.y); }
     Vector2Base operator/(Vector2Base vector) { return Vector2Base(x / vector.x, y / vector.y); }
     Vector2Base operator%(Vector2Base vector) { return Vector2Base(x % vector.x, y % vector.y); }
 
     template<typename U, typename = std::enable_if_t<std::is_arithmetic<U>::value>>
-    Vector2Base operator(U multiplier) { return Vector2Base(T(x * multiplier), T(y * multiplier)); }
+    Vector2Base operator*(U multiplier) { return Vector2Base(T(x * multiplier), T(y * multiplier)); }
     template<typename U, typename = std::enable_if_t<std::is_arithmetic<U>::value>>
     Vector2Base operator/(U divisor) { return Vector2Base(T(x / divisor), T(y / divisor)); }
     template<typename U, typename = std::enable_if_t<std::is_arithmetic<U>::value>>
@@ -202,7 +202,7 @@ struct Vector3Base<T>
 
     Vector3Base operator+(Vector3Base vector) { return Vector3Base(x + vector.x, y + vector.y, z + vector.z); }
     Vector3Base operator-(Vector3Base vector) { return Vector3Base(x - vector.x, y - vector.y, z - vector.z); }
-    Vector3Base operator(Vector3Base vector) { return Vector3Base(x * vector.x, y * vector.y, z * vector.z); }
+    Vector3Base operator*(Vector3Base vector) { return Vector3Base(x * vector.x, y * vector.y, z * vector.z); }
     Vector3Base operator/(Vector3Base vector) { return Vector3Base(x / vector.x, y / vector.y, z / vector.z); }
     Vector3Base operator%(Vector3Base vector) { return Vector3Base(x % vector.x, y % vector.y, z % vector.z); }
 

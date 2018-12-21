@@ -54,7 +54,7 @@ struct Color<T>
         return *this;
     }
 
-    Color operator(double mod) { return Color(*this) *= mod; }
+    Color operator*(double mod) { return Color(*this) *= mod; }
 
     explicit operator bool() { return value != 0; }
 
