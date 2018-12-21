@@ -16,6 +16,8 @@ rules.ninja
 *.vcxproj.filters
 *.vcxproj.user
 .vs
+[Oo]bj
+.idea
 
 *build
 Debug
