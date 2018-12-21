@@ -40,7 +40,7 @@ Controller::~Controller() {}
 
 std::unique_ptr<AIController> AIController::get(boost::string_ref id, Creature& creature)
 {
-    auto ai = AI::get(Game::creatureConfig->get<std::string>(id, "ai"), creature);
+    var ai = AI::get(Game::creatureConfig->get<std::string>(id, "ai"), creature);
     return std::make_unique<AIController>(std::move(ai));
 }
 
@@ -49,7 +49,7 @@ Action AIController::control(Creature& creature)
     if (creature.isDead())
         return Wait;
 
-    auto action = ai->control();
+    var action = ai->control();
     assert(action != NoAction);
     return action;
 }
@@ -63,14 +63,14 @@ Action PlayerController::control(Creature& creature)
         Event event = game.getWindow().waitForInput();
 
         if (!creature.isDead())
-            if (auto direction = getDirectionFromEvent(event, creature.getPosition()))
-                if (auto action = creature.tryToMoveOrAttack(direction))
+            if (var direction = getDirectionFromEvent(event, creature.getPosition()))
+                if (var action = creature.tryToMoveOrAttack(direction))
                     return action;
 
         if (event.type != Event::KeyDown)
             continue;
 
-        auto action = getMappedAction(event.key);
+        var action = getMappedAction(event.key);
 
         switch (action)
         {
@@ -106,7 +106,7 @@ Action PlayerController::control(Creature& creature)
                     break;
 
                 int selectedItemIndex = game.showInventory("What do you want to use?", false,
-                                                           nullptr, [](auto& item)
+                                                           nullptr, [](var item)
                 {
                     return item.isUsable();
                 });
@@ -123,7 +123,7 @@ Action PlayerController::control(Creature& creature)
                     break;
 
                 int selectedItemIndex = game.showInventory("What do you want to eat?", false,
-                                                           nullptr, [](auto& item)
+                                                           nullptr, [](var item)
                 {
                     return item.isEdible();
                 });
@@ -182,12 +182,12 @@ Action PlayerController::control(Creature& creature)
 
                     case F3:
                     {
-                        auto itemName = game.askForString("Which item do you want to spawn?");
+                        var itemName = game.askForString("Which item do you want to spawn?");
 
                         if (itemName.empty())
                             break;
 
-                        auto materialName = game.askForString("Which material do you want to use for the item?");
+                        var materialName = game.askForString("Which material do you want to use for the item?");
                         creature.getTileUnder(0).addItem(std::make_unique<Item>(itemName, materialName));
                         break;
                     }
@@ -228,7 +228,7 @@ void mapKey(Key key, Action action)
 {
     if (key >= 0 && key < keyMapSize)
     {
-        auto oldKey = getMappedKey(action);
+        var oldKey = getMappedKey(action);
         keyMap[oldKey] = NoAction;
         keyMap[key] = action;
     }
@@ -257,7 +257,7 @@ void loadKeyMap(const Config* config)
 {
     for (int i = NoAction + 1; i < LastAction; ++i)
     {
-        auto action = static_cast<Action>(i);
+        var action = static_cast<Action>(i);
         Key key = config ? config->getOptional<int>(toString(action)).get_value_or(NoKey) : NoKey;
 
         if (!key)
@@ -271,7 +271,7 @@ void saveKeyMap(Config& config)
 {
     for (int i = NoAction + 1; i < LastAction; ++i)
     {
-        auto action = static_cast<Action>(i);
+        var action = static_cast<Action>(i);
         config.set(toString(action), static_cast<long long>(getMappedKey(action)));
     }
 }
@@ -282,7 +282,7 @@ Dir8 getDirectionFromEvent(Event event, Vector2 origin)
     {
         case Event::MouseButtonDown:
             if (Game::cursorPosition)
-                if (auto direction = (*Game::cursorPosition - origin).getDir8())
+                if (var direction = (*Game::cursorPosition - origin).getDir8())
                     return direction;
 
             break;

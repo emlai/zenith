@@ -36,8 +36,8 @@ std::vector<ComponentType*> Entity::getComponentsOfType() const
 {
     std::vector<ComponentType*> componentsOfType;
 
-    for (auto& component : components)
-        if (auto* p = dynamic_cast<ComponentType*>(component.get()))
+    for (var component : components)
+        if (var p = dynamic_cast<ComponentType*>(component.get()))
             componentsOfType.push_back(p);
 
     return componentsOfType;
@@ -54,11 +54,11 @@ Entity::Entity(boost::string_ref id, const Config& config)
 :   id(id),
     config(&config)
 {
-    if (auto componentNames = config.getOptional<std::vector<std::string>>(id, "components"))
+    if (var componentNames = config.getOptional<std::vector<std::string>>(id, "components"))
     {
-        for (auto& componentName : *componentNames)
+        for (var componentName : *componentNames)
         {
-            if (auto component = Component::get(componentName, *this))
+            if (var component = Component::get(componentName, *this))
                 components.push_back(std::move(component));
             else
                 reportUnknownComponent(componentName);
@@ -83,7 +83,7 @@ std::string Entity::getName() const
 
 std::string Entity::getNameIndefinite() const
 {
-    auto name = getName();
+    var name = getName();
 
     if (isVowel(name[0]))
         name.insert(0, "an ");
@@ -97,7 +97,7 @@ bool Entity::reactToMovementAttempt()
 {
     bool returnValue = false;
 
-    for (auto& component : components)
+    for (var component : components)
         if (component->reactToMovementAttempt())
             returnValue = true;
 
@@ -106,7 +106,7 @@ bool Entity::reactToMovementAttempt()
 
 bool Entity::preventsMovement() const
 {
-    for (auto& component : components)
+    for (var component : components)
         if (component->preventsMovement())
             return true;
 

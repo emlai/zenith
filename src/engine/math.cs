@@ -41,7 +41,7 @@ public:
     RNG(Generator algorithm) : algorithm(std::move(algorithm)) {}
     void seed();
     void seed(RNG::result_type);
-    auto getSeed() const { return currentSeed; }
+    var getSeed() const { return currentSeed; }
     result_type operator()() { return algorithm(); }
     static constexpr result_type max() { return std::numeric_limits<result_type>::max(); }
     static constexpr result_type min() { return std::numeric_limits<result_type>::min(); }
@@ -74,7 +74,7 @@ T randInt(T min, T max)
 }
 
 template<typename IndexableContainer>
-auto& randomElement(IndexableContainer&& container)
+var randomElement(IndexableContainer&& container)
 {
     assert(!container.empty());
     return container[randInt(container.size() - 1)];
@@ -107,8 +107,8 @@ void RNG::seed(RNG::result_type seed)
 
 uint64_t Xorshift1024Star::operator()()
 {
-    auto s0 = state[index];
-    auto s1 = state[index = (index + 1) & 15];
+    var s0 = state[index];
+    var s1 = state[index = (index + 1) & 15];
     s1 ^= s1 << 31;
     s1 ^= s1 >> 11;
     s0 ^= s0 >> 30;

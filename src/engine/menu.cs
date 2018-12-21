@@ -109,8 +109,8 @@ void Menu::clear()
 
 int Menu::execute()
 {
-    auto& window = getEngine().getWindow();
-    auto& font = window.getFont();
+    var window = getEngine().getWindow();
+    var font = window.getFont();
     TextLayout oldLayout = font.getLayout();
     font.setLayout(textLayout);
     calculateSize();
@@ -123,14 +123,14 @@ int Menu::execute()
 
         if (event.type == Event::MouseButtonDown)
         {
-            for (auto& item : itemPositions)
+            for (var item : itemPositions)
             {
                 if (!title.empty() && &item == &itemPositions[0])
                     continue; // Skip title.
 
                 if (event.mousePosition.isWithin(item))
                 {
-                    auto index = &item - &itemPositions[title.empty() ? 0 : 1];
+                    var index = &item - &itemPositions[title.empty() ? 0 : 1];
                     exitCode = menuItems[index].id;
                     break;
                 }
@@ -145,7 +145,7 @@ int Menu::execute()
         }
 
         assert(event.type == Event::KeyDown);
-        auto input = event.key;
+        var input = event.key;
 
         if (input == Esc)
         {
@@ -167,7 +167,7 @@ int Menu::execute()
         }
 
         // Handle custom shortcuts.
-        for (auto item = menuItems.begin(); item != menuItems.end(); ++item)
+        for (var item = menuItems.begin(); item != menuItems.end(); ++item)
         {
             if (input == item->shortcut)
             {
@@ -188,8 +188,8 @@ int Menu::calculateMaxTextSize() const
 
     for (const MenuItem& item : menuItems)
     {
-        auto index = &item - &menuItems[0];
-        auto currentSize = getHotkeyPrefix(index + 1).size() + item.mainText.size();
+        var index = &item - &menuItems[0];
+        var currentSize = getHotkeyPrefix(index + 1).size() + item.mainText.size();
 
         if (currentSize > maxSize)
         {
@@ -249,9 +249,9 @@ void Menu::calculateItemPositions()
 
 int Menu::calculateMainImageColumnWidth() const
 {
-    auto width = 0;
+    var width = 0;
 
-    for (auto& item : menuItems)
+    for (var item : menuItems)
     {
         if (item.mainImage)
             width = std::max(width, item.mainImage->getWidth());
@@ -262,9 +262,9 @@ int Menu::calculateMainImageColumnWidth() const
 
 void Menu::render(Window& window)
 {
-    auto& font = window.getFont();
+    var font = window.getFont();
     int index = 1;
-    auto position = itemPositions.begin();
+    var position = itemPositions.begin();
 
     if (!title.empty())
     {
@@ -273,15 +273,15 @@ void Menu::render(Window& window)
         ++position;
     }
 
-    auto mainImageColumnWidth = calculateMainImageColumnWidth();
+    var mainImageColumnWidth = calculateMainImageColumnWidth();
 
-    for (auto item = menuItems.begin(); item != menuItems.end(); ++item, ++position, ++index)
+    for (var item = menuItems.begin(); item != menuItems.end(); ++item, ++position, ++index)
     {
         Vector2 itemPosition = position->position;
         bool isHovered = window.getMousePosition().isWithin(Rect(itemPosition, position->size));
-        auto color = isHovered ? hoverColor : textColor;
+        var color = isHovered ? hoverColor : textColor;
 
-        auto hotkeyPrefix = getHotkeyPrefix(index);
+        var hotkeyPrefix = getHotkeyPrefix(index);
         font.setArea(Rect(itemPosition, position->size));
         font.print(window, hotkeyPrefix, color);
         itemPosition.x += hotkeyPrefix.size() * font.getColumnWidth() + tableCellSpacing.x;
@@ -306,7 +306,7 @@ void Menu::render(Window& window)
 
         if (!item->secondaryText.empty())
         {
-            auto oldLayout = font.getLayout();
+            var oldLayout = font.getLayout();
             font.setLayout(TextLayout(secondaryColumnAlignment, font.getLayout().verticalAlignment));
             font.setArea(Rect(itemPosition, position->size - Vector2(itemPosition.x - position->position.x, 0)));
             font.print(window, item->secondaryText, color);

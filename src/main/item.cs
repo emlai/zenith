@@ -75,7 +75,7 @@ Item::Item(boost::string_ref id, boost::string_ref materialId, Sprite sprite)
 
 std::unique_ptr<Item> Item::load(const SaveFile& file)
 {
-    auto itemId = file.readString();
+    var itemId = file.readString();
     std::unique_ptr<Item> item;
 
     if (boost::algorithm::ends_with(itemId, "Corpse"))
@@ -87,12 +87,12 @@ std::unique_ptr<Item> Item::load(const SaveFile& file)
     }
     else
     {
-        auto materialId = file.readString();
+        var materialId = file.readString();
         item = std::make_unique<Item>(itemId, materialId);
         item->sprite.setMaterialColor(Color32(file.readUint32()));
     }
 
-    for (auto& component : item->getComponents())
+    for (var component : item->getComponents())
         component->load(file);
 
     return item;
@@ -103,13 +103,13 @@ void Item::save(SaveFile& file) const
     file.write(getId());
     file.write(materialId);
     file.writeInt32(sprite.getMaterialColor().value);
-    for (auto& component : getComponents())
+    for (var component : getComponents())
         component->save(file);
 }
 
 bool Item::isUsable() const
 {
-    for (auto& component : getComponents())
+    for (var component : getComponents())
         if (component->isUsable())
             return true;
 
@@ -121,7 +121,7 @@ bool Item::use(Creature& user, Game& game)
     assert(isUsable());
     bool returnValue = false;
 
-    for (auto& component : getComponents())
+    for (var component : getComponents())
         if (component->use(user, *this, game))
             returnValue = true;
 
@@ -135,7 +135,7 @@ bool Item::isEdible() const
 
 EquipmentSlot Item::getEquipmentSlot() const
 {
-    auto slotString = getConfig().getOptional<std::string>(getId(), "EquipmentSlot").get_value_or("Hand");
+    var slotString = getConfig().getOptional<std::string>(getId(), "EquipmentSlot").get_value_or("Hand");
 
     if (slotString == "Head") return Head;
     if (slotString == "Torso") return Torso;
@@ -165,7 +165,7 @@ void Item::renderEquipped(Window& window, Vector2 position) const
 
 std::string getRandomMaterialId(boost::string_ref itemId)
 {
-    auto materials = Game::itemConfig->get<std::vector<std::string>>(itemId, "PossibleMaterials");
+    var materials = Game::itemConfig->get<std::vector<std::string>>(itemId, "PossibleMaterials");
     return materials.empty() ? "" : randomElement(materials);
 }
 

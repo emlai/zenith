@@ -13,7 +13,7 @@ public:
     void setScale(double scale);
     double getScale() const;
     void setAnimationFrameRate(int framesPerSecond);
-    auto getAnimationFrameTime() const { return animationFrameTime; }
+    var getAnimationFrameTime() const { return animationFrameTime; }
     void updateScreen();
     SDL_Renderer* getRenderer() const { return renderer.get(); }
     void renderRectangle(Rect rectangle, Color32 color);
@@ -175,18 +175,18 @@ void GraphicsContext::renderFilledRectangle(Rect rectangle, Color32 color, Blend
             double dstG = color.getGreen() / 255.0;
             double dstB = color.getBlue() / 255.0;
             uint32_t* pixels = static_cast<uint32_t*>(targetSurface->pixels);
-            auto targetWidth = targetSurface->w;
+            var targetWidth = targetSurface->w;
 
-            for (auto y = rectangle.getTop(); y <= rectangle.getBottom(); ++y)
+            for (var y = rectangle.getTop(); y <= rectangle.getBottom(); ++y)
             {
-                for (auto x = rectangle.getLeft(); x <= rectangle.getRight(); ++x)
+                for (var x = rectangle.getLeft(); x <= rectangle.getRight(); ++x)
                 {
                     uint32_t* pixel = pixels + (y * targetWidth + x);
                     double srcR = ((*pixel & 0xFF000000) >> 24) / 255.0;
                     double srcG = ((*pixel & 0x00FF0000) >> 16) / 255.0;
                     double srcB = ((*pixel & 0x0000FF00) >> 8) / 255.0;
 
-                    auto blendLinearLight = [](auto& src, auto dst)
+                    var blendLinearLight = [](var src, var dst)
                     {
                         if (dst > 0.5)
                             src += 2.0 * dst - 1.0;
@@ -198,7 +198,7 @@ void GraphicsContext::renderFilledRectangle(Rect rectangle, Color32 color, Blend
                     blendLinearLight(srcG, dstG);
                     blendLinearLight(srcB, dstB);
 
-                    auto wrap = [](auto& src)
+                    var wrap = [](var src)
                     {
                         if (src > 1.0)
                             src = 1.0;

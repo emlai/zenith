@@ -162,8 +162,8 @@ Vector2 BitmapFont::printHelper(Window& window, boost::string_ref text, Vector2 
 
     if (!lineContinuation)
     {
-        const auto lineCount = 1 + std::count(text.begin(), text.end(), '\n');
-        const auto textHeight = lineCount * moveVector.y;
+        var lineCount = 1 + std::count(text.begin(), text.end(), '\n');
+        var textHeight = lineCount * moveVector.y;
 
         switch (layout.verticalAlignment)
         {
@@ -173,7 +173,7 @@ Vector2 BitmapFont::printHelper(Window& window, boost::string_ref text, Vector2 
         }
     }
 
-    for (auto character = text.begin(), lineBegin = text.begin();; ++character)
+    for (var character = text.begin(), lineBegin = text.begin();; ++character)
     {
         if (*character == '\n' || character == text.end())
         {
@@ -206,11 +206,11 @@ void BitmapFont::printLine(Window& window, PrintIterator lineBegin, PrintIterato
         }
     }
 
-    for (auto character = lineBegin; character != lineEnd; ++character)
+    for (var character = lineBegin; character != lineEnd; ++character)
     {
         if (*character >= ' ')
         {
-            const auto index = *character - ' ';
+            var index = *character - ' ';
             source.position = charSize * Vector2(index % dimensions.x, index / dimensions.x);
             window.getGraphicsContext().renderFilledRectangle(target, backgroundColor);
             texture.render(window, source, target);
@@ -226,7 +226,7 @@ Vector2 BitmapFont::getTextSize(boost::string_ref text) const
     int currentLineLength = 0;
     int lineCount = 0;
 
-    for (auto& character : text)
+    for (var character : text)
     {
         if (character != '\n')
         {

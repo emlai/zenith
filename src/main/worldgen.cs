@@ -55,8 +55,8 @@ std::vector<Tile*> Building::getDoorTiles() const
 {
     std::vector<Tile*> doorTiles;
 
-    for (auto& room : rooms)
-        for (auto* doorTile : room.getDoorTiles())
+    for (var room : rooms)
+        for (var doorTile : room.getDoorTiles())
             doorTiles.push_back(doorTile);
 
     return doorTiles;
@@ -69,7 +69,7 @@ WorldGenerator::WorldGenerator(World& world)
 
 void WorldGenerator::generateRegion(Rect region, int level)
 {
-    auto buildings = generateBuildings(region, level);
+    var buildings = generateBuildings(region, level);
 
     if (level < 0)
         generatePaths(buildings);
@@ -80,8 +80,8 @@ void WorldGenerator::generateRegion(Rect region, int level)
 
 std::vector<Building> WorldGenerator::generateBuildings(Rect region, int level)
 {
-    auto minSize = 4;
-    auto maxSize = 10;
+    var minSize = 4;
+    var maxSize = 10;
     unsigned buildingsToGenerate = randInt(1, 10);
 
     std::vector<Building> buildings;
@@ -96,10 +96,10 @@ std::vector<Building> WorldGenerator::generateBuildings(Rect region, int level)
                 // generation of the building always succeeds, so that we don't have to remove any
                 // StairsDown from the above building, which is nasty.
 
-                auto size = makeRandomVector(minSize, maxSize);
+                var size = makeRandomVector(minSize, maxSize);
                 // Makes sure the StairsUp are inside the building.
-                auto topLeftPosition = tile.getPosition() - Vector2(1, 1) - makeRandomVector(size - Vector2(3, 3));
-                auto building = generateBuilding(Rect(topLeftPosition, size), level);
+                var topLeftPosition = tile.getPosition() - Vector2(1, 1) - makeRandomVector(size - Vector2(3, 3));
+                var building = generateBuilding(Rect(topLeftPosition, size), level);
 
                 if (building)
                 {
@@ -114,16 +114,16 @@ std::vector<Building> WorldGenerator::generateBuildings(Rect region, int level)
 
     while (buildings.size() < buildingsToGenerate)
     {
-        auto size = makeRandomVector(minSize, maxSize);
-        auto topLeftPosition = region.position + makeRandomVector(region.size - size);
+        var size = makeRandomVector(minSize, maxSize);
+        var topLeftPosition = region.position + makeRandomVector(region.size - size);
 
-        if (auto building = generateBuilding(Rect(topLeftPosition, size), level))
+        if (var building = generateBuilding(Rect(topLeftPosition, size), level))
             buildings.push_back(std::move(*building));
     }
 
     if (!buildings.empty())
     {
-        auto& randomRoom = randomElement(randomElement(buildings).getRooms());
+        var randomRoom = randomElement(randomElement(buildings).getRooms());
         Tile* stairsTile = world.getTile(makeRandomVectorInside(randomRoom.getInnerRegion()), level);
         stairsTile->setObject(std::make_unique<Object>("StairsDown"));
     }
@@ -133,7 +133,7 @@ std::vector<Building> WorldGenerator::generateBuildings(Rect region, int level)
 
 boost::optional<Building> WorldGenerator::generateBuilding(Rect region, int level)
 {
-    if (auto room = generateRoom(region, level))
+    if (var room = generateRoom(region, level))
     {
         std::vector<Room> rooms;
         rooms.push_back(std::move(*room));
@@ -156,9 +156,9 @@ boost::optional<Room> WorldGenerator::generateRoom(Rect region, int level)
     if (!canGenerateHere)
         return boost::none;
 
-    auto wallId = "BrickWall";
-    auto floorId = "WoodenFloor";
-    auto doorId = "Door";
+    var wallId = "BrickWall";
+    var floorId = "WoodenFloor";
+    var doorId = "Door";
 
     world.forEachTile(region, level, [&](Tile& tile)
     {
@@ -170,15 +170,15 @@ boost::optional<Room> WorldGenerator::generateRoom(Rect region, int level)
     const unsigned nonCornerWallCount = region.getPerimeter() - 8;
     nonCornerWalls.reserve(nonCornerWallCount);
 
-    auto isCorner = [&](Vector2 position)
+    var isCorner = [&](Vector2 position)
     {
         return (position.x == region.getLeft() || position.x == region.getRight())
             && (position.y == region.getTop() || position.y == region.getBottom());
     };
 
-    auto generateWall = [&](Vector2 position)
+    var generateWall = [&](Vector2 position)
     {
-        if (auto* tile = world.getOrCreateTile(position, level))
+        if (var tile = world.getOrCreateTile(position, level))
         {
             tile->setObject(std::make_unique<Object>(wallId));
 
@@ -200,7 +200,7 @@ boost::optional<Room> WorldGenerator::generateRoom(Rect region, int level)
     }
 
     assert(nonCornerWalls.size() == nonCornerWallCount);
-    auto* doorTile = randomElement(nonCornerWalls);
+    var doorTile = randomElement(nonCornerWalls);
     doorTile->setObject(std::make_unique<Object>(doorId));
 
     return Room(region, { doorTile });
@@ -208,9 +208,9 @@ boost::optional<Room> WorldGenerator::generateRoom(Rect region, int level)
 
 Tile* WorldGenerator::findPathStart(Tile& tile) const
 {
-    for (auto direction : { North, East, South, West })
+    for (var direction : { North, East, South, West })
     {
-        auto* adjacentTile = tile.getAdjacentTile(direction);
+        var adjacentTile = tile.getAdjacentTile(direction);
 
         if (adjacentTile && adjacentTile->getGroundId() != "WoodenFloor")
             return adjacentTile;
@@ -250,12 +250,12 @@ std::vector<Tile*> WorldGenerator::findPathAStar(Tile& source, Tile& target,
     boost::unordered_map<Tile*, int> estimatedCosts;
     estimatedCosts.emplace(&source, heuristicCostEstimate(source, target));
 
-    auto comparator = [&](Tile* a, Tile* b) { return estimatedCosts.at(a) < estimatedCosts.at(b); };
+    var comparator = [&](Tile* a, Tile* b) { return estimatedCosts.at(a) < estimatedCosts.at(b); };
 
     while (!openSet.empty())
     {
-        auto iteratorToCurrent = std::min_element(openSet.begin(), openSet.end(), comparator);
-        auto current = *iteratorToCurrent;
+        var iteratorToCurrent = std::min_element(openSet.begin(), openSet.end(), comparator);
+        var current = *iteratorToCurrent;
 
         if (current == &target)
             return reconstructPath(sources, current);
@@ -263,7 +263,7 @@ std::vector<Tile*> WorldGenerator::findPathAStar(Tile& source, Tile& target,
         openSet.erase(iteratorToCurrent);
         closedSet.insert(current);
 
-        for (auto direction : { North, East, South, West })
+        for (var direction : { North, East, South, West })
         {
             Tile* neighbor = current->getPreExistingAdjacentTile(direction);
 
@@ -273,15 +273,15 @@ std::vector<Tile*> WorldGenerator::findPathAStar(Tile& source, Tile& target,
             if (closedSet.find(neighbor) != closedSet.end())
                 continue;
 
-            auto it = costs.find(current);
-            auto tentativeCost = (it == costs.end() ? INT_MAX - 1 : it->second) + 1;
+            var it = costs.find(current);
+            var tentativeCost = (it == costs.end() ? INT_MAX - 1 : it->second) + 1;
 
             if (openSet.find(neighbor) == openSet.end())
                 openSet.insert(neighbor);
             else
             {
-                auto it = costs.find(neighbor);
-                auto neighborCost = it == costs.end() ? INT_MAX - 1 : it->second;
+                var it = costs.find(neighbor);
+                var neighborCost = it == costs.end() ? INT_MAX - 1 : it->second;
 
                 if (tentativeCost >= neighborCost)
                     continue;
@@ -290,8 +290,8 @@ std::vector<Tile*> WorldGenerator::findPathAStar(Tile& source, Tile& target,
             sources.emplace(neighbor, current);
             costs.emplace(neighbor, tentativeCost);
 
-            auto neighborIt = costs.find(neighbor);
-            auto neighborCost = neighborIt == costs.end() ? INT_MAX - 1 : neighborIt->second;
+            var neighborIt = costs.find(neighbor);
+            var neighborCost = neighborIt == costs.end() ? INT_MAX - 1 : neighborIt->second;
             estimatedCosts.emplace(neighbor, neighborCost + heuristicCostEstimate(*neighbor, target));
         }
     }
@@ -304,28 +304,28 @@ void WorldGenerator::generatePaths(const std::vector<Building>& buildings)
     if (buildings.empty())
         return;
 
-    auto& buildingA = randomElement(buildings);
+    var buildingA = randomElement(buildings);
 
-    for (auto& buildingB : buildings)
+    for (var buildingB : buildings)
     {
         if (&buildingA == &buildingB)
             continue;
 
-        for (auto* doorA : buildingA.getDoorTiles())
+        for (var doorA : buildingA.getDoorTiles())
         {
-            auto* pathStart = findPathStart(*doorA);
+            var pathStart = findPathStart(*doorA);
 
             if (!pathStart)
                 continue;
 
-            for (auto* doorB : buildingB.getDoorTiles())
+            for (var doorB : buildingB.getDoorTiles())
             {
-                auto* pathEnd = findPathStart(*doorB);
+                var pathEnd = findPathStart(*doorB);
 
                 if (!pathEnd)
                     continue;
 
-                auto path = findPathAStar(*pathStart, *pathEnd, [](Tile& tile)
+                var path = findPathAStar(*pathStart, *pathEnd, [](Tile& tile)
                 {
                     return !tile.hasObject() || tile.getObject()->getId() == "Door"
                         || tile.getObject()->getId().starts_with("Stairs");
@@ -339,7 +339,7 @@ void WorldGenerator::generatePaths(const std::vector<Building>& buildings)
                     return !tile.hasObject() || tile.getObject()->getId() != "BrickWall";
                 });
 
-                for (auto* pathTile : path)
+                for (var pathTile : path)
                     pathTile->setObject(nullptr);
             }
         }
@@ -348,7 +348,7 @@ void WorldGenerator::generatePaths(const std::vector<Building>& buildings)
 
 void WorldGenerator::generateItems(Rect region, int level)
 {
-    auto density = 0.75;
+    var density = 0.75;
 
     while (randFloat() < density)
     {
@@ -374,7 +374,7 @@ void WorldGenerator::generateItems(Rect region, int level)
 
 void WorldGenerator::generateCreatures(Rect region, int level)
 {
-    auto density = 0.75;
+    var density = 0.75;
 
     while (randFloat() < density)
     {

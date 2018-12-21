@@ -24,8 +24,8 @@ namespace GUI
 
     inline Rect getSidebarArea(const Window& window)
     {
-        auto height = (window.getResolution().y - questionAreaHeight) / 2 - spacing.y / 2;
-        auto width = height * 3 / 4;
+        var height = (window.getResolution().y - questionAreaHeight) / 2 - spacing.y / 2;
+        var width = height * 3 / 4;
         return Rect(window.getResolution().x - width - spacing.x, questionAreaHeight, width, height);
     }
 
@@ -36,14 +36,14 @@ namespace GUI
 
     inline Rect getWorldViewport(const Window& window)
     {
-        auto top = questionAreaHeight;
+        var top = questionAreaHeight;
         return Rect(0, top, window.getResolution().x - getSidebarArea(window).getWidth() - spacing.x * 2,
                     window.getResolution().y - top);
     }
 
     inline Rect getMessageArea(const Window& window)
     {
-        auto sidebarArea = getSidebarArea(window);
+        var sidebarArea = getSidebarArea(window);
         return Rect(sidebarArea.getLeft(), sidebarArea.getBottom() + spacing.y,
                     sidebarArea.getWidth(), sidebarArea.getHeight());
     }
@@ -56,15 +56,15 @@ namespace GUI
 #ifdef DEBUG
     inline Rect getCommandLineArea(const Window& window)
     {
-        auto worldViewport = getWorldViewport(window);
-        auto questionArea = getQuestionArea(window);
+        var worldViewport = getWorldViewport(window);
+        var questionArea = getQuestionArea(window);
         return Rect(worldViewport.getLeft() + spacing.x, worldViewport.getTop() + spacing.y,
                     worldViewport.getWidth() - spacing.x * 2, questionArea.getHeight());
     }
 
     inline Rect getDebugMessageArea(const Window& window)
     {
-        auto commandLineArea = getCommandLineArea(window);
+        var commandLineArea = getCommandLineArea(window);
         return Rect(commandLineArea.getLeft(), commandLineArea.getBottom() + spacing.y,
                     commandLineArea.getWidth(), 60);
     }
@@ -75,15 +75,15 @@ Sprite getSprite(const Texture& spriteSheet, const Config& config, boost::string
                  int frame = 0, Color32 materialColor = Color32::none);
 Rect getSpriteTextureRegion(const Config& config, boost::string_ref id)
 {
-    auto components = config.get<std::vector<int>>(id, "spritePosition");
-    auto offsetX = randInt(config.get<int>(id, "spriteMultiplicity") - 1);
+    var components = config.get<std::vector<int>>(id, "spritePosition");
+    var offsetX = randInt(config.get<int>(id, "spriteMultiplicity") - 1);
     return Rect(Vector2(components.at(0) + offsetX, components.at(1)) * Tile::spriteSize, Tile::spriteSize);
 }
 
 Sprite getSprite(const Texture& spriteSheet, const Config& config, boost::string_ref id,
                  int frame, Color32 materialColor)
 {
-    auto asciiSprite = config.getOptional<std::string>(id, "asciiSprite");
+    var asciiSprite = config.getOptional<std::string>(id, "asciiSprite");
 
     if (!asciiSprite || asciiSprite->size() != 1 || !std::isprint((*asciiSprite)[0]))
         throw std::runtime_error("invalid asciiSprite on '" + id + "', should be 1 printable ASCII character");

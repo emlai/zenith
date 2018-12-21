@@ -85,9 +85,9 @@ struct Vector2Base
     bool operator==(Vector2Base vector) const { return x == vector.x && y == vector.y; }
     bool operator!=(Vector2Base vector) const { return x != vector.x || y != vector.y; }
 
-    auto getLength() const { return std::sqrt(getLengthSquared()); }
-    auto getLengthSquared() const { return x * x + y * y; }
-    auto getArea() const { return x * y; }
+    var getLength() const { return std::sqrt(getLengthSquared()); }
+    var getLengthSquared() const { return x * x + y * y; }
+    var getArea() const { return x * y; }
     bool isZero() const { return x == 0 && y == 0; }
     template<typename U>
     bool isWithin(Vector2Base<U>) const;
@@ -140,13 +140,13 @@ inline Vector2Base<T> sign(Vector2Base<T> vector)
 }
 
 template<typename T>
-inline auto getDistanceSquared(Vector2Base<T> a, Vector2Base<T> b)
+inline var getDistanceSquared(Vector2Base<T> a, Vector2Base<T> b)
 {
     return (b - a).getLengthSquared();
 }
 
 template<typename T>
-inline auto getDistance(Vector2Base<T> a, Vector2Base<T> b)
+inline var getDistance(Vector2Base<T> a, Vector2Base<T> b)
 {
     return std::sqrt(getDistanceSquared(a, b));
 }

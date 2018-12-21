@@ -51,12 +51,12 @@ Texture::Texture(boost::string_ref fileName, Color32 transparentColor)
     if (!surface)
         throw std::runtime_error("Unable to load " + fileName + ": " + SDL_GetError());
 
-    if (auto* converted = SDL_ConvertSurfaceFormat(surface.get(), SDL_PIXELFORMAT_RGBA8888, 0))
+    if (var converted = SDL_ConvertSurfaceFormat(surface.get(), SDL_PIXELFORMAT_RGBA8888, 0))
         surface.reset(converted);
 
     if (transparentColor)
     {
-        auto colorKey = SDL_MapRGB(surface->format,
+        var colorKey = SDL_MapRGB(surface->format,
                                    static_cast<uint8_t>(transparentColor.getRed()),
                                    static_cast<uint8_t>(transparentColor.getGreen()),
                                    static_cast<uint8_t>(transparentColor.getBlue()));
@@ -108,16 +108,16 @@ void Texture::render(Window& window, Rect source, Rect target, Color32 materialC
     SDL_Surface* targetSurface = window.context.targetTexture.getSurface();
     const uint32_t* sourcePixels = static_cast<const uint32_t*>(surface->pixels);
     uint32_t* targetPixels = static_cast<uint32_t*>(targetSurface->pixels);
-    auto sourceWidth = surface->w;
-    auto targetWidth = targetSurface->w;
+    var sourceWidth = surface->w;
+    var targetWidth = targetSurface->w;
 
     uint32_t transparentColor;
     if (SDL_GetColorKey(surface.get(), &transparentColor) != 0)
         transparentColor = 0;
 
-    for (auto y = source.getTop(); y <= source.getBottom(); ++y)
+    for (var y = source.getTop(); y <= source.getBottom(); ++y)
     {
-        for (auto x = source.getLeft(); x <= source.getRight(); ++x)
+        for (var x = source.getLeft(); x <= source.getRight(); ++x)
         {
             uint32_t pixel = sourcePixels[y * sourceWidth + x];
 
@@ -129,12 +129,12 @@ void Texture::render(Window& window, Rect source, Rect target, Color32 materialC
 
             if (isMagenta)
             {
-                auto brightness = abgr[3] / 128.0;
+                var brightness = abgr[3] / 128.0;
                 pixel = (materialColor * brightness).value;
             }
 
-            auto targetY = y - source.getTop() + target.getTop();
-            auto targetX = x - source.getLeft() + target.getLeft();
+            var targetY = y - source.getTop() + target.getTop();
+            var targetX = x - source.getLeft() + target.getLeft();
             targetPixels[targetY * targetWidth + targetX] = pixel;
         }
     }

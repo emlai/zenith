@@ -22,7 +22,7 @@ Object::Object(const SaveFile& file)
 :   Entity(file.readString(), *Game::objectConfig),
     sprite(::getSprite(*Game::objectSpriteSheet, *Game::objectConfig, getId()))
 {
-    for (auto& component : getComponents())
+    for (var component : getComponents())
         component->load(file);
 }
 
@@ -30,7 +30,7 @@ void Object::save(SaveFile& file) const
 {
     file.write(getId());
 
-    for (auto& component : getComponents())
+    for (var component : getComponents())
         component->save(file);
 }
 
@@ -38,7 +38,7 @@ bool Object::close()
 {
     bool returnValue = false;
 
-    for (auto& component : getComponents())
+    for (var component : getComponents())
         if (component->close())
             returnValue = true;
 
@@ -47,7 +47,7 @@ bool Object::close()
 
 bool Object::blocksSight() const
 {
-    for (auto& component : getComponents())
+    for (var component : getComponents())
         if (component->blocksSight())
             return true;
 

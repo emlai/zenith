@@ -39,7 +39,7 @@ public:
     static std::unique_ptr<Texture> cursorTexture;
     static std::unique_ptr<Texture> fogOfWarTexture;
 
-    static constexpr auto saveFileName = "zenith.sav";
+    static constexpr var saveFileName = "zenith.sav";
 
 private:
     friend class LookMode;
@@ -97,7 +97,7 @@ Game::Game(bool loadSavedGame)
         load();
     else
     {
-        auto* tile = world.getOrCreateTile({0, 0}, 0);
+        var tile = world.getOrCreateTile({0, 0}, 0);
         player = tile->spawnCreature("Human", std::make_unique<PlayerController>(*this));
     }
 }
@@ -131,7 +131,7 @@ InventoryMenu::InventoryMenu(Window& window, const Creature& player, boost::stri
 
     int id = 0;
 
-    for (auto& item : player.getInventory())
+    for (var item : player.getInventory())
     {
         if (!itemFilter || itemFilter(*item))
             addItem(MenuItem(id, item->getName(), NoKey, &item->getSprite()));
@@ -172,25 +172,25 @@ void EquipmentMenu::execute()
 
         for (int i = 0; i < equipmentSlots; ++i)
         {
-            auto slot = static_cast<EquipmentSlot>(i);
-            auto* image = player->getEquipment(slot) ? &player->getEquipment(slot)->getSprite() : nullptr;
-            auto itemName = player->getEquipment(slot) ? player->getEquipment(slot)->getName() : "-";
+            var slot = static_cast<EquipmentSlot>(i);
+            var image = player->getEquipment(slot) ? &player->getEquipment(slot)->getSprite() : nullptr;
+            var itemName = player->getEquipment(slot) ? player->getEquipment(slot)->getName() : "-";
             addItem(MenuItem(i, toString(slot) + ":", itemName, NoKey, nullptr, image));
         }
 
-        auto choice = Menu::execute();
+        var choice = Menu::execute();
         if (choice == Menu::Exit)
             break;
 
-        auto selectedSlot = static_cast<EquipmentSlot>(choice);
+        var selectedSlot = static_cast<EquipmentSlot>(choice);
 
         InventoryMenu inventoryMenu(getEngine().getWindow(), *player, "", true,
-                                    player->getEquipment(selectedSlot), [&](auto& item)
+                                    player->getEquipment(selectedSlot), [&](var item)
         {
             return item.getEquipmentSlot() == selectedSlot;
         });
 
-        auto selectedItemIndex = getEngine().execute(inventoryMenu);
+        var selectedItemIndex = getEngine().execute(inventoryMenu);
 
         if (selectedItemIndex == -1)
             player->equip(selectedSlot, nullptr);
@@ -267,7 +267,7 @@ private:
 
 std::string StringQuestion::execute()
 {
-    auto& window = getEngine().getWindow();
+    var window = getEngine().getWindow();
     std::string input;
 
     int result = keyboard::readLine(window, input, GUI::getQuestionArea(window).position,
@@ -303,7 +303,7 @@ boost::optional<Dir8> DirectionQuestion::execute()
 {
     Event event = getEngine().getWindow().waitForInput();
 
-    if (auto direction = getDirectionFromEvent(event, origin))
+    if (var direction = getDirectionFromEvent(event, origin))
         return direction;
 
     return boost::none;
@@ -379,7 +379,7 @@ void Game::printPlayerInformation(BitmapFont& font) const
     printStat(font, "HP", player->getHP(), player->getMaxHP(), TextColor::Red);
     printStat(font, "MP", player->getMP(), player->getMaxMP(), TextColor::Blue);
 
-    for (auto attribute : player->getDisplayedAttributes())
+    for (var attribute : player->getDisplayedAttributes())
         printAttribute(font, attributeAbbreviations[attribute], player->getAttribute(attribute));
 
     if (player->isRunning())
@@ -408,11 +408,11 @@ void Game::printStat(BitmapFont& font, boost::string_ref statName, double curren
     int maximumValueInt = std::ceil(maximumValue);
     std::string currentValueString = std::to_string(currentValueInt);
     std::string padding(std::max(0, 4 - int(currentValueString.size())), ' ');
-    auto text = statName + padding + currentValueString + "/" + std::to_string(maximumValueInt);
+    var text = statName + padding + currentValueString + "/" + std::to_string(maximumValueInt);
 
-    auto sidebarArea = GUI::getSidebarArea(getWindow());
-    auto columns = sidebarArea.getWidth() / font.getColumnWidth();
-    auto filledColumns = columns * std::max(currentValueInt, 0) / maximumValueInt;
+    var sidebarArea = GUI::getSidebarArea(getWindow());
+    var columns = sidebarArea.getWidth() / font.getColumnWidth();
+    var filledColumns = columns * std::max(currentValueInt, 0) / maximumValueInt;
     text.append(columns - text.size(), ' ');
 
     font.print(getWindow(), boost::string_ref(text).substr(0, filledColumns), TextColor::White, color, true, PreserveLines);
@@ -482,8 +482,8 @@ void Game::load()
 {
     SaveFile file(saveFileName, false);
     turn = file.readInt32();
-    auto playerPosition = file.readVector2();
-    auto playerLevel = file.readInt32();
+    var playerPosition = file.readVector2();
+    var playerLevel = file.readInt32();
     world.load(file);
 
     player = &world.getTile(playerPosition, playerLevel)->getCreature(0);

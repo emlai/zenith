@@ -34,7 +34,7 @@ public:
     void setFont(BitmapFont& font) { context.setFont(font); }
     BitmapFont& getFont() { return context.getFont(); }
     void setAnimationFrameRate(int fps) { context.setAnimationFrameRate(fps); }
-    auto getAnimationFrameTime() const { return context.getAnimationFrameTime(); }
+    var getAnimationFrameTime() const { return context.getAnimationFrameTime(); }
     void updateScreen() { context.updateScreen(); }
     bool shouldClose() const;
     Vector2 getResolution() const;
@@ -163,7 +163,7 @@ Event Window::waitForInput()
             {
                 SDL_FilterEvents(filterKeyRepeatEvents, &event);
 
-                auto key = event.key.keysym.sym;
+                var key = event.key.keysym.sym;
 
                 // Use shifts only as modifiers.
                 if (key == SDLK_LSHIFT || key == SDLK_RSHIFT)

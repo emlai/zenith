@@ -73,7 +73,7 @@ int keyboard::readLine(Window& window, std::string& line, Vector2 position, cons
         window.updateScreen();
         SDL_WaitEvent(&event);
 
-        if (auto key = readLineProcessKey(event, line, cursor))
+        if (var key = readLineProcessKey(event, line, cursor))
             return key;
     }
 }
@@ -85,7 +85,7 @@ int keyboard::readLineProcessKey(const SDL_Event& event, std::string& line, std:
     if (event.type != SDL_KEYDOWN)
         return 0;
 
-    auto key = event.key.keysym.sym;
+    var key = event.key.keysym.sym;
 
     switch (key)
     {
@@ -126,8 +126,8 @@ int keyboard::readLineProcessKey(const SDL_Event& event, std::string& line, std:
             {
                 std::unique_ptr<char[], decltype(SDL_free)&> clipboardText(SDL_GetClipboardText(),
                                                                            SDL_free);
-                auto clipboardTextSize = strlen(clipboardText.get());
-                auto maxToAdd = maxBufferSize - line.size();
+                var clipboardTextSize = strlen(clipboardText.get());
+                var maxToAdd = maxBufferSize - line.size();
                 char* endPosition = std::min(clipboardText.get() + maxToAdd,
                                              clipboardText.get() + clipboardTextSize);
                 line.insert(cursor, clipboardText.get(), endPosition);

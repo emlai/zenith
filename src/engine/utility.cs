@@ -1,7 +1,7 @@
 template<typename T>
 std::ostream& operator<<(std::ostream& outputStream, const std::vector<T>& elements)
 {
-    for (const auto& element : elements)
+    for (var element : elements)
         outputStream << element;
 
     return outputStream;
@@ -47,10 +47,10 @@ Deferrer<T> operator+(DeferHelper, T deferred)
     return Deferrer<T>(std::move(deferred));
 }
 
-#define DEFER auto BOOST_PP_CAT(defer, __LINE__) = DeferHelper() + [&]
+#define DEFER var BOOST_PP_CAT(defer, __LINE__) = DeferHelper() + [&]
 std::string changeFileExtension(boost::string_ref fileName, boost::string_ref newExtension)
 {
-    auto dotPosition = fileName.rfind(".");
+    var dotPosition = fileName.rfind(".");
 
     if (dotPosition != std::string::npos)
     {
@@ -69,7 +69,7 @@ std::string toOnOffString(bool value)
 
 std::string toStringAvoidingDecimalPlaces(double value)
 {
-    auto string = std::to_string(value);
+    var string = std::to_string(value);
 
     while (string.back() == '0' || string.back() == '.')
         string.pop_back();

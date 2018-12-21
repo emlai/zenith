@@ -30,12 +30,12 @@ private:
 };
 void World::load(SaveFile& file)
 {
-    auto areaCount = file.readInt32();
+    var areaCount = file.readInt32();
     areas.reserve(size_t(areaCount));
     for (int i = 0; i < areaCount; ++i)
     {
-        auto position = file.readVector3();
-        auto offset = file.readInt64();
+        var position = file.readVector3();
+        var offset = file.readInt64();
         savedAreaOffsets.emplace(position, offset);
     }
 
@@ -45,18 +45,18 @@ void World::load(SaveFile& file)
 void World::save(SaveFile& file) const
 {
     file.writeInt32(int32_t(areas.size()));
-    auto areaPositionsOffset = file.getOffset();
+    var areaPositionsOffset = file.getOffset();
 
-    for (auto& positionAndArea : areas)
+    for (var positionAndArea : areas)
     {
         file.write(positionAndArea.first);
         file.writeInt64(int64_t(0));
     }
 
     int index = 0;
-    for (auto& positionAndArea : areas)
+    for (var positionAndArea : areas)
     {
-        auto areaOffset = file.getOffset();
+        var areaOffset = file.getOffset();
         file.seek(areaPositionsOffset + index * (sizeof(Vector3) + sizeof(int64_t)) + sizeof(Vector3));
         file.writeInt64(areaOffset);
         file.seek(areaOffset);
@@ -79,7 +79,7 @@ void World::exist(Rect region, int level)
     {
         tile.exist();
 
-        for (auto& creature : tile.getCreatures())
+        for (var creature : tile.getCreatures())
             creaturesToUpdate.push_back(creature.get());
     });
 
@@ -88,13 +88,13 @@ void World::exist(Rect region, int level)
     creaturesToUpdate.erase(std::unique(creaturesToUpdate.begin(), creaturesToUpdate.end()),
                             creaturesToUpdate.end());
 
-    for (auto* creature : creaturesToUpdate)
+    for (var creature : creaturesToUpdate)
         creature->exist();
 }
 
 void World::render(Window& window, Rect region, int level, const Creature& player)
 {
-    auto lightRegion = region.inset(Vector2(-LightSource::maxRadius, -LightSource::maxRadius));
+    var lightRegion = region.inset(Vector2(-LightSource::maxRadius, -LightSource::maxRadius));
     forEachTile(lightRegion, level, [&](Tile& tile) { tile.resetLight(); });
     forEachTile(lightRegion, level, [&](Tile& tile) { tile.emitLight(); });
 
@@ -110,16 +110,16 @@ void World::render(Window& window, Rect region, int level, const Creature& playe
     });
 
     for (int zIndex = 0; zIndex < 7; ++zIndex)
-        for (auto tileAndFogOfWar : tilesToRender)
+        for (var tileAndFogOfWar : tilesToRender)
             tileAndFogOfWar.first->render(window, zIndex, tileAndFogOfWar.second, !game->playerSeesEverything);
 }
 
 Area* World::getOrCreateArea(Vector3 position)
 {
-    if (auto* area = getArea(position))
+    if (var area = getArea(position))
         return area;
 
-    auto& area = areas.emplace(position, Area(*this, Vector2(position), position.z)).first->second;
+    var area = areas.emplace(position, Area(*this, Vector2(position), position.z)).first->second;
     WorldGenerator generator(*this);
     generator.generateRegion(Rect(Vector2(position) * Area::sizeVector, Area::sizeVector), position.z);
     return &area;
@@ -127,11 +127,11 @@ Area* World::getOrCreateArea(Vector3 position)
 
 Area* World::getArea(Vector3 position)
 {
-    auto it = areas.find(position);
+    var it = areas.find(position);
     if (it != areas.end())
         return &it->second;
 
-    auto offset = savedAreaOffsets.find(position);
+    var offset = savedAreaOffsets.find(position);
     if (offset != savedAreaOffsets.end())
     {
         saveFile->seek(offset->second);
@@ -156,7 +156,7 @@ Vector2 World::globalPositionToTilePosition(Vector2 position)
 
 Tile* World::getOrCreateTile(Vector2 position, int level)
 {
-    if (auto* area = getOrCreateArea(globalPositionToAreaPosition(position, level)))
+    if (var area = getOrCreateArea(globalPositionToAreaPosition(position, level)))
         return &area->getTileAt(globalPositionToTilePosition(position));
 
     return nullptr;
@@ -164,7 +164,7 @@ Tile* World::getOrCreateTile(Vector2 position, int level)
 
 Tile* World::getTile(Vector2 position, int level)
 {
-    if (auto* area = getArea(globalPositionToAreaPosition(position, level)))
+    if (var area = getArea(globalPositionToAreaPosition(position, level)))
         return &area->getTileAt(globalPositionToTilePosition(position));
 
     return nullptr;
@@ -174,6 +174,6 @@ void World::forEachTile(Rect region, int level, const std::function<void(Tile&)>
 {
     for (int x = region.getLeft(); x <= region.getRight(); ++x)
         for (int y = region.getTop(); y <= region.getBottom(); ++y)
-            if (auto* tile = getOrCreateTile(Vector2(x, y), level))
+            if (var tile = getOrCreateTile(Vector2(x, y), level))
                 function(*tile);
 }

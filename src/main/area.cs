@@ -56,7 +56,7 @@ Area::Area(const SaveFile& file, World& world, Vector2 position, int level)
 
 void Area::save(SaveFile& file) const
 {
-    for (auto& tile : tiles)
+    for (var tile : tiles)
         tile.save(file);
 }
 

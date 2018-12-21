@@ -30,7 +30,7 @@ Action AttackNearestEnemy::control()
     assert(!creature->isDead());
     Action action;
 
-    if (auto* nearestEnemy = creature->getNearestEnemy())
+    if (var nearestEnemy = creature->getNearestEnemy())
         action = creature->tryToMoveTowardsOrAttack(*nearestEnemy);
     else
         action = creature->tryToMoveOrAttack(randomDir8());

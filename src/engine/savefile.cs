@@ -60,14 +60,14 @@ void SaveFile::write(const std::vector<T>& vector)
 {
     writeInt32(int32_t(vector.size()));
 
-    for (auto& element : vector)
+    for (var element : vector)
         write(element);
 }
 
 template<typename T>
 void SaveFile::read(std::vector<T>& vector) const
 {
-    auto size = readInt32();
+    var size = readInt32();
     assert(vector.empty());
     vector.reserve(size_t(size));
 
@@ -102,7 +102,7 @@ SaveFile::SaveFile(std::vector<char> buffer)
 
 uint64_t SaveFile::getSize() const
 {
-    auto size = SDL_RWsize(file.get());
+    var size = SDL_RWsize(file.get());
 
     if (size < 0)
         throw std::runtime_error(SDL_GetError());
@@ -180,7 +180,7 @@ void SaveFile::write(double value)
 
 double SaveFile::readDouble() const
 {
-    auto integer = readUint64();
+    var integer = readUint64();
     double result;
     static_assert(sizeof(integer) == sizeof(result), "");
     std::memcpy(&result, &integer, sizeof(result));
@@ -191,13 +191,13 @@ void SaveFile::write(boost::string_ref value)
 {
     writeInt16(uint16_t(value.size()));
 
-    for (auto ch : value)
+    for (var ch : value)
         writeInt8(uint8_t(ch));
 }
 
 std::string SaveFile::readString() const
 {
-    auto size = readUint16();
+    var size = readUint16();
     std::string string;
     string.reserve(size);
 
@@ -215,8 +215,8 @@ void SaveFile::write(Vector2 value)
 
 Vector2 SaveFile::readVector2() const
 {
-    auto x = readInt32();
-    auto y = readInt32();
+    var x = readInt32();
+    var y = readInt32();
     return Vector2(x, y);
 }
 
@@ -229,17 +229,17 @@ void SaveFile::write(Vector3 value)
 
 Vector3 SaveFile::readVector3() const
 {
-    auto x = readInt32();
-    auto y = readInt32();
-    auto z = readInt32();
+    var x = readInt32();
+    var y = readInt32();
+    var z = readInt32();
     return Vector3(x, y, z);
 }
 
 SaveFile SaveFile::copyToMemory()
 {
-    auto offset = getOffset();
+    var offset = getOffset();
     seek(0);
-    auto size = getSize();
+    var size = getSize();
     std::vector<char> buffer(size);
     size_t bytesRead = SDL_RWread(file.get(), buffer.data(), 1, size);
 

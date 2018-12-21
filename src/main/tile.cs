@@ -9,7 +9,7 @@ public:
     template<typename... Args>
     Creature* spawnCreature(Args&&...);
     bool hasCreature() const { return !creatures.empty(); }
-    const auto& getCreatures() const { return creatures; }
+    var getCreatures() const { return creatures; }
     Creature& getCreature(int index) const { return *creatures[index]; }
     void transferCreature(Creature&, Tile&);
     std::unique_ptr<Creature> removeSingleTileCreature(Creature&);
@@ -87,17 +87,17 @@ Tile::Tile(const SaveFile& file, World& world, Vector2 position, int level)
     groundSprite(getSprite(*Game::groundSpriteSheet, *Game::groundConfig, groundId)),
     light(Color32::black)
 {
-    auto creatureCount = file.readInt32();
+    var creatureCount = file.readInt32();
     creatures.reserve(size_t(creatureCount));
     for (int i = 0; i < creatureCount; ++i)
         creatures.push_back(std::make_unique<Creature>(file, this));
 
-    auto itemCount = file.readInt32();
+    var itemCount = file.readInt32();
     items.reserve(size_t(itemCount));
     for (int i = 0; i < itemCount; ++i)
         items.push_back(Item::load(file));
 
-    auto liquidCount = file.readInt32();
+    var liquidCount = file.readInt32();
     liquids.reserve(size_t(liquidCount));
     for (int i = 0; i < liquidCount; ++i)
         liquids.push_back(Liquid(file));
@@ -119,7 +119,7 @@ void Tile::save(SaveFile& file) const
 
 void Tile::exist()
 {
-    for (auto it = liquids.begin(); it != liquids.end();)
+    for (var it = liquids.begin(); it != liquids.end();)
     {
         if (it->exists())
         {
@@ -130,7 +130,7 @@ void Tile::exist()
             it = liquids.erase(it);
     }
 
-    for (auto& item : items)
+    for (var item : items)
         item->exist();
 }
 
@@ -143,11 +143,11 @@ void Tile::render(Window& window, int zIndex, bool fogOfWar, bool renderLight) c
         case 0:
             groundSprite.render(window, renderPosition);
 
-            for (auto& liquid : liquids)
+            for (var liquid : liquids)
                 liquid.render(window, renderPosition);
             break;
         case 1:
-            for (const auto& item : items)
+            for (var item : items)
                 item->render(window, renderPosition);
             break;
         case 2:
@@ -158,7 +158,7 @@ void Tile::render(Window& window, int zIndex, bool fogOfWar, bool renderLight) c
             if (fogOfWar)
                 break;
 
-            for (const auto& creature : creatures)
+            for (var creature : creatures)
                 creature->render(window, renderPosition);
             break;
         case 4:
@@ -191,7 +191,7 @@ void Tile::render(Window& window, int zIndex, bool fogOfWar, bool renderLight) c
                     Game::cursorTexture->setColor(cursorColor);
                     Game::cursorTexture->render(window, tileRect);
 
-                    auto tooltip = getTooltip();
+                    var tooltip = getTooltip();
                     if (!tooltip.empty())
                     {
                         int lineHeight = 2;
@@ -223,13 +223,13 @@ std::string Tile::getTooltip() const
 {
     std::string tooltip;
 
-    for (auto& creature : creatures)
+    for (var creature : creatures)
     {
         tooltip += creature->getName();
         tooltip += '\n';
     }
 
-    for (auto& item : boost::adaptors::reverse(items))
+    for (var item : boost::adaptors::reverse(items))
     {
         tooltip += item->getName();
         tooltip += '\n';
@@ -246,7 +246,7 @@ std::string Tile::getTooltip() const
 
 void Tile::transferCreature(Creature& creature, Tile& destination)
 {
-    for (auto it = creatures.begin(); it != creatures.end(); ++it)
+    for (var it = creatures.begin(); it != creatures.end(); ++it)
     {
         if (it->get() == &creature)
         {
@@ -263,11 +263,11 @@ std::unique_ptr<Creature> Tile::removeSingleTileCreature(Creature& creature)
 {
     assert(creature.getTilesUnder().size() == 1);
 
-    for (auto it = creatures.begin(); it != creatures.end(); ++it)
+    for (var it = creatures.begin(); it != creatures.end(); ++it)
     {
         if (it->get() == &creature)
         {
-            auto removed = std::move(*it);
+            var removed = std::move(*it);
             creatures.erase(it);
             return removed;
         }
@@ -278,14 +278,14 @@ std::unique_ptr<Creature> Tile::removeSingleTileCreature(Creature& creature)
 
 void Tile::removeCreature(Creature& creature)
 {
-    auto newEnd = std::remove_if(creatures.begin(), creatures.end(),
-                                 [&](auto& ptr) { return ptr.get() == &creature; });
+    var newEnd = std::remove_if(creatures.begin(), creatures.end(),
+                                 [&](var ptr) { return ptr.get() == &creature; });
     creatures.erase(newEnd, creatures.end());
 }
 
 std::unique_ptr<Item> Tile::removeTopmostItem()
 {
-    auto item = std::move(items.back());
+    var item = std::move(items.back());
     items.pop_back();
     return item;
 }
@@ -313,16 +313,16 @@ void Tile::setGround(boost::string_ref groundId)
 
 void Tile::forEachEntity(const std::function<void(Entity&)>& function) const
 {
-    for (auto& creature : creatures)
+    for (var creature : creatures)
     {
         function(*creature);
 
-        for (auto slotAndItem : creature->getEquipment())
+        for (var slotAndItem : creature->getEquipment())
             if (slotAndItem.second)
                 function(*slotAndItem.second);
     }
 
-    for (auto& item : items)
+    for (var item : items)
         function(*item);
 
     if (object)
@@ -333,14 +333,14 @@ void Tile::forEachLightSource(const std::function<void(LightSource&)>& function)
 {
     forEachEntity([&](Entity& entity)
     {
-        for (auto* lightSource : entity.getComponentsOfType<LightSource>())
+        for (var lightSource : entity.getComponentsOfType<LightSource>())
             function(*lightSource);
     });
 }
 
 void Tile::emitLight()
 {
-    forEachLightSource([&](auto& lightSource)
+    forEachLightSource([&](var lightSource)
     {
         lightSource.emitLight(world, this->getCenterPosition(), level);
     });

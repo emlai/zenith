@@ -38,8 +38,8 @@ void Message::save(SaveFile& file) const
 
 Message Message::load(const SaveFile& file)
 {
-    auto text = file.readString();
-    auto turn = file.readInt32();
+    var text = file.readString();
+    var turn = file.readInt32();
     return Message(std::move(text), turn);
 }
 
@@ -73,7 +73,7 @@ void MessageSystem::drawMessages(Window& window, BitmapFont& font,
     for (int end = int(messages.size()), i = std::max(0, end - maxMessagesToPrint); i < end; ++i)
     {
         bool isNewMessage = messages[i].getTurn() >= currentTurn - 1;
-        auto color = isNewMessage ? TextColor::White : TextColor::Gray;
+        var color = isNewMessage ? TextColor::White : TextColor::Gray;
         font.print(window, "- ", color);
         std::string text(messages[i].getText());
         if (messages[i].getCount() > 1)

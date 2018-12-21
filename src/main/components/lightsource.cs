@@ -24,17 +24,17 @@ void LightSource::emitLight(World& world, Vector2 position, int level) const
             if (reverseIntensity >= 1.0)
                 continue;
 
-            auto targetPosition = position + Vector2(dx, dy);
+            var targetPosition = position + Vector2(dx, dy);
 
             bool isLit = raycastIntegerBresenham(position, targetPosition, [&](Vector2 vector)
             {
-                auto* tile = world.getTile(vector, level);
+                var tile = world.getTile(vector, level);
                 return tile && (tile->getPosition() == targetPosition || !tile->blocksSight());
             });
 
             if (isLit)
             {
-                auto intensity = 1.0 - reverseIntensity;
+                var intensity = 1.0 - reverseIntensity;
                 world.getTile(targetPosition, level)->addLight(color * intensity);
             }
         }

@@ -7,9 +7,9 @@ class Dig : public Component
 };
 bool Dig::use(Creature& digger, Item& digItem, Game& game)
 {
-    if (auto direction = game.askForDirection("Where do you want to dig?"))
+    if (var direction = game.askForDirection("Where do you want to dig?"))
     {
-        auto* tileToDig = digger.getTileUnder(0).getAdjacentTile(*direction);
+        var tileToDig = digger.getTileUnder(0).getAdjacentTile(*direction);
 
         if (tileToDig->hasObject())
         {

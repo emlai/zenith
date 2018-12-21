@@ -22,7 +22,7 @@ private:
     public:
         const Value& at(const std::string& key) const
         {
-            if (auto value = getOptional(key))
+            if (var value = getOptional(key))
                 return *value;
 
             throw std::out_of_range(key);
@@ -30,7 +30,7 @@ private:
 
         const Value* getOptional(const std::string& key) const
         {
-            auto it = properties.find(key);
+            var it = properties.find(key);
 
             if (it != properties.end())
                 return &it->second;
@@ -38,8 +38,8 @@ private:
             return nullptr;
         }
 
-        auto begin() const { return properties.begin(); }
-        auto end() const { return properties.end(); }
+        var begin() const { return properties.begin(); }
+        var end() const { return properties.end(); }
 
         void insert(std::string&& key, Value&& value)
         {
@@ -213,7 +213,7 @@ struct Config::ConversionTraits<std::vector<ElementType>>
 
         std::vector<ElementType> outputData;
 
-        for (auto& element : value.getList())
+        for (var element : value.getList())
             outputData.push_back(*convert<ElementType>(element));
 
         return outputData;
@@ -223,7 +223,7 @@ struct Config::ConversionTraits<std::vector<ElementType>>
 template<typename ValueType>
 boost::optional<ValueType> Config::getOptional(boost::string_ref key) const
 {
-    if (auto value = data.getOptional(key.to_string()))
+    if (var value = data.getOptional(key.to_string()))
         return convert<ValueType>(*value);
 
     return boost::none;
@@ -232,7 +232,7 @@ boost::optional<ValueType> Config::getOptional(boost::string_ref key) const
 template<typename ValueType>
 ValueType Config::get(boost::string_ref type, boost::string_ref attribute) const
 {
-    if (auto value = getOptional<ValueType>(type, attribute))
+    if (var value = getOptional<ValueType>(type, attribute))
         return ValueType(std::move(*value));
     else
         throw std::runtime_error("attribute \"" + attribute + "\" not found for \"" + type + "\"!");
@@ -246,30 +246,30 @@ boost::optional<ValueType> Config::getOptional(boost::string_ref type, boost::st
 
     while (true)
     {
-        auto groupValue = data.getOptional(current);
+        var groupValue = data.getOptional(current);
 
         if (!groupValue)
             return boost::none;
 
-        auto& group = groupValue->getGroup();
+        var group = groupValue->getGroup();
 
-        if (auto value = group.getOptional(key))
+        if (var value = group.getOptional(key))
         {
-            if (auto converted = convert<ValueType>(*value))
+            if (var converted = convert<ValueType>(*value))
                 return *converted;
             else
                 throw std::runtime_error("attribute \"" + attribute + "\" of class \"" + current +
                                          "\" has wrong type!");
         }
 
-        auto baseType = group.getOptional("BaseType");
+        var baseType = group.getOptional("BaseType");
 
         if (!baseType)
             return boost::none;
 
         if (baseType->isString())
         {
-            auto& baseTypeString = baseType->getString();
+            var baseTypeString = baseType->getString();
 
             if (data.getOptional(baseTypeString) == nullptr)
                 throw std::runtime_error("BaseType \"" + baseTypeString + "\" doesn't exist!");
@@ -311,7 +311,7 @@ int ConfigReader::get()
 {
     while (true)
     {
-        auto ch = file.get();
+        var ch = file.get();
 
         if (ch == '\n')
         {
@@ -330,7 +330,7 @@ int ConfigReader::get()
 
 std::string ConfigReader::getId()
 {
-    auto ch = get();
+    var ch = get();
 
     if (!std::isalpha(ch))
         throw syntaxError("id", char(ch));
@@ -339,7 +339,7 @@ std::string ConfigReader::getId()
 
     while (true)
     {
-        auto ch = file.get();
+        var ch = file.get();
 
         if (ch == '\n')
         {
@@ -361,7 +361,7 @@ std::string ConfigReader::getId()
 
 std::string ConfigReader::getDoubleQuotedString()
 {
-    auto ch = file.get();
+    var ch = file.get();
 
     if (ch != '"')
         throw syntaxError("'\"'", char(ch));
@@ -370,7 +370,7 @@ std::string ConfigReader::getDoubleQuotedString()
 
     while (true)
     {
-        auto ch = file.get();
+        var ch = file.get();
 
         if (ch == '\n')
         {
@@ -431,9 +431,9 @@ std::vector<std::string> Config::getToplevelKeys() const
 {
     std::vector<std::string> keys;
 
-    for (auto& keyAndValue : data)
+    for (var keyAndValue : data)
     {
-        if (auto it = keyAndValue.second.getGroup().getOptional("isAbstract"))
+        if (var it = keyAndValue.second.getGroup().getOptional("isAbstract"))
             if (it->isBool() && it->getBool())
                 continue;
 
@@ -449,13 +449,13 @@ Config::Group Config::parseGroup(ConfigReader& reader)
 
     while (true)
     {
-        auto ch = reader.get();
+        var ch = reader.get();
 
         if (ch == '}')
             break;
 
         reader.unget(ch);
-        auto key = reader.getId();
+        var key = reader.getId();
         map.insert(std::move(key), parseProperty(reader));
     }
 
@@ -464,12 +464,12 @@ Config::Group Config::parseGroup(ConfigReader& reader)
 
 Config::Value Config::parseProperty(ConfigReader& reader)
 {
-    auto ch = reader.get();
+    var ch = reader.get();
 
     if (ch != '=')
         throw reader.syntaxError("'='", char(ch));
 
-    auto value = parseValue(reader);
+    var value = parseValue(reader);
 
     ch = reader.get();
 
@@ -502,7 +502,7 @@ Config::Value Config::parseArray(ConfigReader& reader)
     while (true)
     {
         values.push_back(parseValue(reader));
-        auto ch = reader.get();
+        var ch = reader.get();
 
         if (ch == ',')
             continue;
@@ -568,7 +568,7 @@ Config::Value Config::parseNumber(ConfigReader& reader)
 
 Config::Value Config::parseAtomicValue(ConfigReader& reader)
 {
-    auto ch = reader.peek();
+    var ch = reader.peek();
 
     if (ch == '"')
         return reader.getDoubleQuotedString();
@@ -578,7 +578,7 @@ Config::Value Config::parseAtomicValue(ConfigReader& reader)
 
     if (std::isalpha(ch))
     {
-        auto id = reader.getId();
+        var id = reader.getId();
 
         if (id == "true")
             return true;
@@ -602,7 +602,7 @@ Config::Config(boost::string_ref filePath)
             break;
 
         std::string id = reader.getId();
-        auto ch = reader.get();
+        var ch = reader.get();
 
         switch (ch)
         {
@@ -638,8 +638,8 @@ void Config::printValue(std::ostream& stream, const Config::Value& value) const
         case Value::Type::List:
         {
             stream << "[";
-            auto& values = value.getList();
-            for (auto& value : values)
+            var values = value.getList();
+            for (var value : values)
             {
                 printValue(stream, value);
                 if (&value != &values.back())
@@ -658,7 +658,7 @@ void Config::writeToFile(boost::string_ref filePath) const
 {
     std::ofstream file(filePath.to_string());
 
-    for (auto& keyAndValue : data)
+    for (var keyAndValue : data)
     {
         file << keyAndValue.first << " = ";
         printValue(file, keyAndValue.second);
@@ -682,13 +682,13 @@ Config::Value::Value(Value&& value)
             floatingPoint = value.floatingPoint;
             break;
         case Type::String:
-            new (&string) auto(std::move(value.string));
+            new (&string) var(std::move(value.string));
             break;
         case Type::List:
-            new (&list) auto(std::move(value.list));
+            new (&list) var(std::move(value.list));
             break;
         case Type::Group:
-            new (&group) auto(std::move(value.group));
+            new (&group) var(std::move(value.group));
             break;
     }
 }

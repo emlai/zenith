@@ -13,8 +13,8 @@ public:
 
     void render(Window& window) override
     {
-        auto& font = window.getFont();
-        auto oldLayout = font.getLayout();
+        var font = window.getFont();
+        var oldLayout = font.getLayout();
         font.setArea(Rect(Vector2(0, 0), window.getResolution()));
         font.setLayout(TextLayout(HorizontalCenter, VerticalCenter));
         font.print(window, text);
@@ -31,7 +31,7 @@ private:
     std::string text;
 };
 
-static const auto preferencesFileName = "prefs.cfg";
+static var preferencesFileName = "prefs.cfg";
 
 static void savePreferencesToFile(bool asciiGraphics, double graphicsScale, bool fullscreen)
 {
@@ -63,7 +63,7 @@ public:
 void KeyMapMenu::execute()
 {
     enum { ResetDefaults };
-    auto& window = getEngine().getWindow();
+    var window = getEngine().getWindow();
 
     while (true)
     {
@@ -72,11 +72,11 @@ void KeyMapMenu::execute()
 
         for (int i = NoAction + 1; i < LastAction; ++i)
         {
-            auto action = static_cast<Action>(i);
+            var action = static_cast<Action>(i);
 
-            if (auto key = getMappedKey(action))
+            if (var key = getMappedKey(action))
             {
-                auto text = pascalCaseToSentenceCase(toString(action));
+                var text = pascalCaseToSentenceCase(toString(action));
                 text[0] = std::toupper(text[0]);
                 addItem(MenuItem(action, text, toString(key)));
             }
@@ -85,7 +85,7 @@ void KeyMapMenu::execute()
         addItem(MenuItem(ResetDefaults, "Reset defaults"));
         setPrefsMenuCommonOptions(*this, window);
 
-        auto selection = Menu::execute();
+        var selection = Menu::execute();
 
         switch (selection)
         {
@@ -97,7 +97,7 @@ void KeyMapMenu::execute()
                 return;
 
             default:
-                auto event = window.waitForInput();
+                var event = window.waitForInput();
 
                 if (event.type == Event::KeyDown && getMappedAction(event.key) == NoAction)
                     mapKey(event.key, static_cast<Action>(selection));
@@ -116,7 +116,7 @@ public:
 void PrefsMenu::execute()
 {
     enum { AsciiGraphics, GraphicsScale, Fullscreen, KeyMap };
-    auto& window = getEngine().getWindow();
+    var window = getEngine().getWindow();
 
     while (true)
     {
@@ -135,7 +135,7 @@ void PrefsMenu::execute()
 
         setPrefsMenuCommonOptions(*this, window);
 
-        auto selection = Menu::execute();
+        var selection = Menu::execute();
 
         switch (selection)
         {
@@ -195,7 +195,7 @@ void MainMenu::execute()
         setArea(Vector2(0, 0), getEngine().getWindow().getResolution() / Vector2(1, 6));
         setHotkeyStyle(LetterHotkeys);
 
-        auto selection = Menu::execute();
+        var selection = Menu::execute();
 
         switch (selection)
         {
@@ -261,7 +261,7 @@ class Program
         }
 
         Engine engine;
-        auto& window = engine.createWindow(Window::getScreenResolution(), PROJECT_NAME, true);
+        var window = engine.createWindow(Window::getScreenResolution(), PROJECT_NAME, true);
         window.setAnimationFrameRate(4);
 
         if (boost::filesystem::exists(preferencesFileName))

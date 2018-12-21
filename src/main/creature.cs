@@ -84,12 +84,12 @@ public:
     bool eat(Item&);
     bool close(Dir8);
 
-    const auto& getTilesUnder() const { return tilesUnder; }
+    var getTilesUnder() const { return tilesUnder; }
     Tile& getTileUnder(int index) const { return *tilesUnder[index]; }
     Vector2 getPosition() const;
     int getLevel() const;
-    const auto& getInventory() const { return inventory; }
-    const auto& getEquipment() const { return equipment; }
+    var getInventory() const { return inventory; }
+    var getEquipment() const { return equipment; }
     std::unique_ptr<Item> removeItem(Item& item);
     Item* getEquipment(EquipmentSlot slot) const { return equipment.at(slot); }
     int getInventoryIndex(const Item& item) const;
@@ -102,7 +102,7 @@ public:
     double getMaxHP() const { return maxHP; }
     double getMaxMP() const { return maxMP; }
     double getAttribute(Attribute) const;
-    const auto& getDisplayedAttributes() const { return displayedAttributes; }
+    var getDisplayedAttributes() const { return displayedAttributes; }
     int getFieldOfVisionRadius() const;
     template<typename... Args>
     void addMessage(Args&&...);
@@ -130,7 +130,7 @@ private:
     void onDeath();
     static std::vector<Attribute> initDisplayedAttributes(boost::string_ref);
     static std::vector<std::vector<int>> initAttributeIndices(boost::string_ref);
-    const auto& getAttributeIndices(int attribute) const { return attributeIndices[attribute]; }
+    var getAttributeIndices(int attribute) const { return attributeIndices[attribute]; }
 
     std::vector<Tile*> tilesUnder;
     mutable boost::unordered_set<Vector3> seenTilePositions;
@@ -153,7 +153,7 @@ template<typename... Args>
 void Creature::addMessage(Args&&... messageParts)
 {
     std::stringstream stream;
-    auto expansion = { (stream << messageParts, 0)... };
+    var expansion = { (stream << messageParts, 0)... };
     (void) expansion;
     std::string message = stream.str();
     message[0] = char(std::toupper(message[0]));
@@ -183,7 +183,7 @@ std::vector<Attribute> Creature::initDisplayedAttributes(boost::string_ref id)
 {
     std::vector<Attribute> displayedAttributes;
 
-    for (const auto& attribute : Game::creatureConfig->get<std::vector<std::string>>(id, "DisplayedAttributes"))
+    for (var attribute : Game::creatureConfig->get<std::vector<std::string>>(id, "DisplayedAttributes"))
         displayedAttributes.push_back(stringToAttribute(attribute));
 
     return displayedAttributes;
@@ -222,9 +222,9 @@ Creature::Creature(Tile* tile, boost::string_ref id, std::unique_ptr<Controller>
 
     generateAttributes(id);
 
-    if (auto initialEquipment = getConfig().getOptional<std::vector<std::string>>(getId(), "Equipment"))
+    if (var initialEquipment = getConfig().getOptional<std::vector<std::string>>(getId(), "Equipment"))
     {
-        for (auto& itemId : *initialEquipment)
+        for (var itemId : *initialEquipment)
         {
             inventory.push_back(std::make_unique<Item>(itemId, getRandomMaterialId(itemId)));
             equip(inventory.back()->getEquipmentSlot(), &*inventory.back());
@@ -247,22 +247,22 @@ Creature::Creature(const SaveFile& file, Tile* tile)
     if (tile)
         tilesUnder.push_back(tile);
 
-    for (auto& component : getComponents())
+    for (var component : getComponents())
         component->load(file);
 
-    auto seenTilePositionsCount = file.readInt32();
+    var seenTilePositionsCount = file.readInt32();
     seenTilePositions.reserve(size_t(seenTilePositionsCount));
     for (int i = 0; i < seenTilePositionsCount; ++i)
         seenTilePositions.insert(file.readVector3());
 
-    auto inventorySize = file.readInt32();
+    var inventorySize = file.readInt32();
     inventory.reserve(size_t(inventorySize));
     for (int i = 0; i < inventorySize; ++i)
         inventory.push_back(Item::load(file));
 
-    for (auto& slotAndItem : equipment)
+    for (var slotAndItem : equipment)
     {
-        auto itemIndex = file.readInt16();
+        var itemIndex = file.readInt16();
 
         if (itemIndex != -1)
             slotAndItem.second = &*inventory[size_t(itemIndex)];
@@ -280,16 +280,16 @@ Creature::Creature(const SaveFile& file, Tile* tile)
 void Creature::save(SaveFile& file) const
 {
     file.write(getId());
-    for (auto& component : getComponents())
+    for (var component : getComponents())
         component->save(file);
 
     file.writeInt32(uint32_t(seenTilePositions.size()));
-    for (auto tilePosition : seenTilePositions)
+    for (var tilePosition : seenTilePositions)
         file.write(tilePosition);
 
     file.write(inventory);
 
-    for (auto slotAndItem : equipment)
+    for (var slotAndItem : equipment)
         file.writeInt16(int16_t(slotAndItem.second ? getInventoryIndex(*slotAndItem.second) : -1));
 
     file.write(attributeValues);
@@ -334,7 +334,7 @@ void Creature::render(Window& window, Vector2 position) const
     {
         for (int slot = equipmentSlots - 1; slot >= 0; --slot)
         {
-            if (auto* equipment = getEquipment(static_cast<EquipmentSlot>(slot)))
+            if (var equipment = getEquipment(static_cast<EquipmentSlot>(slot)))
                 equipment->renderEquipped(window, position);
         }
     }
@@ -344,10 +344,10 @@ void Creature::generateAttributes(boost::string_ref id)
 {
     attributeValues.resize(Game::creatureConfig->get<int>(id, "Attributes"));
 
-    auto attributeStrings = Game::creatureConfig->get<std::vector<std::string>>(id, "ConfigAttributes");
-    auto configAttributes = stringsToAttributes(attributeStrings);
+    var attributeStrings = Game::creatureConfig->get<std::vector<std::string>>(id, "ConfigAttributes");
+    var configAttributes = stringsToAttributes(attributeStrings);
 
-    for (auto attribute : configAttributes)
+    for (var attribute : configAttributes)
     {
         boost::string_ref attributeName = attributeAbbreviations[attribute];
         int baseAttributeValue = Game::creatureConfig->get<int>(id, attributeName);
@@ -376,7 +376,7 @@ double Creature::getAttribute(Attribute attribute) const
 {
     double sum = 0;
 
-    for (auto index : getAttributeIndices(attribute))
+    for (var index : getAttributeIndices(attribute))
         sum += attributeValues[index];
 
     return sum / getAttributeIndices(attribute).size();
@@ -384,13 +384,13 @@ double Creature::getAttribute(Attribute attribute) const
 
 void Creature::setAttribute(Attribute attribute, double amount)
 {
-    for (auto index : getAttributeIndices(attribute))
+    for (var index : getAttributeIndices(attribute))
         attributeValues[index] = amount;
 }
 
 void Creature::editAttribute(Attribute attribute, double amount)
 {
-    for (auto index : getAttributeIndices(attribute))
+    for (var index : getAttributeIndices(attribute))
         attributeValues[index] += amount;
 }
 
@@ -408,7 +408,7 @@ bool Creature::sees(const Tile& tile) const
 
     return raycastIntegerBresenham(getPosition(), tile.getPosition(), [&](Vector2 vector)
     {
-        auto* currentTile = getWorld().getTile(vector, getLevel());
+        var currentTile = getWorld().getTile(vector, getLevel());
 
         if (!currentTile)
             return false;
@@ -437,12 +437,12 @@ std::vector<Creature*> Creature::getCreaturesCurrentlySeenBy(int maxFieldOfVisio
     {
         for (int y = -maxFieldOfVisionRadius; y <= maxFieldOfVisionRadius; ++y)
         {
-            auto* tile = getWorld().getTile(getPosition() + Vector2(x, y), getLevel());
+            var tile = getWorld().getTile(getPosition() + Vector2(x, y), getLevel());
 
             if (!tile)
                 continue;
 
-            for (auto& creature : tile->getCreatures())
+            for (var creature : tile->getCreatures())
             {
                 if (creature.get() != this && creature->sees(getTileUnder(0)))
                     creatures.push_back(creature.get());
@@ -456,18 +456,18 @@ std::vector<Creature*> Creature::getCreaturesCurrentlySeenBy(int maxFieldOfVisio
 std::vector<Creature*> Creature::getCurrentlySeenCreatures() const
 {
     std::vector<Creature*> currentlySeenCreatures;
-    auto fieldOfVisionRadius = getFieldOfVisionRadius();
+    var fieldOfVisionRadius = getFieldOfVisionRadius();
 
     for (int x = -fieldOfVisionRadius; x <= fieldOfVisionRadius; ++x)
     {
         for (int y = -fieldOfVisionRadius; y <= fieldOfVisionRadius; ++y)
         {
-            auto* tile = getWorld().getTile(getPosition() + Vector2(x, y), getLevel());
+            var tile = getWorld().getTile(getPosition() + Vector2(x, y), getLevel());
 
             if (!tile || !sees(*tile))
                 continue;
 
-            for (auto& creature : tile->getCreatures())
+            for (var creature : tile->getCreatures())
             {
                 if (creature.get() != this)
                     currentlySeenCreatures.push_back(creature.get());
@@ -485,7 +485,7 @@ Creature* Creature::getNearestEnemy() const
     Creature* nearestEnemy = nullptr;
     int nearestEnemyDistance = INT_MAX;
 
-    for (auto* other : getCurrentlySeenCreatures())
+    for (var other : getCurrentlySeenCreatures())
     {
         if (other->getId() == getId())
             continue;
@@ -530,7 +530,7 @@ Action Creature::tryToMoveOrAttack(Dir8 direction)
 
 Action Creature::tryToMoveTowardsOrAttack(Creature& target)
 {
-    auto directionVector = target.getPosition() - getPosition();
+    var directionVector = target.getPosition() - getPosition();
     return tryToMoveOrAttack(directionVector.getDir8());
 }
 
@@ -542,7 +542,7 @@ void Creature::moveTo(Tile& destination)
 
     Item* itemOnTile = nullptr;
 
-    for (auto* tile : getTilesUnder())
+    for (var tile : getTilesUnder())
     {
         if (tile->hasItems())
         {
@@ -593,7 +593,7 @@ void Creature::attack(Creature& target)
     attackerMessage << "You hit the " << target.getName();
     targetMessage << "The " << getName() << " hits you";
 
-    if (auto* weapon = getEquipment(Hand))
+    if (var weapon = getEquipment(Hand))
     {
         attackerMessage << " with the " << weapon->getName();
         targetMessage << " with the " << weapon->getName();
@@ -634,7 +634,7 @@ void Creature::onDeath()
 {
     addMessage("You die.");
 
-    for (auto* observer : getCreaturesCurrentlySeenBy(20))
+    for (var observer : getCreaturesCurrentlySeenBy(20))
         observer->addMessage("The ", getName(), " dies.");
 
     if (getTilesUnder().size() == 1)
@@ -645,14 +645,14 @@ void Creature::onDeath()
     else
     {
         // TODO: Implement multi-tile creature corpses.
-        for (auto* tile : getTilesUnder())
+        for (var tile : getTilesUnder())
             tile->removeCreature(*this);
     }
 }
 
 void Creature::bleed()
 {
-    auto chance = 1.0 - std::max(0.0, currentHP / maxHP);
+    var chance = 1.0 - std::max(0.0, currentHP / maxHP);
 
     while (true)
     {
@@ -661,14 +661,14 @@ void Creature::bleed()
         if (chance <= 0)
             break;
 
-        for (auto* tile : getTilesUnder())
+        for (var tile : getTilesUnder())
             tile->addLiquid("Blood");
     }
 }
 
 bool Creature::pickUpItem()
 {
-    for (auto* tile : tilesUnder)
+    for (var tile : tilesUnder)
     {
         if (tile->hasItems())
         {
@@ -705,7 +705,7 @@ bool Creature::eat(Item& itemToEat)
 {
     assert(itemToEat.isEdible());
 
-    if (auto leftoverItemId = Game::itemConfig->getOptional<std::string>(itemToEat.getId(), "leftoverItem"))
+    if (var leftoverItemId = Game::itemConfig->getOptional<std::string>(itemToEat.getId(), "leftoverItem"))
         getTileUnder(0).addItem(std::make_unique<Item>(*leftoverItemId, ""));
 
     addMessage("You eat the ", itemToEat.getName(), ".");
@@ -715,8 +715,8 @@ bool Creature::eat(Item& itemToEat)
 
 std::unique_ptr<Item> Creature::removeItem(Item& itemToRemove)
 {
-    auto index = getInventoryIndex(itemToRemove);
-    auto removedItem = std::move(inventory[index]);
+    var index = getInventoryIndex(itemToRemove);
+    var removedItem = std::move(inventory[index]);
     inventory.erase(inventory.begin() + index);
     return removedItem;
 }
@@ -763,7 +763,7 @@ void Creature::setController(std::unique_ptr<Controller> controller)
 
 Attribute stringToAttribute(boost::string_ref string)
 {
-    auto it = std::find(std::begin(attributeAbbreviations), std::end(attributeAbbreviations), string);
+    var it = std::find(std::begin(attributeAbbreviations), std::end(attributeAbbreviations), string);
 
     if (it != std::end(attributeAbbreviations))
         return static_cast<Attribute>(it - std::begin(attributeAbbreviations));
@@ -775,7 +775,7 @@ std::vector<Attribute> stringsToAttributes(const std::vector<std::string>& strin
 {
     std::vector<Attribute> attributes;
 
-    for (const auto& string : strings)
+    for (var string : strings)
         attributes.push_back(stringToAttribute(string));
 
     return attributes;
