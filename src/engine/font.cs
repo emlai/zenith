@@ -225,7 +225,7 @@ Vector2 BitmapFont::getTextSize(string text)
     int currentLineLength = 0;
     int lineCount = 0;
 
-    for (var character : text)
+    foreach (var character in text)
     {
         if (character != '\n')
         {

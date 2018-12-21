@@ -50,8 +50,8 @@ List<Tile> Building::getDoorTiles()
 {
     List<Tile> doorTiles;
 
-    for (var room : rooms)
-        for (var doorTile : room.getDoorTiles())
+    foreach (var room in rooms)
+        foreach (var doorTile in room.getDoorTiles())
             doorTiles.push_back(doorTile);
 
     return doorTiles;
@@ -203,7 +203,7 @@ Room? WorldGenerator::generateRoom(Rect region, int level)
 
 Tile WorldGenerator::findPathStart(Tile tile)
 {
-    for (var direction : { North, East, South, West })
+    foreach (var direction in { North, East, South, West })
     {
         var adjacentTile = tile.getAdjacentTile(direction);
 
@@ -258,7 +258,7 @@ List<Tile> WorldGenerator::findPathAStar(Tile source, Tile target,
         openSet.erase(iteratorToCurrent);
         closedSet.insert(current);
 
-        for (var direction : { North, East, South, West })
+        foreach (var direction in { North, East, South, West })
         {
             Tile neighbor = current.getPreExistingAdjacentTile(direction);
 
@@ -301,19 +301,19 @@ void WorldGenerator::generatePaths(const List<Building>& buildings)
 
     var buildingA = randomElement(buildings);
 
-    for (var buildingB : buildings)
+    foreach (var buildingB in buildings)
     {
         if (buildingA == buildingB)
             continue;
 
-        for (var doorA : buildingA.getDoorTiles())
+        foreach (var doorA in buildingA.getDoorTiles())
         {
             var pathStart = findPathStart(doorA);
 
             if (!pathStart)
                 continue;
 
-            for (var doorB : buildingB.getDoorTiles())
+            foreach (var doorB in buildingB.getDoorTiles())
             {
                 var pathEnd = findPathStart(doorB);
 
@@ -334,7 +334,7 @@ void WorldGenerator::generatePaths(const List<Building>& buildings)
                     return !tile.hasObject() || tile.getObject().getId() != "BrickWall";
                 });
 
-                for (var pathTile : path)
+                foreach (var pathTile in path)
                     pathTile.setObject(null);
             }
         }

@@ -89,7 +89,7 @@ class Menu : State
 
             if (event.type == Event::MouseButtonDown)
             {
-                for (var item : itemPositions)
+                foreach (var item in itemPositions)
                 {
                     if (!title.empty() && item == itemPositions[0])
                         continue; // Skip title.
@@ -152,7 +152,7 @@ class Menu : State
         int maxSize = 0;
         int indexOfMax = 0;
 
-        for (MenuItem item : menuItems)
+        foreach (MenuItem item in menuItems)
         {
             var index = item - menuItems[0];
             var currentSize = getHotkeyPrefix(index + 1).size() + item.mainText.size();
@@ -217,7 +217,7 @@ class Menu : State
     {
         var width = 0;
 
-        for (var item : menuItems)
+        foreach (var item in menuItems)
         {
             if (item.mainImage)
                 width = std::max(width, item.mainImage.getWidth());

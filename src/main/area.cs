@@ -53,7 +53,7 @@ Area::Area(SaveFile file, World world, Vector2 position, int level)
 
 void Area::save(SaveFile file)
 {
-    for (var tile : tiles)
+    foreach (var tile in tiles)
         tile.save(file);
 }
 

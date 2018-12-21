@@ -208,7 +208,7 @@ struct Config::ConversionTraits<List<ElementType>>
 
         List<ElementType> outputData;
 
-        for (var element : value.getList())
+        foreach (var element in value.getList())
             outputData.push_back(convert<ElementType>(element));
 
         return outputData;
@@ -425,7 +425,7 @@ List<string> Config::getToplevelKeys()
 {
     List<string> keys;
 
-    for (var keyAndValue : data)
+    foreach (var keyAndValue in data)
     {
         if (var it = keyAndValue.second.getGroup().getOptional("isAbstract"))
             if (it.isBool() && it.getBool())
@@ -633,7 +633,7 @@ void Config::printValue(std::ostream stream, Config::Value value)
         {
             stream << "[";
             var values = value.getList();
-            for (var value : values)
+            foreach (var value in values)
             {
                 printValue(stream, value);
                 if (value != values.back())
@@ -652,7 +652,7 @@ void Config::writeToFile(string filePath)
 {
     std::ofstream file(filePath);
 
-    for (var keyAndValue : data)
+    foreach (var keyAndValue in data)
     {
         file << keyAndValue.first << " = ";
         printValue(file, keyAndValue.second);

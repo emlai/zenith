@@ -46,14 +46,14 @@ void World::save(SaveFile file)
     file.writeInt32(int(areas.size()));
     var areaPositionsOffset = file.getOffset();
 
-    for (var positionAndArea : areas)
+    foreach (var positionAndArea in areas)
     {
         file.write(positionAndArea.first);
         file.writeInt64(long(0));
     }
 
     int index = 0;
-    for (var positionAndArea : areas)
+    foreach (var positionAndArea in areas)
     {
         var areaOffset = file.getOffset();
         file.seek(areaPositionsOffset + index * (sizeof(Vector3) + sizeof(long)) + sizeof(Vector3));
@@ -78,7 +78,7 @@ void World::exist(Rect region, int level)
     {
         tile.exist();
 
-        for (var creature : tile.getCreatures())
+        foreach (var creature in tile.getCreatures())
             creaturesToUpdate.push_back(creature.get());
     });
 
@@ -87,7 +87,7 @@ void World::exist(Rect region, int level)
     creaturesToUpdate.erase(std::unique(creaturesToUpdate.begin(), creaturesToUpdate.end()),
                             creaturesToUpdate.end());
 
-    for (var creature : creaturesToUpdate)
+    foreach (var creature in creaturesToUpdate)
         creature.exist();
 }
 
@@ -109,7 +109,7 @@ void World::render(Window window, Rect region, int level, Creature player)
     });
 
     for (int zIndex = 0; zIndex < 7; ++zIndex)
-        for (var tileAndFogOfWar : tilesToRender)
+        foreach (var tileAndFogOfWar in tilesToRender)
             tileAndFogOfWar.first.render(window, zIndex, tileAndFogOfWar.second, !game.playerSeesEverything);
 }
 

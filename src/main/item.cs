@@ -40,7 +40,7 @@ class Item : Entity
             item.sprite.setMaterialColor(Color32(file.readUint32()));
         }
 
-        for (var component : item.getComponents())
+        foreach (var component in item.getComponents())
             component.load(file);
 
         return item;
@@ -51,13 +51,13 @@ class Item : Entity
         file.write(getId());
         file.write(materialId);
         file.writeInt32(sprite.getMaterialColor().value);
-        for (var component : getComponents())
+        foreach (var component in getComponents())
             component.save(file);
     }
 
     bool isUsable()
     {
-        for (var component : getComponents())
+        foreach (var component in getComponents())
             if (component.isUsable())
                 return true;
 
@@ -69,7 +69,7 @@ class Item : Entity
         assert(isUsable());
         bool returnValue = false;
 
-        for (var component : getComponents())
+        foreach (var component in getComponents())
             if (component.use(user, this, game))
                 returnValue = true;
 

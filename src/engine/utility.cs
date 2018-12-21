@@ -1,7 +1,7 @@
 template<typename T>
 std::ostream operator<<(std::ostream outputStream, const List<T>& elements)
 {
-    for (var element : elements)
+    foreach (var element in elements)
         outputStream << element;
 
     return outputStream;
@@ -90,7 +90,7 @@ string pascalCaseToSentenceCase(string pascalCaseString)
     string name;
     name.reserve(pascalCaseString.size());
 
-    for (char ch : pascalCaseString)
+    foreach (char ch in pascalCaseString)
     {
         if (std::isupper(ch))
         {

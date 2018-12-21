@@ -133,7 +133,7 @@ class Creature : Entity
     {
         List<Attribute> displayedAttributes;
 
-        for (var attribute : Game::creatureConfig.get<List<string>>(id, "DisplayedAttributes"))
+        foreach (var attribute in Game::creatureConfig.get<List<string>>(id, "DisplayedAttributes"))
             displayedAttributes.push_back(stringToAttribute(attribute));
 
         return displayedAttributes;
@@ -174,7 +174,7 @@ class Creature : Entity
 
         if (var initialEquipment = getConfig().getOptional<List<string>>(getId(), "Equipment"))
         {
-            for (var itemId : initialEquipment)
+            foreach (var itemId in initialEquipment)
             {
                 inventory.push_back(new Item(itemId, getRandomMaterialId(itemId)));
                 equip(inventory.back().getEquipmentSlot(), &inventory.back());
@@ -197,7 +197,7 @@ class Creature : Entity
         if (tile)
             tilesUnder.push_back(tile);
 
-        for (var component : getComponents())
+        foreach (var component in getComponents())
             component.load(file);
 
         var seenTilePositionsCount = file.readInt32();
@@ -210,7 +210,7 @@ class Creature : Entity
         for (int i = 0; i < inventorySize; ++i)
             inventory.push_back(Item::load(file));
 
-        for (var slotAndItem : equipment)
+        foreach (var slotAndItem in equipment)
         {
             var itemIndex = file.readInt16();
 
@@ -230,16 +230,16 @@ class Creature : Entity
     void save(SaveFile file)
     {
         file.write(getId());
-        for (var component : getComponents())
+        foreach (var component in getComponents())
             component.save(file);
 
         file.writeInt32(uint(seenTilePositions.size()));
-        for (var tilePosition : seenTilePositions)
+        foreach (var tilePosition in seenTilePositions)
             file.write(tilePosition);
 
         file.write(inventory);
 
-        for (var slotAndItem : equipment)
+        foreach (var slotAndItem in equipment)
             file.writeInt16(short(slotAndItem.second ? getInventoryIndex(slotAndItem.second) : -1));
 
         file.write(attributeValues);
@@ -297,7 +297,7 @@ class Creature : Entity
         var attributeStrings = Game::creatureConfig.get<List<string>>(id, "ConfigAttributes");
         var configAttributes = stringsToAttributes(attributeStrings);
 
-        for (var attribute : configAttributes)
+        foreach (var attribute in configAttributes)
         {
             string attributeName = attributeAbbreviations[attribute];
             int baseAttributeValue = Game::creatureConfig.get<int>(id, attributeName);
@@ -326,7 +326,7 @@ class Creature : Entity
     {
         double sum = 0;
 
-        for (var index : getAttributeIndices(attribute))
+        foreach (var index in getAttributeIndices(attribute))
             sum += attributeValues[index];
 
         return sum / getAttributeIndices(attribute).size();
@@ -334,13 +334,13 @@ class Creature : Entity
 
     void setAttribute(Attribute attribute, double amount)
     {
-        for (var index : getAttributeIndices(attribute))
+        foreach (var index in getAttributeIndices(attribute))
             attributeValues[index] = amount;
     }
 
     void editAttribute(Attribute attribute, double amount)
     {
-        for (var index : getAttributeIndices(attribute))
+        foreach (var index in getAttributeIndices(attribute))
             attributeValues[index] += amount;
     }
 
@@ -392,7 +392,7 @@ class Creature : Entity
                 if (!tile)
                     continue;
 
-                for (var creature : tile.getCreatures())
+                foreach (var creature in tile.getCreatures())
                 {
                     if (creature.get() != this && creature.sees(getTileUnder(0)))
                         creatures.push_back(creature.get());
@@ -417,7 +417,7 @@ class Creature : Entity
                 if (!tile || !sees(tile))
                     continue;
 
-                for (var creature : tile.getCreatures())
+                foreach (var creature in tile.getCreatures())
                 {
                     if (creature.get() != this)
                         currentlySeenCreatures.push_back(creature.get());
@@ -435,7 +435,7 @@ class Creature : Entity
         Creature nearestEnemy = null;
         int nearestEnemyDistance = INT_MAX;
 
-        for (var other : getCurrentlySeenCreatures())
+        foreach (var other in getCurrentlySeenCreatures())
         {
             if (other.getId() == getId())
                 continue;
@@ -492,7 +492,7 @@ class Creature : Entity
 
         Item itemOnTile = null;
 
-        for (var tile : getTilesUnder())
+        foreach (var tile in getTilesUnder())
         {
             if (tile.hasItems())
             {
@@ -513,7 +513,7 @@ class Creature : Entity
 
     bool enter()
     {
-        for (Tile tile : getTilesUnder())
+        foreach (Tile tile in getTilesUnder())
         {
             if (!tile.hasObject())
                 continue;
@@ -584,7 +584,7 @@ class Creature : Entity
     {
         addMessage("You die.");
 
-        for (var observer : getCreaturesCurrentlySeenBy(20))
+        foreach (var observer in getCreaturesCurrentlySeenBy(20))
             observer.addMessage("The ", getName(), " dies.");
 
         if (getTilesUnder().size() == 1)
@@ -595,7 +595,7 @@ class Creature : Entity
         else
         {
             // TODO: Implement multi-tile creature corpses.
-            for (var tile : getTilesUnder())
+            foreach (var tile in getTilesUnder())
                 tile.removeCreature(this);
         }
     }
@@ -611,14 +611,14 @@ class Creature : Entity
             if (chance <= 0)
                 break;
 
-            for (var tile : getTilesUnder())
+            foreach (var tile in getTilesUnder())
                 tile.addLiquid("Blood");
         }
     }
 
     bool pickUpItem()
     {
-        for (var tile : tilesUnder)
+        foreach (var tile in tilesUnder)
         {
             if (tile.hasItems())
             {
@@ -725,7 +725,7 @@ class Creature : Entity
     {
         List<Attribute> attributes;
 
-        for (var string : strings)
+        foreach (var string in strings)
             attributes.push_back(stringToAttribute(string));
 
         return attributes;

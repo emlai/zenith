@@ -82,7 +82,7 @@ void MessageSystem::drawMessages(Window window, BitmapFont font,
 
 #ifdef DEBUG
     font.setArea(GUI::getDebugMessageArea(window));
-    for (DebugMessage message : debugMessages)
+    foreach (DebugMessage message in debugMessages)
         font.printLine(window, message.content, messageColors[message.type]);
 #endif
 }

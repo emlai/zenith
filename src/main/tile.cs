@@ -129,7 +129,7 @@ void Tile::exist()
             it = liquids.erase(it);
     }
 
-    for (var item : items)
+    foreach (var item in items)
         item.exist();
 }
 
@@ -142,11 +142,11 @@ void Tile::render(Window window, int zIndex, bool fogOfWar, bool renderLight)
         case 0:
             groundSprite.render(window, renderPosition);
 
-            for (var liquid : liquids)
+            foreach (var liquid in liquids)
                 liquid.render(window, renderPosition);
             break;
         case 1:
-            for (var item : items)
+            foreach (var item in items)
                 item.render(window, renderPosition);
             break;
         case 2:
@@ -157,7 +157,7 @@ void Tile::render(Window window, int zIndex, bool fogOfWar, bool renderLight)
             if (fogOfWar)
                 break;
 
-            for (var creature : creatures)
+            foreach (var creature in creatures)
                 creature.render(window, renderPosition);
             break;
         case 4:
@@ -222,13 +222,13 @@ string Tile::getTooltip()
 {
     string tooltip;
 
-    for (var creature : creatures)
+    foreach (var creature in creatures)
     {
         tooltip += creature.getName();
         tooltip += '\n';
     }
 
-    for (var item : boost::adaptors::reverse(items))
+    foreach (var item in boost::adaptors::reverse(items))
     {
         tooltip += item.getName();
         tooltip += '\n';
@@ -312,16 +312,16 @@ void Tile::setGround(string groundId)
 
 void Tile::forEachEntity(const std::function<void(Entity)>& function)
 {
-    for (var creature : creatures)
+    foreach (var creature in creatures)
     {
         function(creature);
 
-        for (var slotAndItem : creature.getEquipment())
+        foreach (var slotAndItem in creature.getEquipment())
             if (slotAndItem.second)
                 function(slotAndItem.second);
     }
 
-    for (var item : items)
+    foreach (var item in items)
         function(item);
 
     if (object)
@@ -332,7 +332,7 @@ void Tile::forEachLightSource(const std::function<void(LightSource)>& function)
 {
     forEachEntity([&](Entity entity)
     {
-        for (var lightSource : entity.getComponentsOfType<LightSource>())
+        foreach (var lightSource in entity.getComponentsOfType<LightSource>())
             function(lightSource);
     });
 }

@@ -35,7 +35,7 @@ List<ComponentType> Entity::getComponentsOfType()
 {
     List<ComponentType> componentsOfType;
 
-    for (var component : components)
+    foreach (var component in components)
         if (var p = dynamic_cast<ComponentType>(component.get()))
             componentsOfType.push_back(p);
 
@@ -55,7 +55,7 @@ Entity::Entity(string id, Config config)
 {
     if (var componentNames = config.getOptional<List<string>>(id, "components"))
     {
-        for (var componentName : componentNames)
+        foreach (var componentName in componentNames)
         {
             if (var component = Component::get(componentName, this))
                 components.push_back(component);
@@ -96,7 +96,7 @@ bool Entity::reactToMovementAttempt()
 {
     bool returnValue = false;
 
-    for (var component : components)
+    foreach (var component in components)
         if (component.reactToMovementAttempt())
             returnValue = true;
 
@@ -105,7 +105,7 @@ bool Entity::reactToMovementAttempt()
 
 bool Entity::preventsMovement()
 {
-    for (var component : components)
+    foreach (var component in components)
         if (component.preventsMovement())
             return true;
 

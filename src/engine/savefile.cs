@@ -9,7 +9,7 @@ class SaveFile
     {
         writeInt32(int(vector.size()));
 
-        for (var element : vector)
+        foreach (var element in vector)
             write(element);
     }
 
@@ -140,7 +140,7 @@ class SaveFile
     {
         writeInt16(ushort(value.size()));
 
-        for (var ch : value)
+        foreach (var ch in value)
             writeInt8(byte(ch));
     }
 

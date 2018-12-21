@@ -128,7 +128,7 @@ InventoryMenu::InventoryMenu(Window window, Creature player, string title,
 
     int id = 0;
 
-    for (var item : player.getInventory())
+    foreach (var item in player.getInventory())
     {
         if (!itemFilter || itemFilter(item))
             addItem(MenuItem(id, item.getName(), NoKey, item.getSprite()));
@@ -372,7 +372,7 @@ void Game::printPlayerInformation(BitmapFont font)
     printStat(font, "HP", player.getHP(), player.getMaxHP(), TextColor::Red);
     printStat(font, "MP", player.getMP(), player.getMaxMP(), TextColor::Blue);
 
-    for (var attribute : player.getDisplayedAttributes())
+    foreach (var attribute in player.getDisplayedAttributes())
         printAttribute(font, attributeAbbreviations[attribute], player.getAttribute(attribute));
 
     if (player.isRunning())

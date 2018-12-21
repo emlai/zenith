@@ -21,7 +21,7 @@ Object::Object(SaveFile file)
 :   Entity(file.readString(), Game::objectConfig),
     sprite(::getSprite(Game::objectSpriteSheet, Game::objectConfig, getId()))
 {
-    for (var component : getComponents())
+    foreach (var component in getComponents())
         component.load(file);
 }
 
@@ -29,7 +29,7 @@ void Object::save(SaveFile file)
 {
     file.write(getId());
 
-    for (var component : getComponents())
+    foreach (var component in getComponents())
         component.save(file);
 }
 
@@ -37,7 +37,7 @@ bool Object::close()
 {
     bool returnValue = false;
 
-    for (var component : getComponents())
+    foreach (var component in getComponents())
         if (component.close())
             returnValue = true;
 
@@ -46,7 +46,7 @@ bool Object::close()
 
 bool Object::blocksSight()
 {
-    for (var component : getComponents())
+    foreach (var component in getComponents())
         if (component.blocksSight())
             return true;
 
