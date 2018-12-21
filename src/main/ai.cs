@@ -4,7 +4,7 @@ class AI
 {
 public:
     AI(Creature creature) : creature(creature) {}
-    virtual ~AI() = default;
+    virtual ~AI() {}
     virtual Action control() = 0;
     static std::unique_ptr<AI> get(string id, Creature creature);
 

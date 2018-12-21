@@ -3,10 +3,10 @@ class Entity
 public:
     Entity(string id, Config config);
     Entity(Entity) = delete;
-    Entity(Entity) = default;
+    Entity(Entity) {}
     Entity operator=(Entity) = delete;
-    Entity operator=(Entity) = default;
-    virtual ~Entity() = default;
+    Entity operator=(Entity) {}
+    virtual ~Entity() {}
 
     string getName();
     string getNameIndefinite();

@@ -46,7 +46,7 @@ struct Vector2Base
 {
     T x, y;
 
-    Vector2Base() = default;
+    Vector2Base() {}
     constexpr Vector2Base(T x, T y) : x(x), y(y) {}
     constexpr Vector2Base(Dir8 direction) : Vector2Base(directionVectors[direction]) {}
     template<typename U>
@@ -197,7 +197,7 @@ struct Vector3Base
 {
     T x, y, z;
 
-    Vector3Base() = default;
+    Vector3Base() {}
     constexpr Vector3Base(T x, T y, T z) : x(x), y(y), z(z) {}
     explicit constexpr Vector3Base(Vector2Base<T> vector) : x(vector.x), y(vector.y), z(0) {}
 
@@ -244,7 +244,7 @@ struct Rect
     Vector2 position; ///< Top-left corner
     Vector2 size;
 
-    Rect() = default;
+    Rect() {}
     constexpr Rect(Vector2 position, Vector2 size) : position(position), size(size) {}
     constexpr Rect(int x, int y, int w, int h) : position(x, y), size(w, h) {}
 

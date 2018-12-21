@@ -22,7 +22,7 @@ struct Color
 
     T value;
 
-    Color() = default;
+    Color() {}
     explicit Color(T value) : value(value) {}
     Color(int red, int green, int blue, int alpha = max) : value(createValue(red, green, blue, alpha)) {}
 

@@ -35,7 +35,7 @@ struct Deferrer
     T deferred;
 
     Deferrer(T deferred) : deferred(std::move(deferred)) {}
-    Deferrer(Deferrer) = default;
+    Deferrer(Deferrer) {}
     ~Deferrer() { deferred(); }
 }
 

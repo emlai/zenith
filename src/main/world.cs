@@ -3,9 +3,9 @@ class World
 public:
     World(Game game) : game(game), sunlight(0x888888FF) {}
     World(World) = delete;
-    World(World) = default;
+    World(World) {}
     World operator=(World) = delete;
-    World operator=(World) = default;
+    World operator=(World) {}
     void load(SaveFile file);
     void save(SaveFile file);
     int getTurn();

@@ -1,12 +1,12 @@
 class State
 {
 public:
-    State() = default;
+    State() {}
     State(State) = delete;
-    State(State) = default;
+    State(State) {}
     State operator=(State) = delete;
-    State operator=(State) = default;
-    virtual ~State() = default;
+    State operator=(State) {}
+    virtual ~State() {}
     Engine getEngine() { return *engine; }
 
 private:

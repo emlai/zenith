@@ -3,9 +3,9 @@ class Game : public State
 public:
     Game(bool loadSavedGame);
     Game(Game) = delete;
-    Game(Game) = default;
+    Game(Game) {}
     Game operator=(Game) = delete;
-    Game operator=(Game) = default;
+    Game operator=(Game) {}
     void save();
     void load();
     void execute();
