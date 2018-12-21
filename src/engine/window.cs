@@ -24,17 +24,17 @@ class Window
     static int windowCount;
     static bool sdlVideoInitialized;
     const int fullscreenFlag;
-    int Window::windowCount = 0;
-    bool Window::sdlVideoInitialized = false;
-    const int Window::fullscreenFlag = SDL_WINDOW_FULLSCREEN_DESKTOP;
+    int windowCount = 0;
+    bool sdlVideoInitialized = false;
+    const int fullscreenFlag = SDL_WINDOW_FULLSCREEN_DESKTOP;
 
-    void Window::initializeSDLVideoSubsystem()
+    void initializeSDLVideoSubsystem()
     {
         SDL_Init(SDL_INIT_VIDEO);
         sdlVideoInitialized = true;
     }
 
-    SDL_Window Window::initWindowHandle(Vector2 size, string title, bool fullscreen)
+    SDL_Window initWindowHandle(Vector2 size, string title, bool fullscreen)
     {
         if (!sdlVideoInitialized)
             initializeSDLVideoSubsystem();
@@ -55,7 +55,7 @@ class Window
         return windowHandle;
     }
 
-    Window::Window(Engine engine, Vector2 size, string title, bool fullscreen)
+    Window(Engine engine, Vector2 size, string title, bool fullscreen)
     :   engine(engine),
         closeRequestReceived(false),
         windowHandle(initWindowHandle(size, title.to_string().c_str(), fullscreen), SDL_DestroyWindow),
@@ -70,7 +70,7 @@ class Window
         SDL_EventState(SDL_FINGERUP, SDL_IGNORE);
     }
 
-    Window::~Window()
+    ~Window()
     {
         windowHandle.reset();
         --windowCount;
@@ -82,17 +82,17 @@ class Window
         }
     }
 
-    void Window::setFullscreen(bool enable)
+    void setFullscreen(bool enable)
     {
         SDL_SetWindowFullscreen(windowHandle.get(), enable ? fullscreenFlag : 0);
     }
 
-    void Window::toggleFullscreen()
+    void toggleFullscreen()
     {
         setFullscreen(!isFullscreen());
     }
 
-    bool Window::isFullscreen()
+    bool isFullscreen()
     {
         return SDL_GetWindowFlags(windowHandle.get()) & fullscreenFlag;
     }
@@ -106,7 +106,7 @@ class Window
         return 1;
     }
 
-    Event Window::waitForInput()
+    Event waitForInput()
     {
         SDL_Event event;
 
@@ -152,7 +152,7 @@ class Window
         }
     }
 
-    bool Window::handleWindowEvent(int eventType)
+    bool handleWindowEvent(int eventType)
     {
         switch (eventType)
         {
@@ -166,60 +166,60 @@ class Window
         return true;
     }
 
-    void Window::sendCloseRequest()
+    void sendCloseRequest()
     {
         closeRequestReceived = true;
     }
 
-    bool Window::shouldClose()
+    bool shouldClose()
     {
         return closeRequestReceived;
     }
 
-    Vector2 Window::getMousePosition()
+    Vector2 getMousePosition()
     {
         Vector2 position;
         SDL_GetMouseState(position.x, position.y);
         return context.mapFromTargetCoordinates(position);
     }
 
-    void Window::setShowCursor(bool show)
+    void setShowCursor(bool show)
     {
         SDL_ShowCursor(show);
     }
 
-    Vector2 Window::getResolution()
+    Vector2 getResolution()
     {
         return getSize() / context.getScale();
     }
 
-    Vector2 Window::getSize()
+    Vector2 getSize()
     {
         Vector2 size;
         SDL_GetWindowSize(windowHandle.get(), size.x, size.y);
         return size;
     }
 
-    int Window::getWidth()
+    int getWidth()
     {
         int width;
         SDL_GetWindowSize(windowHandle.get(), width, nullptr);
         return width;
     }
 
-    int Window::getHeight()
+    int getHeight()
     {
         int height;
         SDL_GetWindowSize(windowHandle.get(), nullptr, height);
         return height;
     }
 
-    string Window::getTitle()
+    string getTitle()
     {
         return SDL_GetWindowTitle(windowHandle.get());
     }
 
-    Vector2 Window::getScreenResolution()
+    Vector2 getScreenResolution()
     {
         if (!sdlVideoInitialized)
             initializeSDLVideoSubsystem();
