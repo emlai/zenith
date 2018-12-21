@@ -6,7 +6,7 @@ class Texture
 {
 public:
     Texture(string fileName, Color32 transparentColor = Color32::none);
-    Texture(uint32_t pixelFormat, Vector2 size);
+    Texture(uint pixelFormat, Vector2 size);
     void setBlendMode(bool);
     void setColor(Color32) const;
     void render(Window window, Vector2 position, Vector2 size = Vector2::zeroVector) const;
@@ -24,10 +24,10 @@ private:
 }
 struct PixelFormatMasks
 {
-    uint32_t red, green, blue, alpha;
+    uint red, green, blue, alpha;
 }
 
-static PixelFormatMasks pixelFormatEnumToMasks(uint32_t pixelFormat)
+static PixelFormatMasks pixelFormatEnumToMasks(uint pixelFormat)
 {
     int bpp;
     PixelFormatMasks masks;
@@ -38,7 +38,7 @@ static PixelFormatMasks pixelFormatEnumToMasks(uint32_t pixelFormat)
     return masks;
 }
 
-static SDL_Surface createSurfaceWithFormat(uint32_t pixelFormat, Vector2 size)
+static SDL_Surface createSurfaceWithFormat(uint pixelFormat, Vector2 size)
 {
     PixelFormatMasks masks = pixelFormatEnumToMasks(pixelFormat);
     return SDL_CreateRGBSurface(0, size.x, size.y, SDL_BITSPERPIXEL(pixelFormat),
@@ -57,16 +57,16 @@ Texture::Texture(string fileName, Color32 transparentColor)
     if (transparentColor)
     {
         var colorKey = SDL_MapRGB(surface->format,
-                                   static_cast<uint8_t>(transparentColor.getRed()),
-                                   static_cast<uint8_t>(transparentColor.getGreen()),
-                                   static_cast<uint8_t>(transparentColor.getBlue()));
+                                   static_cast<byte>(transparentColor.getRed()),
+                                   static_cast<byte>(transparentColor.getGreen()),
+                                   static_cast<byte>(transparentColor.getBlue()));
         SDL_SetColorKey(surface.get(), 1, colorKey);
     }
 
     setBlendMode(true);
 }
 
-Texture::Texture(uint32_t pixelFormat, Vector2 size)
+Texture::Texture(uint pixelFormat, Vector2 size)
 :   surface(createSurfaceWithFormat(pixelFormat, size), SDL_FreeSurface)
 {
     setBlendMode(true);
@@ -106,12 +106,12 @@ void Texture::render(Window window, Rect source, Rect target, Color32 materialCo
     target = window.context.mapToTargetCoordinates(target);
 
     SDL_Surface targetSurface = window.context.targetTexture.getSurface();
-    const uint32_t sourcePixels = static_cast<const uint32_t>(surface->pixels);
-    uint32_t targetPixels = static_cast<uint32_t>(targetSurface->pixels);
+    const uint sourcePixels = static_cast<const uint>(surface->pixels);
+    uint targetPixels = static_cast<uint>(targetSurface->pixels);
     var sourceWidth = surface->w;
     var targetWidth = targetSurface->w;
 
-    uint32_t transparentColor;
+    uint transparentColor;
     if (SDL_GetColorKey(surface.get(), transparentColor) != 0)
         transparentColor = 0;
 
@@ -119,12 +119,12 @@ void Texture::render(Window window, Rect source, Rect target, Color32 materialCo
     {
         for (var x = source.getLeft(); x <= source.getRight(); ++x)
         {
-            uint32_t pixel = sourcePixels[y * sourceWidth + x];
+            uint pixel = sourcePixels[y * sourceWidth + x];
 
             if (pixel == transparentColor)
                 continue;
 
-            const uint8_t abgr = reinterpret_cast<const uint8_t>(sourcePixels[y * sourceWidth + x]);
+            const byte abgr = reinterpret_cast<const byte>(sourcePixels[y * sourceWidth + x]);
             bool isMagenta = abgr[3] > 0 && abgr[3] == abgr[1] && abgr[2] == 0;
 
             if (isMagenta)
@@ -158,9 +158,9 @@ int Texture::getHeight() const
 void Texture::setColor(Color32 color) const
 {
     SDL_SetSurfaceColorMod(surface.get(),
-                           uint8_t(color.getRed()),
-                           uint8_t(color.getGreen()),
-                           uint8_t(color.getBlue()));
+                           byte(color.getRed()),
+                           byte(color.getGreen()),
+                           byte(color.getBlue()));
     SDL_SetSurfaceAlphaMod(surface.get(),
-                           uint8_t(color.getAlpha()));
+                           byte(color.getAlpha()));
 }

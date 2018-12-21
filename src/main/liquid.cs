@@ -24,7 +24,7 @@ Liquid::Liquid(string materialId)
     int height = 3;
     Vector2 position(randInt(Tile::getSize().x - width), randInt(Tile::getSize().y - height));
     SDL_Rect liquidRectangle = { position.x, position.y, width, height }
-    Color32 color = Color16(Game::materialConfig->get<uint16_t>(materialId, "Color"));
+    Color32 color = Color16(Game::materialConfig->get<ushort>(materialId, "Color"));
     SDL_FillRect(texture.getSurface(), liquidRectangle, color.value);
 }
 
@@ -52,6 +52,6 @@ bool Liquid::exists() const
 
 void Liquid::render(Window window, Vector2 position) const
 {
-    SDL_SetSurfaceAlphaMod(texture.getSurface(), uint8_t(fadeLevel * 255));
+    SDL_SetSurfaceAlphaMod(texture.getSurface(), uint_t(fadeLevel * 255));
     texture.render(window, position);
 }

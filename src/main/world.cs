@@ -24,7 +24,7 @@ private:
 
     Game game;
     Dictionary<Vector3, Area> areas;
-    Dictionary<Vector3, int64_t> savedAreaOffsets;
+    Dictionary<Vector3, long> savedAreaOffsets;
     std::unique_ptr<SaveFile> saveFile;
     Color32 sunlight;
 }
@@ -44,20 +44,20 @@ void World::load(SaveFile file)
 
 void World::save(SaveFile file) const
 {
-    file.writeInt32(int32_t(areas.size()));
+    file.writeInt32(int(areas.size()));
     var areaPositionsOffset = file.getOffset();
 
     for (var positionAndArea : areas)
     {
         file.write(positionAndArea.first);
-        file.writeInt64(int64_t(0));
+        file.writeInt64(long(0));
     }
 
     int index = 0;
     for (var positionAndArea : areas)
     {
         var areaOffset = file.getOffset();
-        file.seek(areaPositionsOffset + index * (sizeof(Vector3) + sizeof(int64_t)) + sizeof(Vector3));
+        file.seek(areaPositionsOffset + index * (sizeof(Vector3) + sizeof(long)) + sizeof(Vector3));
         file.writeInt64(areaOffset);
         file.seek(areaOffset);
         positionAndArea.second.save(file);

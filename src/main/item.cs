@@ -46,7 +46,7 @@ static Color16 getMaterialColor(string materialId)
     {
         try
         {
-            return Color16(static_cast<uint16_t>(Game::materialConfig->get<int>(materialId, "Color")));
+            return Color16(static_cast<ushort>(Game::materialConfig->get<int>(materialId, "Color")));
         }
         catch (std::runtime_error)
         {

@@ -21,22 +21,22 @@ T limit(T value, T min, T max)
 
 struct Xorshift1024Star
 {
-    uint64_t operator()();
-    uint64_t state[16];
+    ulong operator()();
+    ulong state[16];
     int index = 0;
 }
 
 struct Xorshift64Star
 {
-    uint64_t operator()();
-    uint64_t state;
+    ulong operator()();
+    ulong state;
 }
 
 class RNG
 {
 public:
     using Generator = Xorshift1024Star;
-    using result_type = uint64_t;
+    using result_type = ulong;
 
     RNG(Generator algorithm) : algorithm(std::move(algorithm)) {}
     void seed();
@@ -94,7 +94,7 @@ RNG rng = RNG(Xorshift1024Star());
 void RNG::seed()
 {
     std::random_device randomDevice;
-    seed((uint64_t(randomDevice()) << 32) | randomDevice());
+    seed((ulong(randomDevice()) << 32) | randomDevice());
 }
 
 void RNG::seed(RNG::result_type seed)
@@ -105,7 +105,7 @@ void RNG::seed(RNG::result_type seed)
     std::generate(std::begin(algorithm.state), std::end(algorithm.state), seedGenerator);
 }
 
-uint64_t Xorshift1024Star::operator()()
+ulong Xorshift1024Star::operator()()
 {
     var s0 = state[index];
     var s1 = state[index = (index + 1) & 15];
@@ -115,7 +115,7 @@ uint64_t Xorshift1024Star::operator()()
     return (state[index] = s0 ^ s1) * 1181783497276652981ULL;
 }
 
-uint64_t Xorshift64Star::operator()()
+ulong Xorshift64Star::operator()()
 {
     state ^= state >> 12;
     state ^= state << 25;

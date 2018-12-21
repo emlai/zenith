@@ -4,19 +4,19 @@ class SaveFile
 {
 public:
     SaveFile(string filePath, bool writable);
-    uint64_t getSize() const;
-    int64_t getOffset() const;
-    void seek(int64_t offset);
+    ulong getSize() const;
+    long getOffset() const;
+    void seek(long offset);
     SaveFile copyToMemory();
 
-    void writeInt8(int8_t value) { writeInt8(uint8_t(value)); }
-    void writeInt8(uint8_t value);
-    void writeInt16(int16_t value) { writeInt16(uint16_t(value)); }
-    void writeInt16(uint16_t value);
-    void writeInt32(int32_t value) { writeInt32(uint32_t(value)); }
-    void writeInt32(uint32_t value);
-    void writeInt64(int64_t value) { writeInt64(uint64_t(value)); }
-    void writeInt64(uint64_t value);
+    void writeInt8(sbyte value) { writeInt8(byte(value)); }
+    void writeInt8(byte value);
+    void writeInt16(short value) { writeInt16(ushort(value)); }
+    void writeInt16(ushort value);
+    void writeInt32(int value) { writeInt32(uint(value)); }
+    void writeInt32(uint value);
+    void writeInt64(long value) { writeInt64(ulong(value)); }
+    void writeInt64(ulong value);
     void write(bool value);
     void write(double value);
     void write(Vector2 value);
@@ -26,14 +26,14 @@ public:
     template<typename T>
     void write(const List<T>& vector);
 
-    int8_t readInt8() const { return int8_t(readUint8()); }
-    uint8_t readUint8() const;
-    int16_t readInt16() const { return int16_t(readUint16()); }
-    uint16_t readUint16() const;
-    int32_t readInt32() const { return int32_t(readUint32()); }
-    uint32_t readUint32() const;
-    int64_t readInt64() const { return int64_t(readUint64()); }
-    uint64_t readUint64() const;
+    sbyte readInt8() const { return sbyte(readUint8()); }
+    byte readUint8() const;
+    short readInt16() const { return short(readUint16()); }
+    ushort readUint16() const;
+    int readInt32() const { return int(readUint32()); }
+    uint readUint32() const;
+    long readInt64() const { return long(readUint64()); }
+    ulong readUint64() const;
     bool readBool() const;
     double readDouble() const;
     string readString() const;
@@ -58,7 +58,7 @@ private:
 template<typename T>
 void SaveFile::write(const List<T>& vector)
 {
-    writeInt32(int32_t(vector.size()));
+    writeInt32(int(vector.size()));
 
     for (var element : vector)
         write(element);
@@ -100,69 +100,69 @@ SaveFile::SaveFile(List<char> buffer)
         throw std::runtime_error(SDL_GetError());
 }
 
-uint64_t SaveFile::getSize() const
+ulong SaveFile::getSize() const
 {
     var size = SDL_RWsize(file.get());
 
     if (size < 0)
         throw std::runtime_error(SDL_GetError());
 
-    return uint64_t(size);
+    return ulong(size);
 }
 
-int64_t SaveFile::getOffset() const
+long SaveFile::getOffset() const
 {
     return SDL_RWtell(file.get());
 }
 
-void SaveFile::seek(int64_t offset)
+void SaveFile::seek(long offset)
 {
     SDL_RWseek(file.get(), offset, RW_SEEK_SET);
 }
 
-void SaveFile::writeInt8(uint8_t value)
+void SaveFile::writeInt8(byte value)
 {
     SDL_WriteU8(file.get(), value);
 }
 
-uint8_t SaveFile::readUint8() const
+byte SaveFile::readUint8() const
 {
     return SDL_ReadU8(file.get());
 }
 
-void SaveFile::writeInt16(uint16_t value)
+void SaveFile::writeInt16(ushort value)
 {
     SDL_WriteLE16(file.get(), value);
 }
 
-uint16_t SaveFile::readUint16() const
+ushort SaveFile::readUint16() const
 {
     return SDL_ReadLE16(file.get());
 }
 
-void SaveFile::writeInt32(uint32_t value)
+void SaveFile::writeInt32(uint value)
 {
     SDL_WriteLE32(file.get(), value);
 }
 
-uint32_t SaveFile::readUint32() const
+uint SaveFile::readUint32() const
 {
     return SDL_ReadLE32(file.get());
 }
 
-void SaveFile::writeInt64(uint64_t value)
+void SaveFile::writeInt64(ulong value)
 {
     SDL_WriteLE64(file.get(), value);
 }
 
-uint64_t SaveFile::readUint64() const
+ulong SaveFile::readUint64() const
 {
     return SDL_ReadLE64(file.get());
 }
 
 void SaveFile::write(bool value)
 {
-    writeInt8(uint8_t(value));
+    writeInt8(byte(value));
 }
 
 bool SaveFile::readBool() const
@@ -172,7 +172,7 @@ bool SaveFile::readBool() const
 
 void SaveFile::write(double value)
 {
-    uint64_t integer;
+    ulong integer;
     static_assert(sizeof(value) == sizeof(integer), "");
     std::memcpy(integer, value, sizeof(integer));
     writeInt64(integer);
@@ -189,10 +189,10 @@ double SaveFile::readDouble() const
 
 void SaveFile::write(string value)
 {
-    writeInt16(uint16_t(value.size()));
+    writeInt16(ushort(value.size()));
 
     for (var ch : value)
-        writeInt8(uint8_t(ch));
+        writeInt8(byte(ch));
 }
 
 string SaveFile::readString() const

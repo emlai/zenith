@@ -1,8 +1,8 @@
 template<typename T>
 struct Color;
 
-using Color16 = Color<uint16_t>;
-using Color32 = Color<uint32_t>;
+using Color16 = Color<ushort>;
+using Color32 = Color<uint>;
 
 template<typename T>
 struct Color

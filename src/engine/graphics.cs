@@ -174,14 +174,14 @@ void GraphicsContext::renderFilledRectangle(Rect rectangle, Color32 color, Blend
             double dstR = color.getRed() / 255.0;
             double dstG = color.getGreen() / 255.0;
             double dstB = color.getBlue() / 255.0;
-            uint32_t pixels = static_cast<uint32_t>(targetSurface->pixels);
+            uint pixels = static_cast<uint>(targetSurface->pixels);
             var targetWidth = targetSurface->w;
 
             for (var y = rectangle.getTop(); y <= rectangle.getBottom(); ++y)
             {
                 for (var x = rectangle.getLeft(); x <= rectangle.getRight(); ++x)
                 {
-                    uint32_t pixel = pixels + (y * targetWidth + x);
+                    uint pixel = pixels + (y * targetWidth + x);
                     double srcR = ((*pixel & 0xFF000000) >> 24) / 255.0;
                     double srcG = ((*pixel & 0x00FF0000) >> 16) / 255.0;
                     double srcB = ((*pixel & 0x0000FF00) >> 8) / 255.0;

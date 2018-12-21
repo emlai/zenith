@@ -283,14 +283,14 @@ void Creature::save(SaveFile file) const
     for (var component : getComponents())
         component->save(file);
 
-    file.writeInt32(uint32_t(seenTilePositions.size()));
+    file.writeInt32(uint(seenTilePositions.size()));
     for (var tilePosition : seenTilePositions)
         file.write(tilePosition);
 
     file.write(inventory);
 
     for (var slotAndItem : equipment)
-        file.writeInt16(int16_t(slotAndItem.second ? getInventoryIndex(*slotAndItem.second) : -1));
+        file.writeInt16(short(slotAndItem.second ? getInventoryIndex(*slotAndItem.second) : -1));
 
     file.write(attributeValues);
     file.write(currentHP);

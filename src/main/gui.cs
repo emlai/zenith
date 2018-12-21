@@ -88,7 +88,7 @@ Sprite getSprite(Texture spriteSheet, Config config, string id,
     if (!asciiSprite || asciiSprite->size() != 1 || !std::isprint((*asciiSprite)[0]))
         throw std::runtime_error("invalid asciiSprite on '" + id + "', should be 1 printable ASCII character");
 
-    Color32 asciiColor(config.getOptional<uint32_t>(id, "asciiColor").get_value_or(materialColor.value));
+    Color32 asciiColor(config.getOptional<uint>(id, "asciiColor").get_value_or(materialColor.value));
 
     int animationFrames = frame == 0 ? config.get<int>(id, "animationFrames") : 1;
     Sprite sprite(spriteSheet, getSpriteTextureRegion(config, id), (*asciiSprite)[0], asciiColor,

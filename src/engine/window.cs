@@ -78,7 +78,7 @@ SDL_Window Window::initWindowHandle(Vector2 size, string title, bool fullscreen)
     if (!sdlVideoInitialized)
         initializeSDLVideoSubsystem();
 
-    uint32_t windowFlags = SDL_WINDOW_ALLOW_HIGHDPI;
+    uint windowFlags = SDL_WINDOW_ALLOW_HIGHDPI;
 
     if (fullscreen)
         windowFlags |= fullscreenFlag;
