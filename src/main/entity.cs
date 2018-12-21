@@ -58,7 +58,7 @@ Entity::Entity(string id, Config config)
         for (var componentName : componentNames)
         {
             if (var component = Component::get(componentName, this))
-                components.push_back(std::move(component));
+                components.push_back(component);
             else
                 reportUnknownComponent(componentName);
         }

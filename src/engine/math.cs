@@ -34,7 +34,7 @@ class RNG
     using Generator = Xorshift1024Star;
     using result_type = ulong;
 
-    RNG(Generator algorithm) : algorithm(std::move(algorithm)) {}
+    RNG(Generator algorithm) : algorithm(algorithm) {}
     void seed();
     void seed(RNG::result_type);
     var getSeed() { return currentSeed; }

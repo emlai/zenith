@@ -1,7 +1,7 @@
 class Room
 {
     Room(Rect region, List<Tile>&& doorTiles)
-    :   region(region), doorTiles(std::move(doorTiles)) {}
+    :   region(region), doorTiles(doorTiles) {}
     Rect getRegion() { return region; }
     Rect getInnerRegion() { return region.inset(Vector2(1, 1)); }
     const List<Tile> getDoorTiles() { return doorTiles; }
@@ -41,7 +41,7 @@ private:
     World world;
 }
 Building::Building(List<Room>&& rooms)
-:   rooms(std::move(rooms))
+:   rooms(rooms)
 {
     assert(this.rooms.size() >= 1);
 }
@@ -99,7 +99,7 @@ List<Building> WorldGenerator::generateBuildings(Rect region, int level)
                 if (building)
                 {
                     tile.getTileBelow().setObject(std::make_unique<Object>("StairsUp"));
-                    buildings.push_back(std::move(building));
+                    buildings.push_back(building);
                 }
                 else
                     tile.setObject(null);
@@ -113,7 +113,7 @@ List<Building> WorldGenerator::generateBuildings(Rect region, int level)
         var topLeftPosition = region.position + makeRandomVector(region.size - size);
 
         if (var building = generateBuilding(Rect(topLeftPosition, size), level))
-            buildings.push_back(std::move(building));
+            buildings.push_back(building);
     }
 
     if (!buildings.empty())
@@ -131,8 +131,8 @@ Building? WorldGenerator::generateBuilding(Rect region, int level)
     if (var room = generateRoom(region, level))
     {
         List<Room> rooms;
-        rooms.push_back(std::move(room));
-        return Building(std::move(rooms));
+        rooms.push_back(room);
+        return Building(rooms);
     }
     else
         return null;
@@ -353,17 +353,17 @@ void WorldGenerator::generateItems(Rect region, int level)
         if (itemId == "Corpse")
         {
             string creatureId = randomElement(Game::creatureConfig.getToplevelKeys());
-            item = std::make_unique<Corpse>(std::move(creatureId));
+            item = std::make_unique<Corpse>(creatureId);
         }
         else
-            item = std::make_unique<Item>(std::move(itemId), getRandomMaterialId(itemId));
+            item = std::make_unique<Item>(itemId, getRandomMaterialId(itemId));
 
         Tile tile = null;
 
         while (!tile || tile.hasObject())
             tile = world.getTile(makeRandomVectorInside(region), level);
 
-        tile.addItem(std::move(item));
+        tile.addItem(item);
     }
 }
 

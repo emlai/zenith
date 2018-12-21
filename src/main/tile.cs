@@ -46,7 +46,7 @@ class Tile
 
 private:
     string getTooltip();
-    void addCreature(Creature creature) { creatures.push_back(std::move(creature)); }
+    void addCreature(Creature creature) { creatures.push_back(creature); }
 
     List<Creature> creatures;
     List<Item> items;
@@ -249,7 +249,7 @@ void Tile::transferCreature(Creature creature, Tile destination)
     {
         if (it.get() == creature)
         {
-            destination.addCreature(std::move(it));
+            destination.addCreature(it);
             creatures.erase(it);
             return;
         }
@@ -266,7 +266,7 @@ Creature Tile::removeSingleTileCreature(Creature creature)
     {
         if (it.get() == creature)
         {
-            var removed = std::move(it);
+            var removed = it;
             creatures.erase(it);
             return removed;
         }
@@ -291,7 +291,7 @@ Item Tile::removeTopmostItem()
 
 void Tile::addItem(Item item)
 {
-    items.push_back(std::move(item));
+    items.push_back(item);
 }
 
 void Tile::addLiquid(string materialId)
@@ -301,7 +301,7 @@ void Tile::addLiquid(string materialId)
 
 void Tile::setObject(Object newObject)
 {
-    object = std::move(newObject);
+    object = newObject;
 }
 
 void Tile::setGround(string groundId)

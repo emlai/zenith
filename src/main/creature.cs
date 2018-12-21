@@ -160,7 +160,7 @@ void Creature::addMessage(Args... messageParts)
     if (!messages.empty() && messages.back().getText() == message)
         messages.back().increaseCount(getTurn());
     else
-        messages.emplace_back(std::move(message), getTurn());
+        messages.emplace_back(message, getTurn());
 }
 
 Attribute stringToAttribute(string);
@@ -209,7 +209,7 @@ Creature::Creature(Tile tile, string id, Controller controller)
     displayedAttributes(initDisplayedAttributes(id)),
     attributeIndices(initAttributeIndices(id)),
     sprite(getSprite(Game::creatureSpriteSheet, Game::creatureConfig, id)),
-    controller(std::move(controller))
+    controller(controller)
 {
     equipment[Head] = null;
     equipment[Torso] = null;
@@ -639,7 +639,7 @@ void Creature::onDeath()
     if (getTilesUnder().size() == 1)
     {
         Creature self = getTileUnder(0).removeSingleTileCreature(this);
-        getTileUnder(0).addItem(std::make_unique<Corpse>(std::move(self)));
+        getTileUnder(0).addItem(std::make_unique<Corpse>(self));
     }
     else
     {
@@ -715,7 +715,7 @@ bool Creature::eat(Item itemToEat)
 Item Creature::removeItem(Item itemToRemove)
 {
     var index = getInventoryIndex(itemToRemove);
-    var removedItem = std::move(inventory[index]);
+    var removedItem = inventory[index];
     inventory.erase(inventory.begin() + index);
     return removedItem;
 }
@@ -757,7 +757,7 @@ int Creature::getTurn()
 
 void Creature::setController(Controller controller)
 {
-    this.controller = std::move(controller);
+    this.controller = controller;
 }
 
 Attribute stringToAttribute(string string)

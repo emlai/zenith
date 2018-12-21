@@ -42,7 +42,7 @@ class SaveFile
     }
 
     SaveFile(List<char> buffer)
-    :   buffer(std::move(buffer)),
+    :   buffer(buffer),
         file(SDL_RWFromMem(this.buffer.data(), this.buffer.size()), closeFile)
     {
         if (!file)
@@ -199,7 +199,7 @@ class SaveFile
             throw std::runtime_error("SDL_RWread didn't read the requested number of bytes");
 
         seek(offset);
-        return SaveFile(std::move(buffer));
+        return SaveFile(buffer);
     }
 
     void writeInt8(sbyte value) { writeInt8(byte(value)); }

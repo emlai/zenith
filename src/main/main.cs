@@ -9,7 +9,7 @@
 class LoadingScreen : State
 {
 
-    LoadingScreen(string text) : text(std::move(text)) {}
+    LoadingScreen(string text) : text(text) {}
 
     void render(Window window) override
     {

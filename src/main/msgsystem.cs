@@ -2,7 +2,7 @@ enum MessageType { Normal, Warning }
 
 class Message
 {
-    Message(string text, int turn) : text(std::move(text)), turn(turn), count(1) {}
+    Message(string text, int turn) : text(text), turn(turn), count(1) {}
     string getText() { return text; }
     int getTurn() { return turn; }
     int getCount() { return count; }
@@ -39,7 +39,7 @@ Message Message::load(SaveFile file)
 {
     var text = file.readString();
     var turn = file.readInt32();
-    return Message(std::move(text), turn);
+    return Message(text, turn);
 }
 
 namespace MessageSystem
@@ -100,7 +100,7 @@ void MessageSystem::addDebugMessage(string message, MessageType type)
 void MessageSystem::addToCommandHistory(string command)
 {
     if (commandHistory.empty() || commandHistory.back() != command)
-        commandHistory.push_back(std::move(command));
+        commandHistory.push_back(command);
 
     commandIterator = commandHistory.end();
 }

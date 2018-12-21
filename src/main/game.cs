@@ -141,7 +141,7 @@ int Game::showInventory(string title, bool showNothingAsOption, Item preselected
                         std::function<bool(Item)> itemFilter)
 {
     InventoryMenu inventoryMenu(getWindow(), player, title, showNothingAsOption,
-                                preselectedItem, std::move(itemFilter));
+                                preselectedItem, itemFilter);
     return getEngine().execute(inventoryMenu);
 }
 
@@ -249,7 +249,7 @@ void Game::lookMode()
 
 class StringQuestion : State
 {
-    StringQuestion(string question) : question(std::move(question)) {}
+    StringQuestion(string question) : question(question) {}
     string execute();
 
 private:
@@ -281,7 +281,7 @@ string Game::askForString(string question)
 
 class DirectionQuestion : State
 {
-    DirectionQuestion(string question, Vector2 origin) : question(std::move(question)), origin(origin) {}
+    DirectionQuestion(string question, Vector2 origin) : question(question), origin(origin) {}
     Dir8? execute();
 
 private:

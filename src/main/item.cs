@@ -67,7 +67,7 @@ Item::Item(string id, string materialId)
 Item::Item(string id, string materialId, Sprite sprite)
 :   Entity(id, Game::itemConfig),
     materialId(materialId),
-    sprite(std::move(sprite))
+    sprite(sprite)
 {
 }
 
@@ -170,7 +170,7 @@ string getRandomMaterialId(string itemId)
 Corpse::Corpse(Creature creature)
 :   Item(creature.getId() + "Corpse", "", ::getSprite(Game::creatureSpriteSheet, Game::creatureConfig,
                                                        creature.getId(), corpseFrame, Color32::none)),
-    creature(std::move(creature))
+    creature(creature)
 {
     sprite.setAsciiGlyph(corpseGlyph);
 }

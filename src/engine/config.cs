@@ -41,7 +41,7 @@ private:
 
         void insert(string key, Value value)
         {
-            properties.emplace(std::move(key), std::move(value));
+            properties.emplace(key, value);
         }
 
     private:
@@ -64,9 +64,9 @@ private:
         Value(bool value) : boolean(value), type(Type::Bool) {}
         Value(Integer value) : integer(value), type(Type::Int) {}
         Value(double value) : floatingPoint(value), type(Type::Float) {}
-        Value(string value) : string(std::move(value)), type(Type::String) {}
-        Value(List<Value> value) : list(std::move(value)), type(Type::List) {}
-        Value(Group_<Value> value) : group(std::move(value)), type(Type::Group) {}
+        Value(string value) : string(value), type(Type::String) {}
+        Value(List<Value> value) : list(value), type(Type::List) {}
+        Value(Group_<Value> value) : group(value), type(Type::Group) {}
         Value(Value value);
         ~Value();
         Type getType() { return type; }
@@ -228,7 +228,7 @@ template<typename ValueType>
 ValueType Config::get(string type, string attribute)
 {
     if (var value = getOptional<ValueType>(type, attribute))
-        return ValueType(std::move(value));
+        return ValueType(value);
     else
         throw std::runtime_error("attribute \"" + attribute + "\" not found for \"" + type + "\"!");
 }
@@ -450,7 +450,7 @@ Config::Group Config::parseGroup(ConfigReader reader)
 
         reader.unget(ch);
         var key = reader.getId();
-        map.insert(std::move(key), parseProperty(reader));
+        map.insert(key, parseProperty(reader));
     }
 
     return map;
@@ -490,7 +490,7 @@ Config::Value Config::parseArray(ConfigReader reader)
     if (reader.peek() == ']')
     {
         reader.get();
-        return std::move(values);
+        return values;
     }
 
     while (true)
@@ -511,7 +511,7 @@ Config::Value Config::parseArray(ConfigReader reader)
     }
 
     reader.get();
-    return std::move(values);
+    return values;
 }
 
 Config::Value Config::parseNumber(ConfigReader reader)
@@ -580,7 +580,7 @@ Config::Value Config::parseAtomicValue(ConfigReader reader)
         if (id == "false")
             return false;
 
-        return Value(std::move(id));
+        return Value(id);
     }
 
     throw reader.syntaxError("number, id, or double-quoted string", char(ch));
@@ -601,11 +601,11 @@ Config::Config(string filePath)
         switch (ch)
         {
             case '{':
-                data.insert(std::move(id), parseGroup(reader));
+                data.insert(id, parseGroup(reader));
                 break;
             case '=':
                 reader.unget(ch);
-                data.insert(std::move(id), parseProperty(reader));
+                data.insert(id, parseProperty(reader));
                 break;
             default:
                 throw reader.syntaxError("'{' or '='", char(ch));
@@ -676,13 +676,13 @@ Config::Value::Value(Value value)
             floatingPoint = value.floatingPoint;
             break;
         case Type::String:
-            new (string) var(std::move(value.string));
+            new (string) var(value.string);
             break;
         case Type::List:
-            new (list) var(std::move(value.list));
+            new (list) var(value.list);
             break;
         case Type::Group:
-            new (group) var(std::move(value.group));
+            new (group) var(value.group);
             break;
     }
 }

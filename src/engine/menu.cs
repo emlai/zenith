@@ -53,7 +53,7 @@ class Menu : State
 
     int addItem(MenuItem item)
     {
-        menuItems.push_back(std::move(item));
+        menuItems.push_back(item);
         return int(menuItems.size() - 1);
     }
 
@@ -293,7 +293,7 @@ class Menu : State
 
     void setWrap(bool state) { wrapEnabled = state; }
     void setHotkeyStyle(HotkeyStyle style) { hotkeyStyle = style; }
-    void setHotkeySuffix(string string) { hotkeySuffix = std::move(string); }
+    void setHotkeySuffix(string string) { hotkeySuffix = string; }
     void setTextLayout(TextLayout layout) { textLayout = layout; }
     void setItemLayout(ItemLayout layout) { itemLayout = layout; }
     void setItemSpacing(int amount) { itemSpacing = amount; }

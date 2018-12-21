@@ -8,7 +8,7 @@ class Controller
 
 class AIController : Controller
 {
-    AIController(AI ai) : ai(std::move(ai)) {}
+    AIController(AI ai) : ai(ai) {}
     Action control(Creature creature) override;
     static AIController get(string id, Creature creature);
 
@@ -38,7 +38,7 @@ Controller::~Controller() {}
 AIController AIController::get(string id, Creature creature)
 {
     var ai = AI::get(Game::creatureConfig.get<string>(id, "ai"), creature);
-    return std::make_unique<AIController>(std::move(ai));
+    return std::make_unique<AIController>(ai);
 }
 
 Action AIController::control(Creature creature)
