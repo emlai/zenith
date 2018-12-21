@@ -44,7 +44,7 @@ Message Message::load(SaveFile file)
 
 namespace MessageSystem
 {
-    static const int maxMessagesToPrint = 6;
+    const int maxMessagesToPrint = 6;
 
 #ifdef DEBUG
     struct DebugMessage
@@ -57,8 +57,8 @@ namespace MessageSystem
         const MessageType type;
     }
 
-    static const int debugMessageLimit = 16;
-    static const Color16 messageColors[] = { TextColor::White, TextColor::Red }
+    const int debugMessageLimit = 16;
+    const Color16 messageColors[] = { TextColor::White, TextColor::Red }
     static std::deque<DebugMessage> debugMessages;
     static List<string> commandHistory;
     static List<string>::iterator commandIterator = commandHistory.end();

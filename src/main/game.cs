@@ -21,7 +21,7 @@ class Game : public State
     Window getWindow();
 #ifdef DEBUG
     void enterCommandMode(Window);
-    static const Key commandModeKey = '`';
+    const Key commandModeKey = '`';
 #endif
     static boost::optional<Vector2> cursorPosition;
     bool playerSeesEverything;
@@ -38,7 +38,7 @@ class Game : public State
     static std::unique_ptr<Texture> cursorTexture;
     static std::unique_ptr<Texture> fogOfWarTexture;
 
-    static constexpr var saveFileName = "zenith.sav";
+    constexpr var saveFileName = "zenith.sav";
 
 private:
     void renderAtPosition(Window, Vector2 centerPosition);
@@ -70,7 +70,7 @@ std::unique_ptr<Texture> Game::groundSpriteSheet;
 std::unique_ptr<Texture> Game::cursorTexture;
 std::unique_ptr<Texture> Game::fogOfWarTexture;
 
-static const Color32 transparentColor(0x5A5268FF);
+const Color32 transparentColor(0x5A5268FF);
 boost::optional<Vector2> Game::cursorPosition;
 
 Game::Game(bool loadSavedGame)

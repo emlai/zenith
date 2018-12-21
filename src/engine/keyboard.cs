@@ -80,7 +80,7 @@ int keyboard::readLine(Window window, string line, Vector2 position, const std::
 
 int keyboard::readLineProcessKey(SDL_Event event, string line, string::iterator cursor)
 {
-    static const int maxBufferSize = 4096;
+    const int maxBufferSize = 4096;
 
     if (event.type != SDL_KEYDOWN)
         return 0;

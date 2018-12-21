@@ -4,7 +4,7 @@ class LightSource : public Component
     void save(SaveFile) override {}
     void load(SaveFile) override {}
 
-    static const int maxRadius = 20;
+    const int maxRadius = 20;
 }
 void LightSource::emitLight(World world, Vector2 position, int level)
 {

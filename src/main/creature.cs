@@ -144,8 +144,8 @@ private:
     std::unique_ptr<Controller> controller;
     List<Message> messages;
 
-    static constexpr double fullAP = 1.0;
-    static const int configAttributes[8];
+    constexpr double fullAP = 1.0;
+    const int configAttributes[8];
 }
 
 template<typename... Args>

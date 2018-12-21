@@ -5,15 +5,15 @@ struct Color<T>
 {
     enum Channel { Red, Green, Blue, Alpha }
 
-    static const int channelCount = 4;
-    static const int depth = sizeof(T) * CHAR_BIT;
-    static const int bitsPerChannel = depth / channelCount;
-    static const int max = (1 << bitsPerChannel) - 1;
-    static const int bit[channelCount];
-    static const int temperatureCoefficient = int(0.25 * max);
-    static const Color white;
-    static const Color black;
-    static const Color none;
+    const int channelCount = 4;
+    const int depth = sizeof(T) * CHAR_BIT;
+    const int bitsPerChannel = depth / channelCount;
+    const int max = (1 << bitsPerChannel) - 1;
+    const int bit[channelCount];
+    const int temperatureCoefficient = int(0.25 * max);
+    const Color white;
+    const Color black;
+    const Color none;
     static bool modulateTemperature;
 
     T value;
@@ -65,7 +65,7 @@ struct Color<T>
                         getBlue() * Color<U>::max / max, getAlpha() * Color<U>::max / max);
     }
 
-    static constexpr var getMask(Channel channel) { return max << bit[channel]; }
+    constexpr var getMask(Channel channel) { return max << bit[channel]; }
 
 private:
     static T createValue(int red, int green, int blue, int alpha = max)

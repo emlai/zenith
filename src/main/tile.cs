@@ -42,7 +42,7 @@ class Tile
     Vector2 getCenterPosition() { return position * getSize() + getSize() / 2; }
     static Vector2 getSize();
     static Vector2 getMaxSize();
-    static const Vector2 spriteSize;
+    const Vector2 spriteSize;
 
 private:
     string getTooltip();

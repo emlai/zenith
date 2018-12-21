@@ -63,8 +63,8 @@ private:
     const Vector2 charSize;
     Vector2 moveVector;
     Texture texture;
-    static const Vector2 dimensions;
-    static const int chars = 96;
+    const Vector2 dimensions;
+    const int chars = 96;
 }
 const Vector2 BitmapFont::dimensions = Vector2(16, 6);
 

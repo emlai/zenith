@@ -199,7 +199,7 @@ Action PlayerController::control(Creature creature)
     }
 }
 
-static const int keyMapSize = 128;
+const int keyMapSize = 128;
 static Action keyMap[keyMapSize];
 
 Action getMappedAction(Key key)

@@ -99,7 +99,7 @@ struct Vector2Base<T>
 
     Dir8 getDir8();
 
-    static const Vector2Base zeroVector;
+    const Vector2Base zeroVector;
 }
 
 template<typename T>

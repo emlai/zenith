@@ -33,8 +33,8 @@ class Corpse final : public Item
     void save(SaveFile file) override;
 
 private:
-    static const int corpseFrame = 2;
-    static const char corpseGlyph = ',';
+    const int corpseFrame = 2;
+    const char corpseGlyph = ',';
 
     std::unique_ptr<Creature> creature;
 }

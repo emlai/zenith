@@ -9,8 +9,8 @@ private:
     Tile getRandomTile();
     World getWorld() { return world; }
     Vector2 getPosition() { return position; }
-    static const int size = 64;
-    static const Vector2 sizeVector;
+    const int size = 64;
+    const Vector2 sizeVector;
 
     Tile getTileAt(Vector2 position);
     Tile getTileAt(Vector2 position);
