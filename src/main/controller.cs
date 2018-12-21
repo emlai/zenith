@@ -4,15 +4,15 @@ class Controller
 {
 public:
     virtual ~Controller() = 0;
-    virtual Action control(Creature& creature) = 0;
+    virtual Action control(Creature creature) = 0;
 }
 
 class AIController : public Controller
 {
 public:
     AIController(std::unique_ptr<AI> ai) : ai(std::move(ai)) {}
-    Action control(Creature& creature) override;
-    static std::unique_ptr<AIController> get(boost::string_ref id, Creature& creature);
+    Action control(Creature creature) override;
+    static std::unique_ptr<AIController> get(boost::string_ref id, Creature creature);
 
 private:
     std::unique_ptr<AI> ai;
@@ -21,30 +21,30 @@ private:
 class PlayerController : public Controller
 {
 public:
-    PlayerController(Game& game) : game(game) {}
+    PlayerController(Game game) : game(game) {}
 
 private:
-    Action control(Creature& creature) override;
+    Action control(Creature creature) override;
 
-    Game& game;
+    Game game;
 }
 
 Action getMappedAction(Key key);
 Key getMappedKey(Action action);
 void mapKey(Key key, Action action);
 // If 'config' is null, loads the default key map.
-void loadKeyMap(const Config* config);
-void saveKeyMap(Config& config);
+void loadKeyMap(Config config);
+void saveKeyMap(Config config);
 Dir8 getDirectionFromEvent(Event event, Vector2 origin);
 Controller::~Controller() {}
 
-std::unique_ptr<AIController> AIController::get(boost::string_ref id, Creature& creature)
+std::unique_ptr<AIController> AIController::get(boost::string_ref id, Creature creature)
 {
     var ai = AI::get(Game::creatureConfig->get<std::string>(id, "ai"), creature);
     return std::make_unique<AIController>(std::move(ai));
 }
 
-Action AIController::control(Creature& creature)
+Action AIController::control(Creature creature)
 {
     if (creature.isDead())
         return Wait;
@@ -54,7 +54,7 @@ Action AIController::control(Creature& creature)
     return action;
 }
 
-Action PlayerController::control(Creature& creature)
+Action PlayerController::control(Creature creature)
 {
     game.advanceTurn();
 
@@ -253,7 +253,7 @@ static Key getDefaultKeyForAction(Action action)
     }
 }
 
-void loadKeyMap(const Config* config)
+void loadKeyMap(Config config)
 {
     for (int i = NoAction + 1; i < LastAction; ++i)
     {
@@ -267,7 +267,7 @@ void loadKeyMap(const Config* config)
     }
 }
 
-void saveKeyMap(Config& config)
+void saveKeyMap(Config config)
 {
     for (int i = NoAction + 1; i < LastAction; ++i)
     {

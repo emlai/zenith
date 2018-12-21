@@ -41,7 +41,7 @@ enum : Mod
 
 namespace keyboard
 {
-    int readLine(Window&, std::string& lineContent, Vector2 position, const std::function<void(Window&)>&,
+    int readLine(Window, std::string lineContent, Vector2 position, const std::function<void(Window)>&,
                  boost::string_ref prefix = "");
 }
 std::string toString(Key key)
@@ -54,13 +54,13 @@ std::string toString(Key key)
 
 namespace keyboard
 {
-    int readLineProcessKey(const SDL_Event&, std::string& line, std::string::iterator& cursor);
+    int readLineProcessKey(SDL_Event, std::string line, std::string::iterator cursor);
 }
 
-int keyboard::readLine(Window& window, std::string& line, Vector2 position, const std::function<void(Window&)>& render,
+int keyboard::readLine(Window window, std::string line, Vector2 position, const std::function<void(Window)>& render,
                        boost::string_ref prefix)
 {
-    BitmapFont& font = window.getFont();
+    BitmapFont font = window.getFont();
     std::string::iterator cursor = line.end();
     SDL_Event event;
 
@@ -78,7 +78,7 @@ int keyboard::readLine(Window& window, std::string& line, Vector2 position, cons
     }
 }
 
-int keyboard::readLineProcessKey(const SDL_Event& event, std::string& line, std::string::iterator& cursor)
+int keyboard::readLineProcessKey(SDL_Event event, std::string line, std::string::iterator cursor)
 {
     static const int maxBufferSize = 4096;
 
@@ -128,7 +128,7 @@ int keyboard::readLineProcessKey(const SDL_Event& event, std::string& line, std:
                                                                            SDL_free);
                 var clipboardTextSize = strlen(clipboardText.get());
                 var maxToAdd = maxBufferSize - line.size();
-                char* endPosition = std::min(clipboardText.get() + maxToAdd,
+                char endPosition = std::min(clipboardText.get() + maxToAdd,
                                              clipboardText.get() + clipboardTextSize);
                 line.insert(cursor, clipboardText.get(), endPosition);
                 cursor = line.end();

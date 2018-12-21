@@ -1,5 +1,5 @@
 template<typename T>
-std::ostream& operator<<(std::ostream& outputStream, const std::vector<T>& elements)
+std::ostream operator<<(std::ostream outputStream, const std::vector<T>& elements)
 {
     for (var element : elements)
         outputStream << element;
@@ -35,7 +35,7 @@ struct Deferrer
     T deferred;
 
     Deferrer(T deferred) : deferred(std::move(deferred)) {}
-    Deferrer(Deferrer&&) = default;
+    Deferrer(Deferrer) = default;
     ~Deferrer() { deferred(); }
 }
 

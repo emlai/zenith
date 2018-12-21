@@ -20,7 +20,7 @@ private:
     class Group_
     {
     public:
-        const Value& at(const std::string& key) const
+        Value at(std::string key) const
         {
             if (var value = getOptional(key))
                 return *value;
@@ -28,7 +28,7 @@ private:
             throw std::out_of_range(key);
         }
 
-        const Value* getOptional(const std::string& key) const
+        Value getOptional(std::string key) const
         {
             var it = properties.find(key);
 
@@ -41,7 +41,7 @@ private:
         var begin() const { return properties.begin(); }
         var end() const { return properties.end(); }
 
-        void insert(std::string&& key, Value&& value)
+        void insert(std::string key, Value value)
         {
             properties.emplace(std::move(key), std::move(value));
         }
@@ -71,7 +71,7 @@ private:
         Value(std::string value) : string(std::move(value)), type(Type::String) {}
         Value(std::vector<Value> value) : list(std::move(value)), type(Type::List) {}
         Value(Group_<Value> value) : group(std::move(value)), type(Type::Group) {}
-        Value(Value&& value);
+        Value(Value value);
         ~Value();
         Type getType() const { return type; }
         bool isBool() const { return type == Type::Bool; }
@@ -83,7 +83,7 @@ private:
         bool getBool() const { return boolean; }
         Integer getInt() const { return integer; }
         double getFloat() const { return floatingPoint; }
-        const std::string& getString() const { return string; }
+        std::string getString() const { return string; }
         const std::vector<Value>& getList() const { return list; }
         const Group_<Value>& getGroup() const { return group; }
 
@@ -106,18 +106,18 @@ private:
     template<typename OutputType>
     struct ConversionTraits;
     template<typename OutputType>
-    static boost::optional<OutputType> convert(const Value& value)
+    static boost::optional<OutputType> convert(Value value)
     {
         return ConversionTraits<OutputType>()(value);
     }
 
-    Group parseGroup(ConfigReader& reader);
-    Value parseProperty(ConfigReader& reader);
-    Value parseValue(ConfigReader& reader);
-    Value parseArray(ConfigReader& reader);
-    Value parseAtomicValue(ConfigReader& reader);
-    Value parseNumber(ConfigReader& reader);
-    void printValue(std::ostream& stream, const Config::Value& value) const;
+    Group parseGroup(ConfigReader reader);
+    Value parseProperty(ConfigReader reader);
+    Value parseValue(ConfigReader reader);
+    Value parseArray(ConfigReader reader);
+    Value parseAtomicValue(ConfigReader reader);
+    Value parseNumber(ConfigReader reader);
+    void printValue(std::ostream stream, Config::Value value) const;
 
     Group data;
 }
@@ -125,13 +125,13 @@ private:
 template<typename OutputType>
 struct Config::ConversionTraits
 {
-    boost::optional<OutputType> operator()(const Value& value);
+    boost::optional<OutputType> operator()(Value value);
 }
 
 template<>
 struct Config::ConversionTraits<bool>
 {
-    boost::optional<bool> operator()(const Value& value)
+    boost::optional<bool> operator()(Value value)
     {
         if (value.isBool())
             return value.getBool();
@@ -143,7 +143,7 @@ struct Config::ConversionTraits<bool>
 template<>
 struct Config::ConversionTraits<int>
 {
-    boost::optional<int> operator()(const Value& value)
+    boost::optional<int> operator()(Value value)
     {
         if (value.isInt())
             return boost::numeric_cast<int>(value.getInt());
@@ -155,7 +155,7 @@ struct Config::ConversionTraits<int>
 template<>
 struct Config::ConversionTraits<unsigned>
 {
-    boost::optional<unsigned> operator()(const Value& value)
+    boost::optional<unsigned> operator()(Value value)
     {
         if (value.isInt())
             return boost::numeric_cast<unsigned>(value.getInt());
@@ -167,7 +167,7 @@ struct Config::ConversionTraits<unsigned>
 template<>
 struct Config::ConversionTraits<unsigned short>
 {
-    boost::optional<unsigned short> operator()(const Value& value)
+    boost::optional<unsigned short> operator()(Value value)
     {
         if (value.isInt())
             return boost::numeric_cast<unsigned short>(value.getInt());
@@ -179,7 +179,7 @@ struct Config::ConversionTraits<unsigned short>
 template<>
 struct Config::ConversionTraits<double>
 {
-    boost::optional<double> operator()(const Value& value)
+    boost::optional<double> operator()(Value value)
     {
         if (value.isFloat())
             return value.getFloat();
@@ -194,7 +194,7 @@ struct Config::ConversionTraits<double>
 template<>
 struct Config::ConversionTraits<std::string>
 {
-    boost::optional<std::string> operator()(const Value& value)
+    boost::optional<std::string> operator()(Value value)
     {
         if (value.isString())
             return value.getString();
@@ -206,7 +206,7 @@ struct Config::ConversionTraits<std::string>
 template<typename ElementType>
 struct Config::ConversionTraits<std::vector<ElementType>>
 {
-    boost::optional<std::vector<ElementType>> operator()(const Value& value)
+    boost::optional<std::vector<ElementType>> operator()(Value value)
     {
         if (!value.isList())
             return boost::none;
@@ -443,7 +443,7 @@ std::vector<std::string> Config::getToplevelKeys() const
     return keys;
 }
 
-Config::Group Config::parseGroup(ConfigReader& reader)
+Config::Group Config::parseGroup(ConfigReader reader)
 {
     Config::Group map;
 
@@ -462,7 +462,7 @@ Config::Group Config::parseGroup(ConfigReader& reader)
     return map;
 }
 
-Config::Value Config::parseProperty(ConfigReader& reader)
+Config::Value Config::parseProperty(ConfigReader reader)
 {
     var ch = reader.get();
 
@@ -479,7 +479,7 @@ Config::Value Config::parseProperty(ConfigReader& reader)
     return value;
 }
 
-Config::Value Config::parseValue(ConfigReader& reader)
+Config::Value Config::parseValue(ConfigReader reader)
 {
     if (reader.peek() == '[')
         return parseArray(reader);
@@ -487,7 +487,7 @@ Config::Value Config::parseValue(ConfigReader& reader)
         return parseAtomicValue(reader);
 }
 
-Config::Value Config::parseArray(ConfigReader& reader)
+Config::Value Config::parseArray(ConfigReader reader)
 {
     assert(reader.peek() == '[');
     reader.get();
@@ -520,7 +520,7 @@ Config::Value Config::parseArray(ConfigReader& reader)
     return std::move(values);
 }
 
-Config::Value Config::parseNumber(ConfigReader& reader)
+Config::Value Config::parseNumber(ConfigReader reader)
 {
     std::string value;
     bool hasDot = false;
@@ -566,7 +566,7 @@ Config::Value Config::parseNumber(ConfigReader& reader)
         return std::stoll(value);
 }
 
-Config::Value Config::parseAtomicValue(ConfigReader& reader)
+Config::Value Config::parseAtomicValue(ConfigReader reader)
 {
     var ch = reader.peek();
 
@@ -619,7 +619,7 @@ Config::Config(boost::string_ref filePath)
     }
 }
 
-void Config::printValue(std::ostream& stream, const Config::Value& value) const
+void Config::printValue(std::ostream stream, Config::Value value) const
 {
     switch (value.getType())
     {
@@ -666,7 +666,7 @@ void Config::writeToFile(boost::string_ref filePath) const
     }
 }
 
-Config::Value::Value(Value&& value)
+Config::Value::Value(Value value)
 {
     type = value.type;
 

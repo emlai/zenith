@@ -3,19 +3,19 @@ enum class BlendMode { Normal, LinearLight }
 class GraphicsContext
 {
 public:
-    GraphicsContext(const Window&);
-    void setViewport(const Rect* viewport);
+    GraphicsContext(Window);
+    void setViewport(Rect viewport);
     Rect getViewport() const;
-    void setView(const Rect* view);
-    const Rect* getView() const { return view.get_ptr(); }
-    void setFont(BitmapFont&);
-    BitmapFont& getFont();
+    void setView(Rect view);
+    Rect getView() const { return view.get_ptr(); }
+    void setFont(BitmapFont);
+    BitmapFont getFont();
     void setScale(double scale);
     double getScale() const;
     void setAnimationFrameRate(int framesPerSecond);
     var getAnimationFrameTime() const { return animationFrameTime; }
     void updateScreen();
-    SDL_Renderer* getRenderer() const { return renderer.get(); }
+    SDL_Renderer getRenderer() const { return renderer.get(); }
     void renderRectangle(Rect rectangle, Color32 color);
     void renderFilledRectangle(Rect rectangle, Color32 color, BlendMode blendMode = BlendMode::Normal);
 
@@ -27,16 +27,16 @@ private:
     Vector2 mapFromTargetCoordinates(Vector2) const;
     Rect mapToTargetCoordinates(Rect) const;
 
-    const Window& window;
-    std::unique_ptr<SDL_Renderer, void (&)(SDL_Renderer*)> renderer;
-    std::unique_ptr<SDL_Texture, void (&)(SDL_Texture*)> framebuffer;
+    Window window;
+    std::unique_ptr<SDL_Renderer, void (&)(SDL_Renderer)> renderer;
+    std::unique_ptr<SDL_Texture, void (&)(SDL_Texture)> framebuffer;
     Texture targetTexture;
     boost::optional<Rect> viewport;
     boost::optional<Rect> view;
-    BitmapFont* font;
+    BitmapFont font;
     int animationFrameTime;
 }
-GraphicsContext::GraphicsContext(const Window& window)
+GraphicsContext::GraphicsContext(Window window)
 :   window(window),
     renderer(SDL_CreateRenderer(window.windowHandle.get(), -1, 0), SDL_DestroyRenderer),
     framebuffer(SDL_CreateTexture(renderer.get(), SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING,
@@ -71,7 +71,7 @@ void GraphicsContext::setAnimationFrameRate(int framesPerSecond)
     animationFrameTime = 1000 / framesPerSecond;
 }
 
-void GraphicsContext::setViewport(const Rect* viewport)
+void GraphicsContext::setViewport(Rect viewport)
 {
     if (viewport)
         this->viewport = *viewport;
@@ -87,7 +87,7 @@ Rect GraphicsContext::getViewport() const
     return Rect(Vector2(0, 0), targetTexture.getSize());
 }
 
-void GraphicsContext::setView(const Rect* view)
+void GraphicsContext::setView(Rect view)
 {
     if (view)
         this->view = *view;
@@ -95,19 +95,19 @@ void GraphicsContext::setView(const Rect* view)
         this->view = boost::none;
 }
 
-void GraphicsContext::setFont(BitmapFont& font)
+void GraphicsContext::setFont(BitmapFont font)
 {
     this->font = &font;
 }
 
-BitmapFont& GraphicsContext::getFont()
+BitmapFont GraphicsContext::getFont()
 {
     return *font;
 }
 
 void GraphicsContext::updateScreen()
 {
-    SDL_Surface* surface = targetTexture.getSurface();
+    SDL_Surface surface = targetTexture.getSurface();
     SDL_UpdateTexture(framebuffer.get(), nullptr, surface->pixels, surface->pitch);
     SDL_RenderCopy(renderer.get(), framebuffer.get(), nullptr, nullptr);
     SDL_RenderPresent(renderer.get());
@@ -161,11 +161,11 @@ void GraphicsContext::renderFilledRectangle(Rect rectangle, Color32 color, Blend
     switch (blendMode)
     {
         case BlendMode::Normal:
-            SDL_FillRect(targetTexture.getSurface(), reinterpret_cast<const SDL_Rect*>(&rectangle), color.value);
+            SDL_FillRect(targetTexture.getSurface(), reinterpret_cast<SDL_Rect>(&rectangle), color.value);
             break;
 
         case BlendMode::LinearLight:
-            SDL_Surface* targetSurface = targetTexture.getSurface();
+            SDL_Surface targetSurface = targetTexture.getSurface();
 
             if (rectangle.getLeft() < 0 || rectangle.getTop() < 0
                 || rectangle.getRight() >= targetSurface->w || rectangle.getBottom() >= targetSurface->h)
@@ -174,14 +174,14 @@ void GraphicsContext::renderFilledRectangle(Rect rectangle, Color32 color, Blend
             double dstR = color.getRed() / 255.0;
             double dstG = color.getGreen() / 255.0;
             double dstB = color.getBlue() / 255.0;
-            uint32_t* pixels = static_cast<uint32_t*>(targetSurface->pixels);
+            uint32_t pixels = static_cast<uint32_t>(targetSurface->pixels);
             var targetWidth = targetSurface->w;
 
             for (var y = rectangle.getTop(); y <= rectangle.getBottom(); ++y)
             {
                 for (var x = rectangle.getLeft(); x <= rectangle.getRight(); ++x)
                 {
-                    uint32_t* pixel = pixels + (y * targetWidth + x);
+                    uint32_t pixel = pixels + (y * targetWidth + x);
                     double srcR = ((*pixel & 0xFF000000) >> 24) / 255.0;
                     double srcG = ((*pixel & 0x00FF0000) >> 16) / 255.0;
                     double srcB = ((*pixel & 0x0000FF00) >> 8) / 255.0;

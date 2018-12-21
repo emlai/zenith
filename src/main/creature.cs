@@ -65,34 +65,34 @@ namespace std
 class Creature final : public Entity
 {
 public:
-    Creature(Tile*, boost::string_ref id);
-    Creature(Tile*, boost::string_ref id, std::unique_ptr<Controller> controller);
-    Creature(const SaveFile& file, Tile* tile);
-    void save(SaveFile& file) const;
+    Creature(Tile, boost::string_ref id);
+    Creature(Tile, boost::string_ref id, std::unique_ptr<Controller> controller);
+    Creature(SaveFile file, Tile tile);
+    void save(SaveFile file) const;
     void exist();
-    void render(Window& window, Vector2 position) const;
+    void render(Window window, Vector2 position) const;
 
     Action tryToMoveOrAttack(Dir8);
-    Action tryToMoveTowardsOrAttack(Creature& target);
+    Action tryToMoveTowardsOrAttack(Creature target);
     bool enter();
     void takeDamage(double amount);
     void bleed();
     bool pickUpItem();
-    void equip(EquipmentSlot slot, Item* itemToEquip);
-    bool use(Item&, Game& game);
-    void drop(Item&);
-    bool eat(Item&);
+    void equip(EquipmentSlot slot, Item itemToEquip);
+    bool use(Item, Game game);
+    void drop(Item);
+    bool eat(Item);
     bool close(Dir8);
 
     var getTilesUnder() const { return tilesUnder; }
-    Tile& getTileUnder(int index) const { return *tilesUnder[index]; }
+    Tile getTileUnder(int index) const { return *tilesUnder[index]; }
     Vector2 getPosition() const;
     int getLevel() const;
     var getInventory() const { return inventory; }
     var getEquipment() const { return equipment; }
-    std::unique_ptr<Item> removeItem(Item& item);
-    Item* getEquipment(EquipmentSlot slot) const { return equipment.at(slot); }
-    int getInventoryIndex(const Item& item) const;
+    std::unique_ptr<Item> removeItem(Item item);
+    Item getEquipment(EquipmentSlot slot) const { return equipment.at(slot); }
+    int getInventoryIndex(Item item) const;
     bool isRunning() const { return running; }
     void setRunning(bool running) { this->running = running; }
     bool isDead() const { return currentHP <= 0; }
@@ -105,20 +105,20 @@ public:
     var getDisplayedAttributes() const { return displayedAttributes; }
     int getFieldOfVisionRadius() const;
     template<typename... Args>
-    void addMessage(Args&&...);
+    void addMessage(Args...);
     const std::vector<Message>& getMessages() const { return messages; }
-    bool sees(const Tile& tile) const;
-    bool remembers(const Tile& tile) const;
-    std::vector<Creature*> getCreaturesCurrentlySeenBy(int maxFieldOfVisionRadius) const;
-    std::vector<Creature*> getCurrentlySeenCreatures() const;
-    Creature* getNearestEnemy() const;
+    bool sees(Tile tile) const;
+    bool remembers(Tile tile) const;
+    std::vector<Creature> getCreaturesCurrentlySeenBy(int maxFieldOfVisionRadius) const;
+    std::vector<Creature> getCurrentlySeenCreatures() const;
+    Creature getNearestEnemy() const;
     void setController(std::unique_ptr<Controller> controller);
 
 private:
-    World& getWorld() const;
+    World getWorld() const;
     int getTurn() const;
-    void moveTo(Tile&);
-    void attack(Creature&);
+    void moveTo(Tile);
+    void attack(Creature);
     void setAttribute(Attribute, double amount);
     void editAttribute(Attribute, double amount);
     void generateAttributes(boost::string_ref);
@@ -132,10 +132,10 @@ private:
     static std::vector<std::vector<int>> initAttributeIndices(boost::string_ref);
     var getAttributeIndices(int attribute) const { return attributeIndices[attribute]; }
 
-    std::vector<Tile*> tilesUnder;
+    std::vector<Tile> tilesUnder;
     mutable boost::unordered_set<Vector3> seenTilePositions;
     std::vector<std::unique_ptr<Item>> inventory;
-    boost::unordered_map<EquipmentSlot, Item*> equipment;
+    boost::unordered_map<EquipmentSlot, Item> equipment;
     double currentHP, maxHP, currentAP, currentMP, maxMP;
     bool running;
     std::vector<double> attributeValues;
@@ -150,7 +150,7 @@ private:
 }
 
 template<typename... Args>
-void Creature::addMessage(Args&&... messageParts)
+void Creature::addMessage(Args... messageParts)
 {
     std::stringstream stream;
     var expansion = { (stream << messageParts, 0)... }
@@ -194,12 +194,12 @@ std::vector<std::vector<int>> Creature::initAttributeIndices(boost::string_ref i
     return Game::creatureConfig->get<std::vector<std::vector<int>>>(id, "AttributeIndices");
 }
 
-Creature::Creature(Tile* tile, boost::string_ref id)
+Creature::Creature(Tile tile, boost::string_ref id)
 :   Creature(tile, id, AIController::get(id, *this))
 {
 }
 
-Creature::Creature(Tile* tile, boost::string_ref id, std::unique_ptr<Controller> controller)
+Creature::Creature(Tile tile, boost::string_ref id, std::unique_ptr<Controller> controller)
 :   Entity(id, *Game::creatureConfig),
     currentHP(0),
     maxHP(0),
@@ -232,7 +232,7 @@ Creature::Creature(Tile* tile, boost::string_ref id, std::unique_ptr<Controller>
     }
 }
 
-Creature::Creature(const SaveFile& file, Tile* tile)
+Creature::Creature(SaveFile file, Tile tile)
 :   Entity(file.readString(), *Game::creatureConfig),
     displayedAttributes(initDisplayedAttributes(getId())),
     attributeIndices(initAttributeIndices(getId())),
@@ -277,7 +277,7 @@ Creature::Creature(const SaveFile& file, Tile* tile)
     file.read(messages);
 }
 
-void Creature::save(SaveFile& file) const
+void Creature::save(SaveFile file) const
 {
     file.write(getId());
     for (var component : getComponents())
@@ -326,7 +326,7 @@ void Creature::regenerate()
     editMP(0.1);
 }
 
-void Creature::render(Window& window, Vector2 position) const
+void Creature::render(Window window, Vector2 position) const
 {
     sprite.render(window, position);
 
@@ -399,7 +399,7 @@ int Creature::getFieldOfVisionRadius() const
     return int(getAttribute(Perception) * 2);
 }
 
-bool Creature::sees(const Tile& tile) const
+bool Creature::sees(Tile tile) const
 {
     assert(tile.getLevel() == getLevel());
 
@@ -424,14 +424,14 @@ bool Creature::sees(const Tile& tile) const
     });
 }
 
-bool Creature::remembers(const Tile& tile) const
+bool Creature::remembers(Tile tile) const
 {
     return seenTilePositions.find(tile.getPosition3D()) != seenTilePositions.end();
 }
 
-std::vector<Creature*> Creature::getCreaturesCurrentlySeenBy(int maxFieldOfVisionRadius) const
+std::vector<Creature> Creature::getCreaturesCurrentlySeenBy(int maxFieldOfVisionRadius) const
 {
-    std::vector<Creature*> creatures;
+    std::vector<Creature> creatures;
 
     for (int x = -maxFieldOfVisionRadius; x <= maxFieldOfVisionRadius; ++x)
     {
@@ -453,9 +453,9 @@ std::vector<Creature*> Creature::getCreaturesCurrentlySeenBy(int maxFieldOfVisio
     return creatures;
 }
 
-std::vector<Creature*> Creature::getCurrentlySeenCreatures() const
+std::vector<Creature> Creature::getCurrentlySeenCreatures() const
 {
-    std::vector<Creature*> currentlySeenCreatures;
+    std::vector<Creature> currentlySeenCreatures;
     var fieldOfVisionRadius = getFieldOfVisionRadius();
 
     for (int x = -fieldOfVisionRadius; x <= fieldOfVisionRadius; ++x)
@@ -478,11 +478,11 @@ std::vector<Creature*> Creature::getCurrentlySeenCreatures() const
     return currentlySeenCreatures;
 }
 
-Creature* Creature::getNearestEnemy() const
+Creature Creature::getNearestEnemy() const
 {
     // TODO: Optimize by iterating in a spiral starting from this creature's position.
 
-    Creature* nearestEnemy = nullptr;
+    Creature nearestEnemy = nullptr;
     int nearestEnemyDistance = INT_MAX;
 
     for (var other : getCurrentlySeenCreatures())
@@ -504,7 +504,7 @@ Creature* Creature::getNearestEnemy() const
 
 Action Creature::tryToMoveOrAttack(Dir8 direction)
 {
-    Tile* destination = getTileUnder(0).getAdjacentTile(direction);
+    Tile destination = getTileUnder(0).getAdjacentTile(direction);
 
     if (!destination)
         return NoAction;
@@ -528,19 +528,19 @@ Action Creature::tryToMoveOrAttack(Dir8 direction)
     return Move;
 }
 
-Action Creature::tryToMoveTowardsOrAttack(Creature& target)
+Action Creature::tryToMoveTowardsOrAttack(Creature target)
 {
     var directionVector = target.getPosition() - getPosition();
     return tryToMoveOrAttack(directionVector.getDir8());
 }
 
-void Creature::moveTo(Tile& destination)
+void Creature::moveTo(Tile destination)
 {
     getTileUnder(0).transferCreature(*this, destination);
     tilesUnder.clear();
     tilesUnder.push_back(&destination);
 
-    Item* itemOnTile = nullptr;
+    Item itemOnTile = nullptr;
 
     for (var tile : getTilesUnder())
     {
@@ -563,7 +563,7 @@ void Creature::moveTo(Tile& destination)
 
 bool Creature::enter()
 {
-    for (Tile* tile : getTilesUnder())
+    for (Tile tile : getTilesUnder())
     {
         if (!tile->hasObject())
             continue;
@@ -584,7 +584,7 @@ bool Creature::enter()
     return false;
 }
 
-void Creature::attack(Creature& target)
+void Creature::attack(Creature target)
 {
     double damage = std::max(0.0, getAttribute(ArmStrength) / 2 + randNormal());
 
@@ -680,18 +680,18 @@ bool Creature::pickUpItem()
     return false;
 }
 
-void Creature::equip(EquipmentSlot slot, Item* itemToEquip)
+void Creature::equip(EquipmentSlot slot, Item itemToEquip)
 {
     equipment.at(slot) = itemToEquip;
 }
 
-bool Creature::use(Item& itemToUse, Game& game)
+bool Creature::use(Item itemToUse, Game game)
 {
     assert(itemToUse.isUsable());
     return itemToUse.use(*this, game);
 }
 
-void Creature::drop(Item& itemToDrop)
+void Creature::drop(Item itemToDrop)
 {
     EquipmentSlot equipmentSlot = itemToDrop.getEquipmentSlot();
 
@@ -701,7 +701,7 @@ void Creature::drop(Item& itemToDrop)
     getTileUnder(0).addItem(removeItem(itemToDrop));
 }
 
-bool Creature::eat(Item& itemToEat)
+bool Creature::eat(Item itemToEat)
 {
     assert(itemToEat.isEdible());
 
@@ -713,7 +713,7 @@ bool Creature::eat(Item& itemToEat)
     return true;
 }
 
-std::unique_ptr<Item> Creature::removeItem(Item& itemToRemove)
+std::unique_ptr<Item> Creature::removeItem(Item itemToRemove)
 {
     var index = getInventoryIndex(itemToRemove);
     var removedItem = std::move(inventory[index]);
@@ -721,7 +721,7 @@ std::unique_ptr<Item> Creature::removeItem(Item& itemToRemove)
     return removedItem;
 }
 
-int Creature::getInventoryIndex(const Item& item) const
+int Creature::getInventoryIndex(Item item) const
 {
     for (int i = 0; i < int(inventory.size()); ++i)
         if (&*inventory[i] == &item)
@@ -732,7 +732,7 @@ int Creature::getInventoryIndex(const Item& item) const
 
 bool Creature::close(Dir8 direction)
 {
-    Tile* destination = getTileUnder(0).getAdjacentTile(direction);
+    Tile destination = getTileUnder(0).getAdjacentTile(direction);
     return destination && destination->hasObject() && destination->getObject()->close();
 }
 
@@ -746,7 +746,7 @@ int Creature::getLevel() const
     return getTileUnder(0).getLevel();
 }
 
-World& Creature::getWorld() const
+World Creature::getWorld() const
 {
     return getTileUnder(0).getWorld();
 }

@@ -3,13 +3,13 @@ enum MessageType { Normal, Warning }
 class Message
 {
 public:
-    Message(std::string&& text, int turn) : text(std::move(text)), turn(turn), count(1) {}
+    Message(std::string text, int turn) : text(std::move(text)), turn(turn), count(1) {}
     boost::string_ref getText() const { return text; }
     int getTurn() const { return turn; }
     int getCount() const { return count; }
     void increaseCount(int currentTurn) { ++count; turn = currentTurn; }
-    void save(SaveFile& file) const;
-    static Message load(const SaveFile& file);
+    void save(SaveFile file) const;
+    static Message load(SaveFile file);
 
 private:
     std::string text;
@@ -19,24 +19,24 @@ private:
 
 namespace MessageSystem
 {
-    void drawMessages(Window& window, BitmapFont&, const std::vector<Message>& messages,
+    void drawMessages(Window window, BitmapFont, const std::vector<Message>& messages,
                       int currentTurn);
 
 #ifdef DEBUG
     void addDebugMessage(boost::string_ref message, MessageType = Normal);
-    void addToCommandHistory(std::string&& command);
+    void addToCommandHistory(std::string command);
     std::string getPreviousCommand();
     std::string getNextCommand();
     void clearDebugMessageHistory();
 #endif
 }
-void Message::save(SaveFile& file) const
+void Message::save(SaveFile file) const
 {
     file.write(text);
     file.writeInt32(turn);
 }
 
-Message Message::load(const SaveFile& file)
+Message Message::load(SaveFile file)
 {
     var text = file.readString();
     var turn = file.readInt32();
@@ -66,7 +66,7 @@ namespace MessageSystem
 #endif
 }
 
-void MessageSystem::drawMessages(Window& window, BitmapFont& font,
+void MessageSystem::drawMessages(Window window, BitmapFont font,
                                  const std::vector<Message>& messages, int currentTurn)
 {
     font.setArea(GUI::getMessageArea(window));
@@ -83,7 +83,7 @@ void MessageSystem::drawMessages(Window& window, BitmapFont& font,
 
 #ifdef DEBUG
     font.setArea(GUI::getDebugMessageArea(window));
-    for (const DebugMessage& message : debugMessages)
+    for (DebugMessage message : debugMessages)
         font.printLine(window, message.content, messageColors[message.type]);
 #endif
 }
@@ -98,7 +98,7 @@ void MessageSystem::addDebugMessage(boost::string_ref message, MessageType type)
         debugMessages.pop_back();
 }
 
-void MessageSystem::addToCommandHistory(std::string&& command)
+void MessageSystem::addToCommandHistory(std::string command)
 {
     if (commandHistory.empty() || commandHistory.back() != command)
         commandHistory.push_back(std::move(command));

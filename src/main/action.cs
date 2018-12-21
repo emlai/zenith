@@ -17,14 +17,14 @@ enum Action : int
     LastAction
 }
 
-const char* toString(Action action);
-double getAPCost(Action action, const Creature& actor);
+string toString(Action action);
+double getAPCost(Action action, Creature actor);
 static bool isMovementAction(Action action)
 {
     return action == Move || action == GoUpOrDown;
 }
 
-const char* toString(Action action)
+string toString(Action action)
 {
     switch (action)
     {
@@ -46,7 +46,7 @@ const char* toString(Action action)
     assert(false);
 }
 
-double getAPCost(Action action, const Creature& actor)
+double getAPCost(Action action, Creature actor)
 {
     assert(action != NoAction);
 

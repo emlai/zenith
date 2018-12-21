@@ -1,19 +1,19 @@
 class Entity
 {
 public:
-    Entity(boost::string_ref id, const Config& config);
-    Entity(const Entity&) = delete;
-    Entity(Entity&&) = default;
-    Entity& operator=(const Entity&) = delete;
-    Entity& operator=(Entity&&) = default;
+    Entity(boost::string_ref id, Config config);
+    Entity(Entity) = delete;
+    Entity(Entity) = default;
+    Entity operator=(Entity) = delete;
+    Entity operator=(Entity) = default;
     virtual ~Entity() = default;
 
     std::string getName() const;
     std::string getNameIndefinite() const;
     boost::string_ref getId() const { return id; }
-    const Config& getConfig() const { return *config; }
+    Config getConfig() const { return *config; }
     template<typename ComponentType>
-    std::vector<ComponentType*> getComponentsOfType() const;
+    std::vector<ComponentType> getComponentsOfType() const;
 
     /// Returns true if the entity reacted to the movement attempt.
     bool reactToMovementAttempt();
@@ -27,17 +27,17 @@ private:
     virtual std::string getNameAdjective() const { return ""; }
 
     std::string id;
-    const Config* config;
+    Config config;
     std::vector<std::unique_ptr<Component>> components;
 }
 
 template<typename ComponentType>
-std::vector<ComponentType*> Entity::getComponentsOfType() const
+std::vector<ComponentType> Entity::getComponentsOfType() const
 {
-    std::vector<ComponentType*> componentsOfType;
+    std::vector<ComponentType> componentsOfType;
 
     for (var component : components)
-        if (var p = dynamic_cast<ComponentType*>(component.get()))
+        if (var p = dynamic_cast<ComponentType>(component.get()))
             componentsOfType.push_back(p);
 
     return componentsOfType;
@@ -50,7 +50,7 @@ static void reportUnknownComponent(boost::string_ref name)
         std::cerr << "Unknown component '" << name << "'\n";
 }
 
-Entity::Entity(boost::string_ref id, const Config& config)
+Entity::Entity(boost::string_ref id, Config config)
 :   id(id),
     config(&config)
 {

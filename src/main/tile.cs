@@ -1,42 +1,42 @@
 class Tile
 {
 public:
-    Tile(World& world, Vector2 position, int level, boost::string_ref groundId);
-    Tile(const SaveFile& file, World& world, Vector2 position, int level);
-    void save(SaveFile& file) const;
+    Tile(World world, Vector2 position, int level, boost::string_ref groundId);
+    Tile(SaveFile file, World world, Vector2 position, int level);
+    void save(SaveFile file) const;
     void exist();
-    void render(Window& window, int zIndex, bool fogOfWar, bool renderLight) const;
+    void render(Window window, int zIndex, bool fogOfWar, bool renderLight) const;
     template<typename... Args>
-    Creature* spawnCreature(Args&&...);
+    Creature spawnCreature(Args...);
     bool hasCreature() const { return !creatures.empty(); }
     var getCreatures() const { return creatures; }
-    Creature& getCreature(int index) const { return *creatures[index]; }
-    void transferCreature(Creature&, Tile&);
-    std::unique_ptr<Creature> removeSingleTileCreature(Creature&);
-    void removeCreature(Creature&);
+    Creature getCreature(int index) const { return *creatures[index]; }
+    void transferCreature(Creature, Tile);
+    std::unique_ptr<Creature> removeSingleTileCreature(Creature);
+    void removeCreature(Creature);
     bool hasItems() const { return !items.empty(); }
     const std::vector<std::unique_ptr<Item>>& getItems() const { return items; }
     std::unique_ptr<Item> removeTopmostItem();
     void addItem(std::unique_ptr<Item> item);
     void addLiquid(boost::string_ref materialId);
     bool hasObject() const { return bool(object); }
-    Object* getObject() { return object.get(); }
-    const Object* getObject() const { return object.get(); }
+    Object getObject() { return object.get(); }
+    Object getObject() const { return object.get(); }
     void setObject(std::unique_ptr<Object>);
     boost::string_ref getGroundId() const { return groundId; }
     void setGround(boost::string_ref groundId);
-    void forEachEntity(const std::function<void(Entity&)>& function) const;
-    void forEachLightSource(const std::function<void(LightSource&)>& function) const;
+    void forEachEntity(const std::function<void(Entity)>& function) const;
+    void forEachLightSource(const std::function<void(LightSource)>& function) const;
     Color32 getLight() const { return light; }
     void emitLight();
     void addLight(Color32 light) { this->light.lighten(light); }
     void resetLight();
     bool blocksSight() const;
-    Tile* getAdjacentTile(Dir8) const;
-    Tile* getPreExistingAdjacentTile(Dir8) const;
-    Tile* getTileBelow() const;
-    Tile* getTileAbove() const;
-    World& getWorld() const { return world; }
+    Tile getAdjacentTile(Dir8) const;
+    Tile getPreExistingAdjacentTile(Dir8) const;
+    Tile getTileBelow() const;
+    Tile getTileAbove() const;
+    World getWorld() const { return world; }
     Vector2 getPosition() const { return position; }
     Vector3 getPosition3D() const { return Vector3(position) + Vector3(0, 0, level); }
     int getLevel() const { return level; }
@@ -53,7 +53,7 @@ private:
     std::vector<std::unique_ptr<Item>> items;
     std::vector<Liquid> liquids;
     std::unique_ptr<Object> object;
-    World& world;
+    World world;
     Vector2 position;
     int level;
     std::string groundId;
@@ -62,14 +62,14 @@ private:
 }
 
 template<typename... Args>
-Creature* Tile::spawnCreature(Args&&... creatureArgs)
+Creature Tile::spawnCreature(Args... creatureArgs)
 {
     addCreature(std::make_unique<Creature>(this, std::forward<Args>(creatureArgs)...));
     return creatures.back().get();
 }
 const Vector2 Tile::spriteSize(20, 20);
 
-Tile::Tile(World& world, Vector2 position, int level, boost::string_ref groundId)
+Tile::Tile(World world, Vector2 position, int level, boost::string_ref groundId)
 :   world(world),
     position(position),
     level(level),
@@ -79,7 +79,7 @@ Tile::Tile(World& world, Vector2 position, int level, boost::string_ref groundId
 {
 }
 
-Tile::Tile(const SaveFile& file, World& world, Vector2 position, int level)
+Tile::Tile(SaveFile file, World world, Vector2 position, int level)
 :   world(world),
     position(position),
     level(level),
@@ -106,7 +106,7 @@ Tile::Tile(const SaveFile& file, World& world, Vector2 position, int level)
         object = std::make_unique<Object>(file);
 }
 
-void Tile::save(SaveFile& file) const
+void Tile::save(SaveFile file) const
 {
     file.write(groundId);
     file.write(creatures);
@@ -134,7 +134,7 @@ void Tile::exist()
         item->exist();
 }
 
-void Tile::render(Window& window, int zIndex, bool fogOfWar, bool renderLight) const
+void Tile::render(Window window, int zIndex, bool fogOfWar, bool renderLight) const
 {
     Vector2 renderPosition = position * getSize();
 
@@ -244,7 +244,7 @@ std::string Tile::getTooltip() const
     return tooltip;
 }
 
-void Tile::transferCreature(Creature& creature, Tile& destination)
+void Tile::transferCreature(Creature creature, Tile destination)
 {
     for (var it = creatures.begin(); it != creatures.end(); ++it)
     {
@@ -259,7 +259,7 @@ void Tile::transferCreature(Creature& creature, Tile& destination)
     assert(false);
 }
 
-std::unique_ptr<Creature> Tile::removeSingleTileCreature(Creature& creature)
+std::unique_ptr<Creature> Tile::removeSingleTileCreature(Creature creature)
 {
     assert(creature.getTilesUnder().size() == 1);
 
@@ -276,7 +276,7 @@ std::unique_ptr<Creature> Tile::removeSingleTileCreature(Creature& creature)
     assert(false);
 }
 
-void Tile::removeCreature(Creature& creature)
+void Tile::removeCreature(Creature creature)
 {
     var newEnd = std::remove_if(creatures.begin(), creatures.end(),
                                  [&](var ptr) { return ptr.get() == &creature; });
@@ -311,7 +311,7 @@ void Tile::setGround(boost::string_ref groundId)
     groundSprite = getSprite(*Game::groundSpriteSheet, *Game::groundConfig, groundId);
 }
 
-void Tile::forEachEntity(const std::function<void(Entity&)>& function) const
+void Tile::forEachEntity(const std::function<void(Entity)>& function) const
 {
     for (var creature : creatures)
     {
@@ -329,9 +329,9 @@ void Tile::forEachEntity(const std::function<void(Entity&)>& function) const
         function(*object);
 }
 
-void Tile::forEachLightSource(const std::function<void(LightSource&)>& function) const
+void Tile::forEachLightSource(const std::function<void(LightSource)>& function) const
 {
-    forEachEntity([&](Entity& entity)
+    forEachEntity([&](Entity entity)
     {
         for (var lightSource : entity.getComponentsOfType<LightSource>())
             function(*lightSource);
@@ -359,22 +359,22 @@ bool Tile::blocksSight() const
     return hasObject() && getObject()->blocksSight();
 }
 
-Tile* Tile::getAdjacentTile(Dir8 direction) const
+Tile Tile::getAdjacentTile(Dir8 direction) const
 {
     return getWorld().getOrCreateTile(getPosition() + direction, level);
 }
 
-Tile* Tile::getPreExistingAdjacentTile(Dir8 direction) const
+Tile Tile::getPreExistingAdjacentTile(Dir8 direction) const
 {
     return getWorld().getTile(getPosition() + direction, level);
 }
 
-Tile* Tile::getTileBelow() const
+Tile Tile::getTileBelow() const
 {
     return getWorld().getOrCreateTile(getPosition(), level - 1);
 }
 
-Tile* Tile::getTileAbove() const
+Tile Tile::getTileAbove() const
 {
     return getWorld().getOrCreateTile(getPosition(), level + 1);
 }

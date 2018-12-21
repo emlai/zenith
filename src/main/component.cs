@@ -2,8 +2,8 @@ class Component
 {
 public:
     virtual ~Component() = 0;
-    static std::unique_ptr<Component> get(boost::string_ref name, Entity& parent);
-    Entity& getParent() const { return *parent; }
+    static std::unique_ptr<Component> get(boost::string_ref name, Entity parent);
+    Entity getParent() const { return *parent; }
 
     /// Returns true if the component did react to the movement attempt.
     virtual bool reactToMovementAttempt() { return false; }
@@ -11,16 +11,16 @@ public:
     virtual bool close() { return false; }
     virtual bool blocksSight() const { return false; }
     virtual bool isUsable() const { return false; }
-    virtual bool use(Creature&, Item&, Game&) { return false; }
-    virtual void save(SaveFile& file) const = 0;
-    virtual void load(const SaveFile& file) = 0;
+    virtual bool use(Creature, Item, Game) { return false; }
+    virtual void save(SaveFile file) const = 0;
+    virtual void load(SaveFile file) = 0;
 
 private:
-    Entity* parent;
+    Entity parent;
 }
 Component::~Component() {}
 
-std::unique_ptr<Component> Component::get(boost::string_ref name, Entity& parent)
+std::unique_ptr<Component> Component::get(boost::string_ref name, Entity parent)
 {
     std::unique_ptr<Component> component;
 

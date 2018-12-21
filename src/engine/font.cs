@@ -18,13 +18,13 @@ class BitmapFont
 {
 public:
     BitmapFont(boost::string_ref fileName, Vector2 charSize);
-    void print(Window& window, boost::string_ref text, Color32 color = Color32::none,
+    void print(Window window, boost::string_ref text, Color32 color = Color32::none,
                Color32 backgroundColor = Color32::none, bool blend = true,
                LineBreakMode lineBreakMode = SplitLines);
-    void printLine(Window& window, boost::string_ref text, Color32 color = Color32::none,
+    void printLine(Window window, boost::string_ref text, Color32 color = Color32::none,
                    Color32 backgroundColor = Color32::none, bool blend = true,
                    LineBreakMode lineBreakMode = SplitLines);
-    void printWithCursor(Window& window, boost::string_ref, const char* cursorPosition,
+    void printWithCursor(Window window, boost::string_ref, const char cursorPosition,
                          Color32 mainColor = Color32::none, Color32 cursorColor = Color32::none,
                          Color32 backgroundColor = Color32::none);
     void setArea(Rect area) { printArea = area; initCurrentPosition(); }
@@ -46,11 +46,11 @@ public:
     TextLayout getLayout() const { return layout; }
 
 private:
-    using PrintIterator = const char*;
-    Vector2 printHelper(Window& window, boost::string_ref, Vector2 position,
+    using PrintIterator = const char;
+    Vector2 printHelper(Window window, boost::string_ref, Vector2 position,
                         Color32 backgroundColor, LineBreakMode lineBreakMode) const;
-    void printLine(Window& window, PrintIterator lineBegin, PrintIterator lineEnd,
-                   Rect& source, Rect& target, Color32 backgroundColor) const;
+    void printLine(Window window, PrintIterator lineBegin, PrintIterator lineEnd,
+                   Rect source, Rect target, Color32 backgroundColor) const;
     void initCurrentPosition();
 
     Rect printArea;
@@ -83,7 +83,7 @@ BitmapFont::BitmapFont(boost::string_ref fileName, Vector2 charSize)
 {
 }
 
-void BitmapFont::print(Window& window, boost::string_ref text, Color32 color, Color32 backgroundColor,
+void BitmapFont::print(Window window, boost::string_ref text, Color32 color, Color32 backgroundColor,
                        bool blend, LineBreakMode lineBreakMode)
 {
     if (!color)
@@ -102,7 +102,7 @@ void BitmapFont::print(Window& window, boost::string_ref text, Color32 color, Co
     lineContinuation = true;
 }
 
-void BitmapFont::printLine(Window& window, boost::string_ref text, Color32 color, Color32 backgroundColor,
+void BitmapFont::printLine(Window window, boost::string_ref text, Color32 color, Color32 backgroundColor,
                            bool blend, LineBreakMode lineBreakMode)
 {
     print(window, text, color, backgroundColor, blend, lineBreakMode);
@@ -110,7 +110,7 @@ void BitmapFont::printLine(Window& window, boost::string_ref text, Color32 color
     currentPosition.y += moveVector.y;
 }
 
-void BitmapFont::printWithCursor(Window& window, boost::string_ref text, const char* cursor,
+void BitmapFont::printWithCursor(Window window, boost::string_ref text, const char cursor,
                                  Color32 mainColor, Color32 cursorColor, Color32 backgroundColor)
 {
     Vector2 cursorPosition = currentPosition + Vector2(int((cursor - text.begin()) * moveVector.x), 0);
@@ -122,7 +122,7 @@ void BitmapFont::printWithCursor(Window& window, boost::string_ref text, const c
     printHelper(window, "_", cursorPosition, backgroundColor, PreserveLines);
 }
 
-Vector2 BitmapFont::printHelper(Window& window, boost::string_ref text, Vector2 position,
+Vector2 BitmapFont::printHelper(Window window, boost::string_ref text, Vector2 position,
                                 Color32 backgroundColor, LineBreakMode lineBreakMode) const
 {
     Rect source;
@@ -191,8 +191,8 @@ Vector2 BitmapFont::printHelper(Window& window, boost::string_ref text, Vector2 
     }
 }
 
-void BitmapFont::printLine(Window& window, PrintIterator lineBegin, PrintIterator lineEnd,
-                           Rect& source, Rect& target, Color32 backgroundColor) const
+void BitmapFont::printLine(Window window, PrintIterator lineBegin, PrintIterator lineEnd,
+                           Rect source, Rect target, Color32 backgroundColor) const
 {
     const int lineWidth = int((lineEnd - lineBegin) * moveVector.x);
 

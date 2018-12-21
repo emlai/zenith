@@ -4,8 +4,8 @@ class Door : public Component
     bool preventsMovement() override { return !isOpen; }
     bool close() override;
     bool blocksSight() const override { return !isOpen; }
-    void save(SaveFile& file) const override;
-    void load(const SaveFile& file) override;
+    void save(SaveFile file) const override;
+    void load(SaveFile file) override;
 
 private:
     void setOpen(bool open);
@@ -39,17 +39,17 @@ void Door::setOpen(bool open)
     isOpen = open;
 
     // TODO: Add getSprite() to Entity to avoid casting here.
-    var sprite = dynamic_cast<Object&>(getParent()).getSprite();
+    var sprite = dynamic_cast<Object>(getParent()).getSprite();
     sprite.setFrame(isOpen ? 1 : 0);
     sprite.setAsciiGlyph(isOpen ? '_' : '#');
 }
 
-void Door::save(SaveFile& file) const
+void Door::save(SaveFile file) const
 {
     file.write(isOpen);
 }
 
-void Door::load(const SaveFile& file)
+void Door::load(SaveFile file)
 {
     setOpen(file.readBool());
 }

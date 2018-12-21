@@ -11,7 +11,7 @@ class LoadingScreen : public State
 public:
     LoadingScreen(std::string text) : text(std::move(text)) {}
 
-    void render(Window& window) override
+    void render(Window window) override
     {
         var font = window.getFont();
         var oldLayout = font.getLayout();
@@ -43,7 +43,7 @@ static void savePreferencesToFile(bool asciiGraphics, double graphicsScale, bool
     preferences.writeToFile(preferencesFileName);
 }
 
-static void setPrefsMenuCommonOptions(Menu& menu, const Window& window)
+static void setPrefsMenuCommonOptions(Menu menu, Window window)
 {
     menu.addItem(MenuItem(Menu::Exit, "Back", 'q'));
     menu.setItemLayout(Menu::Vertical);
@@ -286,7 +286,7 @@ class Program
         {
             engine.execute(mainMenu);
         }
-        catch (const std::exception& exception)
+        catch (std::exception exception)
         {
             engine.reportErrorToUser(std::string("Unhandled exception: ") + exception.what());
         }

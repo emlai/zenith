@@ -9,17 +9,17 @@ public:
     Texture(uint32_t pixelFormat, Vector2 size);
     void setBlendMode(bool);
     void setColor(Color32) const;
-    void render(Window& window, Vector2 position, Vector2 size = Vector2::zeroVector) const;
-    void render(Window& window, Rect target) const;
-    void render(Window& window, Rect source, Rect target) const;
-    void render(Window& window, Rect source, Rect target, Color32 materialColor) const;
+    void render(Window window, Vector2 position, Vector2 size = Vector2::zeroVector) const;
+    void render(Window window, Rect target) const;
+    void render(Window window, Rect source, Rect target) const;
+    void render(Window window, Rect source, Rect target, Color32 materialColor) const;
     Vector2 getSize() const;
     int getWidth() const;
     int getHeight() const;
-    SDL_Surface* getSurface() const { return surface.get(); }
+    SDL_Surface getSurface() const { return surface.get(); }
 
 private:
-    std::unique_ptr<SDL_Surface, void (*)(SDL_Surface*)> surface;
+    std::unique_ptr<SDL_Surface, void (*)(SDL_Surface)> surface;
     std::vector<Color32> pixelData;
 }
 struct PixelFormatMasks
@@ -38,7 +38,7 @@ static PixelFormatMasks pixelFormatEnumToMasks(uint32_t pixelFormat)
     return masks;
 }
 
-static SDL_Surface* createSurfaceWithFormat(uint32_t pixelFormat, Vector2 size)
+static SDL_Surface createSurfaceWithFormat(uint32_t pixelFormat, Vector2 size)
 {
     PixelFormatMasks masks = pixelFormatEnumToMasks(pixelFormat);
     return SDL_CreateRGBSurface(0, size.x, size.y, SDL_BITSPERPIXEL(pixelFormat),
@@ -77,7 +77,7 @@ void Texture::setBlendMode(bool state)
     SDL_SetSurfaceBlendMode(surface.get(), state ? SDL_BLENDMODE_BLEND : SDL_BLENDMODE_NONE);
 }
 
-void Texture::render(Window& window, Vector2 position, Vector2 size) const
+void Texture::render(Window window, Vector2 position, Vector2 size) const
 {
     if (size.isZero())
         size = getSize();
@@ -85,29 +85,29 @@ void Texture::render(Window& window, Vector2 position, Vector2 size) const
     render(window, Rect(Vector2::zeroVector, size), Rect(position, size));
 }
 
-void Texture::render(Window& window, Rect target) const
+void Texture::render(Window window, Rect target) const
 {
     render(window, Rect(Vector2::zeroVector, getSize()), target);
 }
 
-void Texture::render(Window& window, Rect source, Rect target) const
+void Texture::render(Window window, Rect source, Rect target) const
 {
     target = window.context.mapToTargetCoordinates(target);
 
     SDL_BlitSurface(surface.get(),
-                    reinterpret_cast<SDL_Rect*>(&source),
+                    reinterpret_cast<SDL_Rect>(&source),
                     window.context.targetTexture.getSurface(),
-                    reinterpret_cast<SDL_Rect*>(&target));
+                    reinterpret_cast<SDL_Rect>(&target));
 }
 
 // TODO: Move this functionality out of the engine to the game.
-void Texture::render(Window& window, Rect source, Rect target, Color32 materialColor) const
+void Texture::render(Window window, Rect source, Rect target, Color32 materialColor) const
 {
     target = window.context.mapToTargetCoordinates(target);
 
-    SDL_Surface* targetSurface = window.context.targetTexture.getSurface();
-    const uint32_t* sourcePixels = static_cast<const uint32_t*>(surface->pixels);
-    uint32_t* targetPixels = static_cast<uint32_t*>(targetSurface->pixels);
+    SDL_Surface targetSurface = window.context.targetTexture.getSurface();
+    const uint32_t sourcePixels = static_cast<const uint32_t>(surface->pixels);
+    uint32_t targetPixels = static_cast<uint32_t>(targetSurface->pixels);
     var sourceWidth = surface->w;
     var targetWidth = targetSurface->w;
 
@@ -124,7 +124,7 @@ void Texture::render(Window& window, Rect source, Rect target, Color32 materialC
             if (pixel == transparentColor)
                 continue;
 
-            const uint8_t* abgr = reinterpret_cast<const uint8_t*>(&sourcePixels[y * sourceWidth + x]);
+            const uint8_t abgr = reinterpret_cast<const uint8_t>(&sourcePixels[y * sourceWidth + x]);
             bool isMagenta = abgr[3] > 0 && abgr[3] == abgr[1] && abgr[2] == 0;
 
             if (isMagenta)

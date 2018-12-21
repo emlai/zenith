@@ -4,17 +4,17 @@ class Item : public Entity
 {
 public:
     Item(boost::string_ref id, boost::string_ref materialId);
-    static std::unique_ptr<Item> load(const SaveFile& file);
-    virtual void save(SaveFile& file) const;
+    static std::unique_ptr<Item> load(SaveFile file);
+    virtual void save(SaveFile file) const;
     virtual void exist() {}
     bool isUsable() const;
-    bool use(Creature& user, Game& game);
+    bool use(Creature user, Game game);
     bool isEdible() const;
     EquipmentSlot getEquipmentSlot() const;
     virtual std::string getNameAdjective() const override;
-    void render(Window& window, Vector2 position) const;
-    virtual void renderEquipped(Window& window, Vector2 position) const;
-    const Sprite& getSprite() const { return sprite; }
+    void render(Window window, Vector2 position) const;
+    virtual void renderEquipped(Window window, Vector2 position) const;
+    Sprite getSprite() const { return sprite; }
 
 protected:
     Item(boost::string_ref id, boost::string_ref materialId, Sprite sprite);
@@ -31,8 +31,8 @@ public:
     Corpse(std::unique_ptr<Creature> creature);
     Corpse(boost::string_ref creatureId);
     void exist() override;
-    void renderEquipped(Window& window, Vector2 position) const override;
-    void save(SaveFile& file) const override;
+    void renderEquipped(Window window, Vector2 position) const override;
+    void save(SaveFile file) const override;
 
 private:
     static const int corpseFrame = 2;
@@ -48,7 +48,7 @@ static Color16 getMaterialColor(boost::string_ref materialId)
         {
             return Color16(static_cast<uint16_t>(Game::materialConfig->get<int>(materialId, "Color")));
         }
-        catch (const std::runtime_error&)
+        catch (std::runtime_error)
         {
             if (Game::materialConfig->get<std::string>(materialId, "Color") == "Random")
                 return Color16(randInt(Color16::max / 2), randInt(Color16::max / 2), randInt(Color16::max / 2));
@@ -73,7 +73,7 @@ Item::Item(boost::string_ref id, boost::string_ref materialId, Sprite sprite)
 {
 }
 
-std::unique_ptr<Item> Item::load(const SaveFile& file)
+std::unique_ptr<Item> Item::load(SaveFile file)
 {
     var itemId = file.readString();
     std::unique_ptr<Item> item;
@@ -98,7 +98,7 @@ std::unique_ptr<Item> Item::load(const SaveFile& file)
     return item;
 }
 
-void Item::save(SaveFile& file) const
+void Item::save(SaveFile file) const
 {
     file.write(getId());
     file.write(materialId);
@@ -116,7 +116,7 @@ bool Item::isUsable() const
     return false;
 }
 
-bool Item::use(Creature& user, Game& game)
+bool Item::use(Creature user, Game game)
 {
     assert(isUsable());
     bool returnValue = false;
@@ -152,12 +152,12 @@ std::string Item::getNameAdjective() const
     return pascalCaseToSentenceCase(materialId);
 }
 
-void Item::render(Window& window, Vector2 position) const
+void Item::render(Window window, Vector2 position) const
 {
     sprite.render(window, position);
 }
 
-void Item::renderEquipped(Window& window, Vector2 position) const
+void Item::renderEquipped(Window window, Vector2 position) const
 {
     Vector2 equippedSourceOffset(0, Tile::getSize().y);
     sprite.render(window, position, equippedSourceOffset);
@@ -190,12 +190,12 @@ void Corpse::exist()
         creature->exist();
 }
 
-void Corpse::renderEquipped(Window& window, Vector2 position) const
+void Corpse::renderEquipped(Window window, Vector2 position) const
 {
     render(window, position);
 }
 
-void Corpse::save(SaveFile& file) const
+void Corpse::save(SaveFile file) const
 {
     file.write(getId());
     file.write(creature != nullptr);

@@ -22,39 +22,39 @@ namespace GUI
     const int fontHeight = 12;
     const int questionAreaHeight = spacing.y + fontHeight + spacing.y;
 
-    inline Rect getSidebarArea(const Window& window)
+    inline Rect getSidebarArea(Window window)
     {
         var height = (window.getResolution().y - questionAreaHeight) / 2 - spacing.y / 2;
         var width = height * 3 / 4;
         return Rect(window.getResolution().x - width - spacing.x, questionAreaHeight, width, height);
     }
 
-    inline Rect getQuestionArea(const Window& window)
+    inline Rect getQuestionArea(Window window)
     {
         return Rect(spacing.x, spacing.y, window.getResolution().x - spacing.x * 2, fontHeight);
     }
 
-    inline Rect getWorldViewport(const Window& window)
+    inline Rect getWorldViewport(Window window)
     {
         var top = questionAreaHeight;
         return Rect(0, top, window.getResolution().x - getSidebarArea(window).getWidth() - spacing.x * 2,
                     window.getResolution().y - top);
     }
 
-    inline Rect getMessageArea(const Window& window)
+    inline Rect getMessageArea(Window window)
     {
         var sidebarArea = getSidebarArea(window);
         return Rect(sidebarArea.getLeft(), sidebarArea.getBottom() + spacing.y,
                     sidebarArea.getWidth(), sidebarArea.getHeight());
     }
 
-    inline Rect getInventoryArea(const Window& window)
+    inline Rect getInventoryArea(Window window)
     {
         return getWorldViewport(window).inset(spacing);
     }
 
 #ifdef DEBUG
-    inline Rect getCommandLineArea(const Window& window)
+    inline Rect getCommandLineArea(Window window)
     {
         var worldViewport = getWorldViewport(window);
         var questionArea = getQuestionArea(window);
@@ -62,7 +62,7 @@ namespace GUI
                     worldViewport.getWidth() - spacing.x * 2, questionArea.getHeight());
     }
 
-    inline Rect getDebugMessageArea(const Window& window)
+    inline Rect getDebugMessageArea(Window window)
     {
         var commandLineArea = getCommandLineArea(window);
         return Rect(commandLineArea.getLeft(), commandLineArea.getBottom() + spacing.y,
@@ -71,16 +71,16 @@ namespace GUI
 #endif
 }
 
-Sprite getSprite(const Texture& spriteSheet, const Config& config, boost::string_ref id,
+Sprite getSprite(Texture spriteSheet, Config config, boost::string_ref id,
                  int frame = 0, Color32 materialColor = Color32::none);
-Rect getSpriteTextureRegion(const Config& config, boost::string_ref id)
+Rect getSpriteTextureRegion(Config config, boost::string_ref id)
 {
     var components = config.get<std::vector<int>>(id, "spritePosition");
     var offsetX = randInt(config.get<int>(id, "spriteMultiplicity") - 1);
     return Rect(Vector2(components.at(0) + offsetX, components.at(1)) * Tile::spriteSize, Tile::spriteSize);
 }
 
-Sprite getSprite(const Texture& spriteSheet, const Config& config, boost::string_ref id,
+Sprite getSprite(Texture spriteSheet, Config config, boost::string_ref id,
                  int frame, Color32 materialColor)
 {
     var asciiSprite = config.getOptional<std::string>(id, "asciiSprite");

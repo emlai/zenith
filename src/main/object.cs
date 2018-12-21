@@ -2,12 +2,12 @@ class Object : public Entity
 {
 public:
     Object(boost::string_ref id);
-    Object(const SaveFile& file);
-    void save(SaveFile& file) const;
+    Object(SaveFile file);
+    void save(SaveFile file) const;
     bool close();
     bool blocksSight() const;
-    void render(Window& window, Vector2 position) const;
-    Sprite& getSprite() { return sprite; }
+    void render(Window window, Vector2 position) const;
+    Sprite getSprite() { return sprite; }
 
 private:
     Sprite sprite;
@@ -18,7 +18,7 @@ Object::Object(boost::string_ref id)
 {
 }
 
-Object::Object(const SaveFile& file)
+Object::Object(SaveFile file)
 :   Entity(file.readString(), *Game::objectConfig),
     sprite(::getSprite(*Game::objectSpriteSheet, *Game::objectConfig, getId()))
 {
@@ -26,7 +26,7 @@ Object::Object(const SaveFile& file)
         component->load(file);
 }
 
-void Object::save(SaveFile& file) const
+void Object::save(SaveFile file) const
 {
     file.write(getId());
 
@@ -54,7 +54,7 @@ bool Object::blocksSight() const
     return Game::objectConfig->get<bool>(getId(), "blocksSight");
 }
 
-void Object::render(Window& window, Vector2 position) const
+void Object::render(Window window, Vector2 position) const
 {
     sprite.render(window, position);
 }

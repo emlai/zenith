@@ -1,30 +1,30 @@
 class Area
 {
 public:
-    Area(World& world, Vector2 position, int level);
-    Area(const SaveFile& file, World& world, Vector2 position, int level);
-    void save(SaveFile& file) const;
+    Area(World world, Vector2 position, int level);
+    Area(SaveFile file, World world, Vector2 position, int level);
+    void save(SaveFile file) const;
 
 private:
     friend class World;
 
-    Tile& getRandomTile();
-    const Tile& getRandomTile() const;
-    World& getWorld() const { return world; }
+    Tile getRandomTile();
+    Tile getRandomTile() const;
+    World getWorld() const { return world; }
     Vector2 getPosition() const { return position; }
     static const int size = 64;
     static const Vector2 sizeVector;
 
-    Tile& getTileAt(Vector2 position);
-    const Tile& getTileAt(Vector2 position) const;
+    Tile getTileAt(Vector2 position);
+    Tile getTileAt(Vector2 position) const;
 
     std::vector<Tile> tiles;
-    World& world;
+    World world;
     Vector2 position;
 }
 const Vector2 Area::sizeVector = Vector2(Area::size, Area::size);
 
-Area::Area(World& world, Vector2 position, int level)
+Area::Area(World world, Vector2 position, int level)
 :   world(world), position(position)
 {
     tiles.reserve(size * size);
@@ -42,7 +42,7 @@ Area::Area(World& world, Vector2 position, int level)
     }
 }
 
-Area::Area(const SaveFile& file, World& world, Vector2 position, int level)
+Area::Area(SaveFile file, World world, Vector2 position, int level)
 :   world(world), position(position)
 {
     tiles.reserve(size * size);
@@ -54,32 +54,32 @@ Area::Area(const SaveFile& file, World& world, Vector2 position, int level)
     }
 }
 
-void Area::save(SaveFile& file) const
+void Area::save(SaveFile file) const
 {
     for (var tile : tiles)
         tile.save(file);
 }
 
-Tile& Area::getTileAt(Vector2 position)
+Tile Area::getTileAt(Vector2 position)
 {
     assert(position.x >= 0 && position.x < size);
     assert(position.y >= 0 && position.y < size);
     return tiles[position.x + size * position.y];
 }
 
-const Tile& Area::getTileAt(Vector2 position) const
+Tile Area::getTileAt(Vector2 position) const
 {
     assert(position.x >= 0 && position.x < size);
     assert(position.y >= 0 && position.y < size);
     return tiles[position.x + size * position.y];
 }
 
-const Tile& Area::getRandomTile() const
+Tile Area::getRandomTile() const
 {
     return getTileAt(makeRandomVector(sizeVector));
 }
 
-Tile& Area::getRandomTile()
+Tile Area::getRandomTile()
 {
     return getTileAt(makeRandomVector(sizeVector));
 }

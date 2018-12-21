@@ -53,27 +53,27 @@ struct Vector2Base
     explicit constexpr Vector2Base(Vector2Base<U> vector) : x(T(vector.x)), y(T(vector.y)) {}
     explicit constexpr Vector2Base(Vector3Base<T> vector) : x(vector.x), y(vector.y) {}
 
-    Vector2Base& operator+=(Vector2Base vector) { x += vector.x; y += vector.y; return *this; }
-    Vector2Base& operator-=(Vector2Base vector) { x -= vector.x; y -= vector.y; return *this; }
-    Vector2Base& operator*=(Vector2Base vector) { x *= vector.x; y *= vector.y; return *this; }
-    Vector2Base& operator/=(Vector2Base vector) { x /= vector.x; y /= vector.y; return *this; }
-    Vector2Base& operator%=(Vector2Base vector) { x %= vector.x; y %= vector.y; return *this; }
+    Vector2Base operator+=(Vector2Base vector) { x += vector.x; y += vector.y; return *this; }
+    Vector2Base operator-=(Vector2Base vector) { x -= vector.x; y -= vector.y; return *this; }
+    Vector2Base operator=(Vector2Base vector) { x *= vector.x; y *= vector.y; return *this; }
+    Vector2Base operator/=(Vector2Base vector) { x /= vector.x; y /= vector.y; return *this; }
+    Vector2Base operator%=(Vector2Base vector) { x %= vector.x; y %= vector.y; return *this; }
 
     template<typename U, typename = std::enable_if_t<std::is_arithmetic<U>::value>>
-    Vector2Base& operator*=(U multiplier) { x *= multiplier; y *= multiplier; return *this; }
+    Vector2Base operator=(U multiplier) { x *= multiplier; y *= multiplier; return *this; }
     template<typename U, typename = std::enable_if_t<std::is_arithmetic<U>::value>>
-    Vector2Base& operator/=(U divisor) { x /= divisor; y /= divisor; return *this; }
+    Vector2Base operator/=(U divisor) { x /= divisor; y /= divisor; return *this; }
     template<typename U, typename = std::enable_if_t<std::is_arithmetic<U>::value>>
-    Vector2Base& operator%=(U divisor) { x %= divisor; y %= divisor; return *this; }
+    Vector2Base operator%=(U divisor) { x %= divisor; y %= divisor; return *this; }
 
     Vector2Base operator+(Vector2Base vector) const { return Vector2Base(x + vector.x, y + vector.y); }
     Vector2Base operator-(Vector2Base vector) const { return Vector2Base(x - vector.x, y - vector.y); }
-    Vector2Base operator*(Vector2Base vector) const { return Vector2Base(x * vector.x, y * vector.y); }
+    Vector2Base operator(Vector2Base vector) const { return Vector2Base(x * vector.x, y * vector.y); }
     Vector2Base operator/(Vector2Base vector) const { return Vector2Base(x / vector.x, y / vector.y); }
     Vector2Base operator%(Vector2Base vector) const { return Vector2Base(x % vector.x, y % vector.y); }
 
     template<typename U, typename = std::enable_if_t<std::is_arithmetic<U>::value>>
-    Vector2Base operator*(U multiplier) const { return Vector2Base(T(x * multiplier), T(y * multiplier)); }
+    Vector2Base operator(U multiplier) const { return Vector2Base(T(x * multiplier), T(y * multiplier)); }
     template<typename U, typename = std::enable_if_t<std::is_arithmetic<U>::value>>
     Vector2Base operator/(U divisor) const { return Vector2Base(T(x / divisor), T(y / divisor)); }
     template<typename U, typename = std::enable_if_t<std::is_arithmetic<U>::value>>
@@ -201,15 +201,15 @@ struct Vector3Base
     constexpr Vector3Base(T x, T y, T z) : x(x), y(y), z(z) {}
     explicit constexpr Vector3Base(Vector2Base<T> vector) : x(vector.x), y(vector.y), z(0) {}
 
-    Vector3Base& operator+=(Vector3Base vector) { x += vector.x; y += vector.y; z += vector.z; return *this; }
-    Vector3Base& operator-=(Vector3Base vector) { x -= vector.x; y -= vector.y; z -= vector.z; return *this; }
-    Vector3Base& operator*=(Vector3Base vector) { x *= vector.x; y *= vector.y; z *= vector.z; return *this; }
-    Vector3Base& operator/=(Vector3Base vector) { x /= vector.x; y /= vector.y; z /= vector.z; return *this; }
-    Vector3Base& operator%=(Vector3Base vector) { x %= vector.x; y %= vector.y; z %= vector.z; return *this; }
+    Vector3Base operator+=(Vector3Base vector) { x += vector.x; y += vector.y; z += vector.z; return *this; }
+    Vector3Base operator-=(Vector3Base vector) { x -= vector.x; y -= vector.y; z -= vector.z; return *this; }
+    Vector3Base operator=(Vector3Base vector) { x *= vector.x; y *= vector.y; z *= vector.z; return *this; }
+    Vector3Base operator/=(Vector3Base vector) { x /= vector.x; y /= vector.y; z /= vector.z; return *this; }
+    Vector3Base operator%=(Vector3Base vector) { x %= vector.x; y %= vector.y; z %= vector.z; return *this; }
 
     Vector3Base operator+(Vector3Base vector) const { return Vector3Base(x + vector.x, y + vector.y, z + vector.z); }
     Vector3Base operator-(Vector3Base vector) const { return Vector3Base(x - vector.x, y - vector.y, z - vector.z); }
-    Vector3Base operator*(Vector3Base vector) const { return Vector3Base(x * vector.x, y * vector.y, z * vector.z); }
+    Vector3Base operator(Vector3Base vector) const { return Vector3Base(x * vector.x, y * vector.y, z * vector.z); }
     Vector3Base operator/(Vector3Base vector) const { return Vector3Base(x / vector.x, y / vector.y, z / vector.z); }
     Vector3Base operator%(Vector3Base vector) const { return Vector3Base(x % vector.x, y % vector.y, z % vector.z); }
 

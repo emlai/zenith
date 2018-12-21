@@ -19,8 +19,8 @@ public:
 class Window
 {
 public:
-    Window(Engine& engine, Vector2 size, boost::string_ref title = "", bool fullscreen = true);
-    Window(Window&& window) = default;
+    Window(Engine engine, Vector2 size, boost::string_ref title = "", bool fullscreen = true);
+    Window(Window window) = default;
     ~Window();
     Event waitForInput();
     Vector2 getMousePosition() const;
@@ -29,10 +29,10 @@ public:
     void toggleFullscreen();
     bool isFullscreen() const;
     void sendCloseRequest();
-    void setViewport(const Rect* viewport) { context.setViewport(viewport); }
-    void setView(const Rect* view) { context.setView(view); }
-    void setFont(BitmapFont& font) { context.setFont(font); }
-    BitmapFont& getFont() { return context.getFont(); }
+    void setViewport(Rect viewport) { context.setViewport(viewport); }
+    void setView(Rect view) { context.setView(view); }
+    void setFont(BitmapFont font) { context.setFont(font); }
+    BitmapFont getFont() { return context.getFont(); }
     void setAnimationFrameRate(int fps) { context.setAnimationFrameRate(fps); }
     var getAnimationFrameTime() const { return context.getAnimationFrameTime(); }
     void updateScreen() { context.updateScreen(); }
@@ -42,7 +42,7 @@ public:
     int getWidth() const;
     int getHeight() const;
     boost::string_ref getTitle() const;
-    GraphicsContext& getGraphicsContext() { return context; }
+    GraphicsContext getGraphicsContext() { return context; }
     static Vector2 getScreenResolution();
 
     enum { CloseRequest = -2 }
@@ -52,12 +52,12 @@ private:
     friend class Texture;
 
     static void initializeSDLVideoSubsystem();
-    static SDL_Window* initWindowHandle(Vector2 size, const char* title, bool fullscreen);
+    static SDL_Window initWindowHandle(Vector2 size, string title, bool fullscreen);
     bool handleWindowEvent(int eventType);
 
-    Engine* engine;
+    Engine engine;
     bool closeRequestReceived;
-    std::unique_ptr<SDL_Window, void (&)(SDL_Window*)> windowHandle;
+    std::unique_ptr<SDL_Window, void (&)(SDL_Window)> windowHandle;
     GraphicsContext context;
     static int windowCount;
     static bool sdlVideoInitialized;
@@ -73,7 +73,7 @@ void Window::initializeSDLVideoSubsystem()
     sdlVideoInitialized = true;
 }
 
-SDL_Window* Window::initWindowHandle(Vector2 size, const char* title, bool fullscreen)
+SDL_Window Window::initWindowHandle(Vector2 size, string title, bool fullscreen)
 {
     if (!sdlVideoInitialized)
         initializeSDLVideoSubsystem();
@@ -83,7 +83,7 @@ SDL_Window* Window::initWindowHandle(Vector2 size, const char* title, bool fulls
     if (fullscreen)
         windowFlags |= fullscreenFlag;
 
-    SDL_Window* windowHandle = SDL_CreateWindow(title,
+    SDL_Window windowHandle = SDL_CreateWindow(title,
                                                 SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
                                                 size.x, size.y, windowFlags);
 
@@ -94,7 +94,7 @@ SDL_Window* Window::initWindowHandle(Vector2 size, const char* title, bool fulls
     return windowHandle;
 }
 
-Window::Window(Engine& engine, Vector2 size, boost::string_ref title, bool fullscreen)
+Window::Window(Engine engine, Vector2 size, boost::string_ref title, bool fullscreen)
 :   engine(&engine),
     closeRequestReceived(false),
     windowHandle(initWindowHandle(size, title.to_string().c_str(), fullscreen), SDL_DestroyWindow),
@@ -136,10 +136,10 @@ bool Window::isFullscreen() const
     return SDL_GetWindowFlags(windowHandle.get()) & fullscreenFlag;
 }
 
-static int filterKeyRepeatEvents(void* userdata, SDL_Event* event)
+static int filterKeyRepeatEvents(void userdata, SDL_Event event)
 {
     if (event->type == SDL_KEYDOWN && event->key.repeat
-        && event->key.keysym.sym == static_cast<const SDL_Event*>(userdata)->key.keysym.sym)
+        && event->key.keysym.sym == static_cast<SDL_Event>(userdata)->key.keysym.sym)
         return 0;
 
     return 1;

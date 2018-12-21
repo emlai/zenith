@@ -1,20 +1,20 @@
 struct MenuItem
 {
-    MenuItem(int id, boost::string_ref text, Key shortcut = NoKey, const Sprite* image = nullptr)
+    MenuItem(int id, boost::string_ref text, Key shortcut = NoKey, Sprite image = nullptr)
     :   id(id), mainImage(image), mainText(text), secondaryImage(nullptr), shortcut(shortcut)
     {
     }
     MenuItem(int id, boost::string_ref mainText, boost::string_ref secondaryText, Key shortcut = NoKey,
-             const Sprite* mainImage = nullptr, const Sprite* secondaryImage = nullptr)
+             Sprite mainImage = nullptr, Sprite secondaryImage = nullptr)
     :   id(id), mainImage(mainImage), mainText(mainText), secondaryImage(secondaryImage),
         secondaryText(secondaryText), shortcut(shortcut)
     {
     }
 
     const int id;
-    const Sprite* const mainImage;
+    Sprite const mainImage;
     const std::string mainText;
-    const Sprite* const secondaryImage;
+    Sprite const secondaryImage;
     const std::string secondaryText;
     const Key shortcut;
 }
@@ -29,10 +29,10 @@ public:
     Menu() { clear(); }
     void addTitle(boost::string_ref text);
     /// Returns the index of the added menu item.
-    int addItem(MenuItem&& item);
+    int addItem(MenuItem item);
     void clear();
     int execute();
-    void render(Window& window) override;
+    void render(Window window) override;
     void setWrap(bool state) { wrapEnabled = state; }
     void setHotkeyStyle(HotkeyStyle style) { hotkeyStyle = style; }
     void setHotkeySuffix(std::string string) { hotkeySuffix = std::move(string); }
@@ -85,7 +85,7 @@ void Menu::addTitle(boost::string_ref text)
     title = text.to_string();
 }
 
-int Menu::addItem(MenuItem&& item)
+int Menu::addItem(MenuItem item)
 {
     menuItems.push_back(std::move(item));
     return int(menuItems.size() - 1);
@@ -186,7 +186,7 @@ int Menu::calculateMaxTextSize() const
     int maxSize = 0;
     int indexOfMax = 0;
 
-    for (const MenuItem& item : menuItems)
+    for (MenuItem item : menuItems)
     {
         var index = &item - &menuItems[0];
         var currentSize = getHotkeyPrefix(index + 1).size() + item.mainText.size();
@@ -260,7 +260,7 @@ int Menu::calculateMainImageColumnWidth() const
     return width + tableCellSpacing.x;
 }
 
-void Menu::render(Window& window)
+void Menu::render(Window window)
 {
     var font = window.getFont();
     int index = 1;

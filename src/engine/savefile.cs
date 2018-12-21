@@ -22,7 +22,7 @@ public:
     void write(Vector2 value);
     void write(Vector3 value);
     void write(boost::string_ref value);
-    void write(const std::string& value) { write(boost::string_ref(value)); }
+    void write(std::string value) { write(boost::string_ref(value)); }
     template<typename T>
     void write(const std::vector<T>& vector);
 
@@ -47,12 +47,12 @@ private:
     template<typename T>
     void write(const std::unique_ptr<T>& value) { value->save(*this); }
     template<typename T>
-    void write(const T& value) { value.save(*this); }
+    void write(T value) { value.save(*this); }
     template<typename T>
     T read() const { return T::load(*this); }
 
     std::vector<char> buffer;
-    std::unique_ptr<SDL_RWops, void (*)(SDL_RWops*)> file;
+    std::unique_ptr<SDL_RWops, void (*)(SDL_RWops)> file;
 }
 
 template<typename T>
@@ -80,7 +80,7 @@ inline double SaveFile::read<double>() const
 {
     return readDouble();
 }
-static void closeFile(SDL_RWops* file)
+static void closeFile(SDL_RWops file)
 {
     SDL_RWclose(file);
 }

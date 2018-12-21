@@ -2,11 +2,11 @@ class Liquid
 {
 public:
     Liquid(boost::string_ref materialId);
-    Liquid(const SaveFile& file);
-    void save(SaveFile& file) const;
+    Liquid(SaveFile file);
+    void save(SaveFile file) const;
     void exist();
     bool exists() const;
-    void render(Window& window, Vector2 position) const;
+    void render(Window window, Vector2 position) const;
 
 private:
     static constexpr double fadeRate = 0.001;
@@ -28,13 +28,13 @@ Liquid::Liquid(boost::string_ref materialId)
     SDL_FillRect(texture.getSurface(), &liquidRectangle, color.value);
 }
 
-Liquid::Liquid(const SaveFile& file)
+Liquid::Liquid(SaveFile file)
 :   Liquid(file.readString())
 {
     fadeLevel = file.readDouble();
 }
 
-void Liquid::save(SaveFile& file) const
+void Liquid::save(SaveFile file) const
 {
     file.write(materialId);
     file.write(fadeLevel);
@@ -50,7 +50,7 @@ bool Liquid::exists() const
     return fadeLevel > 0.0;
 }
 
-void Liquid::render(Window& window, Vector2 position) const
+void Liquid::render(Window window, Vector2 position) const
 {
     SDL_SetSurfaceAlphaMod(texture.getSurface(), uint8_t(fadeLevel * 255));
     texture.render(window, position);

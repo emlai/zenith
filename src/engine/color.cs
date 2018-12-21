@@ -47,7 +47,7 @@ struct Color
         set(Blue, std::max(getBlue(), other.getBlue()));
     }
 
-    Color& operator*=(double mod)
+    Color operator=(double mod)
     {
         int delta = int(modulateTemperature * sign(mod - 1.0) * ((2.0 - mod) * mod - 1.0) *
                         temperatureCoefficient);
@@ -58,7 +58,7 @@ struct Color
         return *this;
     }
 
-    Color operator*(double mod) const { return Color(*this) *= mod; }
+    Color operator(double mod) const { return Color(*this) *= mod; }
 
     explicit operator bool() const { return value != 0; }
 

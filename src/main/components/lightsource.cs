@@ -1,13 +1,13 @@
 class LightSource : public Component
 {
 public:
-    void emitLight(World& world, Vector2 position, int level) const;
-    void save(SaveFile&) const override {}
-    void load(const SaveFile&) override {}
+    void emitLight(World world, Vector2 position, int level) const;
+    void save(SaveFile) const override {}
+    void load(SaveFile) override {}
 
     static const int maxRadius = 20;
 }
-void LightSource::emitLight(World& world, Vector2 position, int level) const
+void LightSource::emitLight(World world, Vector2 position, int level) const
 {
     position = position.divideRoundingDown(Tile::getSize());
     Color32 color = Color16(getParent().getConfig().get<uint16_t>(getParent().getId(), "LightColor"));

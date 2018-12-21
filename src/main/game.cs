@@ -2,26 +2,26 @@ class Game : public State
 {
 public:
     Game(bool loadSavedGame);
-    Game(const Game&) = delete;
-    Game(Game&&) = default;
-    Game& operator=(const Game&) = delete;
-    Game& operator=(Game&&) = default;
+    Game(Game) = delete;
+    Game(Game) = default;
+    Game operator=(Game) = delete;
+    Game operator=(Game) = default;
     void save();
     void load();
     void execute();
     void stop() { gameIsRunning = false; }
     void advanceTurn() { ++turn; }
     int getTurn() const { return turn; }
-    int showInventory(boost::string_ref title, bool showNothingAsOption, Item* preselectedItem = nullptr,
-                      std::function<bool(const Item&)> itemFilter = nullptr);
+    int showInventory(boost::string_ref title, bool showNothingAsOption, Item preselectedItem = nullptr,
+                      std::function<bool(Item)> itemFilter = nullptr);
     void showEquipmentMenu();
     void lookMode();
-    std::string askForString(std::string&& question);
-    boost::optional<Dir8> askForDirection(std::string&& question);
-    Creature* getPlayer() const { return player; }
-    Window& getWindow() const;
+    std::string askForString(std::string question);
+    boost::optional<Dir8> askForDirection(std::string question);
+    Creature getPlayer() const { return player; }
+    Window getWindow() const;
 #ifdef DEBUG
-    void enterCommandMode(Window&);
+    void enterCommandMode(Window);
     static const Key commandModeKey = '`';
 #endif
     static boost::optional<Vector2> cursorPosition;
@@ -43,16 +43,16 @@ public:
 
 private:
     friend class LookMode;
-    void renderAtPosition(Window&, Vector2 centerPosition);
-    void render(Window& window) override;
-    void printPlayerInformation(BitmapFont&) const;
-    void printStat(BitmapFont&, boost::string_ref, double current, double max, Color16) const;
-    void printAttribute(BitmapFont&, boost::string_ref, double current) const;
+    void renderAtPosition(Window, Vector2 centerPosition);
+    void render(Window window) override;
+    void printPlayerInformation(BitmapFont) const;
+    void printStat(BitmapFont, boost::string_ref, double current, double max, Color16) const;
+    void printAttribute(BitmapFont, boost::string_ref, double current) const;
 
     bool gameIsRunning;
     int turn;
     World world;
-    Creature* player;
+    Creature player;
 
 #ifdef DEBUG
     void parseCommand(boost::string_ref);
@@ -102,7 +102,7 @@ Game::Game(bool loadSavedGame)
     }
 }
 
-Window& Game::getWindow() const
+Window Game::getWindow() const
 {
     return getEngine().getWindow();
 }
@@ -110,14 +110,14 @@ Window& Game::getWindow() const
 class InventoryMenu : public Menu
 {
 public:
-    InventoryMenu(Window& window, const Creature& player, boost::string_ref title,
-                  bool showNothingAsOption, Item* preselectedItem,
-                  std::function<bool(const Item&)> itemFilter);
+    InventoryMenu(Window window, Creature player, boost::string_ref title,
+                  bool showNothingAsOption, Item preselectedItem,
+                  std::function<bool(Item)> itemFilter);
 }
 
-InventoryMenu::InventoryMenu(Window& window, const Creature& player, boost::string_ref title,
-                             bool showNothingAsOption, Item* preselectedItem,
-                             std::function<bool(const Item&)> itemFilter)
+InventoryMenu::InventoryMenu(Window window, Creature player, boost::string_ref title,
+                             bool showNothingAsOption, Item preselectedItem,
+                             std::function<bool(Item)> itemFilter)
 {
     addTitle(title);
     setArea(GUI::getInventoryArea(window));
@@ -140,8 +140,8 @@ InventoryMenu::InventoryMenu(Window& window, const Creature& player, boost::stri
     }
 }
 
-int Game::showInventory(boost::string_ref title, bool showNothingAsOption, Item* preselectedItem,
-                        std::function<bool(const Item&)> itemFilter)
+int Game::showInventory(boost::string_ref title, bool showNothingAsOption, Item preselectedItem,
+                        std::function<bool(Item)> itemFilter)
 {
     InventoryMenu inventoryMenu(getWindow(), *player, title, showNothingAsOption,
                                 preselectedItem, std::move(itemFilter));
@@ -151,11 +151,11 @@ int Game::showInventory(boost::string_ref title, bool showNothingAsOption, Item*
 class EquipmentMenu : public Menu
 {
 public:
-    EquipmentMenu(Creature& player) : player(&player) {}
+    EquipmentMenu(Creature player) : player(&player) {}
     void execute();
 
 private:
-    Creature* player;
+    Creature player;
 }
 
 void EquipmentMenu::execute()
@@ -208,13 +208,13 @@ void Game::showEquipmentMenu()
 class LookMode : public State
 {
 public:
-    LookMode(Game& game) : game(&game), position(game.player->getPosition()) {}
+    LookMode(Game game) : game(&game), position(game.player->getPosition()) {}
     void execute();
 
 private:
-    void render(Window& window) override;
+    void render(Window window) override;
 
-    Game* game;
+    Game game;
     Vector2 position;
 }
 
@@ -239,7 +239,7 @@ void LookMode::execute()
     }
 }
 
-void LookMode::render(Window& window)
+void LookMode::render(Window window)
 {
     game->renderAtPosition(window, position);
     window.getFont().setArea(GUI::getQuestionArea(window));
@@ -259,7 +259,7 @@ public:
     std::string execute();
 
 private:
-    void render(Window&) override {} // Rendered by keyboard::readLine() in execute().
+    void render(Window) override {} // Rendered by keyboard::readLine() in execute().
     bool renderPreviousState() const override { return true; }
 
     std::string question;
@@ -279,7 +279,7 @@ std::string StringQuestion::execute()
     return input;
 }
 
-std::string Game::askForString(std::string&& question)
+std::string Game::askForString(std::string question)
 {
     StringQuestion stringQuestion(question);
     return getEngine().execute(stringQuestion);
@@ -292,7 +292,7 @@ public:
     boost::optional<Dir8> execute();
 
 private:
-    void render(Window& window) override;
+    void render(Window window) override;
     bool renderPreviousState() const override { return true; }
 
     std::string question;
@@ -309,13 +309,13 @@ boost::optional<Dir8> DirectionQuestion::execute()
     return boost::none;
 }
 
-void DirectionQuestion::render(Window& window)
+void DirectionQuestion::render(Window window)
 {
     window.getFont().setArea(GUI::getQuestionArea(window));
     window.getFont().print(window, question);
 }
 
-boost::optional<Dir8> Game::askForDirection(std::string&& question)
+boost::optional<Dir8> Game::askForDirection(std::string question)
 {
     DirectionQuestion directionQuestion(question, player->getPosition());
     return getEngine().execute(directionQuestion);
@@ -333,12 +333,12 @@ void Game::execute()
     }
 }
 
-void Game::render(Window& window)
+void Game::render(Window window)
 {
     renderAtPosition(window, player->getPosition());
 }
 
-void Game::renderAtPosition(Window& window, Vector2 centerPosition)
+void Game::renderAtPosition(Window window, Vector2 centerPosition)
 {
     cursorPosition = boost::none;
     printPlayerInformation(window.getFont());
@@ -373,7 +373,7 @@ void Game::renderAtPosition(Window& window, Vector2 centerPosition)
     }
 }
 
-void Game::printPlayerInformation(BitmapFont& font) const
+void Game::printPlayerInformation(BitmapFont font) const
 {
     font.setArea(GUI::getSidebarArea(getWindow()));
     printStat(font, "HP", player->getHP(), player->getMaxHP(), TextColor::Red);
@@ -401,7 +401,7 @@ void Game::printPlayerInformation(BitmapFont& font) const
 #endif
 }
 
-void Game::printStat(BitmapFont& font, boost::string_ref statName, double currentValue,
+void Game::printStat(BitmapFont font, boost::string_ref statName, double currentValue,
                      double maximumValue, Color16 color) const
 {
     int currentValueInt = std::ceil(currentValue);
@@ -419,7 +419,7 @@ void Game::printStat(BitmapFont& font, boost::string_ref statName, double curren
     font.printLine(getWindow(), boost::string_ref(text).substr(filledColumns), TextColor::White, Color32::none, true, PreserveLines);
 }
 
-void Game::printAttribute(BitmapFont& font, boost::string_ref attributeName, double attributeValue) const
+void Game::printAttribute(BitmapFont font, boost::string_ref attributeName, double attributeValue) const
 {
     std::string padding(5 - attributeName.size(), ' ');
     font.printLine(getWindow(), attributeName + padding + std::to_string(int(attributeValue)),
@@ -428,7 +428,7 @@ void Game::printAttribute(BitmapFont& font, boost::string_ref attributeName, dou
 
 #ifdef DEBUG
 
-void Game::enterCommandMode(Window& window)
+void Game::enterCommandMode(Window window)
 {
     for (std::string command;;)
     {

@@ -1,34 +1,34 @@
 class World
 {
 public:
-    World(const Game& game) : game(&game), sunlight(0x888888FF) {}
-    World(const World&) = delete;
-    World(World&&) = default;
-    World& operator=(const World&) = delete;
-    World& operator=(World&&) = default;
-    void load(SaveFile& file);
-    void save(SaveFile& file) const;
+    World(Game game) : game(&game), sunlight(0x888888FF) {}
+    World(World) = delete;
+    World(World) = default;
+    World operator=(World) = delete;
+    World operator=(World) = default;
+    void load(SaveFile file);
+    void save(SaveFile file) const;
     int getTurn() const;
     void exist(Rect region, int level);
-    void render(Window&, Rect region, int level, const Creature& player);
-    Tile* getOrCreateTile(Vector2 position, int level);
-    Tile* getTile(Vector2 position, int level);
-    void forEachTile(Rect region, int level, const std::function<void(Tile&)>&);
+    void render(Window, Rect region, int level, Creature player);
+    Tile getOrCreateTile(Vector2 position, int level);
+    Tile getTile(Vector2 position, int level);
+    void forEachTile(Rect region, int level, const std::function<void(Tile)>&);
     Color32 getSunlight() const { return sunlight; }
 
 private:
-    Area* getOrCreateArea(Vector3 position);
-    Area* getArea(Vector3 position);
+    Area getOrCreateArea(Vector3 position);
+    Area getArea(Vector3 position);
     static Vector3 globalPositionToAreaPosition(Vector2 position, int level);
     static Vector2 globalPositionToTilePosition(Vector2 position);
 
-    const Game* game;
+    Game game;
     boost::unordered_map<Vector3, Area> areas;
     boost::unordered_map<Vector3, int64_t> savedAreaOffsets;
     std::unique_ptr<SaveFile> saveFile;
     Color32 sunlight;
 }
-void World::load(SaveFile& file)
+void World::load(SaveFile file)
 {
     var areaCount = file.readInt32();
     areas.reserve(size_t(areaCount));
@@ -42,7 +42,7 @@ void World::load(SaveFile& file)
     saveFile = std::make_unique<SaveFile>(file.copyToMemory());
 }
 
-void World::save(SaveFile& file) const
+void World::save(SaveFile file) const
 {
     file.writeInt32(int32_t(areas.size()));
     var areaPositionsOffset = file.getOffset();
@@ -73,9 +73,9 @@ int World::getTurn() const
 void World::exist(Rect region, int level)
 {
     // Collect the creatures into a vector to avoid updating the same creature more than once.
-    std::vector<Creature*> creaturesToUpdate;
+    std::vector<Creature> creaturesToUpdate;
 
-    forEachTile(region, level, [&](Tile& tile)
+    forEachTile(region, level, [&](Tile tile)
     {
         tile.exist();
 
@@ -92,16 +92,16 @@ void World::exist(Rect region, int level)
         creature->exist();
 }
 
-void World::render(Window& window, Rect region, int level, const Creature& player)
+void World::render(Window window, Rect region, int level, Creature player)
 {
     var lightRegion = region.inset(Vector2(-LightSource::maxRadius, -LightSource::maxRadius));
-    forEachTile(lightRegion, level, [&](Tile& tile) { tile.resetLight(); });
-    forEachTile(lightRegion, level, [&](Tile& tile) { tile.emitLight(); });
+    forEachTile(lightRegion, level, [&](Tile tile) { tile.resetLight(); });
+    forEachTile(lightRegion, level, [&](Tile tile) { tile.emitLight(); });
 
-    std::vector<std::pair<const Tile*, bool>> tilesToRender;
+    std::vector<std::pair<Tile, bool>> tilesToRender;
     tilesToRender.reserve(region.getArea());
 
-    forEachTile(region, level, [&](const Tile& tile)
+    forEachTile(region, level, [&](Tile tile)
     {
         if (game->playerSeesEverything || player.sees(tile))
             tilesToRender.emplace_back(&tile, false);
@@ -114,7 +114,7 @@ void World::render(Window& window, Rect region, int level, const Creature& playe
             tileAndFogOfWar.first->render(window, zIndex, tileAndFogOfWar.second, !game->playerSeesEverything);
 }
 
-Area* World::getOrCreateArea(Vector3 position)
+Area World::getOrCreateArea(Vector3 position)
 {
     if (var area = getArea(position))
         return area;
@@ -125,7 +125,7 @@ Area* World::getOrCreateArea(Vector3 position)
     return &area;
 }
 
-Area* World::getArea(Vector3 position)
+Area World::getArea(Vector3 position)
 {
     var it = areas.find(position);
     if (it != areas.end())
@@ -154,7 +154,7 @@ Vector2 World::globalPositionToTilePosition(Vector2 position)
     return tilePosition;
 }
 
-Tile* World::getOrCreateTile(Vector2 position, int level)
+Tile World::getOrCreateTile(Vector2 position, int level)
 {
     if (var area = getOrCreateArea(globalPositionToAreaPosition(position, level)))
         return &area->getTileAt(globalPositionToTilePosition(position));
@@ -162,7 +162,7 @@ Tile* World::getOrCreateTile(Vector2 position, int level)
     return nullptr;
 }
 
-Tile* World::getTile(Vector2 position, int level)
+Tile World::getTile(Vector2 position, int level)
 {
     if (var area = getArea(globalPositionToAreaPosition(position, level)))
         return &area->getTileAt(globalPositionToTilePosition(position));
@@ -170,7 +170,7 @@ Tile* World::getTile(Vector2 position, int level)
     return nullptr;
 }
 
-void World::forEachTile(Rect region, int level, const std::function<void(Tile&)>& function)
+void World::forEachTile(Rect region, int level, const std::function<void(Tile)>& function)
 {
     for (int x = region.getLeft(); x <= region.getRight(); ++x)
         for (int y = region.getTop(); y <= region.getBottom(); ++y)
