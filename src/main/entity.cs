@@ -43,7 +43,7 @@ List<ComponentType> Entity::getComponentsOfType()
 }
 static void reportUnknownComponent(string name)
 {
-    static boost::unordered_set<string> reportedNames;
+    static HashSet<string> reportedNames;
 
     if (reportedNames.insert(name).second)
         std::cerr << "Unknown component '" << name << "'\n";

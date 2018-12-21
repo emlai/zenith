@@ -50,7 +50,7 @@ static class EquipmentSlotExtensions
 class Creature : Entity
 {
     List<Tile> tilesUnder;
-    mutable boost::unordered_set<Vector3> seenTilePositions;
+    HashSet<Vector3> seenTilePositions;
     List<Item> inventory;
     Dictionary<EquipmentSlot, Item> equipment;
     double currentHP, maxHP, currentAP, currentMP, maxMP;

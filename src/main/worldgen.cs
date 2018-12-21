@@ -236,8 +236,8 @@ static List<Tile> reconstructPath(const Dictionary<Tile, Tile>& cameFrom, Tile c
 List<Tile> WorldGenerator::findPathAStar(Tile source, Tile target,
                                                  const std::function<bool(Tile)>& isAllowed)
 {
-    boost::unordered_set<Tile> closedSet;
-    boost::unordered_set<Tile> openSet;
+    HashSet<Tile> closedSet;
+    HashSet<Tile> openSet;
     openSet.emplace(source);
     Dictionary<Tile, Tile> sources;
     Dictionary<Tile, int> costs;
