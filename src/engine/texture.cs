@@ -1,5 +1,8 @@
 class Texture
 {
+    std::unique_ptr<SDL_Surface, void (*)(SDL_Surface)> surface;
+    List<Color32> pixelData;
+
     struct PixelFormatMasks
     {
         uint red, green, blue, alpha;
@@ -142,8 +145,4 @@ class Texture
         SDL_SetSurfaceAlphaMod(surface.get(),
                                byte(color.getAlpha()));
     }
-
-private:
-    std::unique_ptr<SDL_Surface, void (*)(SDL_Surface)> surface;
-    List<Color32> pixelData;
 }
