@@ -1,7 +1,3 @@
-struct SDL_Renderer;
-struct SDL_Surface;
-
-struct Rect;
 class Texture
 {
 public:

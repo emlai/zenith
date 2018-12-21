@@ -1,5 +1,3 @@
-struct SDL_RWops;
-
 class SaveFile
 {
 public:

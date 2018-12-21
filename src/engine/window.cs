@@ -1,5 +1,3 @@
-struct SDL_Window;
-
 class Event
 {
 public:

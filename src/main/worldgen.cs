@@ -1,5 +1,3 @@
-struct Rect;
-
 class Room
 {
 public:

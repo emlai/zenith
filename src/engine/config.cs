@@ -104,7 +104,6 @@ private:
     using Group = Group_<Value>;
 
     template<typename OutputType>
-    struct ConversionTraits;
     template<typename OutputType>
     static boost::optional<OutputType> convert(Value value)
     {
