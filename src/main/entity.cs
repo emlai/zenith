@@ -52,7 +52,7 @@ static void reportUnknownComponent(boost::string_ref name)
 
 Entity::Entity(boost::string_ref id, Config config)
 :   id(id),
-    config(&config)
+    config(config)
 {
     if (var componentNames = config.getOptional<std::vector<std::string>>(id, "components"))
     {

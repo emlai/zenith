@@ -32,7 +32,7 @@ BitmapFont Sprite::asciiGraphicsFont;
 
 Sprite::Sprite(Texture texture, Rect textureRegion, char asciiGlyph, Color32 asciiColor,
                Color32 materialColor, int animationFrames)
-:   texture(&texture), textureRegion(textureRegion), materialColor(materialColor),
+:   texture(texture), textureRegion(textureRegion), materialColor(materialColor),
     animationFrames(animationFrames), frame(0), asciiGlyph(asciiGlyph), asciiColor(asciiColor)
 {
 }
@@ -52,7 +52,7 @@ void Sprite::render(Window window, Vector2 position, Vector2 sourceOffset) const
         bool blend = false;
         var font = getAsciiGraphicsFont();
         font->setArea(Rect(position, getSize()));
-        font->print(window, boost::string_ref(&asciiGlyph, 1), asciiColor, Color32::none, blend);
+        font->print(window, boost::string_ref(asciiGlyph, 1), asciiColor, Color32::none, blend);
     }
     else
     {

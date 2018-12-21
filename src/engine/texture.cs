@@ -32,7 +32,7 @@ static PixelFormatMasks pixelFormatEnumToMasks(uint32_t pixelFormat)
     int bpp;
     PixelFormatMasks masks;
 
-    if (!SDL_PixelFormatEnumToMasks(pixelFormat, &bpp, &masks.red, &masks.green, &masks.blue, &masks.alpha))
+    if (!SDL_PixelFormatEnumToMasks(pixelFormat, bpp, masks.red, masks.green, masks.blue, masks.alpha))
         throw std::runtime_error("SDL_PixelFormatEnumToMasks: invalid pixel format");
 
     return masks;
@@ -95,9 +95,9 @@ void Texture::render(Window window, Rect source, Rect target) const
     target = window.context.mapToTargetCoordinates(target);
 
     SDL_BlitSurface(surface.get(),
-                    reinterpret_cast<SDL_Rect>(&source),
+                    reinterpret_cast<SDL_Rect>(source),
                     window.context.targetTexture.getSurface(),
-                    reinterpret_cast<SDL_Rect>(&target));
+                    reinterpret_cast<SDL_Rect>(target));
 }
 
 // TODO: Move this functionality out of the engine to the game.
@@ -112,7 +112,7 @@ void Texture::render(Window window, Rect source, Rect target, Color32 materialCo
     var targetWidth = targetSurface->w;
 
     uint32_t transparentColor;
-    if (SDL_GetColorKey(surface.get(), &transparentColor) != 0)
+    if (SDL_GetColorKey(surface.get(), transparentColor) != 0)
         transparentColor = 0;
 
     for (var y = source.getTop(); y <= source.getBottom(); ++y)
@@ -124,7 +124,7 @@ void Texture::render(Window window, Rect source, Rect target, Color32 materialCo
             if (pixel == transparentColor)
                 continue;
 
-            const uint8_t abgr = reinterpret_cast<const uint8_t>(&sourcePixels[y * sourceWidth + x]);
+            const uint8_t abgr = reinterpret_cast<const uint8_t>(sourcePixels[y * sourceWidth + x]);
             bool isMagenta = abgr[3] > 0 && abgr[3] == abgr[1] && abgr[2] == 0;
 
             if (isMagenta)

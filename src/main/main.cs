@@ -270,14 +270,14 @@ class Program
             Sprite::useAsciiGraphics(preferences.getOptional<bool>("ASCIIGraphics").get_value_or(false));
             window.getGraphicsContext().setScale(preferences.getOptional<double>("GraphicsScale").get_value_or(1));
             window.setFullscreen(preferences.getOptional<bool>("Fullscreen").get_value_or(true));
-            loadKeyMap(&preferences);
+            loadKeyMap(preferences);
         }
         else
             loadKeyMap(nullptr);
 
         BitmapFont font = initFont();
         window.setFont(font);
-        Sprite::setAsciiGraphicsFont(&font);
+        Sprite::setAsciiGraphicsFont(font);
         Menu::setDefaultTextColor(TextColor::Gray);
 
         MainMenu mainMenu;

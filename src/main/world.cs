@@ -1,7 +1,7 @@
 class World
 {
 public:
-    World(Game game) : game(&game), sunlight(0x888888FF) {}
+    World(Game game) : game(game), sunlight(0x888888FF) {}
     World(World) = delete;
     World(World) = default;
     World operator=(World) = delete;
@@ -104,9 +104,9 @@ void World::render(Window window, Rect region, int level, Creature player)
     forEachTile(region, level, [&](Tile tile)
     {
         if (game->playerSeesEverything || player.sees(tile))
-            tilesToRender.emplace_back(&tile, false);
+            tilesToRender.emplace_back(tile, false);
         else if (player.remembers(tile))
-            tilesToRender.emplace_back(&tile, true);
+            tilesToRender.emplace_back(tile, true);
     });
 
     for (int zIndex = 0; zIndex < 7; ++zIndex)
@@ -122,20 +122,20 @@ Area World::getOrCreateArea(Vector3 position)
     var area = areas.emplace(position, Area(*this, Vector2(position), position.z)).first->second;
     WorldGenerator generator(*this);
     generator.generateRegion(Rect(Vector2(position) * Area::sizeVector, Area::sizeVector), position.z);
-    return &area;
+    return area;
 }
 
 Area World::getArea(Vector3 position)
 {
     var it = areas.find(position);
     if (it != areas.end())
-        return &it->second;
+        return it->second;
 
     var offset = savedAreaOffsets.find(position);
     if (offset != savedAreaOffsets.end())
     {
         saveFile->seek(offset->second);
-        return &areas.emplace(position, Area(*saveFile, *this, Vector2(position), position.z)).first->second;
+        return areas.emplace(position, Area(*saveFile, *this, Vector2(position), position.z)).first->second;
     }
 
     return nullptr;
@@ -157,7 +157,7 @@ Vector2 World::globalPositionToTilePosition(Vector2 position)
 Tile World::getOrCreateTile(Vector2 position, int level)
 {
     if (var area = getOrCreateArea(globalPositionToAreaPosition(position, level)))
-        return &area->getTileAt(globalPositionToTilePosition(position));
+        return area->getTileAt(globalPositionToTilePosition(position));
 
     return nullptr;
 }
@@ -165,7 +165,7 @@ Tile World::getOrCreateTile(Vector2 position, int level)
 Tile World::getTile(Vector2 position, int level)
 {
     if (var area = getArea(globalPositionToAreaPosition(position, level)))
-        return &area->getTileAt(globalPositionToTilePosition(position));
+        return area->getTileAt(globalPositionToTilePosition(position));
 
     return nullptr;
 }

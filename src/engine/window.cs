@@ -95,7 +95,7 @@ SDL_Window Window::initWindowHandle(Vector2 size, string title, bool fullscreen)
 }
 
 Window::Window(Engine engine, Vector2 size, boost::string_ref title, bool fullscreen)
-:   engine(&engine),
+:   engine(engine),
     closeRequestReceived(false),
     windowHandle(initWindowHandle(size, title.to_string().c_str(), fullscreen), SDL_DestroyWindow),
     context(*this)
@@ -154,14 +154,14 @@ Event Window::waitForInput()
         engine->render(*this);
         updateScreen();
 
-        if (!SDL_PollEvent(&event))
+        if (!SDL_PollEvent(event))
             continue;
 
         switch (event.type)
         {
             case SDL_KEYDOWN:
             {
-                SDL_FilterEvents(filterKeyRepeatEvents, &event);
+                SDL_FilterEvents(filterKeyRepeatEvents, event);
 
                 var key = event.key.keysym.sym;
 
@@ -218,7 +218,7 @@ bool Window::shouldClose() const
 Vector2 Window::getMousePosition() const
 {
     Vector2 position;
-    SDL_GetMouseState(&position.x, &position.y);
+    SDL_GetMouseState(position.x, position.y);
     return context.mapFromTargetCoordinates(position);
 }
 
@@ -235,21 +235,21 @@ Vector2 Window::getResolution() const
 Vector2 Window::getSize() const
 {
     Vector2 size;
-    SDL_GetWindowSize(windowHandle.get(), &size.x, &size.y);
+    SDL_GetWindowSize(windowHandle.get(), size.x, size.y);
     return size;
 }
 
 int Window::getWidth() const
 {
     int width;
-    SDL_GetWindowSize(windowHandle.get(), &width, nullptr);
+    SDL_GetWindowSize(windowHandle.get(), width, nullptr);
     return width;
 }
 
 int Window::getHeight() const
 {
     int height;
-    SDL_GetWindowSize(windowHandle.get(), nullptr, &height);
+    SDL_GetWindowSize(windowHandle.get(), nullptr, height);
     return height;
 }
 
@@ -265,7 +265,7 @@ Vector2 Window::getScreenResolution()
 
     SDL_DisplayMode mode;
 
-    if (SDL_GetDesktopDisplayMode(0, &mode) != 0)
+    if (SDL_GetDesktopDisplayMode(0, mode) != 0)
         throw std::runtime_error(SDL_GetError());
 
     return Vector2(mode.w, mode.h);

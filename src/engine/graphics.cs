@@ -62,7 +62,7 @@ void GraphicsContext::setScale(double scale)
 double GraphicsContext::getScale() const
 {
     float scale;
-    SDL_RenderGetScale(renderer.get(), &scale, nullptr);
+    SDL_RenderGetScale(renderer.get(), scale, nullptr);
     return double(scale);
 }
 
@@ -97,7 +97,7 @@ void GraphicsContext::setView(Rect view)
 
 void GraphicsContext::setFont(BitmapFont font)
 {
-    this->font = &font;
+    this->font = font;
 }
 
 BitmapFont GraphicsContext::getFont()
@@ -148,10 +148,10 @@ void GraphicsContext::renderRectangle(Rect rectangle, Color32 color)
     SDL_Rect bottomLine = { rectangle.getLeft(), rectangle.getBottom(), rectangle.getWidth(), 1 }
     SDL_Rect leftLine = { rectangle.getLeft(), rectangle.getTop(), 1, rectangle.getHeight() }
     SDL_Rect rightLine = { rectangle.getRight(), rectangle.getTop(), 1, rectangle.getHeight() }
-    SDL_FillRect(targetTexture.getSurface(), &topLine, color.value);
-    SDL_FillRect(targetTexture.getSurface(), &bottomLine, color.value);
-    SDL_FillRect(targetTexture.getSurface(), &leftLine, color.value);
-    SDL_FillRect(targetTexture.getSurface(), &rightLine, color.value);
+    SDL_FillRect(targetTexture.getSurface(), topLine, color.value);
+    SDL_FillRect(targetTexture.getSurface(), bottomLine, color.value);
+    SDL_FillRect(targetTexture.getSurface(), leftLine, color.value);
+    SDL_FillRect(targetTexture.getSurface(), rightLine, color.value);
 }
 
 void GraphicsContext::renderFilledRectangle(Rect rectangle, Color32 color, BlendMode blendMode)
@@ -161,7 +161,7 @@ void GraphicsContext::renderFilledRectangle(Rect rectangle, Color32 color, Blend
     switch (blendMode)
     {
         case BlendMode::Normal:
-            SDL_FillRect(targetTexture.getSurface(), reinterpret_cast<SDL_Rect>(&rectangle), color.value);
+            SDL_FillRect(targetTexture.getSurface(), reinterpret_cast<SDL_Rect>(rectangle), color.value);
             break;
 
         case BlendMode::LinearLight:

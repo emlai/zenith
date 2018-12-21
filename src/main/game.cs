@@ -134,7 +134,7 @@ InventoryMenu::InventoryMenu(Window window, Creature player, boost::string_ref t
     for (var item : player.getInventory())
     {
         if (!itemFilter || itemFilter(*item))
-            addItem(MenuItem(id, item->getName(), NoKey, &item->getSprite()));
+            addItem(MenuItem(id, item->getName(), NoKey, item->getSprite()));
 
         ++id;
     }
@@ -151,7 +151,7 @@ int Game::showInventory(boost::string_ref title, bool showNothingAsOption, Item 
 class EquipmentMenu : public Menu
 {
 public:
-    EquipmentMenu(Creature player) : player(&player) {}
+    EquipmentMenu(Creature player) : player(player) {}
     void execute();
 
 private:
@@ -173,7 +173,7 @@ void EquipmentMenu::execute()
         for (int i = 0; i < equipmentSlots; ++i)
         {
             var slot = static_cast<EquipmentSlot>(i);
-            var image = player->getEquipment(slot) ? &player->getEquipment(slot)->getSprite() : nullptr;
+            var image = player->getEquipment(slot) ? player->getEquipment(slot)->getSprite() : nullptr;
             var itemName = player->getEquipment(slot) ? player->getEquipment(slot)->getName() : "-";
             addItem(MenuItem(i, toString(slot) + ":", itemName, NoKey, nullptr, image));
         }
@@ -208,7 +208,7 @@ void Game::showEquipmentMenu()
 class LookMode : public State
 {
 public:
-    LookMode(Game game) : game(&game), position(game.player->getPosition()) {}
+    LookMode(Game game) : game(game), position(game.player->getPosition()) {}
     void execute();
 
 private:
@@ -271,7 +271,7 @@ std::string StringQuestion::execute()
     std::string input;
 
     int result = keyboard::readLine(window, input, GUI::getQuestionArea(window).position,
-                                    std::bind(&Engine::render, &getEngine(), std::placeholders::_1),
+                                    std::bind(Engine::render, getEngine(), std::placeholders::_1),
                                     question);
     if (result == Esc)
         return "";
@@ -348,8 +348,8 @@ void Game::renderAtPosition(Window window, Vector2 centerPosition)
 
     Rect view(centerPosition * Tile::getSize() + Tile::getSize() / 2 - worldViewport.size / 2,
               worldViewport.size);
-    window.setView(&view);
-    window.setViewport(&worldViewport);
+    window.setView(view);
+    window.setViewport(worldViewport);
 
     Rect visibleRegion(centerPosition - worldViewport.size / Tile::getSize() / 2,
                        worldViewport.size / Tile::getSize());
@@ -433,7 +433,7 @@ void Game::enterCommandMode(Window window)
     for (std::string command;;)
     {
         int result = keyboard::readLine(window, command, GUI::getCommandLineArea(window).position,
-                                        std::bind(&Game::render, this, std::placeholders::_1), ">> ");
+                                        std::bind(Game::render, this, std::placeholders::_1), ">> ");
 
         if (result == Enter && !command.empty())
         {
@@ -456,7 +456,7 @@ void Game::enterCommandMode(Window window)
 void Game::parseCommand(boost::string_ref command)
 {
     if (command == "respawn")
-        *player = Creature(&player->getTileUnder(0), "Human", std::make_unique<PlayerController>(*this));
+        *player = Creature(player->getTileUnder(0), "Human", std::make_unique<PlayerController>(*this));
     else if (command == "clear")
         MessageSystem::clearDebugMessageHistory();
     else if (command == "info")
@@ -486,6 +486,6 @@ void Game::load()
     var playerLevel = file.readInt32();
     world.load(file);
 
-    player = &world.getTile(playerPosition, playerLevel)->getCreature(0);
+    player = world.getTile(playerPosition, playerLevel)->getCreature(0);
     player->setController(std::make_unique<PlayerController>(*this));
 }

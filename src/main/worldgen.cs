@@ -243,12 +243,12 @@ std::vector<Tile> WorldGenerator::findPathAStar(Tile source, Tile target,
 {
     boost::unordered_set<Tile> closedSet;
     boost::unordered_set<Tile> openSet;
-    openSet.emplace(&source);
+    openSet.emplace(source);
     boost::unordered_map<Tile, Tile> sources;
     boost::unordered_map<Tile, int> costs;
-    costs.emplace(&source, 0);
+    costs.emplace(source, 0);
     boost::unordered_map<Tile, int> estimatedCosts;
-    estimatedCosts.emplace(&source, heuristicCostEstimate(source, target));
+    estimatedCosts.emplace(source, heuristicCostEstimate(source, target));
 
     var comparator = [&](Tile a, Tile b) { return estimatedCosts.at(a) < estimatedCosts.at(b); }
 
@@ -257,7 +257,7 @@ std::vector<Tile> WorldGenerator::findPathAStar(Tile source, Tile target,
         var iteratorToCurrent = std::min_element(openSet.begin(), openSet.end(), comparator);
         var current = *iteratorToCurrent;
 
-        if (current == &target)
+        if (current == target)
             return reconstructPath(sources, current);
 
         openSet.erase(iteratorToCurrent);
@@ -308,7 +308,7 @@ void WorldGenerator::generatePaths(const std::vector<Building>& buildings)
 
     for (var buildingB : buildings)
     {
-        if (&buildingA == &buildingB)
+        if (buildingA == buildingB)
             continue;
 
         for (var doorA : buildingA.getDoorTiles())

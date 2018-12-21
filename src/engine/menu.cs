@@ -125,12 +125,12 @@ int Menu::execute()
         {
             for (var item : itemPositions)
             {
-                if (!title.empty() && &item == &itemPositions[0])
+                if (!title.empty() && item == itemPositions[0])
                     continue; // Skip title.
 
                 if (event.mousePosition.isWithin(item))
                 {
-                    var index = &item - &itemPositions[title.empty() ? 0 : 1];
+                    var index = item - itemPositions[title.empty() ? 0 : 1];
                     exitCode = menuItems[index].id;
                     break;
                 }
@@ -188,7 +188,7 @@ int Menu::calculateMaxTextSize() const
 
     for (MenuItem item : menuItems)
     {
-        var index = &item - &menuItems[0];
+        var index = item - menuItems[0];
         var currentSize = getHotkeyPrefix(index + 1).size() + item.mainText.size();
 
         if (currentSize > maxSize)

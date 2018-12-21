@@ -21,7 +21,7 @@ private:
 template<typename StateType>
 var Engine::execute(StateType state)
 {
-    states.push_back(&state);
+    states.push_back(state);
     state.engine = this;
     DEFER { states.pop_back(); }
     return state.execute();

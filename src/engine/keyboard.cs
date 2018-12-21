@@ -71,7 +71,7 @@ int keyboard::readLine(Window window, std::string line, Vector2 position, const 
         font.print(window, prefix);
         font.printWithCursor(window, line, cursor == line.end() ? nullptr : &*cursor);
         window.updateScreen();
-        SDL_WaitEvent(&event);
+        SDL_WaitEvent(event);
 
         if (var key = readLineProcessKey(event, line, cursor))
             return key;

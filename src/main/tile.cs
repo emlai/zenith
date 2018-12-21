@@ -248,7 +248,7 @@ void Tile::transferCreature(Creature creature, Tile destination)
 {
     for (var it = creatures.begin(); it != creatures.end(); ++it)
     {
-        if (it->get() == &creature)
+        if (it->get() == creature)
         {
             destination.addCreature(std::move(*it));
             creatures.erase(it);
@@ -265,7 +265,7 @@ std::unique_ptr<Creature> Tile::removeSingleTileCreature(Creature creature)
 
     for (var it = creatures.begin(); it != creatures.end(); ++it)
     {
-        if (it->get() == &creature)
+        if (it->get() == creature)
         {
             var removed = std::move(*it);
             creatures.erase(it);
@@ -279,7 +279,7 @@ std::unique_ptr<Creature> Tile::removeSingleTileCreature(Creature creature)
 void Tile::removeCreature(Creature creature)
 {
     var newEnd = std::remove_if(creatures.begin(), creatures.end(),
-                                 [&](var ptr) { return ptr.get() == &creature; });
+                                 [&](var ptr) { return ptr.get() == creature; });
     creatures.erase(newEnd, creatures.end());
 }
 

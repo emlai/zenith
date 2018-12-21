@@ -174,7 +174,7 @@ void SaveFile::write(double value)
 {
     uint64_t integer;
     static_assert(sizeof(value) == sizeof(integer), "");
-    std::memcpy(&integer, &value, sizeof(integer));
+    std::memcpy(integer, value, sizeof(integer));
     writeInt64(integer);
 }
 
@@ -183,7 +183,7 @@ double SaveFile::readDouble() const
     var integer = readUint64();
     double result;
     static_assert(sizeof(integer) == sizeof(result), "");
-    std::memcpy(&result, &integer, sizeof(result));
+    std::memcpy(result, integer, sizeof(result));
     return result;
 }
 

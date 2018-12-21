@@ -3,7 +3,7 @@ enum Action : int;
 class AI
 {
 public:
-    AI(Creature creature) : creature(&creature) {}
+    AI(Creature creature) : creature(creature) {}
     virtual ~AI() = default;
     virtual Action control() = 0;
     static std::unique_ptr<AI> get(boost::string_ref id, Creature creature);

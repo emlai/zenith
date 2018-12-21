@@ -29,7 +29,7 @@ std::unique_ptr<Component> Component::get(boost::string_ref name, Entity parent)
     if (name == "LightSource") component = std::make_unique<LightSource>();
 
     if (component)
-        component->parent = &parent;
+        component->parent = parent;
 
     return component;
 }

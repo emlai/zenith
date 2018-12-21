@@ -232,7 +232,7 @@ Vector2 BitmapFont::getTextSize(boost::string_ref text) const
         {
             ++currentLineLength;
 
-            if (&character != &text.back())
+            if (character != text.back())
                 continue;
         }
 

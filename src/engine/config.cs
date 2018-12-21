@@ -33,7 +33,7 @@ private:
             var it = properties.find(key);
 
             if (it != properties.end())
-                return &it->second;
+                return it->second;
 
             return nullptr;
         }
@@ -642,7 +642,7 @@ void Config::printValue(std::ostream stream, Config::Value value) const
             for (var value : values)
             {
                 printValue(stream, value);
-                if (&value != &values.back())
+                if (value != values.back())
                     stream << ", ";
             }
             stream << "]";
@@ -682,13 +682,13 @@ Config::Value::Value(Value value)
             floatingPoint = value.floatingPoint;
             break;
         case Type::String:
-            new (&string) var(std::move(value.string));
+            new (string) var(std::move(value.string));
             break;
         case Type::List:
-            new (&list) var(std::move(value.list));
+            new (list) var(std::move(value.list));
             break;
         case Type::Group:
-            new (&group) var(std::move(value.group));
+            new (group) var(std::move(value.group));
             break;
     }
 }

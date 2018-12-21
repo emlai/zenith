@@ -413,7 +413,7 @@ bool Creature::sees(Tile tile) const
         if (!currentTile)
             return false;
 
-        if (currentTile != &tile && currentTile->blocksSight())
+        if (currentTile != tile && currentTile->blocksSight())
             return false;
 
         if (currentTile->getLight().getLuminance() < 0.3)
@@ -538,7 +538,7 @@ void Creature::moveTo(Tile destination)
 {
     getTileUnder(0).transferCreature(*this, destination);
     tilesUnder.clear();
-    tilesUnder.push_back(&destination);
+    tilesUnder.push_back(destination);
 
     Item itemOnTile = nullptr;
 
@@ -695,7 +695,7 @@ void Creature::drop(Item itemToDrop)
 {
     EquipmentSlot equipmentSlot = itemToDrop.getEquipmentSlot();
 
-    if (getEquipment(equipmentSlot) == &itemToDrop)
+    if (getEquipment(equipmentSlot) == itemToDrop)
         equip(equipmentSlot, nullptr);
 
     getTileUnder(0).addItem(removeItem(itemToDrop));
@@ -724,7 +724,7 @@ std::unique_ptr<Item> Creature::removeItem(Item itemToRemove)
 int Creature::getInventoryIndex(Item item) const
 {
     for (int i = 0; i < int(inventory.size()); ++i)
-        if (&*inventory[i] == &item)
+        if (&*inventory[i] == item)
             return i;
 
     assert(false);
