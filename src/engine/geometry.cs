@@ -22,11 +22,11 @@ struct Vector2Base<T>
     T x, y;
 
     Vector2Base() {}
-    constexpr Vector2Base(T x, T y) : x(x), y(y) {}
-    constexpr Vector2Base(Dir8 direction) : Vector2Base(directionVectors[direction]) {}
+    const Vector2Base(T x, T y) : x(x), y(y) {}
+    const Vector2Base(Dir8 direction) : Vector2Base(directionVectors[direction]) {}
     template<typename U>
-    explicit constexpr Vector2Base(Vector2Base<U> vector) : x(T(vector.x)), y(T(vector.y)) {}
-    explicit constexpr Vector2Base(Vector3Base<T> vector) : x(vector.x), y(vector.y) {}
+    explicit const Vector2Base(Vector2Base<U> vector) : x(T(vector.x)), y(T(vector.y)) {}
+    explicit const Vector2Base(Vector3Base<T> vector) : x(vector.x), y(vector.y) {}
 
     Vector2Base operator+=(Vector2Base vector) { x += vector.x; y += vector.y; return this; }
     Vector2Base operator-=(Vector2Base vector) { x -= vector.x; y -= vector.y; return this; }
@@ -172,8 +172,8 @@ struct Vector3Base<T>
     T x, y, z;
 
     Vector3Base() {}
-    constexpr Vector3Base(T x, T y, T z) : x(x), y(y), z(z) {}
-    explicit constexpr Vector3Base(Vector2Base<T> vector) : x(vector.x), y(vector.y), z(0) {}
+    const Vector3Base(T x, T y, T z) : x(x), y(y), z(z) {}
+    explicit const Vector3Base(Vector2Base<T> vector) : x(vector.x), y(vector.y), z(0) {}
 
     Vector3Base operator+=(Vector3Base vector) { x += vector.x; y += vector.y; z += vector.z; return this; }
     Vector3Base operator-=(Vector3Base vector) { x -= vector.x; y -= vector.y; z -= vector.z; return this; }
@@ -219,8 +219,8 @@ struct Rect
     Vector2 size;
 
     Rect() {}
-    constexpr Rect(Vector2 position, Vector2 size) : position(position), size(size) {}
-    constexpr Rect(int x, int y, int w, int h) : position(x, y), size(w, h) {}
+    const Rect(Vector2 position, Vector2 size) : position(position), size(size) {}
+    const Rect(int x, int y, int w, int h) : position(x, y), size(w, h) {}
 
     int getLeft() { return position.x; }
     int getRight() { assert(size.x > 0); return position.x + size.x - 1; }

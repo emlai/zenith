@@ -65,7 +65,7 @@ struct Color<T>
                         getBlue() * Color<U>::max / max, getAlpha() * Color<U>::max / max);
     }
 
-    constexpr var getMask(Channel channel) { return max << bit[channel]; }
+    const var getMask(Channel channel) { return max << bit[channel]; }
 
 private:
     static T createValue(int red, int green, int blue, int alpha = max)

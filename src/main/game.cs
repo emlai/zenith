@@ -38,7 +38,7 @@ class Game : State
     static Texture cursorTexture;
     static Texture fogOfWarTexture;
 
-    constexpr var saveFileName = "zenith.sav";
+    const var saveFileName = "zenith.sav";
 
 private:
     void renderAtPosition(Window, Vector2 centerPosition);

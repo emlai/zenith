@@ -75,7 +75,7 @@ class Creature final : Entity
     Controller controller;
     List<Message> messages;
 
-    constexpr double fullAP = 1.0;
+    const double fullAP = 1.0;
     const int configAttributes[8];
 
     var getTilesUnder() { return tilesUnder; }

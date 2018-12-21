@@ -39,8 +39,8 @@ class RNG
     void seed(RNG::result_type);
     var getSeed() { return currentSeed; }
     result_type operator()() { return algorithm(); }
-    constexpr result_type max() { return std::numeric_limits<result_type>::max(); }
-    constexpr result_type min() { return std::numeric_limits<result_type>::min(); }
+    const result_type max() { return std::numeric_limits<result_type>::max(); }
+    const result_type min() { return std::numeric_limits<result_type>::min(); }
 
 private:
     Generator algorithm;

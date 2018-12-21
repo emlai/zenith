@@ -8,7 +8,7 @@ class Liquid
     void render(Window window, Vector2 position);
 
 private:
-    constexpr double fadeRate = 0.001;
+    const double fadeRate = 0.001;
 
     string materialId;
     double fadeLevel;
