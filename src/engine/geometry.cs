@@ -11,29 +11,10 @@ enum Dir8
     NorthEast
 }
 
-Dir8 randomDir8()
-{
-    switch (randInt(7))
-    {
-        case 0: return East;
-        case 1: return SouthEast;
-        case 2: return South;
-        case 3: return SouthWest;
-        case 4: return West;
-        case 5: return NorthWest;
-        case 6: return North;
-        case 7: return NorthEast;
-    }
-
-    assert(false);
-}
-
 using Vector2 = Vector2Base<int>;
 using Vector2f = Vector2Base<double>;
 using Vector3 = Vector3Base<int>;
 using Vector3f = Vector3Base<double>;
-
-extern const Vector2 directionVectors[]; // Definition in math.cpp.
 
 /// 2D vector structure for representing values with x and y components.
 struct Vector2Base<T>

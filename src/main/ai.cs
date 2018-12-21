@@ -1,41 +1,36 @@
-enum Action : int;
-
 class AI
 {
+    Creature creature;
+
     AI(Creature creature) : creature(creature) {}
     virtual ~AI() {}
     virtual Action control() = 0;
-    static AI get(string id, Creature creature);
 
-protected:
-    Creature creature;
+    AI get(string id, Creature creature)
+    {
+        if (id == "AttackNearestEnemy")
+            return std::make_unique<AttackNearestEnemy>(creature);
+
+        throw std::runtime_error("Unknown AI '" + id + "'\n");
+    }
 }
 
 class AttackNearestEnemy : AI
 {
-private:
-    using AI::AI;
-    Action control() override;
-}
-AI AI::get(string id, Creature creature)
-{
-    if (id == "AttackNearestEnemy") return std::make_unique<AttackNearestEnemy>(creature);
+    Action control()
+    {
+        assert(!creature.isDead());
+        Action action;
 
-    throw std::runtime_error("Unknown AI '" + id + "'\n");
-}
-
-Action AttackNearestEnemy::control()
-{
-    assert(!creature.isDead());
-    Action action;
-
-    if (var nearestEnemy = creature.getNearestEnemy())
+        if (var nearestEnemy = creature.getNearestEnemy())
         action = creature.tryToMoveTowardsOrAttack(nearestEnemy);
-    else
-        action = creature.tryToMoveOrAttack(randomDir8());
+        else
+        action = creature.tryToMoveOrAttack(Random.dir8());
 
-    if (!action) // TODO: Implement proper AI so action is never NoAction.
-        return Wait;
+        if (!action) // TODO: Implement proper AI so action is never NoAction.
+            return Wait;
 
-    return action;
+        return action;
+    }
 }
+
