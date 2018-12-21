@@ -225,7 +225,7 @@ static int heuristicCostEstimate(Tile a, Tile b)
     return distance.x * distance.y;
 }
 
-static List<Tile> reconstructPath(const boost::unordered_map<Tile, Tile>& cameFrom, Tile current)
+static List<Tile> reconstructPath(const Dictionary<Tile, Tile>& cameFrom, Tile current)
 {
     List<Tile> totalPath = { current }
 
@@ -244,10 +244,10 @@ List<Tile> WorldGenerator::findPathAStar(Tile source, Tile target,
     boost::unordered_set<Tile> closedSet;
     boost::unordered_set<Tile> openSet;
     openSet.emplace(source);
-    boost::unordered_map<Tile, Tile> sources;
-    boost::unordered_map<Tile, int> costs;
+    Dictionary<Tile, Tile> sources;
+    Dictionary<Tile, int> costs;
     costs.emplace(source, 0);
-    boost::unordered_map<Tile, int> estimatedCosts;
+    Dictionary<Tile, int> estimatedCosts;
     estimatedCosts.emplace(source, heuristicCostEstimate(source, target));
 
     var comparator = [&](Tile a, Tile b) { return estimatedCosts.at(a) < estimatedCosts.at(b); }

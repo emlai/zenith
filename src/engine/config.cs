@@ -47,7 +47,7 @@ private:
         }
 
     private:
-        boost::unordered_map<string, Value> properties;
+        Dictionary<string, Value> properties;
     }
 
     class Value

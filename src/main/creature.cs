@@ -135,7 +135,7 @@ private:
     List<Tile> tilesUnder;
     mutable boost::unordered_set<Vector3> seenTilePositions;
     List<std::unique_ptr<Item>> inventory;
-    boost::unordered_map<EquipmentSlot, Item> equipment;
+    Dictionary<EquipmentSlot, Item> equipment;
     double currentHP, maxHP, currentAP, currentMP, maxMP;
     bool running;
     List<double> attributeValues;

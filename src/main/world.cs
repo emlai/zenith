@@ -23,8 +23,8 @@ private:
     static Vector2 globalPositionToTilePosition(Vector2 position);
 
     Game game;
-    boost::unordered_map<Vector3, Area> areas;
-    boost::unordered_map<Vector3, int64_t> savedAreaOffsets;
+    Dictionary<Vector3, Area> areas;
+    Dictionary<Vector3, int64_t> savedAreaOffsets;
     std::unique_ptr<SaveFile> saveFile;
     Color32 sunlight;
 }
