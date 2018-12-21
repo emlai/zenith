@@ -23,23 +23,7 @@ enum Attribute
     Charisma
 }
 
-const int attributes = 21;
-
-const string attributeNames[] =
-{
-    "strength", "arm strength", "leg strength", "", "", "", "", "dexterity", "", "", "agility",
-    "", "", "endurance", "perception", "", "", "", "intelligence", "psyche", "charisma"
-}
-
-const string attributeAbbreviations[] =
-{
-    "Str", "AStr", "LStr", "", "", "", "", "Dex", "", "", "Agi",
-    "", "", "End", "Per", "", "", "", "Int", "Psy", "Cha"
-}
-
-const string statNames[] = { "HP", "AP", "MP" }
-
-enum EquipmentSlot : int
+enum EquipmentSlot
 {
     Hand,
     Head,
@@ -47,16 +31,19 @@ enum EquipmentSlot : int
     Legs
 }
 
-const int equipmentSlots = 4;
-
-string toString(EquipmentSlot slot);
-
-namespace std
+static class EquipmentSlotExtensions
 {
-    template<>
-    struct hash<EquipmentSlot>
+    static string toString(this EquipmentSlot slot)
     {
-        size_t operator()(EquipmentSlot slot) { return size_t(slot); }
+        switch (slot)
+        {
+            case Head: return "head";
+            case Torso: return "torso";
+            case Hand: return "hand";
+            case Legs: return "legs";
+        }
+
+        assert(false);
     }
 }
 
@@ -77,6 +64,20 @@ class Creature : Entity
 
     const double fullAP = 1.0;
     const int configAttributes[8];
+
+    const string attributeNames[] =
+    {
+        "strength", "arm strength", "leg strength", "", "", "", "", "dexterity", "", "", "agility",
+        "", "", "endurance", "perception", "", "", "", "intelligence", "psyche", "charisma"
+    }
+
+    const string attributeAbbreviations[] =
+    {
+        "Str", "AStr", "LStr", "", "", "", "", "Dex", "", "", "Agi",
+        "", "", "End", "Per", "", "", "", "Int", "Psy", "Cha"
+    }
+
+    const string statNames[] = { "HP", "AP", "MP" }
 
     var getTilesUnder() { return tilesUnder; }
     Tile getTileUnder(int index) { return tilesUnder[index]; }
@@ -116,18 +117,6 @@ class Creature : Entity
 
     Attribute stringToAttribute(string);
     List<Attribute> stringsToAttributes(const List<string>&);
-    string toString(EquipmentSlot slot)
-    {
-        switch (slot)
-        {
-            case Head: return "head";
-            case Torso: return "torso";
-            case Hand: return "hand";
-            case Legs: return "legs";
-        }
-
-        assert(false);
-    }
 
     List<Attribute> initDisplayedAttributes(string id)
     {

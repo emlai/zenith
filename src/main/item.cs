@@ -1,5 +1,3 @@
-enum EquipmentSlot : int;
-
 class Item : Entity
 {
     string materialId;
