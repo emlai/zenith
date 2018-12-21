@@ -1,11 +1,7 @@
-template<typename T>
-struct Color;
-
 using Color16 = Color<ushort>;
 using Color32 = Color<uint>;
 
-template<typename T>
-struct Color
+struct Color<T>
 {
     enum Channel { Red, Green, Blue, Alpha }
 

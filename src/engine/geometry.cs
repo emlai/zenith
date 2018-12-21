@@ -28,11 +28,6 @@ inline Dir8 randomDir8()
     assert(false);
 }
 
-template<typename T>
-struct Vector2Base;
-template<typename T>
-struct Vector3Base;
-
 using Vector2 = Vector2Base<int>;
 using Vector2f = Vector2Base<double>;
 using Vector3 = Vector3Base<int>;
@@ -41,8 +36,7 @@ using Vector3f = Vector3Base<double>;
 extern const Vector2 directionVectors[]; // Definition in math.cpp.
 
 /// 2D vector structure for representing values with x and y components.
-template<typename T>
-struct Vector2Base
+struct Vector2Base<T>
 {
     T x, y;
 
@@ -192,8 +186,7 @@ namespace std
 }
 
 /// 3D vector structure for representing values with x, y, and z components.
-template<typename T>
-struct Vector3Base
+struct Vector3Base<T>
 {
     T x, y, z;
 

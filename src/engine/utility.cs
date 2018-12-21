@@ -29,8 +29,7 @@ string pascalCaseToSentenceCase(string pascalCaseString);
 
 bool isVowel(char);
 
-template<typename T>
-struct Deferrer
+struct Deferrer<T>
 {
     T deferred;
 
