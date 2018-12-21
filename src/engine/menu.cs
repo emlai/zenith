@@ -19,7 +19,7 @@ struct MenuItem
     const Key shortcut;
 }
 
-class Menu : public State
+class Menu : State
 {
     enum ItemLayout { Vertical, Horizontal }
     enum HotkeyStyle { CustomHotkeys, NumberHotkeys, LetterHotkeys }

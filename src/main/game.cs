@@ -1,4 +1,4 @@
-class Game : public State
+class Game : State
 {
     Game(bool loadSavedGame);
     Game(Game) = delete;
@@ -105,7 +105,7 @@ Window Game::getWindow()
     return getEngine().getWindow();
 }
 
-class InventoryMenu : public Menu
+class InventoryMenu : Menu
 {
     InventoryMenu(Window window, Creature player, string title,
                   bool showNothingAsOption, Item preselectedItem,
@@ -145,7 +145,7 @@ int Game::showInventory(string title, bool showNothingAsOption, Item preselected
     return getEngine().execute(inventoryMenu);
 }
 
-class EquipmentMenu : public Menu
+class EquipmentMenu : Menu
 {
     EquipmentMenu(Creature player) : player(player) {}
     void execute();
@@ -201,7 +201,7 @@ void Game::showEquipmentMenu()
     getEngine().execute(equipmentMenu);
 }
 
-class LookMode : public State
+class LookMode : State
 {
     LookMode(Game game) : game(game), position(game.player.getPosition()) {}
     void execute();
@@ -247,7 +247,7 @@ void Game::lookMode()
     getEngine().execute(lookMode);
 }
 
-class StringQuestion : public State
+class StringQuestion : State
 {
     StringQuestion(string question) : question(std::move(question)) {}
     string execute();
@@ -279,7 +279,7 @@ string Game::askForString(string question)
     return getEngine().execute(stringQuestion);
 }
 
-class DirectionQuestion : public State
+class DirectionQuestion : State
 {
     DirectionQuestion(string question, Vector2 origin) : question(std::move(question)), origin(origin) {}
     Dir8? execute();

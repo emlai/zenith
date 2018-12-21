@@ -1,4 +1,4 @@
-class Door : public Component
+class Door : Component
 {
     bool reactToMovementAttempt() override;
     bool preventsMovement() override { return !isOpen; }

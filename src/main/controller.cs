@@ -6,7 +6,7 @@ class Controller
     virtual Action control(Creature creature) = 0;
 }
 
-class AIController : public Controller
+class AIController : Controller
 {
     AIController(std::unique_ptr<AI> ai) : ai(std::move(ai)) {}
     Action control(Creature creature) override;
@@ -16,7 +16,7 @@ private:
     std::unique_ptr<AI> ai;
 }
 
-class PlayerController : public Controller
+class PlayerController : Controller
 {
     PlayerController(Game game) : game(game) {}
 

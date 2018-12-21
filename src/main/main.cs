@@ -6,7 +6,7 @@
     return font;
 }
 
-class LoadingScreen : public State
+class LoadingScreen : State
 {
 
     LoadingScreen(string text) : text(std::move(text)) {}
@@ -54,7 +54,7 @@ static void setPrefsMenuCommonOptions(Menu menu, Window window)
     menu.setHotkeyStyle(Menu::LetterHotkeys);
 }
 
-class KeyMapMenu : public Menu
+class KeyMapMenu : Menu
 {
 
     void execute();
@@ -107,7 +107,7 @@ void KeyMapMenu::execute()
     }
 }
 
-class PrefsMenu : public Menu
+class PrefsMenu : Menu
 {
     void execute();
 }
@@ -165,7 +165,7 @@ void PrefsMenu::execute()
     }
 }
 
-class MainMenu : public Menu
+class MainMenu : Menu
 {
     void execute();
 }

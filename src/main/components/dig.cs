@@ -1,4 +1,4 @@
-class Dig : public Component
+class Dig : Component
 {
     bool isUsable() override { return true; }
     bool use(Creature digger, Item digItem, Game game) override;

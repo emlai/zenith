@@ -11,7 +11,7 @@ protected:
     Creature creature;
 }
 
-class AttackNearestEnemy : public AI
+class AttackNearestEnemy : AI
 {
 private:
     using AI::AI;

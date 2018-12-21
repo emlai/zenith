@@ -1,6 +1,6 @@
 enum EquipmentSlot : int;
 
-class Item : public Entity
+class Item : Entity
 {
     Item(string id, string materialId);
     static std::unique_ptr<Item> load(SaveFile file);
@@ -24,7 +24,7 @@ protected:
 
 string getRandomMaterialId(string itemId);
 
-class Corpse final : public Item
+class Corpse final : Item
 {
     Corpse(std::unique_ptr<Creature> creature);
     Corpse(string creatureId);

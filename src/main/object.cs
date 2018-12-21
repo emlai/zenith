@@ -1,4 +1,4 @@
-class Object : public Entity
+class Object : Entity
 {
     Object(string id);
     Object(SaveFile file);

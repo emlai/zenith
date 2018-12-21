@@ -1,4 +1,4 @@
-class LightSource : public Component
+class LightSource : Component
 {
     void emitLight(World world, Vector2 position, int level);
     void save(SaveFile) override {}
