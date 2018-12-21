@@ -1,6 +1,5 @@
 class Component
 {
-public:
     virtual ~Component() = 0;
     static std::unique_ptr<Component> get(string name, Entity parent);
     Entity getParent() { return *parent; }

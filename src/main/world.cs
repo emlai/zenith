@@ -1,6 +1,5 @@
 class World
 {
-public:
     World(Game game) : game(game), sunlight(0x888888FF) {}
     World(World) = delete;
     World(World) {}

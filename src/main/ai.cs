@@ -2,7 +2,6 @@ enum Action : int;
 
 class AI
 {
-public:
     AI(Creature creature) : creature(creature) {}
     virtual ~AI() {}
     virtual Action control() = 0;

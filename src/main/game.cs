@@ -1,6 +1,5 @@
 class Game : public State
 {
-public:
     Game(bool loadSavedGame);
     Game(Game) = delete;
     Game(Game) {}
@@ -109,7 +108,6 @@ Window Game::getWindow()
 
 class InventoryMenu : public Menu
 {
-public:
     InventoryMenu(Window window, Creature player, string title,
                   bool showNothingAsOption, Item preselectedItem,
                   std::function<bool(Item)> itemFilter);
@@ -150,7 +148,6 @@ int Game::showInventory(string title, bool showNothingAsOption, Item preselected
 
 class EquipmentMenu : public Menu
 {
-public:
     EquipmentMenu(Creature player) : player(player) {}
     void execute();
 
@@ -207,7 +204,6 @@ void Game::showEquipmentMenu()
 
 class LookMode : public State
 {
-public:
     LookMode(Game game) : game(game), position(game.player->getPosition()) {}
     void execute();
 
@@ -254,7 +250,6 @@ void Game::lookMode()
 
 class StringQuestion : public State
 {
-public:
     StringQuestion(string question) : question(std::move(question)) {}
     string execute();
 
@@ -287,7 +282,6 @@ string Game::askForString(string question)
 
 class DirectionQuestion : public State
 {
-public:
     DirectionQuestion(string question, Vector2 origin) : question(std::move(question)), origin(origin) {}
     boost::optional<Dir8> execute();
 

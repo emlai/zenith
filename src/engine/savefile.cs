@@ -1,6 +1,5 @@
 class SaveFile
 {
-public:
     SaveFile(string filePath, bool writable);
     ulong getSize();
     long getOffset();

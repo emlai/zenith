@@ -1,6 +1,5 @@
 class Tile
 {
-public:
     Tile(World world, Vector2 position, int level, string groundId);
     Tile(SaveFile file, World world, Vector2 position, int level);
     void save(SaveFile file);

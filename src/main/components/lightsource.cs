@@ -1,6 +1,5 @@
 class LightSource : public Component
 {
-public:
     void emitLight(World world, Vector2 position, int level);
     void save(SaveFile) override {}
     void load(SaveFile) override {}

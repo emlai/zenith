@@ -1,6 +1,5 @@
 class Liquid
 {
-public:
     Liquid(string materialId);
     Liquid(SaveFile file);
     void save(SaveFile file);

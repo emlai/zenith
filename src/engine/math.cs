@@ -31,7 +31,6 @@ struct Xorshift64Star
 
 class RNG
 {
-public:
     using Generator = Xorshift1024Star;
     using result_type = ulong;
 

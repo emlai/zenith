@@ -16,7 +16,6 @@ struct TextLayout
 
 class BitmapFont
 {
-public:
     BitmapFont(string fileName, Vector2 charSize);
     void print(Window window, string text, Color32 color = Color32::none,
                Color32 backgroundColor = Color32::none, bool blend = true,

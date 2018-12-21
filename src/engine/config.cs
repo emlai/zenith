@@ -1,6 +1,5 @@
 class Config
 {
-public:
     Config() {}
     Config(string filePath);
     template<typename ValueType>
@@ -19,7 +18,6 @@ private:
     template<typename Value>
     class Group_
     {
-    public:
         Value at(string key)
         {
             if (var value = getOptional(key))
@@ -53,8 +51,6 @@ private:
     class Value
     {
         using Integer = long long;
-
-    public:
         enum class Type
         {
             Bool,
@@ -282,7 +278,6 @@ boost::optional<ValueType> Config::getOptional(string type, string attribute)
 /// Wrapper around std::ifstream that keeps track of the current line and column.
 class ConfigReader
 {
-public:
     ConfigReader(string filePath);
     int get();
     void unget(int);

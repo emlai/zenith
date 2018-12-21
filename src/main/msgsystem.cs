@@ -2,7 +2,6 @@ enum MessageType { Normal, Warning }
 
 class Message
 {
-public:
     Message(string text, int turn) : text(std::move(text)), turn(turn), count(1) {}
     string getText() { return text; }
     int getTurn() { return turn; }

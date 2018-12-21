@@ -8,7 +8,7 @@
 
 class LoadingScreen : public State
 {
-public:
+
     LoadingScreen(string text) : text(std::move(text)) {}
 
     void render(Window window) override
@@ -56,7 +56,7 @@ static void setPrefsMenuCommonOptions(Menu menu, Window window)
 
 class KeyMapMenu : public Menu
 {
-public:
+
     void execute();
 }
 
@@ -109,7 +109,6 @@ void KeyMapMenu::execute()
 
 class PrefsMenu : public Menu
 {
-public:
     void execute();
 }
 
@@ -168,7 +167,6 @@ void PrefsMenu::execute()
 
 class MainMenu : public Menu
 {
-public:
     void execute();
 }
 

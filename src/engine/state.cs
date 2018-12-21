@@ -1,6 +1,5 @@
 class State
 {
-public:
     State() {}
     State(State) = delete;
     State(State) {}

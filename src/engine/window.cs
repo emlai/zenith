@@ -1,6 +1,5 @@
 class Event
 {
-public:
     enum Type { KeyDown, MouseButtonDown }
 
     Event(Key key) : type(KeyDown), key(key) {}
@@ -16,7 +15,6 @@ public:
 
 class Window
 {
-public:
     Window(Engine engine, Vector2 size, string title = "", bool fullscreen = true);
     Window(Window window) {}
     ~Window();

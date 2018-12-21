@@ -1,6 +1,5 @@
 class Object : public Entity
 {
-public:
     Object(string id);
     Object(SaveFile file);
     void save(SaveFile file);

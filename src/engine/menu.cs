@@ -21,7 +21,6 @@ struct MenuItem
 
 class Menu : public State
 {
-public:
     enum ItemLayout { Vertical, Horizontal }
     enum HotkeyStyle { CustomHotkeys, NumberHotkeys, LetterHotkeys }
     enum { Exit = INT_MIN }

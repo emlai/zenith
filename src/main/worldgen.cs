@@ -1,6 +1,5 @@
 class Room
 {
-public:
     Room(Rect region, List<Tile>&& doorTiles)
     :   region(region), doorTiles(std::move(doorTiles)) {}
     Rect getRegion() { return region; }
@@ -14,7 +13,6 @@ private:
 
 class Building
 {
-public:
     Building(List<Room>&& rooms);
     const List<Room>& getRooms() { return rooms; }
     List<Tile> getDoorTiles();
@@ -26,7 +24,6 @@ private:
 
 class WorldGenerator
 {
-public:
     WorldGenerator(World world);
     void generateRegion(Rect region, int level);
 

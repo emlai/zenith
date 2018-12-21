@@ -1,6 +1,5 @@
 class Entity
 {
-public:
     Entity(string id, Config config);
     Entity(Entity) = delete;
     Entity(Entity) {}

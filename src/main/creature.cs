@@ -64,7 +64,6 @@ namespace std
 
 class Creature final : public Entity
 {
-public:
     Creature(Tile, string id);
     Creature(Tile, string id, std::unique_ptr<Controller> controller);
     Creature(SaveFile file, Tile tile);

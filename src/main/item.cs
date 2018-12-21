@@ -2,7 +2,6 @@ enum EquipmentSlot : int;
 
 class Item : public Entity
 {
-public:
     Item(string id, string materialId);
     static std::unique_ptr<Item> load(SaveFile file);
     virtual void save(SaveFile file);
@@ -27,7 +26,6 @@ string getRandomMaterialId(string itemId);
 
 class Corpse final : public Item
 {
-public:
     Corpse(std::unique_ptr<Creature> creature);
     Corpse(string creatureId);
     void exist() override;

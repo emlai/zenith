@@ -2,7 +2,6 @@ enum class BlendMode { Normal, LinearLight }
 
 class GraphicsContext
 {
-public:
     GraphicsContext(Window);
     void setViewport(Rect viewport);
     Rect getViewport();

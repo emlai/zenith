@@ -1,6 +1,5 @@
 class Texture
 {
-public:
     Texture(string fileName, Color32 transparentColor = Color32::none);
     Texture(uint pixelFormat, Vector2 size);
     void setBlendMode(bool);

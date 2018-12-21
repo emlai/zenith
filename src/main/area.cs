@@ -1,6 +1,5 @@
 class Area
 {
-public:
     Area(World world, Vector2 position, int level);
     Area(SaveFile file, World world, Vector2 position, int level);
     void save(SaveFile file);

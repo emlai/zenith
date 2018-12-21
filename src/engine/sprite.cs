@@ -1,6 +1,5 @@
 class Sprite
 {
-public:
     Sprite(Texture texture, Rect textureRegion, char asciiGlyph, Color32 asciiColor,
            Color32 materialColor = Color32::none, int animationFrames = 1);
     Vector2 getSize();
