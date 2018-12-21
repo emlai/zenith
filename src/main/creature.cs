@@ -1,5 +1,3 @@
-enum Action : int;
-
 enum Attribute
 {
     Strength,

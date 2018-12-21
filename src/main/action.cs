@@ -1,4 +1,4 @@
-enum Action : int
+enum Action
 {
     NoAction,
     Wait,
@@ -17,41 +17,42 @@ enum Action : int
     LastAction
 }
 
-string toString(Action action);
-double getAPCost(Action action, Creature actor);
-static bool isMovementAction(Action action)
+static class ActionExtensions
 {
-    return action == Move || action == GoUpOrDown;
-}
-
-string toString(Action action)
-{
-    switch (action)
+    static bool isMovementAction(this Action action)
     {
-        case Wait: return "Wait";
-        case Move: return "Move";
-        case GoUpOrDown: return "GoUpOrDown";
-        case Attack: return "Attack";
-        case PickUpItems: return "PickUp";
-        case DropItem: return "Drop";
-        case UseItem: return "Use";
-        case EatItem: return "Eat";
-        case Close: return "Close";
-        case EnterLookMode: return "LookMode";
-        case OpenInventory: return "Inventory";
-        case ShowEquipmentMenu: return "EquipmentMenu";
-        case ToggleRunning: return "ToggleRunning";
+        return action == Move || action == GoUpOrDown;
     }
 
-    assert(false);
-}
+    static string toString(this Action action)
+    {
+        switch (action)
+        {
+            case Wait: return "Wait";
+            case Move: return "Move";
+            case GoUpOrDown: return "GoUpOrDown";
+            case Attack: return "Attack";
+            case PickUpItems: return "PickUp";
+            case DropItem: return "Drop";
+            case UseItem: return "Use";
+            case EatItem: return "Eat";
+            case Close: return "Close";
+            case EnterLookMode: return "LookMode";
+            case OpenInventory: return "Inventory";
+            case ShowEquipmentMenu: return "EquipmentMenu";
+            case ToggleRunning: return "ToggleRunning";
+        }
 
-double getAPCost(Action action, Creature actor)
-{
-    assert(action != NoAction);
+        assert(false);
+    }
 
-    if (isMovementAction(action) && actor.isRunning())
-        return 0.5;
+    static double getAPCost(this Action action, Creature actor)
+    {
+        assert(action != NoAction);
 
-    return 1;
+        if (isMovementAction(action) && actor.isRunning())
+            return 0.5;
+
+        return 1;
+    }
 }
