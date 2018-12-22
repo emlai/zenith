@@ -15,7 +15,7 @@ enum Dir8
 
 struct Vector2
 {
-    int x;
+    Sign( x;
     int y;
 
     Vector2(int x, int y)

@@ -415,7 +415,7 @@ void Game::printStat(BitmapFont font, string statName, double currentValue,
 void Game::printAttribute(BitmapFont font, string attributeName, double attributeValue)
 {
     string padding(5 - attributeName.size(), ' ');
-    font.printLine(getWindow(), attributeName + padding + std::to_string(int(attributeValue)),
+    font.printLine(getWindow(), attributeName + padding + std::to_string((int) (attributeValue)),
                    Color32::none, Color32::none, true, PreserveLines);
 }
 

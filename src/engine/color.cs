@@ -65,20 +65,18 @@ struct Color32
         set(Channel.Blue, Max(getBlue(), other.getBlue()));
     }
 
-    public static Color32 operator*(double mod)
+    public static Color32 operator*(Color32 color, double mod)
     {
-        int delta = int(modulateTemperature * Sign(mod - 1.0) * ((2.0 - mod) * mod - 1.0) *
-                        temperatureCoefficient);
-        int red = int(Clamp(int(getRed() * mod + 0.5 - delta), 0, int(max)));
-        int green = int(Clamp(int(getGreen() * mod + 0.5), 0, int(max)));
-        int blue = int(Clamp(int(getBlue() * mod + 0.5 + delta), 0, int(max)));
-        value = createValue(red, green, blue, getAlpha());
-        return this;
+        int delta = (int) ((modulateTemperature ? 1 : 0) * Sign(mod - 1.0) * ((2.0 - mod) * mod - 1.0) * temperatureCoefficient);
+        var red = Clamp((uint) (color.getRed() * mod + 0.5 - delta), 0, max);
+        var green = Clamp((uint) (color.getGreen() * mod + 0.5), 0, max);
+        var blue = Clamp((uint) (color.getBlue() * mod + 0.5 + delta), 0, max);
+        return new Color32(red, green, blue, color.getAlpha());
     }
 
     public static explicit operator bool(Color32 color) { return color.value != 0; }
 
-    int getMask(Channel channel) { return max << bit[channel]; }
+    uint getMask(Channel channel) { return max << bit[(int) channel]; }
 
     static uint createValue(uint red, uint green, uint blue, uint alpha = max)
     {

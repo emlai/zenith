@@ -190,7 +190,7 @@ class GraphicsContext
                         wrap(srcG);
                         wrap(srcB);
 
-                        pixel = int(255 * srcR) << 24 | int(255 * srcG) << 16 | int(255 * srcB) << 8 | 255;
+                        pixel = (int) (255 * srcR) << 24 | (int) (255 * srcG) << 16 | (int) (255 * srcB) << 8 | 255;
                     }
                 }
                 break;
