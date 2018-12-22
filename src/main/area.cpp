@@ -46,20 +46,3 @@ Tile& Area::getTileAt(Vector2 position)
     assert(position.y >= 0 && position.y < size);
     return tiles[position.x + size * position.y];
 }
-
-const Tile& Area::getTileAt(Vector2 position) const
-{
-    assert(position.x >= 0 && position.x < size);
-    assert(position.y >= 0 && position.y < size);
-    return tiles[position.x + size * position.y];
-}
-
-const Tile& Area::getRandomTile() const
-{
-    return getTileAt(makeRandomVector(sizeVector));
-}
-
-Tile& Area::getRandomTile()
-{
-    return getTileAt(makeRandomVector(sizeVector));
-}

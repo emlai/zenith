@@ -74,8 +74,6 @@ struct Color
                         getBlue() * Color<U>::max / max, getAlpha() * Color<U>::max / max);
     }
 
-    static constexpr auto getMask(Channel channel) { return max << bit[channel]; }
-
 private:
     static inline T createValue(int red, int green, int blue, int alpha = max)
     {
