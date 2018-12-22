@@ -1,14 +1,14 @@
 using Color16 = Color<ushort>;
 using Color32 = Color<uint>;
 
-struct Color<T>
+struct Color<T> where T : unmanaged
 {
     T value;
 
     enum Channel { Red, Green, Blue, Alpha }
 
     const int channelCount = 4;
-    const int depth = sizeof(T) * CHAR_BIT;
+    const int depth = sizeof(T) * 8;
     const int bitsPerChannel = depth / channelCount;
     const int max = (1 << bitsPerChannel) - 1;
     const int bit[channelCount];
@@ -26,10 +26,10 @@ struct Color<T>
     void set(Channel channel, int n) { value = (~(max << bit[channel]) & value) | n << bit[channel]; }
     void edit(Channel channel, int n) { set(channel, limit(get(channel) + n, 0, max)); }
 
-    int getRed() { return get(Red); }
-    int getGreen() { return get(Green); }
-    int getBlue() { return get(Blue); }
-    int getAlpha() { return get(Alpha); }
+    int getRed() { return get(Channel.Red); }
+    int getGreen() { return get(Channel.Green); }
+    int getBlue() { return get(Channel.Blue); }
+    int getAlpha() { return get(Channel.Alpha); }
 
     double getLuminance()
     {
@@ -38,9 +38,9 @@ struct Color<T>
 
     void lighten(Color32 other)
     {
-        set(Red, std::max(getRed(), other.getRed()));
-        set(Green, std::max(getGreen(), other.getGreen()));
-        set(Blue, std::max(getBlue(), other.getBlue()));
+        set(Channel.Red, std::max(getRed(), other.getRed()));
+        set(Channel.Green, std::max(getGreen(), other.getGreen()));
+        set(Channel.Blue, std::max(getBlue(), other.getBlue()));
     }
 
     Color operator=(double mod)
@@ -70,7 +70,7 @@ struct Color<T>
 private:
     static T createValue(int red, int green, int blue, int alpha = max)
     {
-        return (T) red << bit[Red] | green << bit[Green] | blue << bit[Blue] | alpha << bit[Alpha];
+        return (T) red << bit[Channel.Red] | green << bit[Channel.Green] | blue << bit[Channel.Blue] | alpha << bit[Channel.Alpha];
     }
 }
 
