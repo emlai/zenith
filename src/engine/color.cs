@@ -15,7 +15,7 @@ struct Color32
     const int bitsPerChannel = depth / channelCount;
     const int max = (1 << bitsPerChannel) - 1;
     static readonly int[] bit = { 3 * bitsPerChannel, 2 * bitsPerChannel, 1 * bitsPerChannel, 0 * bitsPerChannel };
-    const int temperatureCoefficient = int(0.25 * max);
+    const int temperatureCoefficient = (int) (0.25 * max);
     static readonly Color32 white = new Color32(max, max, max);
     static readonly Color32 black = new Color32(0, 0, 0);
     static readonly Color32 none = new Color32(0);
@@ -42,14 +42,14 @@ struct Color32
         );
     }
 
-    int get(Channel channel) { return value >> bit[(int) channel] & max; }
+    uint get(Channel channel) { return value >> bit[(int) channel] & max; }
     void set(Channel channel, int n) { value = (~(max << bit[(int) channel]) & value) | n << bit[(int) channel]; }
     void edit(Channel channel, int n) { set(channel, limit(get(channel) + n, 0, max)); }
 
-    int getRed() { return get(Channel.Red); }
-    int getGreen() { return get(Channel.Green); }
-    int getBlue() { return get(Channel.Blue); }
-    int getAlpha() { return get(Channel.Alpha); }
+    uint getRed() { return get(Channel.Red); }
+    uint getGreen() { return get(Channel.Green); }
+    uint getBlue() { return get(Channel.Blue); }
+    uint getAlpha() { return get(Channel.Alpha); }
 
     double getLuminance()
     {
