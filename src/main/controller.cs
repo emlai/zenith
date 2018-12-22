@@ -254,7 +254,7 @@ static class KeyMap
         for (int i = NoAction + 1; i < LastAction; ++i)
         {
             var action = (Action) i;
-            config.set(toString(action), static_cast<long long>(getMappedKey(action)));
+            config.set(toString(action), static_cast<long>(getMappedKey(action)));
         }
     }
 

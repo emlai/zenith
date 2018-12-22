@@ -1,18 +1,68 @@
 class Config
 {
-    Config() {}
-    Config(string filePath);
-    template<typename ValueType>
-    ValueType? getOptional(string key);
-    template<typename ValueType>
-    ValueType get(string type, string attribute);
-    template<typename ValueType>
-    ValueType? getOptional(string type, string attribute);
-    List<string> getToplevelKeys();
+    Group data;
+
+    ValueType? getOptional<ValueType>(string key)
+    {
+        if (var value = data.getOptional(key))
+        return convert<ValueType>(value);
+
+        return null;
+    }
+
+    ValueType get<ValueType>(string type, string attribute)
+    {
+        var value = getOptional<ValueType>(type, attribute);
+        if (value)
+            return ValueType(value);
+        else
+            throw std::runtime_error("attribute \"" + attribute + "\" not found for \"" + type + "\"!");
+    }
+
+    ValueType? getOptional<ValueType>(string type, string attribute)
+    {
+        string current = type;
+        string key = attribute;
+
+        while (true)
+        {
+            var groupValue = data.getOptional(current);
+
+            if (!groupValue)
+                return null;
+
+            var group = groupValue.getGroup();
+
+            if (var value = group.getOptional(key))
+            {
+                if (var converted = convert<ValueType>(value))
+                return converted;
+                else
+                throw std::runtime_error("attribute \"" + attribute + "\" of class \"" + current +
+                                         "\" has wrong type!");
+            }
+
+            var baseType = group.getOptional("BaseType");
+
+            if (!baseType)
+                return null;
+
+            if (baseType.isString())
+            {
+                var baseTypeString = baseType.getString();
+
+                if (data.getOptional(baseTypeString) == null)
+                    throw std::runtime_error("BaseType \"" + baseTypeString + "\" doesn't exist!");
+
+                current = baseTypeString;
+            }
+            else
+                throw std::runtime_error("BaseType of \"" + current + "\" has wrong type!");
+        }
+    }
     void set(string key, bool value) { data.insert(key, Value(value)); }
-    void set(string key, long long value) { data.insert(key, Value(value)); }
+    void set(string key, long value) { data.insert(key, Value(value)); }
     void set(string key, double value) { data.insert(key, Value(value)); }
-    void writeToFile(string filePath);
 
 private:
     template<typename Value>
@@ -50,7 +100,7 @@ private:
 
     class Value
     {
-        using Integer = long long;
+        using Integer = long;
         enum Type
         {
             Bool,
@@ -106,15 +156,244 @@ private:
         return ConversionTraits<OutputType>()(value);
     }
 
-    Group parseGroup(ConfigReader reader);
-    Value parseProperty(ConfigReader reader);
-    Value parseValue(ConfigReader reader);
-    Value parseArray(ConfigReader reader);
-    Value parseAtomicValue(ConfigReader reader);
-    Value parseNumber(ConfigReader reader);
-    void printValue(std::ostream stream, Config::Value value);
+    List<string> Config::getToplevelKeys()
+    {
+        List<string> keys;
 
-    Group data;
+        foreach (var keyAndValue in data)
+        {
+            if (var it = keyAndValue.second.getGroup().getOptional("isAbstract"))
+                if (it.isBool() && it.getBool())
+                    continue;
+
+            keys.push_back(keyAndValue.first);
+        }
+
+        return keys;
+    }
+
+    Config::Group Config::parseGroup(ConfigReader reader)
+    {
+        Config::Group map;
+
+        while (true)
+        {
+            var ch = reader.get();
+
+            if (ch == '}')
+                break;
+
+            reader.unget(ch);
+            var key = reader.getId();
+            map.insert(key, parseProperty(reader));
+        }
+
+        return map;
+    }
+
+    Config::Value Config::parseProperty(ConfigReader reader)
+    {
+        var ch = reader.get();
+
+        if (ch != '=')
+            throw reader.syntaxError("'='", char(ch));
+
+        var value = parseValue(reader);
+
+        ch = reader.get();
+
+        if (ch != ';')
+            throw reader.syntaxError("';'", char(ch));
+
+        return value;
+    }
+
+    Config::Value Config::parseValue(ConfigReader reader)
+    {
+        if (reader.peek() == '[')
+            return parseArray(reader);
+        else
+            return parseAtomicValue(reader);
+    }
+
+    Config::Value Config::parseArray(ConfigReader reader)
+    {
+        assert(reader.peek() == '[');
+        reader.get();
+        List<Value> values;
+
+        if (reader.peek() == ']')
+        {
+            reader.get();
+            return values;
+        }
+
+        while (true)
+        {
+            values.push_back(parseValue(reader));
+            var ch = reader.get();
+
+            if (ch == ',')
+                continue;
+
+            if (ch == ']')
+            {
+                reader.unget(ch);
+                break;
+            }
+
+            throw reader.syntaxError("']' or ','", char(ch));
+        }
+
+        reader.get();
+        return values;
+    }
+
+    Config::Value Config::parseNumber(ConfigReader reader)
+    {
+        string value;
+        bool hasDot = false;
+        bool isHex = false;
+        int ch;
+
+        while (true)
+        {
+            ch = reader.get();
+
+            if (ch == '.')
+            {
+                if (hasDot || isHex)
+                    break;
+
+                hasDot = true;
+            }
+            else if (ch == 'x' && value == "0")
+            {
+                isHex = true;
+            }
+            else if (isHex)
+            {
+                if (!std::isxdigit(ch))
+                    break;
+            }
+            else
+            {
+                if (!std::isdigit(ch))
+                    break;
+            }
+
+            value += char(ch);
+        }
+
+        reader.unget(ch);
+
+        if (hasDot)
+            return std::stod(value);
+        else if (isHex)
+            return std::stoll(value, null, 16);
+        else
+            return std::stoll(value);
+    }
+
+    Config::Value Config::parseAtomicValue(ConfigReader reader)
+    {
+        var ch = reader.peek();
+
+        if (ch == '"')
+            return reader.getDoubleQuotedString();
+
+        if (std::isdigit(ch))
+            return parseNumber(reader);
+
+        if (std::isalpha(ch))
+        {
+            var id = reader.getId();
+
+            if (id == "true")
+                return true;
+
+            if (id == "false")
+                return false;
+
+            return Value(id);
+        }
+
+        throw reader.syntaxError("number, id, or double-quoted string", char(ch));
+    }
+
+    Config::Config(string filePath)
+    {
+        ConfigReader reader(filePath);
+
+        while (true)
+        {
+            if (reader.peek() == EOF)
+                break;
+
+            string id = reader.getId();
+            var ch = reader.get();
+
+            switch (ch)
+            {
+                case '{':
+                    data.insert(id, parseGroup(reader));
+                    break;
+                case '=':
+                    reader.unget(ch);
+                    data.insert(id, parseProperty(reader));
+                    break;
+                default:
+                    throw reader.syntaxError("'{' or '='", char(ch));
+            }
+        }
+    }
+
+    void Config::printValue(std::ostream stream, Config::Value value)
+    {
+        switch (value.getType())
+        {
+            case Value::Type::Bool:
+                stream << (value.getBool() ? "true" : "false");
+                break;
+            case Value::Type::Int:
+                stream << value.getInt();
+                break;
+            case Value::Type::Float:
+                stream << value.getFloat();
+                break;
+            case Value::Type::String:
+                stream << value.getString();
+                break;
+            case Value::Type::List:
+            {
+                stream << "[";
+                var values = value.getList();
+                foreach (var value in values)
+                {
+                    printValue(stream, value);
+                    if (value != values.back())
+                        stream << ", ";
+                }
+                stream << "]";
+                break;
+            }
+            case Value::Type::Group:
+                assert(false && "unimplemented");
+                break;
+        }
+    }
+
+    void Config::writeToFile(string filePath)
+    {
+        std::ofstream file(filePath);
+
+        foreach (var keyAndValue in data)
+        {
+            file << keyAndValue.first << " = ";
+            printValue(file, keyAndValue.second);
+            file << ";\n";
+        }
+    }
 }
 
 template<typename OutputType>
@@ -215,66 +494,6 @@ struct Config::ConversionTraits<List<ElementType>>
     }
 }
 
-template<typename ValueType>
-ValueType? Config::getOptional(string key)
-{
-    if (var value = data.getOptional(key))
-        return convert<ValueType>(value);
-
-    return null;
-}
-
-template<typename ValueType>
-ValueType Config::get(string type, string attribute)
-{
-    if (var value = getOptional<ValueType>(type, attribute))
-        return ValueType(value);
-    else
-        throw std::runtime_error("attribute \"" + attribute + "\" not found for \"" + type + "\"!");
-}
-
-template<typename ValueType>
-ValueType? Config::getOptional(string type, string attribute)
-{
-    string current = type;
-    string key = attribute;
-
-    while (true)
-    {
-        var groupValue = data.getOptional(current);
-
-        if (!groupValue)
-            return null;
-
-        var group = groupValue.getGroup();
-
-        if (var value = group.getOptional(key))
-        {
-            if (var converted = convert<ValueType>(value))
-                return converted;
-            else
-                throw std::runtime_error("attribute \"" + attribute + "\" of class \"" + current +
-                                         "\" has wrong type!");
-        }
-
-        var baseType = group.getOptional("BaseType");
-
-        if (!baseType)
-            return null;
-
-        if (baseType.isString())
-        {
-            var baseTypeString = baseType.getString();
-
-            if (data.getOptional(baseTypeString) == null)
-                throw std::runtime_error("BaseType \"" + baseTypeString + "\" doesn't exist!");
-
-            current = baseTypeString;
-        }
-        else
-            throw std::runtime_error("BaseType of \"" + current + "\" has wrong type!");
-    }
-}
 /// Wrapper around std::ifstream that keeps track of the current line and column.
 class ConfigReader
 {
@@ -421,288 +640,3 @@ std::runtime_error ConfigReader::syntaxError(string expected, char actual)
     return syntaxError("expected " + expected + ", got " + charToString(actual));
 }
 
-List<string> Config::getToplevelKeys()
-{
-    List<string> keys;
-
-    foreach (var keyAndValue in data)
-    {
-        if (var it = keyAndValue.second.getGroup().getOptional("isAbstract"))
-            if (it.isBool() && it.getBool())
-                continue;
-
-        keys.push_back(keyAndValue.first);
-    }
-
-    return keys;
-}
-
-Config::Group Config::parseGroup(ConfigReader reader)
-{
-    Config::Group map;
-
-    while (true)
-    {
-        var ch = reader.get();
-
-        if (ch == '}')
-            break;
-
-        reader.unget(ch);
-        var key = reader.getId();
-        map.insert(key, parseProperty(reader));
-    }
-
-    return map;
-}
-
-Config::Value Config::parseProperty(ConfigReader reader)
-{
-    var ch = reader.get();
-
-    if (ch != '=')
-        throw reader.syntaxError("'='", char(ch));
-
-    var value = parseValue(reader);
-
-    ch = reader.get();
-
-    if (ch != ';')
-        throw reader.syntaxError("';'", char(ch));
-
-    return value;
-}
-
-Config::Value Config::parseValue(ConfigReader reader)
-{
-    if (reader.peek() == '[')
-        return parseArray(reader);
-    else
-        return parseAtomicValue(reader);
-}
-
-Config::Value Config::parseArray(ConfigReader reader)
-{
-    assert(reader.peek() == '[');
-    reader.get();
-    List<Value> values;
-
-    if (reader.peek() == ']')
-    {
-        reader.get();
-        return values;
-    }
-
-    while (true)
-    {
-        values.push_back(parseValue(reader));
-        var ch = reader.get();
-
-        if (ch == ',')
-            continue;
-
-        if (ch == ']')
-        {
-            reader.unget(ch);
-            break;
-        }
-
-        throw reader.syntaxError("']' or ','", char(ch));
-    }
-
-    reader.get();
-    return values;
-}
-
-Config::Value Config::parseNumber(ConfigReader reader)
-{
-    string value;
-    bool hasDot = false;
-    bool isHex = false;
-    int ch;
-
-    while (true)
-    {
-        ch = reader.get();
-
-        if (ch == '.')
-        {
-            if (hasDot || isHex)
-                break;
-
-            hasDot = true;
-        }
-        else if (ch == 'x' && value == "0")
-        {
-            isHex = true;
-        }
-        else if (isHex)
-        {
-            if (!std::isxdigit(ch))
-                break;
-        }
-        else
-        {
-            if (!std::isdigit(ch))
-                break;
-        }
-
-        value += char(ch);
-    }
-
-    reader.unget(ch);
-
-    if (hasDot)
-        return std::stod(value);
-    else if (isHex)
-        return std::stoll(value, null, 16);
-    else
-        return std::stoll(value);
-}
-
-Config::Value Config::parseAtomicValue(ConfigReader reader)
-{
-    var ch = reader.peek();
-
-    if (ch == '"')
-        return reader.getDoubleQuotedString();
-
-    if (std::isdigit(ch))
-        return parseNumber(reader);
-
-    if (std::isalpha(ch))
-    {
-        var id = reader.getId();
-
-        if (id == "true")
-            return true;
-
-        if (id == "false")
-            return false;
-
-        return Value(id);
-    }
-
-    throw reader.syntaxError("number, id, or double-quoted string", char(ch));
-}
-
-Config::Config(string filePath)
-{
-    ConfigReader reader(filePath);
-
-    while (true)
-    {
-        if (reader.peek() == EOF)
-            break;
-
-        string id = reader.getId();
-        var ch = reader.get();
-
-        switch (ch)
-        {
-            case '{':
-                data.insert(id, parseGroup(reader));
-                break;
-            case '=':
-                reader.unget(ch);
-                data.insert(id, parseProperty(reader));
-                break;
-            default:
-                throw reader.syntaxError("'{' or '='", char(ch));
-        }
-    }
-}
-
-void Config::printValue(std::ostream stream, Config::Value value)
-{
-    switch (value.getType())
-    {
-        case Value::Type::Bool:
-            stream << (value.getBool() ? "true" : "false");
-            break;
-        case Value::Type::Int:
-            stream << value.getInt();
-            break;
-        case Value::Type::Float:
-            stream << value.getFloat();
-            break;
-        case Value::Type::String:
-            stream << value.getString();
-            break;
-        case Value::Type::List:
-        {
-            stream << "[";
-            var values = value.getList();
-            foreach (var value in values)
-            {
-                printValue(stream, value);
-                if (value != values.back())
-                    stream << ", ";
-            }
-            stream << "]";
-            break;
-        }
-        case Value::Type::Group:
-            assert(false && "unimplemented");
-            break;
-    }
-}
-
-void Config::writeToFile(string filePath)
-{
-    std::ofstream file(filePath);
-
-    foreach (var keyAndValue in data)
-    {
-        file << keyAndValue.first << " = ";
-        printValue(file, keyAndValue.second);
-        file << ";\n";
-    }
-}
-
-Config::Value::Value(Value value)
-{
-    type = value.type;
-
-    switch (type)
-    {
-        case Type::Bool:
-            boolean = value.boolean;
-            break;
-        case Type::Int:
-            integer = value.integer;
-            break;
-        case Type::Float:
-            floatingPoint = value.floatingPoint;
-            break;
-        case Type::String:
-            new (string) var(value.string);
-            break;
-        case Type::List:
-            new (list) var(value.list);
-            break;
-        case Type::Group:
-            new (group) var(value.group);
-            break;
-    }
-}
-
-Config::Value::~Value()
-{
-    switch (type)
-    {
-        case Type::Bool:
-        case Type::Int:
-        case Type::Float:
-            break;
-        case Type::String:
-            string.~basic_string();
-            break;
-        case Type::List:
-            list.~vector();
-            break;
-        case Type::Group:
-            group.~Group();
-            break;
-    }
-}
