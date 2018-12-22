@@ -11,7 +11,7 @@ class AI
         if (id == "AttackNearestEnemy")
             return new AttackNearestEnemy(creature);
 
-        throw std::runtime_error("Unknown AI '" + id + "'\n");
+        throw new Exception("Unknown AI '" + id + "'\n");
     }
 }
 

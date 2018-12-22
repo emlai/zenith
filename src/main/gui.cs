@@ -85,7 +85,7 @@ static class SpriteTextures
         var asciiSprite = config.getOptional<string>(id, "asciiSprite");
 
         if (!asciiSprite || asciiSprite.size() != 1 || !std::isprint((asciiSprite)[0]))
-            throw std::runtime_error("invalid asciiSprite on '" + id + "', should be 1 printable ASCII character");
+            throw new Exception("invalid asciiSprite on '" + id + "', should be 1 printable ASCII character");
 
         Color32 asciiColor(config.getOptional<uint>
         (id, "asciiColor").get_value_or(materialColor.value));

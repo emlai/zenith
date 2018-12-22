@@ -14,7 +14,7 @@ class Texture
         PixelFormatMasks masks;
 
         if (!SDL_PixelFormatEnumToMasks(pixelFormat, bpp, masks.red, masks.green, masks.blue, masks.alpha))
-            throw std::runtime_error("SDL_PixelFormatEnumToMasks: invalid pixel format");
+            throw new Exception("SDL_PixelFormatEnumToMasks: invalid pixel format");
 
         return masks;
     }
@@ -30,7 +30,7 @@ class Texture
     :   surface(SDL_LoadBMP(fileName.c_str()), SDL_FreeSurface)
     {
         if (!surface)
-            throw std::runtime_error("Unable to load " + fileName + ": " + SDL_GetError());
+            throw new Exception("Unable to load " + fileName + ": " + SDL_GetError());
 
         if (var converted = SDL_ConvertSurfaceFormat(surface.get(), SDL_PIXELFORMAT_RGBA8888, 0))
             surface.reset(converted);

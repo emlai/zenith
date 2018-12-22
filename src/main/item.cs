@@ -117,7 +117,7 @@ class Item : Entity
             {
                 return Color16(static_cast<ushort>(Game::materialConfig.get<int>(materialId, "Color")));
             }
-            catch (std::runtime_error)
+            catch (Exception)
             {
                 if (Game::materialConfig.get<string>(materialId, "Color") == "Random")
                     return Color16(randInt(Color16::max / 2), randInt(Color16::max / 2), randInt(Color16::max / 2));

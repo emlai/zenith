@@ -25,7 +25,7 @@ class GraphicsContext
         animationFrameTime(10)
     {
         if (!renderer)
-            throw std::runtime_error(SDL_GetError());
+            throw new Exception(SDL_GetError());
 
         SDL_SetRenderDrawColor(renderer.get(), 0x0, 0x0, 0x0, 0xFF);
         SDL_RenderClear(renderer.get());

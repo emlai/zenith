@@ -16,7 +16,7 @@ class Config
         if (value)
             return ValueType(value);
         else
-            throw std::runtime_error("attribute \"" + attribute + "\" not found for \"" + type + "\"!");
+            throw new Exception("attribute \"" + attribute + "\" not found for \"" + type + "\"!");
     }
 
     ValueType? getOptional<ValueType>(string type, string attribute)
@@ -38,7 +38,7 @@ class Config
                 if (var converted = convert<ValueType>(value))
                 return converted;
                 else
-                throw std::runtime_error("attribute \"" + attribute + "\" of class \"" + current +
+                throw new Exception("attribute \"" + attribute + "\" of class \"" + current +
                                          "\" has wrong type!");
             }
 
@@ -52,12 +52,12 @@ class Config
                 var baseTypeString = baseType.getString();
 
                 if (data.getOptional(baseTypeString) == null)
-                    throw std::runtime_error("BaseType \"" + baseTypeString + "\" doesn't exist!");
+                    throw new Exception("BaseType \"" + baseTypeString + "\" doesn't exist!");
 
                 current = baseTypeString;
             }
             else
-                throw std::runtime_error("BaseType of \"" + current + "\" has wrong type!");
+                throw new Exception("BaseType of \"" + current + "\" has wrong type!");
         }
     }
     void set(string key, bool value) { data.insert(key, Value(value)); }
@@ -503,8 +503,8 @@ class ConfigReader
     int peek();
     string getId();
     string getDoubleQuotedString();
-    std::runtime_error syntaxError(string message);
-    std::runtime_error syntaxError(string expected, char actual);
+    Exception syntaxError(string message);
+    Exception syntaxError(string expected, char actual);
 
 private:
     string filePath;
@@ -517,7 +517,7 @@ ConfigReader::ConfigReader(string filePath)
 :   filePath(filePath), file(this.filePath), line(1), column(0)
 {
     if (!file)
-        throw std::runtime_error("Couldn't open \"" + filePath + "\"!");
+        throw new Exception("Couldn't open \"" + filePath + "\"!");
 }
 
 int ConfigReader::get()
@@ -629,13 +629,13 @@ static string charToString(char ch)
     }
 }
 
-std::runtime_error ConfigReader::syntaxError(string message)
+Exception ConfigReader::syntaxError(string message)
 {
-    return std::runtime_error("Syntax error in " + filePath + " (line " + std::to_string(line) +
+    return Exception("Syntax error in " + filePath + " (line " + std::to_string(line) +
                               ", column " + std::to_string(column) + "): " + message);
 }
 
-std::runtime_error ConfigReader::syntaxError(string expected, char actual)
+Exception ConfigReader::syntaxError(string expected, char actual)
 {
     return syntaxError("expected " + expected + ", got " + charToString(actual));
 }

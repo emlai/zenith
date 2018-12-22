@@ -49,7 +49,7 @@ class Window
                                                     size.x, size.y, windowFlags);
 
         if (!windowHandle)
-            throw std::runtime_error(SDL_GetError());
+            throw new Exception(SDL_GetError());
 
         ++windowCount;
         return windowHandle;
@@ -227,7 +227,7 @@ class Window
         SDL_DisplayMode mode;
 
         if (SDL_GetDesktopDisplayMode(0, mode) != 0)
-            throw std::runtime_error(SDL_GetError());
+            throw new Exception(SDL_GetError());
 
         return Vector2(mode.w, mode.h);
     }

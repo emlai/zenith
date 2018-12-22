@@ -38,7 +38,7 @@ class SaveFile
     :   file(SDL_RWFromFile(filePath.c_str(), writable ? "wb" : "rb"), closeFile)
     {
         if (!file)
-            throw std::runtime_error(SDL_GetError());
+            throw new Exception(SDL_GetError());
     }
 
     SaveFile(List<char> buffer)
@@ -46,7 +46,7 @@ class SaveFile
         file(SDL_RWFromMem(this.buffer.data(), this.buffer.size()), closeFile)
     {
         if (!file)
-            throw std::runtime_error(SDL_GetError());
+            throw new Exception(SDL_GetError());
     }
 
     ulong getSize()
@@ -54,7 +54,7 @@ class SaveFile
         var size = SDL_RWsize(file.get());
 
         if (size < 0)
-            throw std::runtime_error(SDL_GetError());
+            throw new Exception(SDL_GetError());
 
         return ulong(size);
     }
@@ -193,10 +193,10 @@ class SaveFile
         size_t bytesRead = SDL_RWread(file.get(), buffer.data(), 1, size);
 
         if (bytesRead == 0)
-            throw std::runtime_error(SDL_GetError());
+            throw new Exception(SDL_GetError());
 
         if (bytesRead != size)
-            throw std::runtime_error("SDL_RWread didn't read the requested number of bytes");
+            throw new Exception("SDL_RWread didn't read the requested number of bytes");
 
         seek(offset);
         return SaveFile(buffer);
