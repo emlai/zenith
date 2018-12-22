@@ -1,19 +1,3 @@
-using Vector2 = new Vector2<int>;
-
-const double pi = 3.14159265358979324;
-
-template<typename T>
-T sign(T value)
-{
-    return (value > 0) - (value < 0);
-}
-
-template<typename T>
-T limit(T value, T min, T max)
-{
-    return std::min(std::max(value, min), max);
-}
-
 /* Pseudo-random number generation */
 
 struct Xorshift1024Star
@@ -149,7 +133,7 @@ double randNormal(double stdDev)
 bool raycastIntegerBresenham(Vector2 source, Vector2 target, const std::function<bool(Vector2)>& process)
 {
     const Vector2 delta = target - source;
-    const Vector2 sign = ::sign(delta);
+    const Vector2 sign = ::Sign(delta);
     const Vector2 abs = ::abs(delta) * 2; // x2 to avoid rounding errors
     Vector2 current = source;
     int slope = 0;

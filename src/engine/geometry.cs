@@ -97,9 +97,9 @@ Vector2 abs(Vector2 vector)
 }
 
 template<typename T>
-Vector2 sign(Vector2 vector)
+Vector2 Sign(Vector2 vector)
 {
-    return new Vector2(sign(vector.x), sign(vector.y));
+    return new Vector2(Sign(vector.x), Sign(vector.y));
 }
 
 template<typename T>
