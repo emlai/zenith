@@ -6,13 +6,12 @@
 #include "components/lightsource.h"
 #include "engine/savefile.h"
 #include "engine/texture.h"
-#include <boost/range/adaptor/reversed.hpp>
 #include <cassert>
 #include <cmath>
 
 const Vector2 Tile::spriteSize(20, 20);
 
-Tile::Tile(World& world, Vector2 position, int level, boost::string_ref groundId)
+Tile::Tile(World& world, Vector2 position, int level, std::string_view groundId)
 :   world(world),
     position(position),
     level(level),
@@ -172,7 +171,7 @@ std::string Tile::getTooltip() const
         tooltip += '\n';
     }
 
-    for (auto& item : boost::adaptors::reverse(items))
+    for (auto& item : reverse(items))
     {
         tooltip += item->getName();
         tooltip += '\n';
@@ -238,7 +237,7 @@ void Tile::addItem(std::unique_ptr<Item> item)
     items.push_back(std::move(item));
 }
 
-void Tile::addLiquid(boost::string_ref materialId)
+void Tile::addLiquid(std::string_view materialId)
 {
     liquids.push_back(Liquid(materialId));
 }
@@ -248,9 +247,9 @@ void Tile::setObject(std::unique_ptr<Object> newObject)
     object = std::move(newObject);
 }
 
-void Tile::setGround(boost::string_ref groundId)
+void Tile::setGround(std::string_view groundId)
 {
-    this->groundId = groundId.to_string();
+    this->groundId = groundId;
     groundSprite = getSprite(*Game::groundSpriteSheet, *Game::groundConfig, groundId);
 }
 

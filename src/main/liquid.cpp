@@ -2,7 +2,7 @@
 #include "game.h"
 #include "tile.h"
 
-Liquid::Liquid(boost::string_ref materialId)
+Liquid::Liquid(std::string_view materialId)
 :   materialId(materialId),
     fadeLevel(1.0),
     texture(SDL_PIXELFORMAT_RGBA8888, Tile::getSize())

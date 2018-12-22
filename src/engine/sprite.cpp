@@ -30,7 +30,7 @@ void Sprite::render(Window& window, Vector2 position, Vector2 sourceOffset) cons
         bool blend = false;
         auto* font = getAsciiGraphicsFont();
         font->setArea(Rect(position, getSize()));
-        font->print(window, boost::string_ref(&asciiGlyph, 1), asciiColor, Color32::none, blend);
+        font->print(window, std::string_view(&asciiGlyph, 1), asciiColor, Color32::none, blend);
     }
     else
     {

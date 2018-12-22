@@ -1,7 +1,7 @@
 #pragma once
 
 #include "engine/texture.h"
-#include <boost/utility/string_ref.hpp>
+#include <string_view>
 
 class SaveFile;
 class Window;
@@ -9,7 +9,7 @@ class Window;
 class Liquid
 {
 public:
-    Liquid(boost::string_ref materialId);
+    Liquid(std::string_view materialId);
     Liquid(const SaveFile& file);
     void save(SaveFile& file) const;
     void exist();

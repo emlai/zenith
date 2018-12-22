@@ -5,17 +5,17 @@
 #include <functional>
 #include <iostream>
 
-Window& Engine::createWindow(Vector2 size, boost::string_ref title, bool fullscreen)
+Window& Engine::createWindow(Vector2 size, std::string_view title, bool fullscreen)
 {
     windows.emplace_back(*this, size, title, fullscreen);
     return windows.back();
 }
 
-void Engine::reportErrorToUser(boost::string_ref text)
+void Engine::reportErrorToUser(const std::string& text)
 {
-    if (SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, getWindow().getTitle().to_string().c_str(),
-                                 text.to_string().c_str(), nullptr) != 0)
-        std::cerr << text.to_string().c_str() << std::endl;
+    if (SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, std::string(getWindow().getTitle()).c_str(),
+                                 text.c_str(), nullptr) != 0)
+        std::cerr << text.c_str() << std::endl;
 }
 
 void Engine::render(Window& window)

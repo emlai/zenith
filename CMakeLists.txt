@@ -1,7 +1,9 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.10)
 project(zenith VERSION 0.0.0)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_EXTENSIONS OFF)
 add_definitions(-DPROJECT_NAME="${PROJECT_NAME}" -DPROJECT_VERSION="${PROJECT_VERSION}")
 
 file(GLOB_RECURSE ENGINE_SOURCES ${PROJECT_SOURCE_DIR}/src/engine/*.h ${PROJECT_SOURCE_DIR}/src/engine/*.cpp)
@@ -22,19 +24,12 @@ foreach(CONFIG ${CMAKE_CONFIGURATION_TYPES})
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CONFIG} ${CMAKE_BINARY_DIR})
 endforeach()
 
-find_package(Boost REQUIRED COMPONENTS filesystem system)
-link_directories(${Boost_LIBRARY_DIRS})
-
 add_library(zenithEngine ${ENGINE_SOURCES})
 add_executable(zenith WIN32 ${MAIN_SOURCES})
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
 target_include_directories(zenith PUBLIC "${PROJECT_SOURCE_DIR}/src")
 target_link_libraries(zenith zenithEngine)
 set_target_properties(zenith PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
-
-target_include_directories(zenith SYSTEM PUBLIC ${Boost_INCLUDE_DIR})
-target_include_directories(zenithEngine SYSTEM PUBLIC ${Boost_INCLUDE_DIR})
-target_link_libraries(zenithEngine ${Boost_LIBRARIES})
 
 set(CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR}/cmake-modules)
 

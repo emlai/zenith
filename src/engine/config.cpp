@@ -1,4 +1,5 @@
 #include "config.h"
+#include <cassert>
 #include <cctype>
 #include <fstream>
 
@@ -6,14 +7,14 @@
 class ConfigReader
 {
 public:
-    ConfigReader(boost::string_ref filePath);
+    ConfigReader(std::string_view filePath);
     int get();
     void unget(int);
     int peek();
     std::string getId();
     std::string getDoubleQuotedString();
-    std::runtime_error syntaxError(boost::string_ref message) const;
-    std::runtime_error syntaxError(boost::string_ref expected, char actual) const;
+    std::runtime_error syntaxError(std::string_view message) const;
+    std::runtime_error syntaxError(std::string_view expected, char actual) const;
 
 private:
     std::string filePath;
@@ -22,7 +23,7 @@ private:
     int column;
 };
 
-ConfigReader::ConfigReader(boost::string_ref filePath)
+ConfigReader::ConfigReader(std::string_view filePath)
 :   filePath(filePath), file(this->filePath), line(1), column(0)
 {
     if (!file)
@@ -138,13 +139,13 @@ static std::string charToString(char ch)
     }
 }
 
-std::runtime_error ConfigReader::syntaxError(boost::string_ref message) const
+std::runtime_error ConfigReader::syntaxError(std::string_view message) const
 {
     return std::runtime_error("Syntax error in " + filePath + " (line " + std::to_string(line) +
                               ", column " + std::to_string(column) + "): " + message);
 }
 
-std::runtime_error ConfigReader::syntaxError(boost::string_ref expected, char actual) const
+std::runtime_error ConfigReader::syntaxError(std::string_view expected, char actual) const
 {
     return syntaxError("expected " + expected + ", got " + charToString(actual));
 }
@@ -314,7 +315,7 @@ Config::Value Config::parseAtomicValue(ConfigReader& reader)
     throw reader.syntaxError("number, id, or double-quoted string", char(ch));
 }
 
-Config::Config(boost::string_ref filePath)
+Config::Config(std::string_view filePath)
 {
     ConfigReader reader(filePath);
 
@@ -376,9 +377,9 @@ void Config::printValue(std::ostream& stream, const Config::Value& value) const
     }
 }
 
-void Config::writeToFile(boost::string_ref filePath) const
+void Config::writeToFile(const std::string& filePath) const
 {
-    std::ofstream file(filePath.to_string());
+    std::ofstream file(filePath);
 
     for (auto& keyAndValue : data)
     {

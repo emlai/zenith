@@ -1,14 +1,15 @@
 #include "utility.h"
+#include <cassert>
 #include <cctype>
 
-std::string changeFileExtension(boost::string_ref fileName, boost::string_ref newExtension)
+std::string changeFileExtension(std::string_view fileName, std::string_view newExtension)
 {
     auto dotPosition = fileName.rfind(".");
 
     if (dotPosition != std::string::npos)
     {
-        std::string newFileName = fileName.to_string();
-        newFileName.replace(dotPosition + 1, std::string::npos, newExtension.to_string());
+        std::string newFileName(fileName);
+        newFileName.replace(dotPosition + 1, std::string::npos, newExtension);
         return newFileName;
     }
     else
@@ -30,7 +31,7 @@ std::string toStringAvoidingDecimalPlaces(double value)
     return string;
 }
 
-std::string operator+(boost::string_ref a, boost::string_ref b)
+std::string operator+(std::string_view a, std::string_view b)
 {
     std::string result;
     result.reserve(a.size() + b.size());
@@ -39,7 +40,23 @@ std::string operator+(boost::string_ref a, boost::string_ref b)
     return result;
 }
 
-std::string pascalCaseToSentenceCase(boost::string_ref pascalCaseString)
+bool startsWith(std::string_view a, std::string_view b)
+{
+    return a.substr(0, b.size()) == b;
+}
+
+bool endsWith(std::string_view a, std::string_view b)
+{
+    return a.substr(a.size() - b.size()) == b;
+}
+
+std::string_view removeSuffix(std::string_view a, std::string_view b)
+{
+    assert(endsWith(a, b));
+    return a.substr(a.size() - b.size());
+}
+
+std::string pascalCaseToSentenceCase(std::string_view pascalCaseString)
 {
     std::string name;
     name.reserve(pascalCaseString.size());

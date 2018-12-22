@@ -6,9 +6,9 @@
 #include "engine/geometry.h"
 #include "engine/utility.h"
 #include "engine/window.h"
-#include <boost/filesystem.hpp>
 #include <cassert>
 #include <cstdio>
+#include <filesystem>
 #include <iostream>
 #include <memory>
 
@@ -196,7 +196,7 @@ void MainMenu::execute()
     {
         clear();
 
-        if (game || boost::filesystem::exists(Game::saveFileName))
+        if (game || std::filesystem::exists(Game::saveFileName))
             addItem(MenuItem(LoadGame, "Load game", 'l'));
         else
             addItem(MenuItem(NewGame, "New game", 'n'));
@@ -276,12 +276,12 @@ int main(int argc, char** argv)
     auto& window = engine.createWindow(Window::getScreenResolution(), PROJECT_NAME, true);
     window.setAnimationFrameRate(4);
 
-    if (boost::filesystem::exists(preferencesFileName))
+    if (std::filesystem::exists(preferencesFileName))
     {
         Config preferences(preferencesFileName);
-        Sprite::useAsciiGraphics(preferences.getOptional<bool>("ASCIIGraphics").get_value_or(false));
-        window.getGraphicsContext().setScale(preferences.getOptional<double>("GraphicsScale").get_value_or(1));
-        window.setFullscreen(preferences.getOptional<bool>("Fullscreen").get_value_or(true));
+        Sprite::useAsciiGraphics(preferences.getOptional<bool>("ASCIIGraphics").value_or(false));
+        window.getGraphicsContext().setScale(preferences.getOptional<double>("GraphicsScale").value_or(1));
+        window.setFullscreen(preferences.getOptional<bool>("Fullscreen").value_or(true));
         loadKeyMap(&preferences);
     }
     else

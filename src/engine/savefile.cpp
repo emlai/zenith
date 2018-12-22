@@ -8,8 +8,8 @@ static void closeFile(SDL_RWops* file)
     SDL_RWclose(file);
 }
 
-SaveFile::SaveFile(boost::string_ref filePath, bool writable)
-:   file(SDL_RWFromFile(filePath.to_string().c_str(), writable ? "wb" : "rb"), closeFile)
+SaveFile::SaveFile(std::string_view filePath, bool writable)
+:   file(SDL_RWFromFile(std::string(filePath).c_str(), writable ? "wb" : "rb"), closeFile)
 {
     if (!file)
         throw std::runtime_error(SDL_GetError());
@@ -110,7 +110,7 @@ double SaveFile::readDouble() const
     return result;
 }
 
-void SaveFile::write(boost::string_ref value)
+void SaveFile::write(std::string_view value)
 {
     writeInt16(uint16_t(value.size()));
 

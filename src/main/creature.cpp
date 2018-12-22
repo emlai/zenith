@@ -10,7 +10,7 @@
 #include <iomanip>
 #include <sstream>
 
-boost::string_ref toString(EquipmentSlot slot)
+std::string_view toString(EquipmentSlot slot)
 {
     switch (slot)
     {
@@ -23,7 +23,7 @@ boost::string_ref toString(EquipmentSlot slot)
     assert(false);
 }
 
-std::vector<Attribute> Creature::initDisplayedAttributes(boost::string_ref id)
+std::vector<Attribute> Creature::initDisplayedAttributes(std::string_view id)
 {
     std::vector<Attribute> displayedAttributes;
 
@@ -33,17 +33,17 @@ std::vector<Attribute> Creature::initDisplayedAttributes(boost::string_ref id)
     return displayedAttributes;
 }
 
-std::vector<std::vector<int>> Creature::initAttributeIndices(boost::string_ref id)
+std::vector<std::vector<int>> Creature::initAttributeIndices(std::string_view id)
 {
     return Game::creatureConfig->get<std::vector<std::vector<int>>>(id, "AttributeIndices");
 }
 
-Creature::Creature(Tile* tile, boost::string_ref id)
+Creature::Creature(Tile* tile, std::string_view id)
 :   Creature(tile, id, AIController::get(id, *this))
 {
 }
 
-Creature::Creature(Tile* tile, boost::string_ref id, std::unique_ptr<Controller> controller)
+Creature::Creature(Tile* tile, std::string_view id, std::unique_ptr<Controller> controller)
 :   Entity(id, *Game::creatureConfig),
     currentHP(0),
     maxHP(0),
@@ -184,7 +184,7 @@ void Creature::render(Window& window, Vector2 position) const
     }
 }
 
-void Creature::generateAttributes(boost::string_ref id)
+void Creature::generateAttributes(std::string_view id)
 {
     attributeValues.resize(Game::creatureConfig->get<int>(id, "Attributes"));
 
@@ -193,7 +193,7 @@ void Creature::generateAttributes(boost::string_ref id)
 
     for (auto attribute : configAttributes)
     {
-        boost::string_ref attributeName = attributeAbbreviations[attribute];
+        std::string_view attributeName = attributeAbbreviations[attribute];
         int baseAttributeValue = Game::creatureConfig->get<int>(id, attributeName);
         setAttribute(attribute, baseAttributeValue + randNormal(2));
     }
@@ -605,7 +605,7 @@ void Creature::setController(std::unique_ptr<Controller> controller)
     this->controller = std::move(controller);
 }
 
-Attribute stringToAttribute(boost::string_ref string)
+Attribute stringToAttribute(std::string_view string)
 {
     auto it = std::find(std::begin(attributeAbbreviations), std::end(attributeAbbreviations), string);
 

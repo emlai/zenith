@@ -4,7 +4,8 @@
 #include "keyboard.h"
 #include "state.h"
 #include "utility.h"
-#include <boost/utility/string_ref.hpp>
+#include <string>
+#include <string_view>
 #include <vector>
 
 class Window;
@@ -12,10 +13,10 @@ class Window;
 class Engine
 {
 public:
-    Window& createWindow(Vector2 size, boost::string_ref title = "", bool fullscreen = true);
+    Window& createWindow(Vector2 size, std::string_view title = "", bool fullscreen = true);
     Window& getWindow(unsigned index = 0) { return windows[index]; }
     const Window& getWindow(unsigned index = 0) const { return windows[index]; }
-    void reportErrorToUser(boost::string_ref text);
+    void reportErrorToUser(const std::string& text);
     template<typename StateType>
     auto execute(StateType& state);
     void render(Window& window);

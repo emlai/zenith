@@ -2,7 +2,7 @@
 
 #include "entity.h"
 #include "engine/sprite.h"
-#include <boost/utility/string_ref.hpp>
+#include <string_view>
 #include <memory>
 
 class SaveFile;
@@ -10,7 +10,7 @@ class SaveFile;
 class Object : public Entity
 {
 public:
-    Object(boost::string_ref id);
+    Object(std::string_view id);
     Object(const SaveFile& file);
     void save(SaveFile& file) const;
     bool close();

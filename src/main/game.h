@@ -7,7 +7,7 @@
 #include "engine/keyboard.h"
 #include "engine/state.h"
 #include "engine/window.h"
-#include <boost/optional.hpp>
+#include <optional>
 #include <string>
 
 class Game : public State
@@ -24,19 +24,19 @@ public:
     void stop() { gameIsRunning = false; }
     void advanceTurn() { ++turn; }
     int getTurn() const { return turn; }
-    int showInventory(boost::string_ref title, bool showNothingAsOption, Item* preselectedItem = nullptr,
+    int showInventory(std::string_view title, bool showNothingAsOption, Item* preselectedItem = nullptr,
                       std::function<bool(const Item&)> itemFilter = nullptr);
     void showEquipmentMenu();
     void lookMode();
     std::string askForString(std::string&& question);
-    boost::optional<Dir8> askForDirection(std::string&& question);
+    std::optional<Dir8> askForDirection(std::string&& question);
     Creature* getPlayer() const { return player; }
     Window& getWindow() const;
 #ifdef DEBUG
     void enterCommandMode(Window&);
     static const Key commandModeKey = '`';
 #endif
-    static boost::optional<Vector2> cursorPosition;
+    static std::optional<Vector2> cursorPosition;
     bool playerSeesEverything;
 
     static std::unique_ptr<Config> creatureConfig;
@@ -58,8 +58,8 @@ private:
     void renderAtPosition(Window&, Vector2 centerPosition);
     void render(Window& window) override;
     void printPlayerInformation(BitmapFont&) const;
-    void printStat(BitmapFont&, boost::string_ref, double current, double max, Color16) const;
-    void printAttribute(BitmapFont&, boost::string_ref, double current) const;
+    void printStat(BitmapFont&, std::string_view, double current, double max, Color16) const;
+    void printAttribute(BitmapFont&, std::string_view, double current) const;
 
     bool gameIsRunning;
     int turn;
@@ -67,7 +67,7 @@ private:
     Creature* player;
 
 #ifdef DEBUG
-    void parseCommand(boost::string_ref);
+    void parseCommand(std::string_view);
 
     bool showExtraInfo = true;
 #endif

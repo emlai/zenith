@@ -21,7 +21,7 @@ namespace keyboard
 }
 
 int keyboard::readLine(Window& window, std::string& line, Vector2 position, const std::function<void(Window&)>& render,
-                       boost::string_ref prefix)
+                       std::string_view prefix)
 {
     BitmapFont& font = window.getFont();
     std::string::iterator cursor = line.end();

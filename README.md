@@ -1,33 +1,24 @@
 # Zenith [![Build Status](https://travis-ci.org/emlai/zenith.svg?branch=master)](https://travis-ci.org/emlai/zenith) [![Build Status](https://ci.appveyor.com/api/projects/status/avyab8dh0d35dakh/branch/master?svg=true)](https://ci.appveyor.com/project/emlai/zenith/branch/master)
- 
-Zenith is an upcoming open-world roguelike-like game currently in development.
 
-It is written in C++14 using the Boost and SDL2 libraries.
+Zenith is an upcoming open-world roguelike-like game currently in development.
+It is written in C++17 using the SDL2 library.
 
 ![](https://forum.freegamedev.net/download/file.php?id=10844&mode=view)
 ![](https://forum.freegamedev.net/download/file.php?id=10843&mode=view)
 
 ## Building from source
 
-Install the dependencies: CMake, Boost, and SDL2.
+Install the dependencies: CMake and SDL2.
 
 Ubuntu:
 
-    sudo apt-get install cmake libboost-all-dev libsdl2-dev
+    sudo apt-get install cmake libsdl2-dev
 
 macOS (with [Homebrew](https://brew.sh/)):
 
-    brew install cmake boost sdl2
+    brew install cmake sdl2
 
-When invoking CMake, you may need to define the paths to SDL2 and Boost:
-
-    -DSDL2_PATH=... -DBOOST_ROOT=... -DBOOST_LIBRARYDIR=...
-
-**Note:** On Windows, in addition to specifying the `BOOST_ROOT` and
-`BOOST_LIBRARYDIR` variables for CMake, you may need to also specify
-`Boost_COMPILER` in order to find the Boost libraries: e.g.
-`-DBoost_COMPILER="-vc141"` where `-vc141` is the same string as the one
-encoded in the Boost library filenames.
+When invoking CMake, you may need to define the path to SDL2: `-DSDL2_PATH=...`
 
 Then, generate a build system, and build the project:
 

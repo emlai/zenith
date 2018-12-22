@@ -3,7 +3,7 @@
 #include "engine/color.h"
 #include "engine/geometry.h"
 #include "engine/window.h"
-#include <boost/utility/string_ref.hpp>
+#include <string_view>
 #include <memory>
 #include <vector>
 
@@ -83,5 +83,5 @@ namespace GUI
 #endif
 }
 
-Sprite getSprite(const Texture& spriteSheet, const Config& config, boost::string_ref id,
+Sprite getSprite(const Texture& spriteSheet, const Config& config, std::string_view id,
                  int frame = 0, Color32 materialColor = Color32::none);

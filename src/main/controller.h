@@ -3,7 +3,7 @@
 #include "ai.h"
 #include "engine/geometry.h"
 #include "engine/keyboard.h"
-#include <boost/utility/string_ref.hpp>
+#include <string_view>
 #include <memory>
 
 class Config;
@@ -24,7 +24,7 @@ class AIController : public Controller
 public:
     AIController(std::unique_ptr<AI> ai) : ai(std::move(ai)) {}
     Action control(Creature& creature) override;
-    static std::unique_ptr<AIController> get(boost::string_ref id, Creature& creature);
+    static std::unique_ptr<AIController> get(std::string_view id, Creature& creature);
 
 private:
     std::unique_ptr<AI> ai;

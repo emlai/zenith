@@ -25,7 +25,7 @@ std::unique_ptr<Texture> Game::cursorTexture;
 std::unique_ptr<Texture> Game::fogOfWarTexture;
 
 static const Color32 transparentColor(0x5A5268FF);
-boost::optional<Vector2> Game::cursorPosition;
+std::optional<Vector2> Game::cursorPosition;
 
 Game::Game(bool loadSavedGame)
 :   playerSeesEverything(false),
@@ -62,12 +62,12 @@ Window& Game::getWindow() const
 class InventoryMenu : public Menu
 {
 public:
-    InventoryMenu(Window& window, const Creature& player, boost::string_ref title,
+    InventoryMenu(Window& window, const Creature& player, std::string_view title,
                   bool showNothingAsOption, Item* preselectedItem,
                   std::function<bool(const Item&)> itemFilter);
 };
 
-InventoryMenu::InventoryMenu(Window& window, const Creature& player, boost::string_ref title,
+InventoryMenu::InventoryMenu(Window& window, const Creature& player, std::string_view title,
                              bool showNothingAsOption, Item* preselectedItem,
                              std::function<bool(const Item&)> itemFilter)
 {
@@ -92,7 +92,7 @@ InventoryMenu::InventoryMenu(Window& window, const Creature& player, boost::stri
     }
 }
 
-int Game::showInventory(boost::string_ref title, bool showNothingAsOption, Item* preselectedItem,
+int Game::showInventory(std::string_view title, bool showNothingAsOption, Item* preselectedItem,
                         std::function<bool(const Item&)> itemFilter)
 {
     InventoryMenu inventoryMenu(getWindow(), *player, title, showNothingAsOption,
@@ -241,7 +241,7 @@ class DirectionQuestion : public State
 {
 public:
     DirectionQuestion(std::string question, Vector2 origin) : question(std::move(question)), origin(origin) {}
-    boost::optional<Dir8> execute();
+    std::optional<Dir8> execute();
 
 private:
     void render(Window& window) override;
@@ -251,14 +251,14 @@ private:
     Vector2 origin;
 };
 
-boost::optional<Dir8> DirectionQuestion::execute()
+std::optional<Dir8> DirectionQuestion::execute()
 {
     Event event = getEngine().getWindow().waitForInput();
 
     if (auto direction = getDirectionFromEvent(event, origin))
         return direction;
 
-    return boost::none;
+    return std::nullopt;
 }
 
 void DirectionQuestion::render(Window& window)
@@ -267,7 +267,7 @@ void DirectionQuestion::render(Window& window)
     window.getFont().print(window, question);
 }
 
-boost::optional<Dir8> Game::askForDirection(std::string&& question)
+std::optional<Dir8> Game::askForDirection(std::string&& question)
 {
     DirectionQuestion directionQuestion(question, player->getPosition());
     return getEngine().execute(directionQuestion);
@@ -292,7 +292,7 @@ void Game::render(Window& window)
 
 void Game::renderAtPosition(Window& window, Vector2 centerPosition)
 {
-    cursorPosition = boost::none;
+    cursorPosition = std::nullopt;
     printPlayerInformation(window.getFont());
     MessageSystem::drawMessages(window, window.getFont(), player->getMessages(), getTurn());
 
@@ -353,7 +353,7 @@ void Game::printPlayerInformation(BitmapFont& font) const
 #endif
 }
 
-void Game::printStat(BitmapFont& font, boost::string_ref statName, double currentValue,
+void Game::printStat(BitmapFont& font, std::string_view statName, double currentValue,
                      double maximumValue, Color16 color) const
 {
     int currentValueInt = std::ceil(currentValue);
@@ -367,11 +367,11 @@ void Game::printStat(BitmapFont& font, boost::string_ref statName, double curren
     auto filledColumns = columns * std::max(currentValueInt, 0) / maximumValueInt;
     text.append(columns - text.size(), ' ');
 
-    font.print(getWindow(), boost::string_ref(text).substr(0, filledColumns), TextColor::White, color, true, PreserveLines);
-    font.printLine(getWindow(), boost::string_ref(text).substr(filledColumns), TextColor::White, Color32::none, true, PreserveLines);
+    font.print(getWindow(), std::string_view(text).substr(0, filledColumns), TextColor::White, color, true, PreserveLines);
+    font.printLine(getWindow(), std::string_view(text).substr(filledColumns), TextColor::White, Color32::none, true, PreserveLines);
 }
 
-void Game::printAttribute(BitmapFont& font, boost::string_ref attributeName, double attributeValue) const
+void Game::printAttribute(BitmapFont& font, std::string_view attributeName, double attributeValue) const
 {
     std::string padding(5 - attributeName.size(), ' ');
     font.printLine(getWindow(), attributeName + padding + std::to_string(int(attributeValue)),
@@ -405,7 +405,7 @@ void Game::enterCommandMode(Window& window)
     }
 }
 
-void Game::parseCommand(boost::string_ref command)
+void Game::parseCommand(std::string_view command)
 {
     if (command == "respawn")
         *player = Creature(&player->getTileUnder(0), "Human", std::make_unique<PlayerController>(*this));

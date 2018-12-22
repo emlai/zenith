@@ -1,7 +1,7 @@
 #pragma once
 
 #include "geometry.h"
-#include <boost/utility/string_ref.hpp>
+#include <string_view>
 #include <fstream>
 #include <memory>
 #include <vector>
@@ -11,7 +11,7 @@ struct SDL_RWops;
 class SaveFile
 {
 public:
-    SaveFile(boost::string_ref filePath, bool writable);
+    SaveFile(std::string_view filePath, bool writable);
     uint64_t getSize() const;
     int64_t getOffset() const;
     void seek(int64_t offset);
@@ -29,8 +29,8 @@ public:
     void write(double value);
     void write(Vector2 value);
     void write(Vector3 value);
-    void write(boost::string_ref value);
-    void write(const std::string& value) { write(boost::string_ref(value)); }
+    void write(std::string_view value);
+    void write(const std::string& value) { write(std::string_view(value)); }
     template<typename T>
     void write(const std::vector<T>& vector);
 

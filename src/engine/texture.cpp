@@ -27,8 +27,8 @@ static SDL_Surface* createSurfaceWithFormat(uint32_t pixelFormat, Vector2 size)
                                 masks.red, masks.green, masks.blue, masks.alpha);
 }
 
-Texture::Texture(boost::string_ref fileName, Color32 transparentColor)
-:   surface(SDL_LoadBMP(fileName.to_string().c_str()), SDL_FreeSurface)
+Texture::Texture(std::string_view fileName, Color32 transparentColor)
+:   surface(SDL_LoadBMP(std::string(fileName).c_str()), SDL_FreeSurface)
 {
     if (!surface)
         throw std::runtime_error("Unable to load " + fileName + ": " + SDL_GetError());

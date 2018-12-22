@@ -9,9 +9,9 @@
 Color32 Menu::defaultTextColor = Color32::white * 0.6;
 Color32 Menu::defaultHoverColor = Color32::white;
 
-void Menu::addTitle(boost::string_ref text)
+void Menu::addTitle(std::string_view text)
 {
-    title = text.to_string();
+    title = text;
 }
 
 int Menu::addItem(MenuItem&& item)
@@ -28,7 +28,7 @@ void Menu::clear()
     hotkeySuffix = ")";
     itemLayout = Vertical;
     itemSpacing = 1;
-    itemSize = boost::none;
+    itemSize = std::nullopt;
     tableCellSpacing = Vector2(0, 0);
     secondaryColumnAlignment = LeftAlign;
     textColor = defaultTextColor;
