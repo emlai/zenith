@@ -2,7 +2,7 @@ using static System.Math;
 
 struct Color32
 {
-    public uint value;
+    uint value;
 
     enum Channel
     {
@@ -33,14 +33,13 @@ struct Color32
         this.value = createValue(red, green, blue, alpha);
     }
 
-    public static Color32 fromColor16(ushort value)
+    public static Color32 fromInt16(uint value)
     {
-        const uint color16Max = 15;
         return new Color32(
-            (value >> bit[(int) Channel.Red] & color16Max) * max / color16Max,
-            (value >> bit[(int) Channel.Green] & color16Max) * max / color16Max,
-            (value >> bit[(int) Channel.Blue] & color16Max) * max / color16Max,
-            (value >> bit[(int) Channel.Alpha] & color16Max) * max / color16Max
+            (value >> 12 & 15) * max / 15,
+            (value >>  8 & 15) * max / 15,
+            (value >>  4 & 15) * max / 15,
+            (value >>  0 & 15) * max / 15
         );
     }
 

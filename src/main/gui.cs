@@ -1,19 +1,19 @@
 static class GUIColor
 {
-    public static readonly Color32 White = Color32.fromColor16(0xFEEF);
-    public static readonly Color32 Gray = Color32.fromColor16(0x778F);
-    public static readonly Color32 Black = Color32.fromColor16(0x000F);
+    public static readonly Color32 White = Color32.fromInt16(0xFEEF);
+    public static readonly Color32 Gray = Color32.fromInt16(0x778F);
+    public static readonly Color32 Black = Color32.fromInt16(0x000F);
 }
 
 static class TextColor
 {
     static readonly Color32 White = GUIColor.White;
     static readonly Color32 Gray = GUIColor.Gray;
-    static readonly Color32 Red = Color32.fromColor16(0xF14F);
-    static readonly Color32 Green = Color32.fromColor16(0x2C2F);
-    static readonly Color32 Blue = Color32.fromColor16(0x66FF);
-    static readonly Color32 Yellow = Color32.fromColor16(0xFD1F);
-    static readonly Color32 Brown = Color32.fromColor16(0xE71F);
+    static readonly Color32 Red = Color32.fromInt16(0xF14F);
+    static readonly Color32 Green = Color32.fromInt16(0x2C2F);
+    static readonly Color32 Blue = Color32.fromInt16(0x66FF);
+    static readonly Color32 Yellow = Color32.fromInt16(0xFD1F);
+    static readonly Color32 Brown = Color32.fromInt16(0xE71F);
 }
 
 static class GUI
