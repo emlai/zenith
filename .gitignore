@@ -16,6 +16,8 @@ rules.ninja
 *.vcxproj.filters
 *.vcxproj.user
 .vs
+.idea
+cmake-build-*
 
 *build
 Debug
