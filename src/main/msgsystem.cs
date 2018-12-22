@@ -30,7 +30,7 @@ static class MessageSystem
 {
     const int maxMessagesToPrint = 6;
 
-#ifdef DEBUG
+#if DEBUG
     struct DebugMessage
     {
         DebugMessage(string content, MessageType type = Normal)
@@ -63,14 +63,14 @@ static class MessageSystem
             font.printLine(window, text, color);
         }
 
-    #ifdef DEBUG
+    #if DEBUG
         font.setArea(GUI::getDebugMessageArea(window));
         foreach (DebugMessage message in debugMessages)
             font.printLine(window, message.content, messageColors[message.type]);
     #endif
     }
 
-    #ifdef DEBUG
+    #if DEBUG
 
     void MessageSystem::addDebugMessage(string message, MessageType type)
     {

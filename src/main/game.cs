@@ -19,7 +19,7 @@ class Game : State
     Dir8? askForDirection(string question);
     Creature getPlayer() { return player; }
     Window getWindow();
-#ifdef DEBUG
+#if DEBUG
     void enterCommandMode(Window);
     const Key commandModeKey = '`';
 #endif
@@ -52,7 +52,7 @@ private:
     World world;
     Creature player;
 
-#ifdef DEBUG
+#if DEBUG
     void parseCommand(string);
 
     bool showExtraInfo = true;
@@ -359,7 +359,7 @@ void Game::renderAtPosition(Window window, Vector2 centerPosition)
         window.getGraphicsContext().renderRectangle(GUI::getSidebarArea(window), GUIColor::Gray);
         window.getGraphicsContext().renderRectangle(GUI::getQuestionArea(window), GUIColor::Gray);
         window.getGraphicsContext().renderRectangle(GUI::getInventoryArea(window), GUIColor::Gray);
-#ifdef DEBUG
+#if DEBUG
         window.getGraphicsContext().renderRectangle(GUI::getCommandLineArea(window), GUIColor::Gray);
         window.getGraphicsContext().renderRectangle(GUI::getDebugMessageArea(window), GUIColor::Gray);
 #endif
@@ -381,7 +381,7 @@ void Game::printPlayerInformation(BitmapFont font)
         font.printLine(getWindow(), "Running");
     }
 
-#ifdef DEBUG
+#if DEBUG
     if (showExtraInfo)
     {
         font.printLine(getWindow(), "");
@@ -419,7 +419,7 @@ void Game::printAttribute(BitmapFont font, string attributeName, double attribut
                    Color32::none, Color32::none, true, PreserveLines);
 }
 
-#ifdef DEBUG
+#if DEBUG
 
 void Game::enterCommandMode(Window window)
 {

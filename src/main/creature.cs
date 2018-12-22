@@ -541,7 +541,7 @@ class Creature : Entity
         attackerMessage << ".";
         targetMessage << ".";
 
-    #ifdef DEBUG
+    #if DEBUG
         bool showDamageNumbers = false;
         if (showDamageNumbers)
         {

@@ -53,7 +53,7 @@ static class GUI
         return getWorldViewport(window).inset(spacing);
     }
 
-#ifdef DEBUG
+#if DEBUG
     static Rect getCommandLineArea(Window window)
     {
         var worldViewport = getWorldViewport(window);

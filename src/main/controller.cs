@@ -153,7 +153,7 @@ class PlayerController : Controller
                             game.stop();
                             return NoAction;
 
-    #ifdef DEBUG
+    #if DEBUG
                         case F2:
                             game.playerSeesEverything = !game.playerSeesEverything;
                             break;
