@@ -166,7 +166,7 @@ class SaveFile
     {
         var x = readInt32();
         var y = readInt32();
-        return Vector2(x, y);
+        return new Vector2(x, y);
     }
 
     void write(Vector3 value)
@@ -181,7 +181,7 @@ class SaveFile
         var x = readInt32();
         var y = readInt32();
         var z = readInt32();
-        return Vector3(x, y, z);
+        return new Vector3(x, y, z);
     }
 
     SaveFile copyToMemory()

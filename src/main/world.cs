@@ -124,7 +124,7 @@ class World
 
     Vector3 globalPositionToAreaPosition(Vector2 position, int level)
     {
-        return Vector3(position.divideRoundingDown(Area::size)) + Vector3(0, 0, level);
+        return new Vector3(position.divideRoundingDown(Area::size)) + Vector3(0, 0, level);
     }
 
     Vector2 globalPositionToTilePosition(Vector2 position)

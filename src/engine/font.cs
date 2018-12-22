@@ -242,7 +242,7 @@ Vector2 BitmapFont::getTextSize(string text)
         ++lineCount;
     }
 
-    return Vector2(getColumnWidth() * lengthOfLongestLine, getRowHeight() * lineCount);
+    return new Vector2(getColumnWidth() * lengthOfLongestLine, getRowHeight() * lineCount);
 }
 
 void BitmapFont::initCurrentPosition()

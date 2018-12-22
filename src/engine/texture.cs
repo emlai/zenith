@@ -123,7 +123,7 @@ class Texture
 
     Vector2 getSize()
     {
-        return Vector2(surface.w, surface.h);
+        return new Vector2(surface.w, surface.h);
     }
 
     int getWidth()

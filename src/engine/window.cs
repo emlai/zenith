@@ -229,6 +229,6 @@ class Window
         if (SDL_GetDesktopDisplayMode(0, mode) != 0)
             throw new Exception(SDL_GetError());
 
-        return Vector2(mode.w, mode.h);
+        return new Vector2(mode.w, mode.h);
     }
 }

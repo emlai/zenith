@@ -24,7 +24,7 @@ class Tile
     void addLight(Color32 light) { this.light.lighten(light); }
     World getWorld() { return world; }
     Vector2 getPosition() { return position; }
-    Vector3 getPosition3D() { return Vector3(position) + Vector3(0, 0, level); }
+    Vector3 getPosition3D() { return new Vector3(position) + Vector3(0, 0, level); }
     int getLevel() { return level; }
     Vector2 getCenterPosition() { return position * getSize() + getSize() / 2; }
     void addCreature(Creature creature) { creatures.push_back(creature); }
@@ -357,7 +357,7 @@ class Tile
 
     Vector2 Tile::getMaxSize()
     {
-        return Vector2(std::max(Sprite::getAsciiGraphicsFont().getCharSize().x, spriteSize.x),
+        return new Vector2(std::max(Sprite::getAsciiGraphicsFont().getCharSize().x, spriteSize.x),
                        std::max(Sprite::getAsciiGraphicsFont().getCharSize().y, spriteSize.y));
     }
 }
