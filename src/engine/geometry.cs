@@ -1,3 +1,5 @@
+using System;
+
 enum Dir8
 {
     NoDir,
@@ -26,8 +28,8 @@ struct Vector2
 
     Vector2(Vector3 vector)
     {
-        this.x = new Vector.x;
-        this.y = new Vector.y;
+        this.x = vector.x;
+        this.y = vector.y;
     }
 
 //    Vector2 operator+=(Vector2 a, Vector2 b) { x += new Vector.x; y += new Vector.y; return this; }
@@ -51,19 +53,20 @@ struct Vector2
     public static Vector2 operator*(Vector2 a, int b) { return new Vector2(a.x * b, a.y * b); }
     public static Vector2 operator/(Vector2 a, int b) { return new Vector2(a.x / b, a.y / b); }
     public static Vector2 operator%(Vector2 a, int b) { return new Vector2(a.x % b, a.y % b); }
-    public static Vector2 operator+(Vector2 a) { return a; }
     public static Vector2 operator-(Vector2 a) { return new Vector2(-a.x, -a.y); }
     public static bool operator==(Vector2 a, Vector2 b) { return a.x == b.x && a.y == b.y; }
     public static bool operator!=(Vector2 a, Vector2 b) { return a.x != b.x || a.y != b.y; }
 
-    var getLength() { return std::sqrt(getLengthSquared()); }
-    var getLengthSquared() { return x * x + y * y; }
-    var getArea() { return x * y; }
+    float getLength() { return MathF.Sqrt(getLengthSquared()); }
+    int getLengthSquared() { return x * x + y * y; }
+    int getArea() { return x * y; }
     bool isZero() { return x == 0 && y == 0; }
-    bool Vector2::isWithin(Vector2<U> vector)
+
+    bool isWithin(Vector2 vector)
     {
-        return x >= 0 && U(x) < vector.x && y >= 0 && U(y) < vector.y;
+        return x >= 0 && x < vector.x && y >= 0 && y < vector.y;
     }
+
     bool isWithin(struct Rect);
 
     Vector2 divideRoundingDown(int divisor)
@@ -76,7 +79,7 @@ struct Vector2
         return new Vector2(::divideRoundingDown(x, divisor.x), ::divideRoundingDown(y, divisor.y));
     }
 
-    Dir8 Vector2::getDir8()
+    Dir8 getDir8()
     {
         if (isZero()) return NoDir;
         double angle = std::atan2(y, x);
@@ -84,12 +87,8 @@ struct Vector2
         return (Dir8) octant + 1;
     }
 
-    const Vector2 zeroVector = new Vector2(0, 0);
-
+    static readonly Vector2 zero = new Vector2(0, 0);
 }
-
-template<typename T>
-const Vector2 Vector2::zeroVector
 
 template<typename T>
 Vector2 abs(Vector2 vector)
