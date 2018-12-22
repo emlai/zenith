@@ -18,7 +18,7 @@ static class TextColor
 
 static class GUI
 {
-    const Vector2 spacing(12, 12);
+    const Vector2 spacing = new Vector2(12, 12);
     const int fontHeight = 12;
     const int questionAreaHeight = spacing.y + fontHeight + spacing.y;
 
