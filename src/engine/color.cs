@@ -1,26 +1,34 @@
-using Color16 = Color<ushort>;
-using Color32 = Color<uint>;
-
-struct Color<T> where T : unmanaged
+struct Color32
 {
-    T value;
+    uint value;
 
-    enum Channel { Red, Green, Blue, Alpha }
+    enum Channel
+    {
+        Red,
+        Green,
+        Blue,
+        Alpha
+    }
 
     const int channelCount = 4;
-    const int depth = sizeof(T) * 8;
+    const int depth = sizeof(uint) * 8;
     const int bitsPerChannel = depth / channelCount;
     const int max = (1 << bitsPerChannel) - 1;
-    const int bit[channelCount];
+    static readonly int[] bit = { 3 * bitsPerChannel, 2 * bitsPerChannel, 1 * bitsPerChannel, 0 * bitsPerChannel };
     const int temperatureCoefficient = int(0.25 * max);
-    const Color<T> white = new Color<T>(max, max, max);
-    const Color<T> black = new Color<T>(0, 0, 0);
-    const Color<T> none = new Color<T>(0);
+    static readonly Color<uint> white = new Color<uint>(max, max, max);
+    static readonly Color<uint> black = new Color<uint>(0, 0, 0);
+    static readonly Color<uint> none = new Color<uint>(0);
     static bool modulateTemperature = true;
 
     Color() {}
-    explicit Color(T value) : value(value) {}
+    Color(uint value) : value(value) {}
     Color(int red, int green, int blue, int alpha = max) : value(createValue(red, green, blue, alpha)) {}
+
+    void fromColor16(ushort value)
+    {
+
+    }
 
     int get(Channel channel) { return value >> bit[channel] & max; }
     void set(Channel channel, int n) { value = (~(max << bit[channel]) & value) | n << bit[channel]; }
@@ -68,14 +76,9 @@ struct Color<T> where T : unmanaged
     const var getMask(Channel channel) { return max << bit[channel]; }
 
 private:
-    static T createValue(int red, int green, int blue, int alpha = max)
+    static uint createValue(int red, int green, int blue, int alpha = max)
     {
-        return (T) red << bit[Channel.Red] | green << bit[Channel.Green] | blue << bit[Channel.Blue] | alpha << bit[Channel.Alpha];
+        return red << bit[Channel.Red] | green << bit[Channel.Green] | blue << bit[Channel.Blue] | alpha << bit[Channel.Alpha];
     }
 }
 
-template<typename T>
-const int Color<T>::bit[] =
-{
-    3 * bitsPerChannel, 2 * bitsPerChannel, 1 * bitsPerChannel, 0 * bitsPerChannel
-}
