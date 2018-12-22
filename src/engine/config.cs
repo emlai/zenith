@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using static System.Char;
 using Group = Group_<Value>;
 
 class Config
@@ -136,15 +138,16 @@ class Config
 
     List<string> getToplevelKeys()
     {
-        List<string> keys;
+        var keys = new List<string>();
 
         foreach (var keyAndValue in data)
         {
-            if (var it = keyAndValue.second.getGroup().getOptional("isAbstract"))
-                if (it.isBool() && it.getBool())
-                    continue;
+            var it = keyAndValue.second.getGroup().getOptional("isAbstract");
 
-            keys.push_back(keyAndValue.first);
+            if (it && it.isBool() && it.getBool())
+                continue;
+
+            keys.Add(keyAndValue.first);
         }
 
         return keys;
@@ -301,7 +304,7 @@ class Config
 
     Config(string filePath)
     {
-        ConfigReader reader(filePath);
+        var reader = new ConfigReader(filePath);
 
         while (true)
         {
@@ -472,149 +475,139 @@ struct ConversionTraits<List<ElementType>>
     }
 }
 
-/// Wrapper around std::ifstream that keeps track of the current line and column.
-class ConfigReader
+/// Wrapper around StreamReader that keeps track of the current line and column.
+class ConfigReader : IDisposable
 {
-    ConfigReader(string filePath);
-    int get();
-    void unget(int);
-    int peek();
-    string getId();
-    string getDoubleQuotedString();
-    Exception syntaxError(string message);
-    Exception syntaxError(string expected, char actual);
-
-private:
     string filePath;
-    std::ifstream file;
+    StreamReader file;
     int line;
     int column;
-}
 
-ConfigReader::ConfigReader(string filePath)
-:   filePath(filePath), file(this.filePath), line(1), column(0)
-{
-    if (!file)
-        throw new Exception("Couldn't open \"" + filePath + "\"!");
-}
-
-int ConfigReader::get()
-{
-    while (true)
+    public ConfigReader(string filePath)
     {
-        var ch = file.get();
+        this.filePath = filePath;
+        this.file = File.OpenText(filePath);
+        this.line = 1;
+        this.column = 0;
+    }
 
-        if (ch == '\n')
-        {
-            ++line;
-            column = 0;
-        }
-        else
-        {
-            ++column;
+    public void Dispose()
+    {
+        file.Dispose();
+    }
 
-            if (!std::isspace(ch))
-                return ch;
+    char get()
+    {
+        while (true)
+        {
+            var ch = (char) file.Read();
+
+            if (ch == '\n')
+            {
+                ++line;
+                column = 0;
+            }
+            else
+            {
+                ++column;
+
+                if (!IsWhiteSpace(ch))
+                    return ch;
+            }
         }
     }
-}
 
-string ConfigReader::getId()
-{
-    var ch = get();
-
-    if (!std::isalpha(ch))
-        throw syntaxError("id", char(ch));
-
-    string string(1, char(ch));
-
-    while (true)
+    string getId()
     {
-        var ch = file.get();
+        var ch = get();
 
-        if (ch == '\n')
+        if (!IsLetter(ch))
+            throw syntaxError("id", ch);
+
+        var id = ch.ToString();
+
+        while (true)
         {
-            ++line;
-            column = 0;
-        }
-        else
-            ++column;
+            ch = (char) file.Peek();
 
-        if (!std::isalpha(ch))
-        {
-            file.unget();
-            return string;
-        }
+            if (ch == '\n')
+            {
+                ++line;
+                column = 0;
+            }
+            else
+                ++column;
 
-        string += char(ch);
+            if (!IsLetter(ch))
+                return id;
+
+            file.Read();
+            id += ch;
+        }
     }
-}
 
-string ConfigReader::getDoubleQuotedString()
-{
-    var ch = file.get();
-
-    if (ch != '"')
-        throw syntaxError("'\"'", char(ch));
-
-    string string;
-
-    while (true)
+    string getDoubleQuotedString()
     {
-        var ch = file.get();
+        var ch = (char) file.Read();
 
-        if (ch == '\n')
+        if (ch != '"')
+            throw syntaxError("'\"'", ch);
+
+        string str = "";
+
+        while (true)
         {
-            ++column;
-            throw syntaxError("newline inside double-quoted string");
-        }
-        else
-        {
+            ch = (char) file.Read();
+
+            if (ch == '\n')
+            {
+                ++column;
+                throw syntaxError("newline inside double-quoted string");
+            }
+
             ++column;
 
             if (ch == '"')
-                return string;
+                return str;
 
-            string += char(ch);
+            str += ch;
         }
     }
-}
 
-void ConfigReader::unget(int ch)
-{
-    file.putback((char) ch);
-
-    if (ch == '\n')
-        --line;
-    else
-        --column;
-}
-
-int ConfigReader::peek()
-{
-    if (file.peek() == ' ' || file.peek() == '\n')
-        unget(get());
-
-    return file.peek();
-}
-
-static string charToString(char ch)
-{
-    switch (ch)
+    void unget(int ch)
     {
-        case '\n': return "newline";
-        default: return "'" + string(1, ch) + "'";
+        file.putback((char) ch);
+
+        if (ch == '\n')
+            --line;
+        else
+            --column;
+    }
+
+    public int peek()
+    {
+        if (file.Peek() == ' ' || file.Peek() == '\n')
+            unget(get());
+
+        return file.Peek();
+    }
+
+    static string charToString(char ch)
+    {
+        switch (ch)
+        {
+            case '\n': return "newline";
+            default: return "'" + ch + "'";
+        }
+    }
+
+    Exception syntaxError(string message)
+    {
+        return new Exception("Syntax error in " + filePath + " (line " + line + ", column " + column + "): " + message);
+    }
+
+    Exception syntaxError(string expected, char actual)
+    {
+        return syntaxError("expected " + expected + ", got " + charToString(actual));
     }
 }
-
-Exception ConfigReader::syntaxError(string message)
-{
-    return Exception("Syntax error in " + filePath + " (line " + std::to_string(line) +
-                              ", column " + std::to_string(column) + "): " + message);
-}
-
-Exception ConfigReader::syntaxError(string expected, char actual)
-{
-    return syntaxError("expected " + expected + ", got " + charToString(actual));
-}
-
