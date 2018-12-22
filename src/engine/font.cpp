@@ -113,7 +113,7 @@ Vector2 BitmapFont::printHelper(Window& window, std::string_view text, Vector2 p
 
     for (auto character = text.begin(), lineBegin = text.begin();; ++character)
     {
-        if (*character == '\n' || character == text.end())
+        if (character == text.end() || *character == '\n')
         {
             printLine(window, lineBegin, character, source, target, backgroundColor);
 
