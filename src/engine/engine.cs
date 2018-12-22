@@ -3,8 +3,7 @@ class Engine
     List<Window> windows;
     List<State> states;
 
-    Window getWindow(unsigned index = 0) { return windows[index]; }
-    Window getWindow(unsigned index = 0) { return windows[index]; }
+    Window getWindow(int index = 0) { return windows[index]; }
     State getCurrentState() { return states.end()[-1]; }
     State getPreviousState() { return states.end()[-2]; }
 
@@ -16,7 +15,7 @@ class Engine
 
     var execute<StateType>(StateType state)
     {
-        states.push_back(state);
+        states.Add(state);
         state.engine = this;
         DEFER { states.pop_back(); }
         return state.execute();
