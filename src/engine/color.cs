@@ -16,22 +16,34 @@ struct Color32
     const int max = (1 << bitsPerChannel) - 1;
     static readonly int[] bit = { 3 * bitsPerChannel, 2 * bitsPerChannel, 1 * bitsPerChannel, 0 * bitsPerChannel };
     const int temperatureCoefficient = int(0.25 * max);
-    static readonly Color<uint> white = new Color<uint>(max, max, max);
-    static readonly Color<uint> black = new Color<uint>(0, 0, 0);
-    static readonly Color<uint> none = new Color<uint>(0);
+    static readonly Color32 white = new Color32(max, max, max);
+    static readonly Color32 black = new Color32(0, 0, 0);
+    static readonly Color32 none = new Color32(0);
     static bool modulateTemperature = true;
 
-    Color() {}
-    Color(uint value) : value(value) {}
-    Color(int red, int green, int blue, int alpha = max) : value(createValue(red, green, blue, alpha)) {}
-
-    void fromColor16(ushort value)
+    Color32(uint value)
     {
-
+        this.value = value;
     }
 
-    int get(Channel channel) { return value >> bit[channel] & max; }
-    void set(Channel channel, int n) { value = (~(max << bit[channel]) & value) | n << bit[channel]; }
+    Color32(int red, int green, int blue, int alpha = max)
+    {
+        this.value = createValue(red, green, blue, alpha);
+    }
+
+    static Color32 fromColor16(ushort value)
+    {
+        const int color16Max = 15;
+        return new Color32(
+            (value >> bit[(int) Channel.Red] & color16Max) * max / color16Max,
+            (value >> bit[(int) Channel.Green] & color16Max) * max / color16Max,
+            (value >> bit[(int) Channel.Blue] & color16Max) * max / color16Max,
+            (value >> bit[(int) Channel.Alpha] & color16Max) * max / color16Max
+        );
+    }
+
+    int get(Channel channel) { return value >> bit[(int) channel] & max; }
+    void set(Channel channel, int n) { value = (~(max << bit[(int) channel]) & value) | n << bit[(int) channel]; }
     void edit(Channel channel, int n) { set(channel, limit(get(channel) + n, 0, max)); }
 
     int getRed() { return get(Channel.Red); }
@@ -51,7 +63,7 @@ struct Color32
         set(Channel.Blue, std::max(getBlue(), other.getBlue()));
     }
 
-    Color operator=(double mod)
+    Color32 operator*=(double mod)
     {
         int delta = int(modulateTemperature * sign(mod - 1.0) * ((2.0 - mod) * mod - 1.0) *
                         temperatureCoefficient);
@@ -62,20 +74,12 @@ struct Color32
         return this;
     }
 
-    Color operator*(double mod) { return Color(this) *= mod; }
+    Color32 operator*(double mod) { return Color32(this) *= mod; }
 
     explicit operator bool() { return value != 0; }
 
-    template<typename U>
-    operator Color<U>()
-    {
-        return Color<U>(getRed() * Color<U>::max / max, getGreen() * Color<U>::max / max,
-                        getBlue() * Color<U>::max / max, getAlpha() * Color<U>::max / max);
-    }
+    int getMask(Channel channel) { return max << bit[channel]; }
 
-    const var getMask(Channel channel) { return max << bit[channel]; }
-
-private:
     static uint createValue(int red, int green, int blue, int alpha = max)
     {
         return red << bit[Channel.Red] | green << bit[Channel.Green] | blue << bit[Channel.Blue] | alpha << bit[Channel.Alpha];
