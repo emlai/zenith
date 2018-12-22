@@ -1,6 +1,6 @@
 struct Color32
 {
-    uint value;
+    public uint value;
 
     enum Channel
     {
@@ -31,7 +31,7 @@ struct Color32
         this.value = createValue(red, green, blue, alpha);
     }
 
-    static Color32 fromColor16(ushort value)
+    public static Color32 fromColor16(ushort value)
     {
         const int color16Max = 15;
         return new Color32(

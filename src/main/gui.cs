@@ -1,19 +1,19 @@
 static class GUIColor
 {
-    const Color16 White(0xFEEF);
-    const Color16 Gray(0x778F);
-    const Color16 Black(0x000F);
+    public static readonly Color32 White = Color32.fromColor16(0xFEEF);
+    public static readonly Color32 Gray = Color32.fromColor16(0x778F);
+    public static readonly Color32 Black = Color32.fromColor16(0x000F);
 }
 
 static class TextColor
 {
-    const Color16 White(GUIColor::White);
-    const Color16 Gray(GUIColor::Gray);
-    const Color16 Red(0xF14F);
-    const Color16 Green(0x2C2F);
-    const Color16 Blue(0x66FF);
-    const Color16 Yellow(0xFD1F);
-    const Color16 Brown(0xE71F);
+    static readonly Color32 White = GUIColor.White;
+    static readonly Color32 Gray = GUIColor.Gray;
+    static readonly Color32 Red = Color32.fromColor16(0xF14F);
+    static readonly Color32 Green = Color32.fromColor16(0x2C2F);
+    static readonly Color32 Blue = Color32.fromColor16(0x66FF);
+    static readonly Color32 Yellow = Color32.fromColor16(0xFD1F);
+    static readonly Color32 Brown = Color32.fromColor16(0xE71F);
 }
 
 static class GUI
