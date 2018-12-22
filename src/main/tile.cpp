@@ -327,14 +327,5 @@ Tile* Tile::getTileAbove() const
 
 Vector2 Tile::getSize()
 {
-    if (Sprite::useAsciiGraphics())
-        return Sprite::getAsciiGraphicsFont()->getCharSize();
-    else
-        return spriteSize;
-}
-
-Vector2 Tile::getMaxSize()
-{
-    return Vector2(std::max(Sprite::getAsciiGraphicsFont()->getCharSize().x, spriteSize.x),
-                   std::max(Sprite::getAsciiGraphicsFont()->getCharSize().y, spriteSize.y));
+    return spriteSize;
 }

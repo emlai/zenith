@@ -174,13 +174,10 @@ void Creature::render(Window& window, Vector2 position) const
 {
     sprite.render(window, position);
 
-    if (!Sprite::useAsciiGraphics())
+    for (int slot = equipmentSlots - 1; slot >= 0; --slot)
     {
-        for (int slot = equipmentSlots - 1; slot >= 0; --slot)
-        {
-            if (auto* equipment = getEquipment(static_cast<EquipmentSlot>(slot)))
-                equipment->renderEquipped(window, position);
-        }
+        if (auto* equipment = getEquipment(static_cast<EquipmentSlot>(slot)))
+            equipment->renderEquipped(window, position);
     }
 }
 

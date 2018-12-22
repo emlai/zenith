@@ -141,14 +141,12 @@ Corpse::Corpse(std::unique_ptr<Creature> creature)
                                                        creature->getId(), corpseFrame, Color32::none)),
     creature(std::move(creature))
 {
-    sprite.setAsciiGlyph(corpseGlyph);
 }
 
 Corpse::Corpse(std::string_view creatureId)
 :   Item(creatureId + "Corpse", "", ::getSprite(*Game::creatureSpriteSheet, *Game::creatureConfig,
                                                 creatureId, corpseFrame, Color32::none))
 {
-    sprite.setAsciiGlyph(corpseGlyph);
 }
 
 void Corpse::exist()

@@ -63,7 +63,6 @@ public:
     int getLevel() const { return level; }
     Vector2 getCenterPosition() const { return position * getSize() + getSize() / 2; }
     static Vector2 getSize();
-    static Vector2 getMaxSize();
     static const Vector2 spriteSize;
 
 private:

@@ -73,8 +73,8 @@ InventoryMenu::InventoryMenu(Window& window, const Creature& player, std::string
 {
     addTitle(title);
     setArea(GUI::getInventoryArea(window));
-    setItemSize(Tile::getMaxSize());
-    setTextLayout(TextLayout(LeftAlign, Sprite::useAsciiGraphics() ? TopAlign : VerticalCenter));
+    setItemSize(Tile::getSize());
+    setTextLayout(TextLayout(LeftAlign, VerticalCenter));
     setTableCellSpacing(Vector2(window.getFont().getColumnWidth(), 0));
     setHotkeyStyle(LetterHotkeys);
 
@@ -117,8 +117,8 @@ void EquipmentMenu::execute()
         clear();
         addTitle("Equipment");
         setArea(GUI::getInventoryArea(getEngine().getWindow()));
-        setItemSize(Tile::getMaxSize());
-        setTextLayout(TextLayout(LeftAlign, Sprite::useAsciiGraphics() ? TopAlign : VerticalCenter));
+        setItemSize(Tile::getSize());
+        setTextLayout(TextLayout(LeftAlign, VerticalCenter));
         setTableCellSpacing(Vector2(getEngine().getWindow().getFont().getColumnWidth(), 0));
         setHotkeyStyle(LetterHotkeys);
 

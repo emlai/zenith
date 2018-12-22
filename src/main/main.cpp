@@ -47,10 +47,9 @@ private:
 
 static const auto preferencesFileName = "prefs.cfg";
 
-static void savePreferencesToFile(bool asciiGraphics, double graphicsScale, bool fullscreen)
+static void savePreferencesToFile(double graphicsScale, bool fullscreen)
 {
     Config preferences;
-    preferences.set("ASCIIGraphics", asciiGraphics);
     preferences.set("GraphicsScale", graphicsScale);
     preferences.set("Fullscreen", fullscreen);
     saveKeyMap(preferences);
@@ -61,7 +60,7 @@ static void setPrefsMenuCommonOptions(Menu& menu, const Window& window)
 {
     menu.addItem(MenuItem(Menu::Exit, "Back", 'q'));
     menu.setItemLayout(Menu::Vertical);
-    menu.setItemSize(Tile::getMaxSize());
+    menu.setItemSize(Tile::getSize());
     menu.setTextLayout(TextLayout(LeftAlign, TopAlign));
     menu.setSecondaryColumnAlignment(RightAlign);
     menu.setArea(window.getResolution() / 4, window.getResolution() / 2);
@@ -129,18 +128,13 @@ public:
 
 void PrefsMenu::execute()
 {
-    enum { AsciiGraphics, GraphicsScale, Fullscreen, KeyMap };
+    enum { GraphicsScale, Fullscreen, KeyMap };
     auto& window = getEngine().getWindow();
 
     while (true)
     {
         clear();
         addTitle("Preferences");
-
-        // This is a hidden option until the ASCII mode is fully implemented,
-        // so only show it if it's explicitly set to 'true' in the preferences file.
-        if (Sprite::useAsciiGraphics())
-            addItem(MenuItem(AsciiGraphics, "ASCII graphics", toOnOffString(Sprite::useAsciiGraphics())));
 
         addItem(MenuItem(GraphicsScale, "Graphics scale",
                          toStringAvoidingDecimalPlaces(window.getGraphicsContext().getScale()) + "x"));
@@ -153,9 +147,6 @@ void PrefsMenu::execute()
 
         switch (selection)
         {
-            case AsciiGraphics:
-                Sprite::useAsciiGraphics(!Sprite::useAsciiGraphics());
-                break;
             case GraphicsScale:
                 if (window.getGraphicsContext().getScale() >= 2)
                     window.getGraphicsContext().setScale(1);
@@ -172,7 +163,7 @@ void PrefsMenu::execute()
                 break;
             }
             case Menu::Exit:
-                savePreferencesToFile(Sprite::useAsciiGraphics(), window.getGraphicsContext().getScale(), window.isFullscreen());
+                savePreferencesToFile(window.getGraphicsContext().getScale(), window.isFullscreen());
                 return;
             default:
                 assert(false);
@@ -279,7 +270,6 @@ int main(int argc, char** argv)
     if (std::filesystem::exists(preferencesFileName))
     {
         Config preferences(preferencesFileName);
-        Sprite::useAsciiGraphics(preferences.getOptional<bool>("ASCIIGraphics").value_or(false));
         window.getGraphicsContext().setScale(preferences.getOptional<double>("GraphicsScale").value_or(1));
         window.setFullscreen(preferences.getOptional<bool>("Fullscreen").value_or(true));
         loadKeyMap(&preferences);
@@ -289,7 +279,6 @@ int main(int argc, char** argv)
 
     BitmapFont font = initFont();
     window.setFont(font);
-    Sprite::setAsciiGraphicsFont(&font);
     Menu::setDefaultTextColor(TextColor::Gray);
 
     MainMenu mainMenu;
