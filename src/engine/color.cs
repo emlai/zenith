@@ -3,6 +3,8 @@ using Color32 = Color<uint>;
 
 struct Color<T>
 {
+    T value;
+
     enum Channel { Red, Green, Blue, Alpha }
 
     const int channelCount = 4;
@@ -11,12 +13,10 @@ struct Color<T>
     const int max = (1 << bitsPerChannel) - 1;
     const int bit[channelCount];
     const int temperatureCoefficient = int(0.25 * max);
-    const Color<T> white;
-    const Color<T> black;
-    const Color<T> none;
-    static bool modulateTemperature;
-
-    T value;
+    const Color<T> white = new Color<T>(max, max, max);
+    const Color<T> black = new Color<T>(0, 0, 0);
+    const Color<T> none = new Color<T>(0);
+    static bool modulateTemperature = true;
 
     Color() {}
     explicit Color(T value) : value(value) {}
@@ -79,15 +79,3 @@ const int Color<T>::bit[] =
 {
     3 * bitsPerChannel, 2 * bitsPerChannel, 1 * bitsPerChannel, 0 * bitsPerChannel
 }
-
-template<typename T>
-bool Color<T>::modulateTemperature = true;
-
-template<typename T>
-const Color<T> Color<T>::white(max, max, max);
-
-template<typename T>
-const Color<T> Color<T>::black(0, 0, 0);
-
-template<typename T>
-const Color<T> Color<T>::none(0);
