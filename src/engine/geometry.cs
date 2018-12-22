@@ -26,15 +26,15 @@ struct Vector2
 
     Vector2(Vector3 vector)
     {
-        this.x = vector.x;
-        this.y = vector.y;
+        this.x = new Vector.x;
+        this.y = new Vector.y;
     }
 
-//    Vector2 operator+=(Vector2 a, Vector2 b) { x += vector.x; y += vector.y; return this; }
-//    Vector2 operator-=(Vector2 a, Vector2 b) { x -= vector.x; y -= vector.y; return this; }
-//    Vector2 operator=(Vector2 a, Vector2 b) { x *= vector.x; y *= vector.y; return this; }
-//    Vector2 operator/=(Vector2 a, Vector2 b) { x /= vector.x; y /= vector.y; return this; }
-//    Vector2 operator%=(Vector2 a, Vector2 b) { x %= vector.x; y %= vector.y; return this; }
+//    Vector2 operator+=(Vector2 a, Vector2 b) { x += new Vector.x; y += new Vector.y; return this; }
+//    Vector2 operator-=(Vector2 a, Vector2 b) { x -= new Vector.x; y -= new Vector.y; return this; }
+//    Vector2 operator=(Vector2 a, Vector2 b) { x *= new Vector.x; y *= new Vector.y; return this; }
+//    Vector2 operator/=(Vector2 a, Vector2 b) { x /= new Vector.x; y /= new Vector.y; return this; }
+//    Vector2 operator%=(Vector2 a, Vector2 b) { x %= new Vector.x; y %= new Vector.y; return this; }
 //
 //    template<typename U, typename = std::enable_if_t<std::is_arithmetic<U>::value>>
 //    Vector2 operator=(U multiplier) { x *= multiplier; y *= multiplier; return this; }
@@ -43,28 +43,27 @@ struct Vector2
 //    template<typename U, typename = std::enable_if_t<std::is_arithmetic<U>::value>>
 //    Vector2 operator%=(U divisor) { x %= divisor; y %= divisor; return this; }
 
-    public static Vector2 operator+(Vector2 a, Vector2 b) { return new Vector2(x + vector.x, y + vector.y); }
-    public static Vector2 operator-(Vector2 a, Vector2 b) { return new Vector2(x - vector.x, y - vector.y); }
-    public static Vector2 operator*(Vector2 a, Vector2 b) { return new Vector2(x * vector.x, y * vector.y); }
-    public static Vector2 operator/(Vector2 a, Vector2 b) { return new Vector2(x / vector.x, y / vector.y); }
-    public static Vector2 operator%(Vector2 a, Vector2 b) { return new Vector2(x % vector.x, y % vector.y); }
-
-    public static Vector2 operator*(Vector2 a, T b) { return new Vector2(a.x * b, a.y * b); }
-    public static Vector2 operator/(Vector2 a, T b) { return new Vector2(a.x / b, a.y / b); }
-    public static Vector2 operator%(Vector2 a, T b) { return new Vector2(a.x % b, a.y % b); }
-
+    public static Vector2 operator+(Vector2 a, Vector2 b) { return new Vector2(a.x + b.x, a.y + b.y); }
+    public static Vector2 operator-(Vector2 a, Vector2 b) { return new Vector2(a.x - b.x, a.y - b.y); }
+    public static Vector2 operator*(Vector2 a, Vector2 b) { return new Vector2(a.x * b.x, a.y * b.y); }
+    public static Vector2 operator/(Vector2 a, Vector2 b) { return new Vector2(a.x / b.x, a.y / b.y); }
+    public static Vector2 operator%(Vector2 a, Vector2 b) { return new Vector2(a.x % b.x, a.y % b.y); }
+    public static Vector2 operator*(Vector2 a, int b) { return new Vector2(a.x * b, a.y * b); }
+    public static Vector2 operator/(Vector2 a, int b) { return new Vector2(a.x / b, a.y / b); }
+    public static Vector2 operator%(Vector2 a, int b) { return new Vector2(a.x % b, a.y % b); }
     public static Vector2 operator+(Vector2 a) { return a; }
     public static Vector2 operator-(Vector2 a) { return new Vector2(-a.x, -a.y); }
-
-    bool operator==(Vector2 a, Vector2 b) { return x == vector.x && y == vector.y; }
-    bool operator!=(Vector2 a, Vector2 b) { return x != vector.x || y != vector.y; }
+    public static bool operator==(Vector2 a, Vector2 b) { return a.x == b.x && a.y == b.y; }
+    public static bool operator!=(Vector2 a, Vector2 b) { return a.x != b.x || a.y != b.y; }
 
     var getLength() { return std::sqrt(getLengthSquared()); }
     var getLengthSquared() { return x * x + y * y; }
     var getArea() { return x * y; }
     bool isZero() { return x == 0 && y == 0; }
-    template<typename U>
-    bool isWithin(Vector2<U>);
+    bool Vector2::isWithin(Vector2<U> vector)
+    {
+        return x >= 0 && U(x) < vector.x && y >= 0 && U(y) < vector.y;
+    }
     bool isWithin(struct Rect);
 
     Vector2 divideRoundingDown(int divisor)
@@ -77,29 +76,20 @@ struct Vector2
         return new Vector2(::divideRoundingDown(x, divisor.x), ::divideRoundingDown(y, divisor.y));
     }
 
-    Dir8 getDir8();
+    Dir8 Vector2::getDir8()
+    {
+        if (isZero()) return NoDir;
+        double angle = std::atan2(y, x);
+        int octant = static_cast<int>(std::round(8 * angle / (2 * pi) + 8)) % 8;
+        return (Dir8) octant + 1;
+    }
 
-    const Vector2 zeroVector;
+    const Vector2 zeroVector = new Vector2(0, 0);
+
 }
 
 template<typename T>
-template<typename U>
-bool Vector2::isWithin(Vector2<U> vector)
-{
-    return x >= 0 && U(x) < vector.x && y >= 0 && U(y) < vector.y;
-}
-
-template<typename T>
-Dir8 Vector2::getDir8()
-{
-    if (isZero()) return NoDir;
-    double angle = std::atan2(y, x);
-    int octant = static_cast<int>(std::round(8 * angle / (2 * pi) + 8)) % 8;
-    return (Dir8) octant + 1;
-}
-
-template<typename T>
-const Vector2 Vector2::zeroVector = Vector2(0, 0);
+const Vector2 Vector2::zeroVector
 
 template<typename T>
 Vector2 abs(Vector2 vector)
@@ -162,11 +152,11 @@ struct Vector3
     const Vector3(T x, T y, T z) : x(x), y(y), z(z) {}
     explicit const Vector3(Vector2 vector) : x(vector.x), y(vector.y), z(0) {}
 
-    Vector3 operator+=(Vector3 vector) { x += vector.x; y += vector.y; z += vector.z; return this; }
-    Vector3 operator-=(Vector3 vector) { x -= vector.x; y -= vector.y; z -= vector.z; return this; }
-    Vector3 operator=(Vector3 vector) { x *= vector.x; y *= vector.y; z *= vector.z; return this; }
-    Vector3 operator/=(Vector3 vector) { x /= vector.x; y /= vector.y; z /= vector.z; return this; }
-    Vector3 operator%=(Vector3 vector) { x %= vector.x; y %= vector.y; z %= vector.z; return this; }
+    Vector3 operator+=(Vector3 vector) { x += new Vector.x; y += new Vector.y; z += new Vector.z; return this; }
+    Vector3 operator-=(Vector3 vector) { x -= new Vector.x; y -= new Vector.y; z -= new Vector.z; return this; }
+    Vector3 operator=(Vector3 vector) { x *= new Vector.x; y *= new Vector.y; z *= new Vector.z; return this; }
+    Vector3 operator/=(Vector3 vector) { x /= new Vector.x; y /= new Vector.y; z /= new Vector.z; return this; }
+    Vector3 operator%=(Vector3 vector) { x %= new Vector.x; y %= new Vector.y; z %= new Vector.z; return this; }
 
     Vector3 operator+(Vector3 vector) { return new Vector3(x + vector.x, y + vector.y, z + vector.z); }
     Vector3 operator-(Vector3 vector) { return new Vector3(x - vector.x, y - vector.y, z - vector.z); }
@@ -177,8 +167,8 @@ struct Vector3
     Vector3 operator+() { return this; }
     Vector3 operator-() { return new Vector3(-x, -y, -z); }
 
-    bool operator==(Vector3 vector) { return x == vector.x && y == vector.y && z == vector.z; }
-    bool operator!=(Vector3 vector) { return x != vector.x || y != vector.y || z != vector.z; }
+    bool operator==(Vector3 vector) { return x == new Vector.x && y == new Vector.y && z == new Vector.z; }
+    bool operator!=(Vector3 vector) { return x != new Vector.x || y != new Vector.y || z != new Vector.z; }
 
     Vector3 divideRoundingDown(int divisor)
     {

@@ -4,7 +4,7 @@ class Area
     World world;
     Vector2 position;
     const int size = 64;
-    const Vector2 sizeVector = Vector2(size, size);
+    const Vector2 sizeVector = new Vector2(size, size);
 
     World getWorld() { return world; }
     Vector2 getPosition() { return position; }

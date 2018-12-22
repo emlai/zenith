@@ -1,4 +1,4 @@
-using Vector2 = Vector2<int>;
+using Vector2 = new Vector2<int>;
 
 const double pi = 3.14159265358979324;
 

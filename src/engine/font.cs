@@ -66,7 +66,7 @@ private:
     const Vector2 dimensions;
     const int chars = 96;
 }
-const Vector2 BitmapFont::dimensions = Vector2(16, 6);
+const Vector2 BitmapFont::dimensions = new Vector2(16, 6);
 
 BitmapFont::BitmapFont(string fileName, Vector2 charSize)
 :   printArea(0, 0, 0, 0),
@@ -252,13 +252,13 @@ void BitmapFont::initCurrentPosition()
     switch (layout.verticalAlignment)
     {
         case TopAlign:
-            currentPosition = Vector2(printArea.position.x, printArea.getTop());
+            currentPosition = new Vector2(printArea.position.x, printArea.getTop());
             break;
         case VerticalCenter:
-            currentPosition = Vector2(printArea.position.x, printArea.getCenter().y);
+            currentPosition = new Vector2(printArea.position.x, printArea.getCenter().y);
             break;
         case BottomAlign:
-            currentPosition = Vector2(printArea.position.x, printArea.getBottom());
+            currentPosition = new Vector2(printArea.position.x, printArea.getBottom());
             break;
     }
 }

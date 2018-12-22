@@ -18,7 +18,7 @@ void LightSource::emitLight(World world, Vector2 position, int level)
     {
         for (int dy = -radius; dy <= radius; ++dy)
         {
-            double reverseIntensity = Vector2(dx, dy).getLengthSquared() / radiusSquared;
+            double reverseIntensity = new Vector2(dx, dy).getLengthSquared() / radiusSquared;
 
             if (reverseIntensity >= 1.0)
                 continue;

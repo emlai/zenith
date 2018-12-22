@@ -66,7 +66,7 @@ class Menu : State
         itemLayout = Vertical;
         itemSpacing = 1;
         itemSize = null;
-        tableCellSpacing = Vector2(0, 0);
+        tableCellSpacing = new Vector2(0, 0);
         secondaryColumnAlignment = LeftAlign;
         textColor = defaultTextColor;
         hoverColor = defaultHoverColor;
@@ -185,7 +185,7 @@ class Menu : State
             lines = 1;
         }
 
-        size = Vector2(maxCharsPerLine, lines);
+        size = new Vector2(maxCharsPerLine, lines);
     }
 
     void calculateItemPositions()
@@ -196,9 +196,9 @@ class Menu : State
         Vector2 size;
 
         if (itemLayout == Vertical)
-            size = Vector2(area.size.x, itemSize ? itemSize.y : area.size.y / menuItems.size());
+            size = new Vector2(area.size.x, itemSize ? itemSize.y : area.size.y / menuItems.size());
         else
-            size = Vector2(itemSize ? itemSize.x : area.size.x / menuItems.size(), area.size.y);
+            size = new Vector2(itemSize ? itemSize.x : area.size.x / menuItems.size(), area.size.y);
 
         Vector2 position = area.position;
 

@@ -168,7 +168,7 @@ class Tile
                                           getSize().x / 2, lineHeight);
                             window.getGraphicsContext().renderFilledRectangle(lineArea, GUIColor::Black);
 
-                            Vector2 inset = Vector2(window.getFont().getColumnWidth(),
+                            Vector2 inset = new Vector2(window.getFont().getColumnWidth(),
                                                     window.getFont().getRowHeight() / 2);
                             Rect tooltipArea(Vector2(lineArea.getRight(), tileRect.getTop()),
                                              window.getFont().getTextSize(tooltip) + inset * 2);
