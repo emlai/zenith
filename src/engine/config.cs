@@ -1,25 +1,32 @@
+using System;
+using System.Collections.Generic;
+using Group = Group_<Value>;
+
 class Config
 {
     Group data;
 
-    ValueType? getOptional<ValueType>(string key)
+    ValueType? getOptional<ValueType>(string key) where ValueType : struct
     {
-        if (var value = data.getOptional(key))
-        return convert<ValueType>(value);
+        var value = data.getOptional(key);
+
+        if (value)
+            return convert<ValueType>(value);
 
         return null;
     }
 
-    ValueType get<ValueType>(string type, string attribute)
+    ValueType get<ValueType>(string type, string attribute) where ValueType : struct
     {
         var value = getOptional<ValueType>(type, attribute);
-        if (value)
-            return ValueType(value);
-        else
-            throw new Exception("attribute \"" + attribute + "\" not found for \"" + type + "\"!");
+
+        if (value != null)
+            return value.Value;
+
+        throw new Exception("attribute \"" + attribute + "\" not found for \"" + type + "\"!");
     }
 
-    ValueType? getOptional<ValueType>(string type, string attribute)
+    ValueType? getOptional<ValueType>(string type, string attribute) where ValueType : struct
     {
         string current = type;
         string key = attribute;
@@ -32,14 +39,16 @@ class Config
                 return null;
 
             var group = groupValue.getGroup();
+            var value = group.getOptional(key);
 
-            if (var value = group.getOptional(key))
+            if (value != null)
             {
-                if (var converted = convert<ValueType>(value))
-                return converted;
-                else
-                throw new Exception("attribute \"" + attribute + "\" of class \"" + current +
-                                         "\" has wrong type!");
+                var converted = convert<ValueType>(value);
+
+                if (converted)
+                    return converted;
+
+                throw new Exception("attribute \"" + attribute + "\" of class \"" + current + "\" has wrong type!");
             }
 
             var baseType = group.getOptional("BaseType");
@@ -60,103 +69,72 @@ class Config
                 throw new Exception("BaseType of \"" + current + "\" has wrong type!");
         }
     }
+
     void set(string key, bool value) { data.insert(key, Value(value)); }
     void set(string key, long value) { data.insert(key, Value(value)); }
     void set(string key, double value) { data.insert(key, Value(value)); }
 
-private:
-    template<typename Value>
-    class Group_
+    class Group_<Value> where Value : struct
     {
+        Dictionary<string, Value> properties;
+
         Value at(string key)
         {
-            if (var value = getOptional(key))
+            var value = getOptional(key);
+
+            if (value != null)
                 return value;
 
-            throw std::out_of_range(key);
+            throw new IndexOutOfRangeException(key);
         }
 
-        Value getOptional(string key)
+        Value? getOptional(string key)
         {
-            var it = properties.find(key);
+            Value value;
 
-            if (it != properties.end())
-                return it.second;
+            if (properties.TryGetValue(key, out value))
+                return value;
 
             return null;
         }
 
-        var begin() { return properties.begin(); }
-        var end() { return properties.end(); }
-
         void insert(string key, Value value)
         {
-            properties.emplace(key, value);
+            properties[key] = value;
         }
-
-    private:
-        Dictionary<string, Value> properties;
     }
 
-    class Value
+    struct Value
     {
-        using Integer = long;
-        enum Type
-        {
-            Bool,
-            Int,
-            Float,
-            String,
-            List,
-            Group
-        }
+        object value;
 
-        Value(bool value) : boolean(value), type(Type::Bool) {}
-        Value(Integer value) : integer(value), type(Type::Int) {}
-        Value(double value) : floatingPoint(value), type(Type::Float) {}
-        Value(string value) : string(value), type(Type::String) {}
-        Value(List<Value> value) : list(value), type(Type::List) {}
-        Value(Group_<Value> value) : group(value), type(Type::Group) {}
-        Value(Value value);
-        ~Value();
-        Type getType() { return type; }
-        bool isBool() { return type == Type::Bool; }
-        bool isInt() { return type == Type::Int; }
-        bool isFloat() { return type == Type::Float; }
-        bool isString() { return type == Type::String; }
-        bool isList() { return type == Type::List; }
-        bool isGroup() { return type == Type::Group; }
-        bool getBool() { return boolean; }
-        Integer getInt() { return integer; }
-        double getFloat() { return floatingPoint; }
-        string getString() { return string; }
-        List<Value> getList() { return list; }
-        Group_<Value> getGroup() { return group; }
-
-    private:
-        union
-        {
-            bool boolean;
-            Integer integer;
-            double floatingPoint;
-            string string;
-            List<Value> list;
-            Group_<Value> group;
-        }
-
-        Type type;
+        Value(bool value) { this.value = value; }
+        Value(long value) { this.value = value; }
+        Value(double value) { this.value = value; }
+        Value(string value) { this.value = value; }
+        Value(List<Value> value) { this.value = value; }
+        Value(Group_<Value> value) { this.value = value; }
+        Type getType() { return value.GetType(); }
+        bool isBool() { return value is bool; }
+        bool isInt() { return value is long; }
+        bool isFloat() { return value is double; }
+        bool isString() { return value is string; }
+        bool isList() { return value is List<Value>; }
+        bool isGroup() { return value is Group_<Value>; }
+        bool getBool() { return (bool) value; }
+        long getInt() { return (long) value; }
+        double getFloat() { return (double) value; }
+        string getString() { return (string) value; }
+        List<Value> getList() { return (List<Value>) value; }
+        Group_<Value> getGroup() { return (Group_<Value>) value; }
     }
 
-    using Group = Group_<Value>;
-
-    template<typename OutputType>
-    template<typename OutputType>
-    static OutputType? convert(Value value)
+    static OutputType? convert<OutputType>(Value value)
     {
         return ConversionTraits<OutputType>()(value);
     }
 
-    List<string> Config::getToplevelKeys()
+    List<string> getToplevelKeys()
     {
         List<string> keys;
 
@@ -172,9 +150,9 @@ private:
         return keys;
     }
 
-    Config::Group Config::parseGroup(ConfigReader reader)
+    Group parseGroup(ConfigReader reader)
     {
-        Config::Group map;
+        Group map;
 
         while (true)
         {
@@ -191,7 +169,7 @@ private:
         return map;
     }
 
-    Config::Value Config::parseProperty(ConfigReader reader)
+    Value parseProperty(ConfigReader reader)
     {
         var ch = reader.get();
 
@@ -208,7 +186,7 @@ private:
         return value;
     }
 
-    Config::Value Config::parseValue(ConfigReader reader)
+    Value parseValue(ConfigReader reader)
     {
         if (reader.peek() == '[')
             return parseArray(reader);
@@ -216,7 +194,7 @@ private:
             return parseAtomicValue(reader);
     }
 
-    Config::Value Config::parseArray(ConfigReader reader)
+    Value parseArray(ConfigReader reader)
     {
         assert(reader.peek() == '[');
         reader.get();
@@ -249,7 +227,7 @@ private:
         return values;
     }
 
-    Config::Value Config::parseNumber(ConfigReader reader)
+    Value parseNumber(ConfigReader reader)
     {
         string value;
         bool hasDot = false;
@@ -295,7 +273,7 @@ private:
             return std::stoll(value);
     }
 
-    Config::Value Config::parseAtomicValue(ConfigReader reader)
+    Value parseAtomicValue(ConfigReader reader)
     {
         var ch = reader.peek();
 
@@ -321,7 +299,7 @@ private:
         throw reader.syntaxError("number, id, or double-quoted string", char(ch));
     }
 
-    Config::Config(string filePath)
+    Config(string filePath)
     {
         ConfigReader reader(filePath);
 
@@ -348,7 +326,7 @@ private:
         }
     }
 
-    void Config::printValue(std::ostream stream, Config::Value value)
+    void printValue(std::ostream stream, Value value)
     {
         switch (value.getType())
         {
@@ -383,7 +361,7 @@ private:
         }
     }
 
-    void Config::writeToFile(string filePath)
+    void writeToFile(string filePath)
     {
         std::ofstream file(filePath);
 
@@ -397,13 +375,13 @@ private:
 }
 
 template<typename OutputType>
-struct Config::ConversionTraits
+struct ConversionTraits
 {
     OutputType? operator()(Value value);
 }
 
 template<>
-struct Config::ConversionTraits<bool>
+struct ConversionTraits<bool>
 {
     bool? operator()(Value value)
     {
@@ -415,7 +393,7 @@ struct Config::ConversionTraits<bool>
 }
 
 template<>
-struct Config::ConversionTraits<int>
+struct ConversionTraits<int>
 {
     int? operator()(Value value)
     {
@@ -427,7 +405,7 @@ struct Config::ConversionTraits<int>
 }
 
 template<>
-struct Config::ConversionTraits<unsigned>
+struct ConversionTraits<unsigned>
 {
     unsigned? operator()(Value value)
     {
@@ -439,7 +417,7 @@ struct Config::ConversionTraits<unsigned>
 }
 
 template<>
-struct Config::ConversionTraits<unsigned short>
+struct ConversionTraits<unsigned short>
 {
     unsigned short? operator()(Value value)
     {
@@ -451,7 +429,7 @@ struct Config::ConversionTraits<unsigned short>
 }
 
 template<>
-struct Config::ConversionTraits<double>
+struct ConversionTraits<double>
 {
     double? operator()(Value value)
     {
@@ -466,7 +444,7 @@ struct Config::ConversionTraits<double>
 }
 
 template<>
-struct Config::ConversionTraits<string>
+struct ConversionTraits<string>
 {
     string? operator()(Value value)
     {
@@ -478,7 +456,7 @@ struct Config::ConversionTraits<string>
 }
 
 template<typename ElementType>
-struct Config::ConversionTraits<List<ElementType>>
+struct ConversionTraits<List<ElementType>>
 {
     List<ElementType?> operator()(Value value)
     {
