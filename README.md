@@ -19,6 +19,10 @@ macOS (with [Homebrew](https://brew.sh/)):
 
     brew install cmake boost sdl2
 
+When invoking CMake, you may need to define the paths to SDL2 and Boost:
+
+    -DSDL2_PATH=... -DBOOST_ROOT=... -DBOOST_LIBRARYDIR=...
+
 **Note:** On Windows, in addition to specifying the `BOOST_ROOT` and
 `BOOST_LIBRARYDIR` variables for CMake, you may need to also specify
 `Boost_COMPILER` in order to find the Boost libraries: e.g.
