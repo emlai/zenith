@@ -106,12 +106,12 @@ Creature::Creature(const SaveFile& file, Tile* tile)
     for (int i = 0; i < inventorySize; ++i)
         inventory.push_back(Item::load(file));
 
-    for (auto& slotAndItem : equipment)
+    for (auto& item : equipment)
     {
         auto itemIndex = file.readInt16();
 
         if (itemIndex != -1)
-            slotAndItem.second = &*inventory[size_t(itemIndex)];
+            item = inventory[itemIndex].get();
     }
 
     file.read(attributeValues);
@@ -135,8 +135,8 @@ void Creature::save(SaveFile& file) const
 
     file.write(inventory);
 
-    for (auto slotAndItem : equipment)
-        file.writeInt16(int16_t(slotAndItem.second ? getInventoryIndex(*slotAndItem.second) : -1));
+    for (auto item : equipment)
+        file.writeInt16(int16_t(item ? getInventoryIndex(*item) : -1));
 
     file.write(attributeValues);
     file.write(currentHP);
@@ -529,9 +529,9 @@ bool Creature::pickUpItem()
     return false;
 }
 
-void Creature::equip(EquipmentSlot slot, Item* itemToEquip)
+void Creature::equip(EquipmentSlot slot, Item* item)
 {
-    equipment.at(slot) = itemToEquip;
+    equipment[slot] = item;
 }
 
 bool Creature::use(Item& itemToUse, Game& game)

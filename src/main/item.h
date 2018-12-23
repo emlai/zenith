@@ -1,6 +1,7 @@
 #pragma once
 
 #include "entity.h"
+#include "creature.h"
 #include "engine/geometry.h"
 #include "engine/sprite.h"
 #include <string_view>
@@ -9,7 +10,6 @@
 class Creature;
 class SaveFile;
 class Window;
-enum EquipmentSlot : int;
 
 class Item : public Entity
 {

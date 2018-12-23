@@ -6,7 +6,6 @@
 #include "engine/geometry.h"
 #include "engine/sprite.h"
 #include "engine/utility.h"
-#include <unordered_map>
 #include <unordered_set>
 #include <cctype>
 #include <memory>
@@ -63,7 +62,7 @@ const std::string attributeAbbreviations[] =
 
 const std::string statNames[] = { "HP", "AP", "MP" };
 
-enum EquipmentSlot : int
+enum EquipmentSlot
 {
     Hand,
     Head,
@@ -74,15 +73,6 @@ enum EquipmentSlot : int
 const int equipmentSlots = 4;
 
 std::string_view toString(EquipmentSlot slot);
-
-namespace std
-{
-    template<>
-    struct hash<EquipmentSlot>
-    {
-        size_t operator()(EquipmentSlot slot) const { return size_t(slot); }
-    };
-}
 
 class Creature final : public Entity
 {
@@ -100,7 +90,7 @@ public:
     void takeDamage(double amount);
     void bleed();
     bool pickUpItem();
-    void equip(EquipmentSlot slot, Item* itemToEquip);
+    void equip(EquipmentSlot slot, Item* item);
     bool use(Item&, Game& game);
     void drop(Item&);
     bool eat(Item&);
@@ -113,7 +103,7 @@ public:
     const auto& getInventory() const { return inventory; }
     const auto& getEquipment() const { return equipment; }
     std::unique_ptr<Item> removeItem(Item& item);
-    Item* getEquipment(EquipmentSlot slot) const { return equipment.at(slot); }
+    Item* getEquipment(EquipmentSlot slot) const { return equipment[slot]; }
     int getInventoryIndex(const Item& item) const;
     bool isRunning() const { return running; }
     void setRunning(bool running) { this->running = running; }
@@ -157,7 +147,7 @@ private:
     std::vector<Tile*> tilesUnder;
     mutable std::unordered_set<Vector3> seenTilePositions;
     std::vector<std::unique_ptr<Item>> inventory;
-    std::unordered_map<EquipmentSlot, Item*> equipment;
+    Item* equipment[equipmentSlots];
     double currentHP, maxHP, currentAP, currentMP, maxMP;
     bool running;
     std::vector<double> attributeValues;
