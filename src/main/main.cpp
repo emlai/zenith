@@ -3,12 +3,12 @@
 #include "gui.h"
 #include "engine/engine.h"
 #include "engine/menu.h"
+#include "engine/filesystem.h"
 #include "engine/geometry.h"
 #include "engine/utility.h"
 #include "engine/window.h"
 #include <cassert>
 #include <cstdio>
-#include <filesystem>
 #include <iostream>
 #include <memory>
 
@@ -187,7 +187,7 @@ void MainMenu::execute()
     {
         clear();
 
-        if (game || std::filesystem::exists(Game::saveFileName))
+        if (game || fs::exists(Game::saveFileName))
             addItem(MenuItem(LoadGame, "Load game", 'l'));
         else
             addItem(MenuItem(NewGame, "New game", 'n'));
@@ -267,7 +267,7 @@ int main(int argc, char** argv)
     auto& window = engine.createWindow(Window::getScreenResolution(), PROJECT_NAME, true);
     window.setAnimationFrameRate(4);
 
-    if (std::filesystem::exists(preferencesFileName))
+    if (fs::exists(preferencesFileName))
     {
         Config preferences(preferencesFileName);
         window.getGraphicsContext().setScale(preferences.getOptional<double>("GraphicsScale").value_or(1));
