@@ -38,10 +38,7 @@ Texture::Texture(std::string_view fileName, Color transparentColor)
 
     if (transparentColor)
     {
-        auto colorKey = SDL_MapRGB(surface->format,
-                                   static_cast<uint8_t>(transparentColor.getRed()),
-                                   static_cast<uint8_t>(transparentColor.getGreen()),
-                                   static_cast<uint8_t>(transparentColor.getBlue()));
+        auto colorKey = SDL_MapRGB(surface->format, transparentColor.r, transparentColor.g,transparentColor.b);
         SDL_SetColorKey(surface.get(), 1, colorKey);
     }
 
@@ -112,7 +109,7 @@ void Texture::render(Window& window, Rect source, Rect target, Color materialCol
             if (isMagenta)
             {
                 auto brightness = abgr[3] / 128.0;
-                pixel = (materialColor * brightness).value;
+                pixel = (materialColor * brightness).intValue();
             }
 
             auto targetY = y - source.getTop() + target.getTop();
@@ -139,10 +136,6 @@ int Texture::getHeight() const
 
 void Texture::setColor(Color color) const
 {
-    SDL_SetSurfaceColorMod(surface.get(),
-                           uint8_t(color.getRed()),
-                           uint8_t(color.getGreen()),
-                           uint8_t(color.getBlue()));
-    SDL_SetSurfaceAlphaMod(surface.get(),
-                           uint8_t(color.getAlpha()));
+    SDL_SetSurfaceColorMod(surface.get(), color.r, color.g, color.b);
+    SDL_SetSurfaceAlphaMod(surface.get(), color.a);
 }

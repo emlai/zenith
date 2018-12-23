@@ -126,10 +126,10 @@ void GraphicsContext::renderRectangle(Rect rectangle, Color color)
     SDL_Rect bottomLine = { rectangle.getLeft(), rectangle.getBottom(), rectangle.getWidth(), 1 };
     SDL_Rect leftLine = { rectangle.getLeft(), rectangle.getTop(), 1, rectangle.getHeight() };
     SDL_Rect rightLine = { rectangle.getRight(), rectangle.getTop(), 1, rectangle.getHeight() };
-    SDL_FillRect(targetTexture.getSurface(), &topLine, color.value);
-    SDL_FillRect(targetTexture.getSurface(), &bottomLine, color.value);
-    SDL_FillRect(targetTexture.getSurface(), &leftLine, color.value);
-    SDL_FillRect(targetTexture.getSurface(), &rightLine, color.value);
+    SDL_FillRect(targetTexture.getSurface(), &topLine, color.intValue());
+    SDL_FillRect(targetTexture.getSurface(), &bottomLine, color.intValue());
+    SDL_FillRect(targetTexture.getSurface(), &leftLine, color.intValue());
+    SDL_FillRect(targetTexture.getSurface(), &rightLine, color.intValue());
 }
 
 void GraphicsContext::renderFilledRectangle(Rect rectangle, Color color, BlendMode blendMode)
@@ -139,7 +139,7 @@ void GraphicsContext::renderFilledRectangle(Rect rectangle, Color color, BlendMo
     switch (blendMode)
     {
         case BlendMode::Normal:
-            SDL_FillRect(targetTexture.getSurface(), reinterpret_cast<const SDL_Rect*>(&rectangle), color.value);
+            SDL_FillRect(targetTexture.getSurface(), reinterpret_cast<const SDL_Rect*>(&rectangle), color.intValue());
             break;
 
         case BlendMode::LinearLight:
@@ -149,9 +149,9 @@ void GraphicsContext::renderFilledRectangle(Rect rectangle, Color color, BlendMo
                 || rectangle.getRight() >= targetSurface->w || rectangle.getBottom() >= targetSurface->h)
                 return;
 
-            double dstR = color.getRed() / 255.0;
-            double dstG = color.getGreen() / 255.0;
-            double dstB = color.getBlue() / 255.0;
+            double dstR = color.r / 255.0;
+            double dstG = color.g / 255.0;
+            double dstB = color.b / 255.0;
             uint32_t* pixels = static_cast<uint32_t*>(targetSurface->pixels);
             auto targetWidth = targetSurface->w;
 

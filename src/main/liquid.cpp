@@ -12,7 +12,7 @@ Liquid::Liquid(std::string_view materialId)
     Vector2 position(randInt(Tile::getSize().x - width), randInt(Tile::getSize().y - height));
     SDL_Rect liquidRectangle = { position.x, position.y, width, height };
     auto color = Color(Game::materialConfig->get<uint32_t>(materialId, "Color"));
-    SDL_FillRect(texture.getSurface(), &liquidRectangle, color.value);
+    SDL_FillRect(texture.getSurface(), &liquidRectangle, color.intValue());
 }
 
 Liquid::Liquid(const SaveFile& file)

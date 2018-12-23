@@ -17,7 +17,7 @@ static Color getMaterialColor(std::string_view materialId)
         catch (const std::runtime_error&)
         {
             if (Game::materialConfig->get<std::string>(materialId, "Color") == "Random")
-                return Color(randInt(Color::max / 2), randInt(Color::max / 2), randInt(Color::max / 2));
+                return Color(randInt(0xff / 2), randInt(0xff / 2), randInt(0xff / 2));
             else
                 throw;
         }
@@ -69,7 +69,7 @@ void Item::save(SaveFile& file) const
 {
     file.write(getId());
     file.write(materialId);
-    file.writeInt32(sprite.getMaterialColor().value);
+    file.writeInt32(sprite.getMaterialColor().intValue());
     for (auto& component : getComponents())
         component->save(file);
 }

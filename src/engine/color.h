@@ -5,66 +5,59 @@
 
 struct Color
 {
-    enum Channel { Red, Green, Blue, Alpha };
-
-    static constexpr int channelCount = 4;
-    static constexpr int bitsPerChannel = 8;
-    static constexpr int max = (1 << bitsPerChannel) - 1;
-    static constexpr int bit[channelCount] =
-    {
-        3 * bitsPerChannel, 2 * bitsPerChannel, 1 * bitsPerChannel, 0 * bitsPerChannel
-    };
-    static constexpr int temperatureCoefficient = int(0.25 * max);
-    static const Color white;
-    static const Color black;
-    static const Color none;
-    static constexpr bool modulateTemperature = true;
-
-    uint32_t value;
+    uint8_t r, g, b, a;
 
     Color() = default;
-    explicit Color(uint32_t value) : value(value) {}
-    Color(int red, int green, int blue, int alpha = max) : value(createValue(red, green, blue, alpha)) {}
 
-    int get(Channel channel) const { return value >> bit[channel] & max; }
-    void set(Channel channel, int n) { value = (~(max << bit[channel]) & value) | n << bit[channel]; }
-    void edit(Channel channel, int n) { set(channel, limit(get(channel) + n, 0, max)); }
+    explicit Color(uint32_t intValue)
+    {
+        r = (intValue >> 24) & 0xff;
+        g = (intValue >> 16) & 0xff;
+        b = (intValue >> 8) & 0xff;
+        a = intValue & 0xff;
+    }
 
-    int getRed() const { return get(Red); }
-    int getGreen() const { return get(Green); }
-    int getBlue() const { return get(Blue); }
-    int getAlpha() const { return get(Alpha); }
+    Color(int red, int green, int blue, int alpha = 0xff)
+    {
+        r = red;
+        g = green;
+        b = blue;
+        a = alpha;
+    }
+
+    uint32_t intValue() const
+    {
+        return (r << 24) | (g << 16) | (b << 8) | a;
+    }
+
+    explicit operator bool() const
+    {
+        return intValue() != 0;
+    }
 
     double getLuminance() const
     {
-        return (0.299 * getRed() + 0.587 * getGreen() + 0.114 * getBlue()) / max;
+        return (0.299 * r + 0.587 * g + 0.114 * b) / 0xff;
     }
 
-    void lighten(Color other)
+    void lighten(Color color)
     {
-        set(Red, std::max(getRed(), other.getRed()));
-        set(Green, std::max(getGreen(), other.getGreen()));
-        set(Blue, std::max(getBlue(), other.getBlue()));
+        r = std::max(r, color.r);
+        g = std::max(g, color.g);
+        b = std::max(b, color.b);
     }
 
-    Color& operator*=(double mod)
+    Color operator*(double mod) const
     {
-        int delta = int(modulateTemperature * sign(mod - 1.0) * ((2.0 - mod) * mod - 1.0) *
-                        temperatureCoefficient);
-        int red = int(limit(int(getRed() * mod + 0.5 - delta), 0, int(max)));
-        int green = int(limit(int(getGreen() * mod + 0.5), 0, int(max)));
-        int blue = int(limit(int(getBlue() * mod + 0.5 + delta), 0, int(max)));
-        value = createValue(red, green, blue, getAlpha());
-        return *this;
+        auto temperatureCoefficient = 0.25 * 0xff;
+        int delta = int(sign(mod - 1.0) * ((2.0 - mod) * mod - 1.0) * temperatureCoefficient);
+        int red = limit(int(r * mod + 0.5 - delta), 0, 0xff);
+        int green = limit(int(g * mod + 0.5), 0, 0xff);
+        int blue = limit(int(b * mod + 0.5 + delta), 0, 0xff);
+        return Color(red, green, blue, a);
     }
 
-    Color operator*(double mod) const { return Color(*this) *= mod; }
-
-    explicit operator bool() const { return value != 0; }
-
-private:
-    static inline uint32_t createValue(int red, int green, int blue, int alpha = max)
-    {
-        return static_cast<uint32_t>(red << bit[Red] | green << bit[Green] | blue << bit[Blue] | alpha << bit[Alpha]);
-    }
+    static const Color white;
+    static const Color black;
+    static const Color none;
 };
