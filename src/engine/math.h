@@ -16,12 +16,6 @@ T sign(T value)
     return (value > 0) - (value < 0);
 }
 
-template<typename T>
-T limit(T value, T min, T max)
-{
-    return std::min(std::max(value, min), max);
-}
-
 /* Pseudo-random number generation */
 
 struct Xorshift1024Star

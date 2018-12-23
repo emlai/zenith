@@ -1,6 +1,7 @@
 #pragma once
 
 #include "math.h"
+#include <algorithm>
 #include <cstdint>
 
 struct Color
@@ -51,9 +52,9 @@ struct Color
     {
         auto temperatureCoefficient = 0.25 * 0xff;
         int delta = int(sign(mod - 1.0) * ((2.0 - mod) * mod - 1.0) * temperatureCoefficient);
-        int red = limit(int(r * mod + 0.5 - delta), 0, 0xff);
-        int green = limit(int(g * mod + 0.5), 0, 0xff);
-        int blue = limit(int(b * mod + 0.5 + delta), 0, 0xff);
+        int red = std::clamp(int(r * mod + 0.5 - delta), 0, 0xff);
+        int green = std::clamp(int(g * mod + 0.5), 0, 0xff);
+        int blue = std::clamp(int(b * mod + 0.5 + delta), 0, 0xff);
         return Color(red, green, blue, a);
     }
 
