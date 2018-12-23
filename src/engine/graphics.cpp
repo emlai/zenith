@@ -134,51 +134,39 @@ void GraphicsContext::renderFilledRectangle(Rect rectangle, Color color, BlendMo
 
         case BlendMode::LinearLight:
             SDL_Surface* targetSurface = targetTexture.surface.get();
+            auto left = rectangle.getLeft();
+            auto top = rectangle.getTop();
+            auto right = rectangle.getRight();
+            auto bottom = rectangle.getBottom();
 
-            if (rectangle.getLeft() < 0 || rectangle.getTop() < 0
-                || rectangle.getRight() >= targetSurface->w || rectangle.getBottom() >= targetSurface->h)
+            if (left < 0 || top < 0 || right >= targetSurface->w || bottom >= targetSurface->h)
                 return;
 
-            double dstR = color.r / 255.0;
-            double dstG = color.g / 255.0;
-            double dstB = color.b / 255.0;
+            float dstR = color.r / 255.0f;
+            float dstG = color.g / 255.0f;
+            float dstB = color.b / 255.0f;
             uint32_t* pixels = static_cast<uint32_t*>(targetSurface->pixels);
             auto targetWidth = targetSurface->w;
 
-            for (auto y = rectangle.getTop(); y <= rectangle.getBottom(); ++y)
+            for (auto y = top; y <= bottom; ++y)
             {
-                for (auto x = rectangle.getLeft(); x <= rectangle.getRight(); ++x)
+                for (auto x = left; x <= right; ++x)
                 {
                     uint32_t* pixel = pixels + (y * targetWidth + x);
-                    double srcR = ((*pixel & 0xFF000000) >> 24) / 255.0;
-                    double srcG = ((*pixel & 0x00FF0000) >> 16) / 255.0;
-                    double srcB = ((*pixel & 0x0000FF00) >> 8) / 255.0;
 
-                    auto blendLinearLight = [](auto& src, auto dst)
-                    {
-                        if (dst > 0.5)
-                            src += 2.0 * dst - 1.0;
-                        else
-                            src = src + 2.0 * dst - 1.0;
-                    };
+                    float srcR = ((*pixel & 0xFF000000) >> 24) / 255.0f;
+                    float srcG = ((*pixel & 0x00FF0000) >> 16) / 255.0f;
+                    float srcB = ((*pixel & 0x0000FF00) >> 8) / 255.0f;
 
-                    blendLinearLight(srcR, dstR);
-                    blendLinearLight(srcG, dstG);
-                    blendLinearLight(srcB, dstB);
+                    srcR = (dstR > 0.5f) * (srcR + 2.0f * (dstR - 0.5f)) + (dstR <= 0.5f) * (srcR + 2.0f * dstR - 1.0f);
+                    srcG = (dstG > 0.5f) * (srcG + 2.0f * (dstG - 0.5f)) + (dstG <= 0.5f) * (srcG + 2.0f * dstG - 1.0f);
+                    srcB = (dstB > 0.5f) * (srcB + 2.0f * (dstB - 0.5f)) + (dstB <= 0.5f) * (srcB + 2.0f * dstB - 1.0f);
 
-                    auto wrap = [](auto& src)
-                    {
-                        if (src > 1.0)
-                            src = 1.0;
-                        else if (src < 0.0)
-                            src = 0.0;
-                    };
+                    srcR = srcR < 0.0f ? 0.0f : srcR > 1.0f ? 1.0f : srcR;
+                    srcG = srcG < 0.0f ? 0.0f : srcG > 1.0f ? 1.0f : srcG;
+                    srcB = srcB < 0.0f ? 0.0f : srcB > 1.0f ? 1.0f : srcB;
 
-                    wrap(srcR);
-                    wrap(srcG);
-                    wrap(srcB);
-
-                    *pixel = int(255 * srcR) << 24 | int(255 * srcG) << 16 | int(255 * srcB) << 8 | 255;
+                    *pixel = uint32_t(255 * srcR) << 24 | uint32_t(255 * srcG) << 16 | uint32_t(255 * srcB) << 8 | 255;
                 }
             }
             break;
