@@ -10,17 +10,17 @@ BitmapFont::BitmapFont(std::string_view fileName, Vector2 charSize)
 :   printArea(0, 0, 0, 0),
     lineContinuation(false),
     currentPosition(0, 0),
-    defaultColor(Color32::white),
+    defaultColor(Color::white),
     drawShadows(false),
     shadowColorMod(0.5),
     shadowPosition(1, 1),
     charSize(charSize),
     moveVector(charSize),
-    texture(fileName, Color32::black)
+    texture(fileName, Color::black)
 {
 }
 
-void BitmapFont::print(Window& window, std::string_view text, Color32 color, Color32 backgroundColor,
+void BitmapFont::print(Window& window, std::string_view text, Color color, Color backgroundColor,
                        bool blend, LineBreakMode lineBreakMode)
 {
     if (!color)
@@ -39,7 +39,7 @@ void BitmapFont::print(Window& window, std::string_view text, Color32 color, Col
     lineContinuation = true;
 }
 
-void BitmapFont::printLine(Window& window, std::string_view text, Color32 color, Color32 backgroundColor,
+void BitmapFont::printLine(Window& window, std::string_view text, Color color, Color backgroundColor,
                            bool blend, LineBreakMode lineBreakMode)
 {
     print(window, text, color, backgroundColor, blend, lineBreakMode);
@@ -48,7 +48,7 @@ void BitmapFont::printLine(Window& window, std::string_view text, Color32 color,
 }
 
 void BitmapFont::printWithCursor(Window& window, std::string_view text, const char* cursor,
-                                 Color32 mainColor, Color32 cursorColor, Color32 backgroundColor)
+                                 Color mainColor, Color cursorColor, Color backgroundColor)
 {
     Vector2 cursorPosition = currentPosition + Vector2(int((cursor - text.data()) * moveVector.x), 0);
     print(window, text, mainColor);
@@ -60,7 +60,7 @@ void BitmapFont::printWithCursor(Window& window, std::string_view text, const ch
 }
 
 Vector2 BitmapFont::printHelper(Window& window, std::string_view text, Vector2 position,
-                                Color32 backgroundColor, LineBreakMode lineBreakMode) const
+                                Color backgroundColor, LineBreakMode lineBreakMode) const
 {
     Rect source;
     source.size = charSize;
@@ -130,7 +130,7 @@ Vector2 BitmapFont::printHelper(Window& window, std::string_view text, Vector2 p
 }
 
 void BitmapFont::printLine(Window& window, PrintIterator lineBegin, PrintIterator lineEnd,
-                           Rect& source, Rect& target, Color32 backgroundColor) const
+                           Rect& source, Rect& target, Color backgroundColor) const
 {
     const int lineWidth = int((lineEnd - lineBegin) * moveVector.x);
 

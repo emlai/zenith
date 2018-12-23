@@ -6,24 +6,24 @@
 #include "engine/savefile.h"
 #include <iostream>
 
-static Color16 getMaterialColor(std::string_view materialId)
+static Color getMaterialColor(std::string_view materialId)
 {
     if (!materialId.empty())
     {
         try
         {
-            return Color16(static_cast<uint16_t>(Game::materialConfig->get<int>(materialId, "Color")));
+            return Color(Game::materialConfig->get<int>(materialId, "Color"));
         }
         catch (const std::runtime_error&)
         {
             if (Game::materialConfig->get<std::string>(materialId, "Color") == "Random")
-                return Color16(randInt(Color16::max / 2), randInt(Color16::max / 2), randInt(Color16::max / 2));
+                return Color(randInt(Color::max / 2), randInt(Color::max / 2), randInt(Color::max / 2));
             else
                 throw;
         }
     }
     else
-        return Color16::none;
+        return Color::none;
 }
 
 Item::Item(std::string_view id, std::string_view materialId)
@@ -56,7 +56,7 @@ std::unique_ptr<Item> Item::load(const SaveFile& file)
     {
         auto materialId = file.readString();
         item = std::make_unique<Item>(itemId, materialId);
-        item->sprite.setMaterialColor(Color32(file.readUint32()));
+        item->sprite.setMaterialColor(Color(file.readUint32()));
     }
 
     for (auto& component : item->getComponents())
@@ -138,14 +138,14 @@ std::string getRandomMaterialId(std::string_view itemId)
 
 Corpse::Corpse(std::unique_ptr<Creature> creature)
 :   Item(creature->getId() + "Corpse", "", ::getSprite(*Game::creatureSpriteSheet, *Game::creatureConfig,
-                                                       creature->getId(), corpseFrame, Color32::none)),
+                                                       creature->getId(), corpseFrame, Color::none)),
     creature(std::move(creature))
 {
 }
 
 Corpse::Corpse(std::string_view creatureId)
 :   Item(creatureId + "Corpse", "", ::getSprite(*Game::creatureSpriteSheet, *Game::creatureConfig,
-                                                creatureId, corpseFrame, Color32::none))
+                                                creatureId, corpseFrame, Color::none))
 {
 }
 

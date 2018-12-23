@@ -119,7 +119,7 @@ Rect GraphicsContext::mapToTargetCoordinates(Rect rectangle) const
     return rectangle;
 }
 
-void GraphicsContext::renderRectangle(Rect rectangle, Color32 color)
+void GraphicsContext::renderRectangle(Rect rectangle, Color color)
 {
     rectangle = mapToTargetCoordinates(rectangle);
     SDL_Rect topLine = { rectangle.getLeft(), rectangle.getTop(), rectangle.getWidth(), 1 };
@@ -132,7 +132,7 @@ void GraphicsContext::renderRectangle(Rect rectangle, Color32 color)
     SDL_FillRect(targetTexture.getSurface(), &rightLine, color.value);
 }
 
-void GraphicsContext::renderFilledRectangle(Rect rectangle, Color32 color, BlendMode blendMode)
+void GraphicsContext::renderFilledRectangle(Rect rectangle, Color color, BlendMode blendMode)
 {
     rectangle = mapToTargetCoordinates(rectangle);
 

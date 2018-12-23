@@ -31,7 +31,7 @@ namespace MessageSystem
     };
 
     static const int debugMessageLimit = 16;
-    static const Color16 messageColors[] = { TextColor::White, TextColor::Red };
+    static const Color messageColors[] = { TextColor::White, TextColor::Red };
     static std::deque<DebugMessage> debugMessages;
     static std::vector<std::string> commandHistory;
     static std::vector<std::string>::iterator commandIterator = commandHistory.end();

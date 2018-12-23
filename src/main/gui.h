@@ -12,20 +12,20 @@ class Sprite;
 
 namespace GUIColor
 {
-    const Color16 White(0xFEEF);
-    const Color16 Gray(0x778F);
-    const Color16 Black(0x000F);
+    const Color White(0xFFEEEEFF);
+    const Color Gray(0x777788FF);
+    const Color Black(0x000000FF);
 }
 
 namespace TextColor
 {
-    const Color16 White(GUIColor::White);
-    const Color16 Gray(GUIColor::Gray);
-    const Color16 Red(0xF14F);
-    const Color16 Green(0x2C2F);
-    const Color16 Blue(0x66FF);
-    const Color16 Yellow(0xFD1F);
-    const Color16 Brown(0xE71F);
+    const Color White(GUIColor::White);
+    const Color Gray(GUIColor::Gray);
+    const Color Red(0xFF1144FF);
+    const Color Green(0x22CC22FF);
+    const Color Blue(0x6666FFFF);
+    const Color Yellow(0xFFDD11FF);
+    const Color Brown(0xEE7711FF);
 }
 
 namespace GUI
@@ -84,4 +84,4 @@ namespace GUI
 }
 
 Sprite getSprite(const Texture& spriteSheet, const Config& config, std::string_view id,
-                 int frame = 0, Color32 materialColor = Color32::none);
+                 int frame = 0, Color materialColor = Color::none);

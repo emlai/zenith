@@ -28,8 +28,8 @@ public:
     auto getAnimationFrameTime() const { return animationFrameTime; }
     void updateScreen();
     SDL_Renderer* getRenderer() const { return renderer.get(); }
-    void renderRectangle(Rect rectangle, Color32 color);
-    void renderFilledRectangle(Rect rectangle, Color32 color, BlendMode blendMode = BlendMode::Normal);
+    void renderRectangle(Rect rectangle, Color color);
+    void renderFilledRectangle(Rect rectangle, Color color, BlendMode blendMode = BlendMode::Normal);
 
 private:
     friend class Texture;

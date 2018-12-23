@@ -5,7 +5,7 @@
 #include "window.h"
 #include <SDL.h>
 
-Sprite::Sprite(const Texture& texture, Rect textureRegion, Color32 materialColor, int animationFrames)
+Sprite::Sprite(const Texture& texture, Rect textureRegion, Color materialColor, int animationFrames)
 :   texture(&texture), textureRegion(textureRegion), materialColor(materialColor),
     animationFrames(animationFrames), frame(0)
 {

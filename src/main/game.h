@@ -57,7 +57,7 @@ private:
     void renderAtPosition(Window&, Vector2 centerPosition);
     void render(Window& window) override;
     void printPlayerInformation(BitmapFont&) const;
-    void printStat(BitmapFont&, std::string_view, double current, double max, Color16) const;
+    void printStat(BitmapFont&, std::string_view, double current, double max, Color) const;
     void printAttribute(BitmapFont&, std::string_view, double current) const;
 
     bool gameIsRunning;

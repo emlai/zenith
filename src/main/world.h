@@ -29,7 +29,7 @@ public:
     Tile* getOrCreateTile(Vector2 position, int level);
     Tile* getTile(Vector2 position, int level);
     std::vector<Tile*> getTiles(Rect region, int level);
-    Color32 getSunlight() const { return sunlight; }
+    Color getSunlight() const { return sunlight; }
 
 private:
     Area* getOrCreateArea(Vector3 position);
@@ -41,5 +41,5 @@ private:
     std::unordered_map<Vector3, Area> areas;
     std::unordered_map<Vector3, int64_t> savedAreaOffsets;
     std::unique_ptr<SaveFile> saveFile;
-    Color32 sunlight;
+    Color sunlight;
 };

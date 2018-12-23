@@ -7,6 +7,7 @@
 #include "engine/savefile.h"
 #include <cassert>
 #include <cctype>
+#include <climits>
 #include <iomanip>
 #include <sstream>
 

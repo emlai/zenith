@@ -17,7 +17,7 @@ Tile::Tile(World& world, Vector2 position, int level, std::string_view groundId)
     level(level),
     groundId(groundId),
     groundSprite(getSprite(*Game::groundSpriteSheet, *Game::groundConfig, groundId)),
-    light(Color32::black)
+    light(Color::black)
 {
 }
 
@@ -27,7 +27,7 @@ Tile::Tile(const SaveFile& file, World& world, Vector2 position, int level)
     level(level),
     groundId(file.readString()),
     groundSprite(getSprite(*Game::groundSpriteSheet, *Game::groundConfig, groundId)),
-    light(Color32::black)
+    light(Color::black)
 {
     auto creatureCount = file.readInt32();
     creatures.reserve(size_t(creatureCount));
@@ -129,7 +129,7 @@ void Tile::render(Window& window, int zIndex, bool fogOfWar, bool renderLight) c
                     double minAlpha = 0.0;
                     double maxAlpha = 0.5;
                     double currentAlpha = minAlpha + (sine + 1) / 2 * (maxAlpha - minAlpha);
-                    Color32 cursorColor = Color32(0xFF, 0xFF, 0xFF, currentAlpha * 0xFF);
+                    auto cursorColor = Color(0xFF, 0xFF, 0xFF, currentAlpha * 0xFF);
                     Game::cursorTexture->setColor(cursorColor);
                     Game::cursorTexture->render(window, tileRect);
 
@@ -297,7 +297,7 @@ void Tile::resetLight()
     if (getLevel() >= 0)
         light = world.getSunlight();
     else
-        light = Color32::black;
+        light = Color::black;
 }
 
 bool Tile::blocksSight() const

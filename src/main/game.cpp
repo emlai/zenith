@@ -24,7 +24,7 @@ std::unique_ptr<Texture> Game::groundSpriteSheet;
 std::unique_ptr<Texture> Game::cursorTexture;
 std::unique_ptr<Texture> Game::fogOfWarTexture;
 
-static const Color32 transparentColor(0x5A5268FF);
+static const Color transparentColor(0x5A5268FF);
 std::optional<Vector2> Game::cursorPosition;
 
 Game::Game(bool loadSavedGame)
@@ -348,8 +348,7 @@ void Game::printPlayerInformation(BitmapFont& font) const
 #endif
 }
 
-void Game::printStat(BitmapFont& font, std::string_view statName, double currentValue,
-                     double maximumValue, Color16 color) const
+void Game::printStat(BitmapFont& font, std::string_view statName, double currentValue, double maximumValue, Color color) const
 {
     int currentValueInt = std::ceil(currentValue);
     int maximumValueInt = std::ceil(maximumValue);
@@ -363,14 +362,14 @@ void Game::printStat(BitmapFont& font, std::string_view statName, double current
     text.append(columns - text.size(), ' ');
 
     font.print(getWindow(), std::string_view(text).substr(0, filledColumns), TextColor::White, color, true, PreserveLines);
-    font.printLine(getWindow(), std::string_view(text).substr(filledColumns), TextColor::White, Color32::none, true, PreserveLines);
+    font.printLine(getWindow(), std::string_view(text).substr(filledColumns), TextColor::White, Color::none, true, PreserveLines);
 }
 
 void Game::printAttribute(BitmapFont& font, std::string_view attributeName, double attributeValue) const
 {
     std::string padding(5 - attributeName.size(), ' ');
     font.printLine(getWindow(), attributeName + padding + std::to_string(int(attributeValue)),
-                   Color32::none, Color32::none, true, PreserveLines);
+                   Color::none, Color::none, true, PreserveLines);
 }
 
 #ifdef DEBUG

@@ -11,8 +11,7 @@ static Rect getSpriteTextureRegion(const Config& config, std::string_view id)
     return Rect(Vector2(components.at(0) + offsetX, components.at(1)) * Tile::spriteSize, Tile::spriteSize);
 }
 
-Sprite getSprite(const Texture& spriteSheet, const Config& config, std::string_view id,
-                 int frame, Color32 materialColor)
+Sprite getSprite(const Texture& spriteSheet, const Config& config, std::string_view id, int frame, Color materialColor)
 {
     int animationFrames = frame == 0 ? config.get<int>(id, "animationFrames") : 1;
     Sprite sprite(spriteSheet, getSpriteTextureRegion(config, id), materialColor, animationFrames);

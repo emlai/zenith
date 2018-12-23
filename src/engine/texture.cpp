@@ -27,7 +27,7 @@ static SDL_Surface* createSurfaceWithFormat(uint32_t pixelFormat, Vector2 size)
                                 masks.red, masks.green, masks.blue, masks.alpha);
 }
 
-Texture::Texture(std::string_view fileName, Color32 transparentColor)
+Texture::Texture(std::string_view fileName, Color transparentColor)
 :   surface(SDL_LoadBMP(std::string(fileName).c_str()), SDL_FreeSurface)
 {
     if (!surface)
@@ -83,7 +83,7 @@ void Texture::render(Window& window, Rect source, Rect target) const
 }
 
 // TODO: Move this functionality out of the engine to the game.
-void Texture::render(Window& window, Rect source, Rect target, Color32 materialColor) const
+void Texture::render(Window& window, Rect source, Rect target, Color materialColor) const
 {
     target = window.context.mapToTargetCoordinates(target);
 
@@ -137,7 +137,7 @@ int Texture::getHeight() const
     return surface->h;
 }
 
-void Texture::setColor(Color32 color) const
+void Texture::setColor(Color color) const
 {
     SDL_SetSurfaceColorMod(surface.get(),
                            uint8_t(color.getRed()),

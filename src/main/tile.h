@@ -48,9 +48,9 @@ public:
     void setGround(std::string_view groundId);
     std::vector<Entity*> getEntities() const;
     std::vector<LightSource*> getLightSources() const;
-    Color32 getLight() const { return light; }
+    Color getLight() const { return light; }
     void emitLight();
-    void addLight(Color32 light) { this->light.lighten(light); }
+    void addLight(Color light) { this->light.lighten(light); }
     void resetLight();
     bool blocksSight() const;
     Tile* getAdjacentTile(Dir8) const;
@@ -78,7 +78,7 @@ private:
     int level;
     std::string groundId;
     Sprite groundSprite;
-    Color32 light;
+    Color light;
 };
 
 template<typename... Args>

@@ -27,18 +27,18 @@ class BitmapFont
 {
 public:
     BitmapFont(std::string_view fileName, Vector2 charSize);
-    void print(Window& window, std::string_view text, Color32 color = Color32::none,
-               Color32 backgroundColor = Color32::none, bool blend = true,
+    void print(Window& window, std::string_view text, Color color = Color::none,
+               Color backgroundColor = Color::none, bool blend = true,
                LineBreakMode lineBreakMode = SplitLines);
-    void printLine(Window& window, std::string_view text, Color32 color = Color32::none,
-                   Color32 backgroundColor = Color32::none, bool blend = true,
+    void printLine(Window& window, std::string_view text, Color color = Color::none,
+                   Color backgroundColor = Color::none, bool blend = true,
                    LineBreakMode lineBreakMode = SplitLines);
     void printWithCursor(Window& window, std::string_view, const char* cursorPosition,
-                         Color32 mainColor = Color32::none, Color32 cursorColor = Color32::none,
-                         Color32 backgroundColor = Color32::none);
+                         Color mainColor = Color::none, Color cursorColor = Color::none,
+                         Color backgroundColor = Color::none);
     void setArea(Rect area) { printArea = area; initCurrentPosition(); }
     void setLayout(TextLayout layout) { this->layout = layout; initCurrentPosition(); }
-    void setDefaultColor(Color32 color) { defaultColor = color; }
+    void setDefaultColor(Color color) { defaultColor = color; }
     void setDrawShadows(bool state) { drawShadows = state; }
     void setShadowColorMod(double mod) { shadowColorMod = mod; }
     void setShadowPosition(Vector2 position) { shadowPosition = position; }
@@ -57,16 +57,16 @@ public:
 private:
     using PrintIterator = std::string_view::const_iterator;
     Vector2 printHelper(Window& window, std::string_view, Vector2 position,
-                        Color32 backgroundColor, LineBreakMode lineBreakMode) const;
+                        Color backgroundColor, LineBreakMode lineBreakMode) const;
     void printLine(Window& window, PrintIterator lineBegin, PrintIterator lineEnd,
-                   Rect& source, Rect& target, Color32 backgroundColor) const;
+                   Rect& source, Rect& target, Color backgroundColor) const;
     void initCurrentPosition();
 
     Rect printArea;
     bool lineContinuation;
     TextLayout layout;
     Vector2 currentPosition;
-    Color32 defaultColor;
+    Color defaultColor;
     bool drawShadows;
     double shadowColorMod;
     Vector2 shadowPosition;

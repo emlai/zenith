@@ -1,34 +1,29 @@
 #pragma once
 
 #include "math.h"
-#include <climits>
+#include <cstdint>
 
-template<typename T>
-struct Color;
-
-using Color16 = Color<uint16_t>;
-using Color32 = Color<uint32_t>;
-
-template<typename T>
 struct Color
 {
     enum Channel { Red, Green, Blue, Alpha };
 
-    static const int channelCount = 4;
-    static const int depth = sizeof(T) * CHAR_BIT;
-    static const int bitsPerChannel = depth / channelCount;
-    static const int max = (1 << bitsPerChannel) - 1;
-    static const int bit[channelCount];
-    static const int temperatureCoefficient = int(0.25 * max);
+    static constexpr int channelCount = 4;
+    static constexpr int bitsPerChannel = 8;
+    static constexpr int max = (1 << bitsPerChannel) - 1;
+    static constexpr int bit[channelCount] =
+    {
+        3 * bitsPerChannel, 2 * bitsPerChannel, 1 * bitsPerChannel, 0 * bitsPerChannel
+    };
+    static constexpr int temperatureCoefficient = int(0.25 * max);
     static const Color white;
     static const Color black;
     static const Color none;
-    static bool modulateTemperature;
+    static constexpr bool modulateTemperature = true;
 
-    T value;
+    uint32_t value;
 
     Color() = default;
-    explicit Color(T value) : value(value) {}
+    explicit Color(uint32_t value) : value(value) {}
     Color(int red, int green, int blue, int alpha = max) : value(createValue(red, green, blue, alpha)) {}
 
     int get(Channel channel) const { return value >> bit[channel] & max; }
@@ -45,7 +40,7 @@ struct Color
         return (0.299 * getRed() + 0.587 * getGreen() + 0.114 * getBlue()) / max;
     }
 
-    void lighten(Color32 other)
+    void lighten(Color other)
     {
         set(Red, std::max(getRed(), other.getRed()));
         set(Green, std::max(getGreen(), other.getGreen()));
@@ -67,34 +62,9 @@ struct Color
 
     explicit operator bool() const { return value != 0; }
 
-    template<typename U>
-    operator Color<U>() const
-    {
-        return Color<U>(getRed() * Color<U>::max / max, getGreen() * Color<U>::max / max,
-                        getBlue() * Color<U>::max / max, getAlpha() * Color<U>::max / max);
-    }
-
 private:
-    static inline T createValue(int red, int green, int blue, int alpha = max)
+    static inline uint32_t createValue(int red, int green, int blue, int alpha = max)
     {
-        return static_cast<T>(red << bit[Red] | green << bit[Green] | blue << bit[Blue] | alpha << bit[Alpha]);
+        return static_cast<uint32_t>(red << bit[Red] | green << bit[Green] | blue << bit[Blue] | alpha << bit[Alpha]);
     }
 };
-
-template<typename T>
-const int Color<T>::bit[] =
-{
-    3 * bitsPerChannel, 2 * bitsPerChannel, 1 * bitsPerChannel, 0 * bitsPerChannel
-};
-
-template<typename T>
-bool Color<T>::modulateTemperature = true;
-
-template<typename T>
-const Color<T> Color<T>::white(max, max, max);
-
-template<typename T>
-const Color<T> Color<T>::black(0, 0, 0);
-
-template<typename T>
-const Color<T> Color<T>::none(0);

@@ -6,8 +6,8 @@
 #include <algorithm>
 #include <cctype>
 
-Color32 Menu::defaultTextColor = Color32::white * 0.6;
-Color32 Menu::defaultHoverColor = Color32::white;
+Color Menu::defaultTextColor = Color::white * 0.6;
+Color Menu::defaultHoverColor = Color::white;
 
 void Menu::addTitle(std::string_view text)
 {

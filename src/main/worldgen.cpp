@@ -5,6 +5,7 @@
 #include "world.h"
 #include "engine/geometry.h"
 #include "engine/math.h"
+#include <climits>
 #include <unordered_map>
 #include <unordered_set>
 
