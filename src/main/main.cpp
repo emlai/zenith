@@ -214,7 +214,8 @@ void MainMenu::execute()
                         engine->execute(loadingScreen);
                     }
 
-                    rng.seed();
+                    std::random_device randomDevice;
+                    rng.seed(randomDevice());
                     game = std::make_unique<Game>(selection == LoadGame);
                 }
 

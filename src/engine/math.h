@@ -4,11 +4,7 @@
 #include <cassert>
 #include <functional>
 #include <limits>
-
-template<typename T>
-struct Vector2Base;
-
-using Vector2 = Vector2Base<int>;
+#include <random>
 
 template<typename T>
 T sign(T value)
@@ -16,38 +12,7 @@ T sign(T value)
     return (value > 0) - (value < 0);
 }
 
-/* Pseudo-random number generation */
-
-struct Xorshift1024Star
-{
-    uint64_t operator()();
-    uint64_t state[16];
-    int index = 0;
-};
-
-struct Xorshift64Star
-{
-    uint64_t operator()();
-    uint64_t state;
-};
-
-class RNG
-{
-public:
-    using Generator = Xorshift1024Star;
-    using result_type = uint64_t;
-
-    RNG(Generator algorithm) : algorithm(std::move(algorithm)) {}
-    void seed();
-    void seed(RNG::result_type);
-    result_type operator()() { return algorithm(); }
-    static constexpr result_type max() { return std::numeric_limits<result_type>::max(); }
-    static constexpr result_type min() { return std::numeric_limits<result_type>::min(); }
-
-private:
-    Generator algorithm;
-};
-
+using RNG = std::mt19937;
 extern RNG rng;
 
 template<typename T> T randInt(T max = std::numeric_limits<T>::max());
