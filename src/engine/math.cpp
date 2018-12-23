@@ -18,8 +18,6 @@ void RNG::seed()
 
 void RNG::seed(RNG::result_type seed)
 {
-    currentSeed = seed;
-
     Xorshift64Star seedGenerator{seed};
     std::generate(std::begin(algorithm.state), std::end(algorithm.state), seedGenerator);
 }

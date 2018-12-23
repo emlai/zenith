@@ -79,7 +79,6 @@ void Texture::render(Window& window, Rect source, Rect target) const
                     reinterpret_cast<SDL_Rect*>(&target));
 }
 
-// TODO: Move this functionality out of the engine to the game.
 void Texture::render(Window& window, Rect source, Rect target, Color materialColor) const
 {
     target = window.context.mapToTargetCoordinates(target);

@@ -48,14 +48,12 @@ public:
     RNG(Generator algorithm) : algorithm(std::move(algorithm)) {}
     void seed();
     void seed(RNG::result_type);
-    auto getSeed() const { return currentSeed; }
     result_type operator()() { return algorithm(); }
     static constexpr result_type max() { return std::numeric_limits<result_type>::max(); }
     static constexpr result_type min() { return std::numeric_limits<result_type>::min(); }
 
 private:
     Generator algorithm;
-    result_type currentSeed;
 };
 
 extern RNG rng;

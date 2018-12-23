@@ -8,7 +8,7 @@
 #include <climits>
 #include <stdexcept>
 
-const int Window::fullscreenFlag = SDL_WINDOW_FULLSCREEN_DESKTOP;
+static const auto fullscreenFlag = SDL_WINDOW_FULLSCREEN_DESKTOP;
 
 SDL_Window* Window::initWindowHandle(const char* title, bool fullscreen)
 {

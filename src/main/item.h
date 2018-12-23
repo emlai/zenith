@@ -47,7 +47,5 @@ public:
 
 private:
     static const int corpseFrame = 2;
-    static const char corpseGlyph = ',';
-
     std::unique_ptr<Creature> creature;
 };

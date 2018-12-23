@@ -14,8 +14,6 @@ std::ostream& operator<<(std::ostream& outputStream, const std::vector<T>& eleme
     return outputStream;
 }
 
-std::string changeFileExtension(std::string_view fileName, std::string_view newExtension);
-
 /// Performs integer division, rounding towards negative infinity.
 inline int divideRoundingDown(int dividend, int divisor)
 {

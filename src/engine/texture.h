@@ -28,5 +28,4 @@ public:
     int getHeight() const;
 
     std::unique_ptr<SDL_Surface, void (*)(SDL_Surface*)> surface;
-    std::vector<Color> pixelData;
 };

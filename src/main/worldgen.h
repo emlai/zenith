@@ -26,7 +26,6 @@ public:
     std::vector<Tile*> getDoorTiles() const;
 
     std::vector<Room> rooms;
-    std::vector<Tile*> doorTiles;
 };
 
 class WorldGenerator

@@ -52,5 +52,4 @@ public:
     bool closeRequestReceived;
     std::unique_ptr<SDL_Window, void (&)(SDL_Window*)> windowHandle;
     GraphicsContext context;
-    static const int fullscreenFlag;
 };

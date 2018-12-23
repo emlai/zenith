@@ -2,20 +2,6 @@
 #include <cassert>
 #include <cctype>
 
-std::string changeFileExtension(std::string_view fileName, std::string_view newExtension)
-{
-    auto dotPosition = fileName.rfind(".");
-
-    if (dotPosition != std::string::npos)
-    {
-        std::string newFileName(fileName);
-        newFileName.replace(dotPosition + 1, std::string::npos, newExtension);
-        return newFileName;
-    }
-    else
-        return fileName + "." + newExtension;
-}
-
 std::string toOnOffString(bool value)
 {
     return value ? "on" : "off";
