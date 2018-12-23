@@ -38,8 +38,8 @@ void Menu::clear()
 
 int Menu::execute()
 {
-    auto& window = getEngine().getWindow();
-    auto& font = window.getFont();
+    auto& window = *engine->window;
+    auto& font = *window.context.font;
     TextLayout oldLayout = font.getLayout();
     font.setLayout(textLayout);
     calculateSize();
@@ -190,7 +190,7 @@ int Menu::calculateMainImageColumnWidth() const
 
 void Menu::render(Window& window)
 {
-    auto& font = window.getFont();
+    auto& font = *window.context.font;
     int index = 1;
     auto position = itemPositions.begin();
 

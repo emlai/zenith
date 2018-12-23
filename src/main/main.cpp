@@ -27,7 +27,7 @@ public:
 
     void render(Window& window) override
     {
-        auto& font = window.getFont();
+        auto& font = *window.context.font;
         auto oldLayout = font.getLayout();
         font.setArea(Rect(Vector2(0, 0), window.getResolution()));
         font.setLayout(TextLayout(HorizontalCenter, VerticalCenter));
@@ -37,8 +37,8 @@ public:
 
     void execute()
     {
-        getEngine().render(getEngine().getWindow());
-        getEngine().getWindow().updateScreen();
+        engine->render(*engine->window);
+        engine->window->context.updateScreen();
     }
 
 private:
@@ -76,7 +76,7 @@ public:
 void KeyMapMenu::execute()
 {
     enum { ResetDefaults };
-    auto& window = getEngine().getWindow();
+    auto& window = *engine->window;
 
     while (true)
     {
@@ -129,7 +129,7 @@ public:
 void PrefsMenu::execute()
 {
     enum { GraphicsScale, Fullscreen, KeyMap };
-    auto& window = getEngine().getWindow();
+    auto& window = *engine->window;
 
     while (true)
     {
@@ -137,7 +137,7 @@ void PrefsMenu::execute()
         addTitle("Preferences");
 
         addItem(MenuItem(GraphicsScale, "Graphics scale",
-                         toStringAvoidingDecimalPlaces(window.getGraphicsContext().getScale()) + "x"));
+                         toStringAvoidingDecimalPlaces(window.context.getScale()) + "x"));
         addItem(MenuItem(Fullscreen, "Fullscreen", toOnOffString(window.isFullscreen())));
         addItem(MenuItem(KeyMap, "Key map"));
 
@@ -148,10 +148,10 @@ void PrefsMenu::execute()
         switch (selection)
         {
             case GraphicsScale:
-                if (window.getGraphicsContext().getScale() >= 2)
-                    window.getGraphicsContext().setScale(1);
+                if (window.context.getScale() >= 2)
+                    window.context.setScale(1);
                 else
-                    window.getGraphicsContext().setScale(window.getGraphicsContext().getScale() + 0.5);
+                    window.context.setScale(window.context.getScale() + 0.5);
                 break;
             case Fullscreen:
                 window.toggleFullscreen();
@@ -159,11 +159,11 @@ void PrefsMenu::execute()
             case KeyMap:
             {
                 KeyMapMenu keyMapMenu;
-                getEngine().execute(keyMapMenu);
+                engine->execute(keyMapMenu);
                 break;
             }
             case Menu::Exit:
-                savePreferencesToFile(window.getGraphicsContext().getScale(), window.isFullscreen());
+                savePreferencesToFile(window.context.getScale(), window.isFullscreen());
                 return;
             default:
                 assert(false);
@@ -197,7 +197,7 @@ void MainMenu::execute()
         setItemLayout(Menu::Horizontal);
         setItemSpacing(18);
         setTextLayout(TextLayout(HorizontalCenter, VerticalCenter));
-        setArea(Vector2(0, 0), getEngine().getWindow().getResolution() / Vector2(1, 6));
+        setArea(Vector2(0, 0), engine->window->getResolution() / Vector2(1, 6));
         setHotkeyStyle(LetterHotkeys);
 
         auto selection = Menu::execute();
@@ -211,7 +211,7 @@ void MainMenu::execute()
                     if (selection == LoadGame)
                     {
                         LoadingScreen loadingScreen("Loading game...");
-                        getEngine().execute(loadingScreen);
+                        engine->execute(loadingScreen);
                     }
 
                     rng.seed();
@@ -220,7 +220,7 @@ void MainMenu::execute()
 
                 try
                 {
-                    getEngine().execute(*game);
+                    engine->execute(*game);
                 }
                 catch (...)
                 {
@@ -228,7 +228,7 @@ void MainMenu::execute()
                     throw;
                 }
 
-                if (game->getPlayer()->isDead())
+                if (game->player->isDead())
                 {
                     std::remove(Game::saveFileName);
                     game = nullptr;
@@ -238,7 +238,7 @@ void MainMenu::execute()
             case Preferences:
             {
                 PrefsMenu prefsMenu;
-                getEngine().execute(prefsMenu);
+                engine->execute(prefsMenu);
                 break;
             }
 
@@ -247,7 +247,7 @@ void MainMenu::execute()
                 if (game)
                 {
                     LoadingScreen loadingScreen("Saving game...");
-                    getEngine().execute(loadingScreen);
+                    engine->execute(loadingScreen);
                     game->save();
                 }
                 return;
@@ -265,13 +265,13 @@ int main(int argc, char** argv)
 
     Engine engine;
     Window window(engine, PROJECT_NAME, true);
-    window.setAnimationFrameRate(4);
-    engine.setWindow(&window);
+    window.context.setAnimationFrameRate(4);
+    engine.window = &window;
 
     if (fs::exists(preferencesFileName))
     {
         Config preferences(preferencesFileName);
-        window.getGraphicsContext().setScale(preferences.getOptional<double>("GraphicsScale").value_or(1));
+        window.context.setScale(preferences.getOptional<double>("GraphicsScale").value_or(1));
         window.setFullscreen(preferences.getOptional<bool>("Fullscreen").value_or(true));
         loadKeyMap(&preferences);
     }
@@ -279,7 +279,7 @@ int main(int argc, char** argv)
         loadKeyMap(nullptr);
 
     BitmapFont font = initFont();
-    window.setFont(font);
+    window.context.font = &font;
     Menu::setDefaultTextColor(TextColor::Gray);
 
     MainMenu mainMenu;

@@ -56,7 +56,7 @@ Game::Game(bool loadSavedGame)
 
 Window& Game::getWindow() const
 {
-    return getEngine().getWindow();
+    return *engine->window;
 }
 
 class InventoryMenu : public Menu
@@ -73,7 +73,7 @@ InventoryMenu::InventoryMenu(Window& window, const Creature& player, std::string
     setArea(GUI::getInventoryArea(window));
     setItemSize(Tile::getSize());
     setTextLayout(TextLayout(LeftAlign, VerticalCenter));
-    setTableCellSpacing(Vector2(window.getFont().getColumnWidth(), 0));
+    setTableCellSpacing(Vector2(window.context.font->getColumnWidth(), 0));
     setHotkeyStyle(LetterHotkeys);
 
     if (showNothingAsOption)
@@ -93,7 +93,7 @@ InventoryMenu::InventoryMenu(Window& window, const Creature& player, std::string
 int Game::showInventory(std::string_view title, bool showNothingAsOption, std::function<bool(const Item&)> itemFilter)
 {
     InventoryMenu inventoryMenu(getWindow(), *player, title, showNothingAsOption, std::move(itemFilter));
-    return getEngine().execute(inventoryMenu);
+    return engine->execute(inventoryMenu);
 }
 
 class EquipmentMenu : public Menu
@@ -112,10 +112,10 @@ void EquipmentMenu::execute()
     {
         clear();
         addTitle("Equipment");
-        setArea(GUI::getInventoryArea(getEngine().getWindow()));
+        setArea(GUI::getInventoryArea(*engine->window));
         setItemSize(Tile::getSize());
         setTextLayout(TextLayout(LeftAlign, VerticalCenter));
-        setTableCellSpacing(Vector2(getEngine().getWindow().getFont().getColumnWidth(), 0));
+        setTableCellSpacing(Vector2(engine->window->context.font->getColumnWidth(), 0));
         setHotkeyStyle(LetterHotkeys);
 
         for (int i = 0; i < equipmentSlots; ++i)
@@ -132,12 +132,12 @@ void EquipmentMenu::execute()
 
         auto selectedSlot = static_cast<EquipmentSlot>(choice);
 
-        InventoryMenu inventoryMenu(getEngine().getWindow(), *player, "", true, [&](auto& item)
+        InventoryMenu inventoryMenu(*engine->window, *player, "", true, [&](auto& item)
         {
             return item.getEquipmentSlot() == selectedSlot;
         });
 
-        auto selectedItemIndex = getEngine().execute(inventoryMenu);
+        auto selectedItemIndex = engine->execute(inventoryMenu);
 
         if (selectedItemIndex == -1)
             player->equip(selectedSlot, nullptr);
@@ -149,7 +149,7 @@ void EquipmentMenu::execute()
 void Game::showEquipmentMenu()
 {
     EquipmentMenu equipmentMenu(*player);
-    getEngine().execute(equipmentMenu);
+    engine->execute(equipmentMenu);
 }
 
 class LookMode : public State
@@ -169,7 +169,7 @@ void LookMode::execute()
 {
     while (true)
     {
-        Event event = getEngine().getWindow().waitForInput();
+        Event event = engine->window->waitForInput();
 
         if (event.type != Event::KeyDown)
             continue;
@@ -189,14 +189,14 @@ void LookMode::execute()
 void LookMode::render(Window& window)
 {
     game->renderAtPosition(window, position);
-    window.getFont().setArea(GUI::getQuestionArea(window));
-    window.getFont().print(window, "Look mode (arrow keys to move around, esc to exit)");
+    window.context.font->setArea(GUI::getQuestionArea(window));
+    window.context.font->print(window, "Look mode (arrow keys to move around, esc to exit)");
 }
 
 void Game::lookMode()
 {
     LookMode lookMode(*this);
-    getEngine().execute(lookMode);
+    engine->execute(lookMode);
 }
 
 class StringQuestion : public State
@@ -214,12 +214,12 @@ private:
 
 std::string StringQuestion::execute()
 {
-    auto& window = getEngine().getWindow();
+    auto& window = *engine->window;
     std::string input;
 
     int result = keyboard::readLine(window, input, GUI::getQuestionArea(window).position,
-                                    std::bind(&Engine::render, &getEngine(), std::placeholders::_1),
-                                    question);
+                                    std::bind(&Engine::render, engine, std::placeholders::_1), question);
+
     if (result == Esc)
         return "";
 
@@ -229,7 +229,7 @@ std::string StringQuestion::execute()
 std::string Game::askForString(std::string&& question)
 {
     StringQuestion stringQuestion(question);
-    return getEngine().execute(stringQuestion);
+    return engine->execute(stringQuestion);
 }
 
 class DirectionQuestion : public State
@@ -248,7 +248,7 @@ private:
 
 std::optional<Dir8> DirectionQuestion::execute()
 {
-    Event event = getEngine().getWindow().waitForInput();
+    Event event = engine->window->waitForInput();
 
     if (auto direction = getDirectionFromEvent(event, origin))
         return direction;
@@ -258,14 +258,14 @@ std::optional<Dir8> DirectionQuestion::execute()
 
 void DirectionQuestion::render(Window& window)
 {
-    window.getFont().setArea(GUI::getQuestionArea(window));
-    window.getFont().print(window, question);
+    window.context.font->setArea(GUI::getQuestionArea(window));
+    window.context.font->print(window, question);
 }
 
 std::optional<Dir8> Game::askForDirection(std::string&& question)
 {
     DirectionQuestion directionQuestion(question, player->getPosition());
-    return getEngine().execute(directionQuestion);
+    return engine->execute(directionQuestion);
 }
 
 void Game::execute()
@@ -288,34 +288,34 @@ void Game::render(Window& window)
 void Game::renderAtPosition(Window& window, Vector2 centerPosition)
 {
     cursorPosition = std::nullopt;
-    printPlayerInformation(window.getFont());
-    MessageSystem::drawMessages(window, window.getFont(), player->getMessages(), getTurn());
+    printPlayerInformation(*window.context.font);
+    MessageSystem::drawMessages(window, *window.context.font, player->getMessages(), getTurn());
 
     Rect worldViewport = GUI::getWorldViewport(getWindow());
 
     Rect view(centerPosition * Tile::getSize() + Tile::getSize() / 2 - worldViewport.size / 2,
               worldViewport.size);
-    window.setView(&view);
-    window.setViewport(&worldViewport);
+    window.context.setView(&view);
+    window.context.setViewport(&worldViewport);
 
     Rect visibleRegion(centerPosition - worldViewport.size / Tile::getSize() / 2,
                        worldViewport.size / Tile::getSize());
     world.render(window, visibleRegion, player->getLevel(), *player);
 
-    window.setView(nullptr);
-    window.setViewport(nullptr);
+    window.context.setView(nullptr);
+    window.context.setViewport(nullptr);
 
     bool enableGUIDebugRectangles = false;
     if (enableGUIDebugRectangles)
     {
-        window.getGraphicsContext().renderRectangle(GUI::getWorldViewport(window), GUIColor::Gray);
-        window.getGraphicsContext().renderRectangle(GUI::getMessageArea(window), GUIColor::Gray);
-        window.getGraphicsContext().renderRectangle(GUI::getSidebarArea(window), GUIColor::Gray);
-        window.getGraphicsContext().renderRectangle(GUI::getQuestionArea(window), GUIColor::Gray);
-        window.getGraphicsContext().renderRectangle(GUI::getInventoryArea(window), GUIColor::Gray);
+        window.context.renderRectangle(GUI::getWorldViewport(window), GUIColor::Gray);
+        window.context.renderRectangle(GUI::getMessageArea(window), GUIColor::Gray);
+        window.context.renderRectangle(GUI::getSidebarArea(window), GUIColor::Gray);
+        window.context.renderRectangle(GUI::getQuestionArea(window), GUIColor::Gray);
+        window.context.renderRectangle(GUI::getInventoryArea(window), GUIColor::Gray);
 #ifdef DEBUG
-        window.getGraphicsContext().renderRectangle(GUI::getCommandLineArea(window), GUIColor::Gray);
-        window.getGraphicsContext().renderRectangle(GUI::getDebugMessageArea(window), GUIColor::Gray);
+        window.context.renderRectangle(GUI::getCommandLineArea(window), GUIColor::Gray);
+        window.context.renderRectangle(GUI::getDebugMessageArea(window), GUIColor::Gray);
 #endif
     }
 }

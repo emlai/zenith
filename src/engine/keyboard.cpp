@@ -23,7 +23,7 @@ namespace keyboard
 int keyboard::readLine(Window& window, std::string& line, Vector2 position, const std::function<void(Window&)>& render,
                        std::string_view prefix)
 {
-    BitmapFont& font = window.getFont();
+    BitmapFont& font = *window.context.font;
     std::string::iterator cursor = line.end();
     SDL_Event event;
 
@@ -33,7 +33,7 @@ int keyboard::readLine(Window& window, std::string& line, Vector2 position, cons
         font.setArea(Rect(position, window.getResolution() - position));
         font.print(window, prefix);
         font.printWithCursor(window, line, cursor == line.end() ? nullptr : &*cursor);
-        window.updateScreen();
+        window.context.updateScreen();
         SDL_WaitEvent(&event);
 
         if (auto key = readLineProcessKey(event, line, cursor))

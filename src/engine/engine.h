@@ -13,15 +13,10 @@ class Window;
 class Engine
 {
 public:
-    void setWindow(Window* window) { this->window = window; }
-    Window& getWindow() { return *window; }
     void reportErrorToUser(const std::string& text);
     template<typename StateType>
     auto execute(StateType& state);
     void render(Window& window);
-
-private:
-    friend class Window;
     State& getCurrentState() { return *states.end()[-1]; }
     State& getPreviousState() { return *states.end()[-2]; }
 

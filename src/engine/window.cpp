@@ -86,7 +86,7 @@ Event Window::waitForInput()
     while (true)
     {
         engine->render(*this);
-        updateScreen();
+        context.updateScreen();
 
         if (!SDL_PollEvent(&event))
             continue;

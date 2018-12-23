@@ -44,12 +44,14 @@ void MessageSystem::drawMessages(Window& window, BitmapFont& font,
     font.setArea(GUI::getMessageArea(window));
     for (int end = int(messages.size()), i = std::max(0, end - maxMessagesToPrint); i < end; ++i)
     {
-        bool isNewMessage = messages[i].getTurn() >= currentTurn - 1;
+        bool isNewMessage = messages[i].turn >= currentTurn - 1;
         auto color = isNewMessage ? TextColor::White : TextColor::Gray;
         font.print(window, "- ", color);
-        std::string text(messages[i].getText());
-        if (messages[i].getCount() > 1)
-            text += " (x" + std::to_string(messages[i].getCount()) + ")";
+        std::string text = messages[i].text;
+
+        if (messages[i].count > 1)
+            text += " (x" + std::to_string(messages[i].count) + ")";
+
         font.printLine(window, text, color);
     }
 

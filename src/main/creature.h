@@ -180,7 +180,7 @@ void Creature::addMessage(Args&&... messageParts)
     std::string message = stream.str();
     message[0] = char(std::toupper(message[0]));
 
-    if (!messages.empty() && messages.back().getText() == message)
+    if (!messages.empty() && messages.back().text == message)
         messages.back().increaseCount(getTurn());
     else
         messages.emplace_back(std::move(message), getTurn());

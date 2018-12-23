@@ -7,8 +7,7 @@
 
 void Engine::reportErrorToUser(const std::string& text)
 {
-    if (SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, std::string(getWindow().getTitle()).c_str(),
-                                 text.c_str(), nullptr) != 0)
+    if (SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, std::string(window->getTitle()).c_str(), text.c_str(), nullptr) != 0)
         std::cerr << text.c_str() << std::endl;
 }
 

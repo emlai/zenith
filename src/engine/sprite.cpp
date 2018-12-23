@@ -18,8 +18,7 @@ Vector2 Sprite::getSize() const
 
 void Sprite::render(Window& window, Vector2 position, Vector2 sourceOffset) const
 {
-    int msPerAnimationFrame = window.getGraphicsContext().getAnimationFrameTime();
-    int animationFrame = SDL_GetTicks() / msPerAnimationFrame % animationFrames;
+    int animationFrame = SDL_GetTicks() / window.context.animationFrameTime % animationFrames;
     sourceOffset.x += (animationFrame + frame) * textureRegion.getWidth();
     Rect source = textureRegion.offset(sourceOffset);
     Rect target(position, textureRegion.size);

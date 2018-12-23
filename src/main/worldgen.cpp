@@ -20,7 +20,7 @@ std::vector<Tile*> Building::getDoorTiles() const
     std::vector<Tile*> doorTiles;
 
     for (auto& room : rooms)
-        for (auto* doorTile : room.getDoorTiles())
+        for (auto* doorTile : room.doorTiles)
             doorTiles.push_back(doorTile);
 
     return doorTiles;
@@ -87,7 +87,7 @@ std::vector<Building> WorldGenerator::generateBuildings(Rect region, int level)
 
     if (!buildings.empty())
     {
-        auto& randomRoom = randomElement(randomElement(buildings).getRooms());
+        auto& randomRoom = randomElement(randomElement(buildings).rooms);
         Tile* stairsTile = world.getTile(makeRandomVectorInside(randomRoom.getInnerRegion()), level);
         stairsTile->setObject(std::make_unique<Object>("StairsDown"));
     }

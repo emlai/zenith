@@ -15,16 +15,10 @@ public:
     Area(World& world, Vector2 position, int level);
     Area(const SaveFile& file, World& world, Vector2 position, int level);
     void save(SaveFile& file) const;
+    Tile& getTileAt(Vector2 position);
 
-private:
-    friend class World;
-
-    World& getWorld() const { return world; }
-    Vector2 getPosition() const { return position; }
     static const int size = 64;
     static const Vector2 sizeVector;
-
-    Tile& getTileAt(Vector2 position);
 
     std::vector<Tile> tiles;
     World& world;

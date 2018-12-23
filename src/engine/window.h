@@ -37,29 +37,16 @@ public:
     void toggleFullscreen();
     bool isFullscreen() const;
     void sendCloseRequest();
-    void setViewport(const Rect* viewport) { context.setViewport(viewport); }
-    void setView(const Rect* view) { context.setView(view); }
-    void setFont(BitmapFont& font) { context.setFont(font); }
-    BitmapFont& getFont() { return context.getFont(); }
-    void setAnimationFrameRate(int fps) { context.setAnimationFrameRate(fps); }
-    auto getAnimationFrameTime() const { return context.getAnimationFrameTime(); }
-    void updateScreen() { context.updateScreen(); }
     bool shouldClose() const;
     Vector2 getResolution() const;
     Vector2 getSize() const;
     int getWidth() const;
     int getHeight() const;
     std::string_view getTitle() const;
-    GraphicsContext& getGraphicsContext() { return context; }
-
-    enum { CloseRequest = -2 };
-
-private:
-    friend class GraphicsContext;
-    friend class Texture;
-
     static SDL_Window* initWindowHandle(const char* title, bool fullscreen);
     bool handleWindowEvent(int eventType);
+
+    enum { CloseRequest = -2 };
 
     Engine* engine;
     bool closeRequestReceived;

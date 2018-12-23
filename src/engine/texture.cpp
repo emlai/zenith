@@ -75,7 +75,7 @@ void Texture::render(Window& window, Rect source, Rect target) const
 
     SDL_BlitSurface(surface.get(),
                     reinterpret_cast<SDL_Rect*>(&source),
-                    window.context.targetTexture.getSurface(),
+                    window.context.targetTexture.surface.get(),
                     reinterpret_cast<SDL_Rect*>(&target));
 }
 
@@ -84,7 +84,7 @@ void Texture::render(Window& window, Rect source, Rect target, Color materialCol
 {
     target = window.context.mapToTargetCoordinates(target);
 
-    SDL_Surface* targetSurface = window.context.targetTexture.getSurface();
+    SDL_Surface* targetSurface = window.context.targetTexture.surface.get();
     const uint32_t* sourcePixels = static_cast<const uint32_t*>(surface->pixels);
     uint32_t* targetPixels = static_cast<uint32_t*>(targetSurface->pixels);
     auto sourceWidth = surface->w;

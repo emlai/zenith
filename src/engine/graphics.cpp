@@ -65,16 +65,6 @@ void GraphicsContext::setView(const Rect* view)
         this->view = std::nullopt;
 }
 
-void GraphicsContext::setFont(BitmapFont& font)
-{
-    this->font = &font;
-}
-
-BitmapFont& GraphicsContext::getFont()
-{
-    return *font;
-}
-
 void GraphicsContext::updateScreen()
 {
     void* pixels;
@@ -82,7 +72,7 @@ void GraphicsContext::updateScreen()
     int result = SDL_LockTexture(framebuffer.get(), nullptr, &pixels, &pitch);
     assert(result == 0);
 
-    SDL_Surface* surface = targetTexture.getSurface();
+    SDL_Surface* surface = targetTexture.surface.get();
     std::memcpy(pixels, surface->pixels, surface->h * pitch);
 
     SDL_UnlockTexture(framebuffer.get());
@@ -94,7 +84,7 @@ void GraphicsContext::updateScreen()
 
 void GraphicsContext::clearScreen()
 {
-    SDL_FillRect(targetTexture.getSurface(), nullptr, 0);
+    SDL_FillRect(targetTexture.surface.get(), nullptr, 0);
 }
 
 Vector2 GraphicsContext::mapFromTargetCoordinates(Vector2 position) const
@@ -126,10 +116,10 @@ void GraphicsContext::renderRectangle(Rect rectangle, Color color)
     SDL_Rect bottomLine = { rectangle.getLeft(), rectangle.getBottom(), rectangle.getWidth(), 1 };
     SDL_Rect leftLine = { rectangle.getLeft(), rectangle.getTop(), 1, rectangle.getHeight() };
     SDL_Rect rightLine = { rectangle.getRight(), rectangle.getTop(), 1, rectangle.getHeight() };
-    SDL_FillRect(targetTexture.getSurface(), &topLine, color.intValue());
-    SDL_FillRect(targetTexture.getSurface(), &bottomLine, color.intValue());
-    SDL_FillRect(targetTexture.getSurface(), &leftLine, color.intValue());
-    SDL_FillRect(targetTexture.getSurface(), &rightLine, color.intValue());
+    SDL_FillRect(targetTexture.surface.get(), &topLine, color.intValue());
+    SDL_FillRect(targetTexture.surface.get(), &bottomLine, color.intValue());
+    SDL_FillRect(targetTexture.surface.get(), &leftLine, color.intValue());
+    SDL_FillRect(targetTexture.surface.get(), &rightLine, color.intValue());
 }
 
 void GraphicsContext::renderFilledRectangle(Rect rectangle, Color color, BlendMode blendMode)
@@ -139,11 +129,11 @@ void GraphicsContext::renderFilledRectangle(Rect rectangle, Color color, BlendMo
     switch (blendMode)
     {
         case BlendMode::Normal:
-            SDL_FillRect(targetTexture.getSurface(), reinterpret_cast<const SDL_Rect*>(&rectangle), color.intValue());
+            SDL_FillRect(targetTexture.surface.get(), reinterpret_cast<const SDL_Rect*>(&rectangle), color.intValue());
             break;
 
         case BlendMode::LinearLight:
-            SDL_Surface* targetSurface = targetTexture.getSurface();
+            SDL_Surface* targetSurface = targetTexture.surface.get();
 
             if (rectangle.getLeft() < 0 || rectangle.getTop() < 0
                 || rectangle.getRight() >= targetSurface->w || rectangle.getBottom() >= targetSurface->h)

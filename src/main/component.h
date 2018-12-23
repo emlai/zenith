@@ -15,7 +15,6 @@ class Component
 public:
     virtual ~Component() = 0;
     static std::unique_ptr<Component> get(std::string_view name, Entity& parent);
-    Entity& getParent() const { return *parent; }
 
     /// Returns true if the component did react to the movement attempt.
     virtual bool reactToMovementAttempt() { return false; }
@@ -27,6 +26,5 @@ public:
     virtual void save(SaveFile& file) const = 0;
     virtual void load(const SaveFile& file) = 0;
 
-private:
     Entity* parent;
 };

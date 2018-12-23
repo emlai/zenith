@@ -150,7 +150,7 @@ void BitmapFont::printLine(Window& window, PrintIterator lineBegin, PrintIterato
         {
             const auto index = *character - ' ';
             source.position = charSize * Vector2(index % dimensions.x, index / dimensions.x);
-            window.getGraphicsContext().renderFilledRectangle(target, backgroundColor);
+            window.context.renderFilledRectangle(target, backgroundColor);
             texture.render(window, source, target);
         }
 

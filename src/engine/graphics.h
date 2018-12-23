@@ -20,21 +20,12 @@ public:
     Rect getViewport() const;
     void setView(const Rect* view);
     const Rect* getView() const { return &*view; }
-    void setFont(BitmapFont&);
-    BitmapFont& getFont();
     void setScale(double scale);
     double getScale() const;
     void setAnimationFrameRate(int framesPerSecond);
-    auto getAnimationFrameTime() const { return animationFrameTime; }
     void updateScreen();
-    SDL_Renderer* getRenderer() const { return renderer.get(); }
     void renderRectangle(Rect rectangle, Color color);
     void renderFilledRectangle(Rect rectangle, Color color, BlendMode blendMode = BlendMode::Normal);
-
-private:
-    friend class Texture;
-    friend class Window;
-
     void clearScreen();
     Vector2 mapFromTargetCoordinates(Vector2) const;
     Rect mapToTargetCoordinates(Rect) const;

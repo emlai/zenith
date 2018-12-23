@@ -29,7 +29,6 @@ public:
     void lookMode();
     std::string askForString(std::string&& question);
     std::optional<Dir8> askForDirection(std::string&& question);
-    Creature* getPlayer() const { return player; }
     Window& getWindow() const;
 #ifdef DEBUG
     void enterCommandMode(Window&);
@@ -52,8 +51,6 @@ public:
 
     static constexpr auto saveFileName = "zenith.sav";
 
-private:
-    friend class LookMode;
     void renderAtPosition(Window&, Vector2 centerPosition);
     void render(Window& window) override;
     void printPlayerInformation(BitmapFont&) const;

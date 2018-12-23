@@ -107,7 +107,7 @@ void Tile::render(Window& window, int zIndex, bool fogOfWar, bool renderLight) c
             if (fogOfWar || !renderLight)
                 break;
 
-            window.getGraphicsContext().renderFilledRectangle(Rect(renderPosition, getSize()),
+            window.context.renderFilledRectangle(Rect(renderPosition, getSize()),
                                                               light, BlendMode::LinearLight);
             break;
         case 5:
@@ -140,16 +140,16 @@ void Tile::render(Window& window, int zIndex, bool fogOfWar, bool renderLight) c
                         Rect lineArea(tileRect.position.x + getSize().x,
                                       tileRect.position.y + getSize().y / 2 - lineHeight / 2,
                                       getSize().x / 2, lineHeight);
-                        window.getGraphicsContext().renderFilledRectangle(lineArea, GUIColor::Black);
+                        window.context.renderFilledRectangle(lineArea, GUIColor::Black);
 
-                        Vector2 inset = Vector2(window.getFont().getColumnWidth(),
-                                                window.getFont().getRowHeight() / 2);
+                        Vector2 inset = Vector2(window.context.font->getColumnWidth(),
+                                                window.context.font->getRowHeight() / 2);
                         Rect tooltipArea(Vector2(lineArea.getRight(), tileRect.getTop()),
-                                         window.getFont().getTextSize(tooltip) + inset * 2);
-                        window.getGraphicsContext().renderFilledRectangle(tooltipArea.inset(Vector2(0, 1)), GUIColor::Black);
-                        window.getGraphicsContext().renderFilledRectangle(tooltipArea.inset(Vector2(1, 0)), GUIColor::Black);
-                        window.getFont().setArea(tooltipArea.offset(inset));
-                        window.getFont().print(window, tooltip, TextColor::White, GUIColor::Black, true, PreserveLines);
+                                         window.context.font->getTextSize(tooltip) + inset * 2);
+                        window.context.renderFilledRectangle(tooltipArea.inset(Vector2(0, 1)), GUIColor::Black);
+                        window.context.renderFilledRectangle(tooltipArea.inset(Vector2(1, 0)), GUIColor::Black);
+                        window.context.font->setArea(tooltipArea.offset(inset));
+                        window.context.font->print(window, tooltip, TextColor::White, GUIColor::Black, true, PreserveLines);
                     }
                 }
             }

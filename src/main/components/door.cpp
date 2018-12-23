@@ -29,7 +29,7 @@ void Door::setOpen(bool open)
     isOpen = open;
 
     // TODO: Add getSprite() to Entity to avoid casting here.
-    auto& sprite = dynamic_cast<Object&>(getParent()).getSprite();
+    auto& sprite = dynamic_cast<Object*>(parent)->getSprite();
     sprite.setFrame(isOpen ? 1 : 0);
 }
 
