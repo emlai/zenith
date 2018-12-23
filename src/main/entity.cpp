@@ -28,7 +28,7 @@ Entity::Entity(std::string_view id, const Config& config)
 
 std::string Entity::getName() const
 {
-    std::string prefix = std::move(getConfig().getOptional<std::string>(getId(), "NamePrefix").value_or(""));
+    std::string prefix = getConfig().getOptional<std::string>(getId(), "NamePrefix").value_or("");
 
     if (!prefix.empty())
         prefix += ' ';

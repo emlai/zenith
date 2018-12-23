@@ -1,5 +1,6 @@
 #include "savefile.h"
 #include <SDL.h>
+#include <climits>
 #include <cstring>
 #include <stdexcept>
 
@@ -17,8 +18,10 @@ SaveFile::SaveFile(std::string_view filePath, bool writable)
 
 SaveFile::SaveFile(std::vector<char> buffer)
 :   buffer(std::move(buffer)),
-    file(SDL_RWFromMem(this->buffer.data(), this->buffer.size()), closeFile)
+    file(SDL_RWFromMem(this->buffer.data(), static_cast<int>(this->buffer.size())), closeFile)
 {
+    assert(this->buffer.size() <= INT_MAX && "SDL_RWFromMem size overflow");
+
     if (!file)
         throw std::runtime_error(SDL_GetError());
 }

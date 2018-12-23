@@ -74,8 +74,7 @@ Action PlayerController::control(Creature& creature)
                 if (creature.isDead())
                     break;
 
-                int selectedItemIndex = game.showInventory("What do you want to use?", false,
-                                                           nullptr, [](auto& item)
+                int selectedItemIndex = game.showInventory("What do you want to use?", false, [](auto& item)
                 {
                     return item.isUsable();
                 });
@@ -91,8 +90,7 @@ Action PlayerController::control(Creature& creature)
                 if (creature.isDead())
                     break;
 
-                int selectedItemIndex = game.showInventory("What do you want to eat?", false,
-                                                           nullptr, [](auto& item)
+                int selectedItemIndex = game.showInventory("What do you want to eat?", false, [](auto& item)
                 {
                     return item.isEdible();
                 });
@@ -135,7 +133,13 @@ Action PlayerController::control(Creature& creature)
                 creature.setRunning(!creature.isRunning());
                 break;
 
-            default:
+            case Move:
+            case Attack:
+            case LastAction:
+                assert(false);
+                break;
+
+            case NoAction:
                 switch (event.key)
                 {
                     case Esc:
@@ -218,7 +222,11 @@ static Key getDefaultKeyForAction(Action action)
         case OpenInventory: return 'i';
         case ShowEquipmentMenu: return 'E';
         case ToggleRunning: return 'r';
-        default: return NoKey;
+        case Move:
+        case Attack:
+        case NoAction:
+        case LastAction:
+            return NoKey;
     }
 }
 

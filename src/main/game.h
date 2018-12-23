@@ -24,8 +24,7 @@ public:
     void stop() { gameIsRunning = false; }
     void advanceTurn() { ++turn; }
     int getTurn() const { return turn; }
-    int showInventory(std::string_view title, bool showNothingAsOption, Item* preselectedItem = nullptr,
-                      std::function<bool(const Item&)> itemFilter = nullptr);
+    int showInventory(std::string_view title, bool showNothingAsOption, std::function<bool(const Item&)> itemFilter = nullptr);
     void showEquipmentMenu();
     void lookMode();
     std::string askForString(std::string&& question);

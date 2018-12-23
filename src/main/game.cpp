@@ -63,13 +63,11 @@ class InventoryMenu : public Menu
 {
 public:
     InventoryMenu(Window& window, const Creature& player, std::string_view title,
-                  bool showNothingAsOption, Item* preselectedItem,
-                  std::function<bool(const Item&)> itemFilter);
+                  bool showNothingAsOption, std::function<bool(const Item&)> itemFilter);
 };
 
 InventoryMenu::InventoryMenu(Window& window, const Creature& player, std::string_view title,
-                             bool showNothingAsOption, Item* preselectedItem,
-                             std::function<bool(const Item&)> itemFilter)
+                             bool showNothingAsOption, std::function<bool(const Item&)> itemFilter)
 {
     addTitle(title);
     setArea(GUI::getInventoryArea(window));
@@ -92,11 +90,9 @@ InventoryMenu::InventoryMenu(Window& window, const Creature& player, std::string
     }
 }
 
-int Game::showInventory(std::string_view title, bool showNothingAsOption, Item* preselectedItem,
-                        std::function<bool(const Item&)> itemFilter)
+int Game::showInventory(std::string_view title, bool showNothingAsOption, std::function<bool(const Item&)> itemFilter)
 {
-    InventoryMenu inventoryMenu(getWindow(), *player, title, showNothingAsOption,
-                                preselectedItem, std::move(itemFilter));
+    InventoryMenu inventoryMenu(getWindow(), *player, title, showNothingAsOption, std::move(itemFilter));
     return getEngine().execute(inventoryMenu);
 }
 
@@ -136,8 +132,7 @@ void EquipmentMenu::execute()
 
         auto selectedSlot = static_cast<EquipmentSlot>(choice);
 
-        InventoryMenu inventoryMenu(getEngine().getWindow(), *player, "", true,
-                                    player->getEquipment(selectedSlot), [&](auto& item)
+        InventoryMenu inventoryMenu(getEngine().getWindow(), *player, "", true, [&](auto& item)
         {
             return item.getEquipmentSlot() == selectedSlot;
         });

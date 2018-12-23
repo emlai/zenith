@@ -119,7 +119,7 @@ int keyboard::readLineProcessKey(const SDL_Event& event, std::string& line, std:
     }
 
     if (key >= 0 && key <= UCHAR_MAX && std::isprint(key) && line.size() < maxBufferSize)
-        cursor = 1 + line.insert(cursor, key);
+        cursor = 1 + line.insert(cursor, char(key));
 
     return key;
 }

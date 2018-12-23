@@ -23,6 +23,9 @@ const char* toString(Action action)
         case OpenInventory: return "Inventory";
         case ShowEquipmentMenu: return "EquipmentMenu";
         case ToggleRunning: return "ToggleRunning";
+        case NoAction:
+        case LastAction:
+            break;
     }
 
     assert(false);

@@ -93,6 +93,9 @@ int Menu::execute()
                 if (input >= 'a' && input <= 'z' && isValidIndex(input - 'a'))
                     exitCode = menuItems[input - 'a'].id;
                 break;
+
+            case CustomHotkeys:
+                break;
         }
 
         // Handle custom shortcuts.
@@ -112,7 +115,7 @@ int Menu::execute()
 
 int Menu::calculateMaxTextSize() const
 {
-    int maxSize = 0;
+    unsigned maxSize = 0;
     int indexOfMax = 0;
 
     for (const MenuItem& item : menuItems)

@@ -4,7 +4,7 @@
 #include <cctype>
 #include <stdexcept>
 
-Rect getSpriteTextureRegion(const Config& config, std::string_view id)
+static Rect getSpriteTextureRegion(const Config& config, std::string_view id)
 {
     auto components = config.get<std::vector<int>>(id, "spritePosition");
     auto offsetX = randInt(config.get<int>(id, "spriteMultiplicity") - 1);
