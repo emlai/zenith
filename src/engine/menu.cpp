@@ -116,7 +116,6 @@ int Menu::execute()
 int Menu::calculateMaxTextSize() const
 {
     unsigned maxSize = 0;
-    int indexOfMax = 0;
 
     for (const MenuItem& item : menuItems)
     {
@@ -124,10 +123,7 @@ int Menu::calculateMaxTextSize() const
         auto currentSize = getHotkeyPrefix(index + 1).size() + item.mainText.size();
 
         if (currentSize > maxSize)
-        {
             maxSize = currentSize;
-            indexOfMax = index;
-        }
     }
 
     return maxSize;
