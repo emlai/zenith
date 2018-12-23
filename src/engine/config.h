@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <fstream>
 #include <functional>
+#include <memory>
 #include <stdexcept>
 #include <string>
 #include <string_view>
@@ -30,8 +31,62 @@ public:
     void writeToFile(const std::string& filePath) const;
 
 private:
-    template<typename Value>
-    class Group_
+    class Group;
+
+    class Value
+    {
+        using Integer = long long;
+
+    public:
+        enum class Type
+        {
+            Bool,
+            Int,
+            Float,
+            String,
+            List,
+            Group
+        };
+
+        Value(bool value);
+        Value(Integer value);
+        Value(double value);
+        Value(std::string value);
+        Value(std::vector<Value> value);
+        Value(Group value);
+        Value(Value&& value);
+        ~Value();
+        Type getType() const { return type; }
+        bool isBool() const { return type == Type::Bool; }
+        bool isInt() const { return type == Type::Int; }
+        bool isFloat() const { return type == Type::Float; }
+        bool isString() const { return type == Type::String; }
+        bool isList() const { return type == Type::List; }
+        bool isGroup() const { return type == Type::Group; }
+        bool getBool() const { return boolean; }
+        Integer getInt() const { return integer; }
+        double getFloat() const { return floatingPoint; }
+        const std::string& getString() const { return string; }
+        const std::vector<Value>& getList() const { return list; }
+        const Group& getGroup() const { return *group; }
+
+    private:
+        using GroupPtr = std::unique_ptr<Group>;
+
+        union
+        {
+            bool boolean;
+            Integer integer;
+            double floatingPoint;
+            std::string string;
+            std::vector<Value> list;
+            GroupPtr group;
+        };
+
+        Type type;
+    };
+
+    class Group
     {
     public:
         const Value& at(const std::string& key) const
@@ -63,59 +118,6 @@ private:
     private:
         std::unordered_map<std::string, Value> properties;
     };
-
-    class Value
-    {
-        using Integer = long long;
-
-    public:
-        enum class Type
-        {
-            Bool,
-            Int,
-            Float,
-            String,
-            List,
-            Group
-        };
-
-        Value(bool value) : boolean(value), type(Type::Bool) {}
-        Value(Integer value) : integer(value), type(Type::Int) {}
-        Value(double value) : floatingPoint(value), type(Type::Float) {}
-        Value(std::string value) : string(std::move(value)), type(Type::String) {}
-        Value(std::vector<Value> value) : list(std::move(value)), type(Type::List) {}
-        Value(Group_<Value> value) : group(std::move(value)), type(Type::Group) {}
-        Value(Value&& value);
-        ~Value();
-        Type getType() const { return type; }
-        bool isBool() const { return type == Type::Bool; }
-        bool isInt() const { return type == Type::Int; }
-        bool isFloat() const { return type == Type::Float; }
-        bool isString() const { return type == Type::String; }
-        bool isList() const { return type == Type::List; }
-        bool isGroup() const { return type == Type::Group; }
-        bool getBool() const { return boolean; }
-        Integer getInt() const { return integer; }
-        double getFloat() const { return floatingPoint; }
-        const std::string& getString() const { return string; }
-        const std::vector<Value>& getList() const { return list; }
-        const Group_<Value>& getGroup() const { return group; }
-
-    private:
-        union
-        {
-            bool boolean;
-            Integer integer;
-            double floatingPoint;
-            std::string string;
-            std::vector<Value> list;
-            Group_<Value> group;
-        };
-
-        Type type;
-    };
-
-    using Group = Group_<Value>;
 
     template<typename OutputType>
     struct ConversionTraits;

@@ -389,6 +389,13 @@ void Config::writeToFile(const std::string& filePath) const
     }
 }
 
+Config::Value::Value(bool value) : boolean(value), type(Type::Bool) {}
+Config::Value::Value(Integer value) : integer(value), type(Type::Int) {}
+Config::Value::Value(double value) : floatingPoint(value), type(Type::Float) {}
+Config::Value::Value(std::string value) : string(std::move(value)), type(Type::String) {}
+Config::Value::Value(std::vector<Value> value) : list(std::move(value)), type(Type::List) {}
+Config::Value::Value(Group value) : group(std::make_unique<Group>(std::move(value))), type(Type::Group) {}
+
 Config::Value::Value(Value&& value)
 {
     type = value.type;
@@ -431,7 +438,7 @@ Config::Value::~Value()
             list.~vector();
             break;
         case Type::Group:
-            group.~Group();
+            group.~GroupPtr();
             break;
     }
 }
