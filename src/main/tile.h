@@ -19,6 +19,14 @@ class SaveFile;
 class Window;
 class World;
 
+enum class RenderLayer
+{
+    Bottom,
+    Top
+};
+
+constexpr RenderLayer renderLayers[] = { RenderLayer::Bottom, RenderLayer::Top };
+
 class Tile
 {
 public:
@@ -26,7 +34,7 @@ public:
     Tile(const SaveFile& file, World& world, Vector2 position, int level);
     void save(SaveFile& file) const;
     void exist();
-    void render(Window& window, int zIndex, bool fogOfWar, bool renderLight) const;
+    void render(Window& window, RenderLayer layer, bool fogOfWar, bool renderLight) const;
     template<typename... Args>
     Creature* spawnCreature(Args&&...);
     bool hasCreature() const { return !creatures.empty(); }

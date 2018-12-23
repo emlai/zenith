@@ -76,45 +76,39 @@ void Tile::exist()
         item->exist();
 }
 
-void Tile::render(Window& window, int zIndex, bool fogOfWar, bool renderLight) const
+void Tile::render(Window& window, RenderLayer layer, bool fogOfWar, bool renderLight) const
 {
     Vector2 renderPosition = position * getSize();
 
-    switch (zIndex)
+    switch (layer)
     {
-        case 0:
+        case RenderLayer::Bottom:
             groundSprite.render(window, renderPosition);
 
             for (auto& liquid : liquids)
                 liquid.render(window, renderPosition);
-            break;
-        case 1:
+
             for (const auto& item : items)
                 item->render(window, renderPosition);
-            break;
-        case 2:
+
             if (object)
                 object->render(window, renderPosition);
-            break;
-        case 3:
-            if (fogOfWar)
-                break;
 
-            for (const auto& creature : creatures)
-                creature->render(window, renderPosition);
-            break;
-        case 4:
-            if (fogOfWar || !renderLight)
-                break;
-
-            window.context.renderFilledRectangle(Rect(renderPosition, getSize()),
-                                                              light, BlendMode::LinearLight);
-            break;
-        case 5:
             if (fogOfWar)
+            {
                 Game::fogOfWarTexture->render(window, renderPosition, getSize());
+            }
+            else
+            {
+                for (const auto& creature : creatures)
+                    creature->render(window, renderPosition);
+
+                if (renderLight)
+                    window.context.renderFilledRectangle(Rect(renderPosition, getSize()), light, BlendMode::LinearLight);
+            }
             break;
-        case 6:
+
+        case RenderLayer::Top:
         {
             bool showTooltip = true;
             if (showTooltip)
@@ -155,8 +149,6 @@ void Tile::render(Window& window, int zIndex, bool fogOfWar, bool renderLight) c
             }
             break;
         }
-        default:
-            assert(false);
     }
 
 }

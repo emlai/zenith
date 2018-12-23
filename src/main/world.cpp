@@ -82,7 +82,7 @@ void World::render(Window& window, Rect region, int level, const Creature& playe
     for (auto* tile : getTiles(emitRegion, level))
         tile->emitLight();
 
-    for (int zIndex = 0; zIndex < 7; ++zIndex)
+    for (auto layer : renderLayers)
     {
         for (auto* tile : tiles)
         {
@@ -90,7 +90,7 @@ void World::render(Window& window, Rect region, int level, const Creature& playe
             bool fogOfWar = !sees && player.remembers(*tile);
 
             if (sees || fogOfWar)
-                tile->render(window, zIndex, fogOfWar, !game->playerSeesEverything);
+                tile->render(window, layer, fogOfWar, !game->playerSeesEverything);
         }
     }
 }
