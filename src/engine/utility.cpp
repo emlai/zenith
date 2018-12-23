@@ -42,12 +42,12 @@ std::string operator+(std::string_view a, std::string_view b)
 
 bool startsWith(std::string_view a, std::string_view b)
 {
-    return a.substr(0, b.size()) == b;
+    return a.size() >= b.size() && a.substr(0, b.size()) == b;
 }
 
 bool endsWith(std::string_view a, std::string_view b)
 {
-    return a.substr(a.size() - b.size()) == b;
+    return a.size() >= b.size() && a.substr(a.size() - b.size()) == b;
 }
 
 std::string_view removeSuffix(std::string_view a, std::string_view b)
