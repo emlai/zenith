@@ -283,6 +283,9 @@ int main(int argc, char** argv)
 
     MainMenu mainMenu;
 
+#ifdef DEBUG
+    engine.execute(mainMenu);
+#else
     try
     {
         engine.execute(mainMenu);
@@ -291,6 +294,7 @@ int main(int argc, char** argv)
     {
         engine.reportErrorToUser(std::string("Unhandled exception: ") + exception.what());
     }
+#endif
 
     return 0;
 }
