@@ -248,7 +248,7 @@ bool Creature::sees(const Tile& tile) const
     if (getDistance(getPosition(), tile.getPosition()) > getFieldOfVisionRadius())
         return false;
 
-    return raycastIntegerBresenham(getPosition(), tile.getPosition(), [&](Vector2 vector)
+    bool sees = raycastIntegerBresenham(getPosition(), tile.getPosition(), [&](Vector2 vector)
     {
         auto* currentTile = getWorld().getTile(vector, getLevel());
 
@@ -261,9 +261,11 @@ bool Creature::sees(const Tile& tile) const
         if (currentTile->getLight().getLuminance() < 0.3)
             return false;
 
-        seenTilePositions.emplace(currentTile->getPosition3D());
         return true;
     });
+
+    if (sees)
+        seenTilePositions.emplace(tile.getPosition3D());
 }
 
 bool Creature::remembers(const Tile& tile) const
