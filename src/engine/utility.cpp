@@ -39,7 +39,7 @@ bool endsWith(std::string_view a, std::string_view b)
 std::string_view removeSuffix(std::string_view a, std::string_view b)
 {
     assert(endsWith(a, b));
-    return a.substr(a.size() - b.size());
+    return a.substr(0, a.size() - b.size());
 }
 
 std::string pascalCaseToSentenceCase(std::string_view pascalCaseString)
