@@ -82,20 +82,17 @@ void World::render(Window& window, Rect region, int level, const Creature& playe
     for (auto* tile : getTiles(emitRegion, level))
         tile->emitLight();
 
-    std::vector<std::pair<const Tile*, bool>> tilesToRender;
-    tilesToRender.reserve(region.getArea());
-
-    for (auto* tile : tiles)
-    {
-        if (game->playerSeesEverything || player.sees(*tile))
-            tilesToRender.emplace_back(tile, false);
-        else if (player.remembers(*tile))
-            tilesToRender.emplace_back(tile, true);
-    }
-
     for (int zIndex = 0; zIndex < 7; ++zIndex)
-        for (auto tileAndFogOfWar : tilesToRender)
-            tileAndFogOfWar.first->render(window, zIndex, tileAndFogOfWar.second, !game->playerSeesEverything);
+    {
+        for (auto* tile : tiles)
+        {
+            bool sees = game->playerSeesEverything || player.sees(*tile);
+            bool fogOfWar = !sees && player.remembers(*tile);
+
+            if (sees || fogOfWar)
+                tile->render(window, zIndex, fogOfWar, !game->playerSeesEverything);
+        }
+    }
 }
 
 Area* World::getOrCreateArea(Vector3 position)
