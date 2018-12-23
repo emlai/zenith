@@ -71,18 +71,21 @@ void World::exist(Rect region, int level)
 
 void World::render(Window& window, Rect region, int level, const Creature& player)
 {
-    auto lightRegion = region.inset(Vector2(-LightSource::maxRadius, -LightSource::maxRadius));
+    auto tiles = getTiles(region, level);
 
-    for (auto* tile : getTiles(lightRegion, level))
+    for (auto* tile : tiles)
         tile->resetLight();
 
-    for (auto* tile : getTiles(lightRegion, level))
+    // Handle light sources outside the current region emitting light into the current region.
+    auto emitRegion = region.inset(Vector2(-LightSource::maxRadius, -LightSource::maxRadius));
+
+    for (auto* tile : getTiles(emitRegion, level))
         tile->emitLight();
 
     std::vector<std::pair<const Tile*, bool>> tilesToRender;
     tilesToRender.reserve(region.getArea());
 
-    for (auto* tile : getTiles(region, level))
+    for (auto* tile : tiles)
     {
         if (game->playerSeesEverything || player.sees(*tile))
             tilesToRender.emplace_back(tile, false);
