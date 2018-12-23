@@ -27,7 +27,7 @@ public:
 class Window
 {
 public:
-    Window(Engine& engine, Vector2 size, std::string_view title = "", bool fullscreen = true);
+    Window(Engine& engine, std::string_view title = "", bool fullscreen = true);
     Window(Window&& window) = default;
     ~Window();
     Event waitForInput();
@@ -51,7 +51,6 @@ public:
     int getHeight() const;
     std::string_view getTitle() const;
     GraphicsContext& getGraphicsContext() { return context; }
-    static Vector2 getScreenResolution();
 
     enum { CloseRequest = -2 };
 
@@ -59,15 +58,12 @@ private:
     friend class GraphicsContext;
     friend class Texture;
 
-    static void initializeSDLVideoSubsystem();
-    static SDL_Window* initWindowHandle(Vector2 size, const char* title, bool fullscreen);
+    static SDL_Window* initWindowHandle(const char* title, bool fullscreen);
     bool handleWindowEvent(int eventType);
 
     Engine* engine;
     bool closeRequestReceived;
     std::unique_ptr<SDL_Window, void (&)(SDL_Window*)> windowHandle;
     GraphicsContext context;
-    static int windowCount;
-    static bool sdlVideoInitialized;
     static const int fullscreenFlag;
 };

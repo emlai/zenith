@@ -264,8 +264,9 @@ int main(int argc, char** argv)
     }
 
     Engine engine;
-    auto& window = engine.createWindow(Window::getScreenResolution(), PROJECT_NAME, true);
+    Window window(engine, PROJECT_NAME, true);
     window.setAnimationFrameRate(4);
+    engine.setWindow(&window);
 
     if (fs::exists(preferencesFileName))
     {

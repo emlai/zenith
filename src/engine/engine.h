@@ -13,9 +13,8 @@ class Window;
 class Engine
 {
 public:
-    Window& createWindow(Vector2 size, std::string_view title = "", bool fullscreen = true);
-    Window& getWindow(unsigned index = 0) { return windows[index]; }
-    const Window& getWindow(unsigned index = 0) const { return windows[index]; }
+    void setWindow(Window* window) { this->window = window; }
+    Window& getWindow() { return *window; }
     void reportErrorToUser(const std::string& text);
     template<typename StateType>
     auto execute(StateType& state);
@@ -26,7 +25,7 @@ private:
     State& getCurrentState() { return *states.end()[-1]; }
     State& getPreviousState() { return *states.end()[-2]; }
 
-    std::vector<Window> windows;
+    Window* window;
     std::vector<State*> states;
 };
 

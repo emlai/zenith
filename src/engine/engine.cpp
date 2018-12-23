@@ -5,12 +5,6 @@
 #include <functional>
 #include <iostream>
 
-Window& Engine::createWindow(Vector2 size, std::string_view title, bool fullscreen)
-{
-    windows.emplace_back(*this, size, title, fullscreen);
-    return windows.back();
-}
-
 void Engine::reportErrorToUser(const std::string& text)
 {
     if (SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, std::string(getWindow().getTitle()).c_str(),
