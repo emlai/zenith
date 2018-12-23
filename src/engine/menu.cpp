@@ -251,4 +251,6 @@ std::string Menu::getHotkeyPrefix(int index) const
         case NumberHotkeys: return std::to_string(index) + hotkeySuffix;
         case LetterHotkeys: return char('a' + index - 1) + hotkeySuffix;
     }
+
+    assert(false);
 }

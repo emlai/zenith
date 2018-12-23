@@ -228,6 +228,8 @@ static Key getDefaultKeyForAction(Action action)
         case LastAction:
             return NoKey;
     }
+
+    assert(false);
 }
 
 void loadKeyMap(const Config* config)
