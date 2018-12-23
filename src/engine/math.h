@@ -10,8 +10,6 @@ struct Vector2Base;
 
 using Vector2 = Vector2Base<int>;
 
-const double pi = 3.14159265358979324;
-
 template<typename T>
 T sign(T value)
 {

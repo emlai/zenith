@@ -127,7 +127,7 @@ Dir8 Vector2Base<T>::getDir8() const
 {
     if (isZero()) return NoDir;
     double angle = std::atan2(y, x);
-    int octant = static_cast<int>(std::round(8 * angle / (2 * pi) + 8)) % 8;
+    int octant = static_cast<int>(std::round(8 * angle / (2 * M_PI) + 8)) % 8;
     return static_cast<Dir8>(octant + 1);
 }
 
