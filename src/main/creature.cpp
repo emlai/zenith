@@ -4,6 +4,7 @@
 #include "game.h"
 #include "msgsystem.h"
 #include "tile.h"
+#include "engine/raycast.h"
 #include "engine/savefile.h"
 #include <cassert>
 #include <cctype>
@@ -241,6 +242,22 @@ int Creature::getFieldOfVisionRadius() const
     return int(getAttribute(Perception) * 2);
 }
 
+static bool sightHandler(Vector2 vector, const Tile* tile)
+{
+    auto* currentTile = tile->getWorld().getTile(vector, tile->getLevel());
+
+    if (!currentTile)
+        return false;
+
+    if (currentTile != tile && currentTile->blocksSight())
+        return false;
+
+    if (currentTile->getLight().getLuminance() < 0.3)
+        return false;
+
+    return true;
+}
+
 bool Creature::sees(const Tile& tile) const
 {
     assert(tile.getLevel() == getLevel());
@@ -248,24 +265,12 @@ bool Creature::sees(const Tile& tile) const
     if (getDistance(getPosition(), tile.getPosition()) > getFieldOfVisionRadius())
         return false;
 
-    bool sees = raycastIntegerBresenham(getPosition(), tile.getPosition(), [&](Vector2 vector)
-    {
-        auto* currentTile = getWorld().getTile(vector, getLevel());
-
-        if (!currentTile)
-            return false;
-
-        if (currentTile != &tile && currentTile->blocksSight())
-            return false;
-
-        if (currentTile->getLight().getLuminance() < 0.3)
-            return false;
-
-        return true;
-    });
+    bool sees = raycast(getPosition(), tile.getPosition(), sightHandler, &tile);
 
     if (sees)
         seenTilePositions.emplace(tile.getPosition3D());
+
+    return sees;
 }
 
 bool Creature::remembers(const Tile& tile) const

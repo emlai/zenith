@@ -1,7 +1,21 @@
 #include "lightsource.h"
 #include "../tile.h"
 #include "../world.h"
+#include "engine/raycast.h"
 #include "engine/window.h"
+
+struct EmitHandlerData
+{
+    World& world;
+    int level;
+    Vector2 targetPosition;
+};
+
+static bool emitHandler(Vector2 vector, EmitHandlerData* data)
+{
+    auto* tile = data->world.getTile(vector, data->level);
+    return tile && (tile->getPosition() == data->targetPosition || !tile->blocksSight());
+}
 
 void LightSource::emitLight(World& world, Vector2 position, int level) const
 {
@@ -21,12 +35,8 @@ void LightSource::emitLight(World& world, Vector2 position, int level) const
                 continue;
 
             auto targetPosition = position + Vector2(dx, dy);
-
-            bool isLit = raycastIntegerBresenham(position, targetPosition, [&](Vector2 vector)
-            {
-                auto* tile = world.getTile(vector, level);
-                return tile && (tile->getPosition() == targetPosition || !tile->blocksSight());
-            });
+            EmitHandlerData data { world, level, targetPosition };
+            bool isLit = raycast(position, targetPosition, emitHandler, &data);
 
             if (isLit)
             {
