@@ -40,11 +40,6 @@ std::vector<std::vector<int>> Creature::initAttributeIndices(std::string_view id
     return Game::creatureConfig->get<std::vector<std::vector<int>>>(id, "AttributeIndices");
 }
 
-Creature::Creature(Tile* tile, std::string_view id)
-:   Creature(tile, id, AIController::get(id, *this))
-{
-}
-
 Creature::Creature(Tile* tile, std::string_view id, std::unique_ptr<Controller> controller)
 :   Entity(id, *Game::creatureConfig),
     currentHP(0),
@@ -56,7 +51,7 @@ Creature::Creature(Tile* tile, std::string_view id, std::unique_ptr<Controller> 
     displayedAttributes(initDisplayedAttributes(id)),
     attributeIndices(initAttributeIndices(id)),
     sprite(getSprite(*Game::creatureSpriteSheet, *Game::creatureConfig, id)),
-    controller(std::move(controller))
+    controller(controller ? std::move(controller) : AIController::get(id, *this))
 {
     equipment[Head] = nullptr;
     equipment[Torso] = nullptr;
@@ -78,7 +73,7 @@ Creature::Creature(Tile* tile, std::string_view id, std::unique_ptr<Controller> 
     }
 }
 
-Creature::Creature(const SaveFile& file, Tile* tile)
+Creature::Creature(Tile* tile, const SaveFile& file)
 :   Entity(file.readString(), *Game::creatureConfig),
     displayedAttributes(initDisplayedAttributes(getId())),
     attributeIndices(initAttributeIndices(getId())),
@@ -291,10 +286,10 @@ std::vector<Creature*> Creature::getCreaturesCurrentlySeenBy(int maxFieldOfVisio
             if (!tile)
                 continue;
 
-            for (auto& creature : tile->getCreatures())
+            if (auto creature = tile->getCreature())
             {
-                if (creature.get() != this && creature->sees(getTileUnder(0)))
-                    creatures.push_back(creature.get());
+                if (creature != this && creature->sees(getTileUnder(0)))
+                    creatures.push_back(creature);
             }
         }
     }
@@ -316,10 +311,10 @@ std::vector<Creature*> Creature::getCurrentlySeenCreatures() const
             if (!tile || !sees(*tile))
                 continue;
 
-            for (auto& creature : tile->getCreatures())
+            if (auto creature = tile->getCreature())
             {
-                if (creature.get() != this)
-                    currentlySeenCreatures.push_back(creature.get());
+                if (creature != this)
+                    currentlySeenCreatures.push_back(creature);
             }
         }
     }
@@ -358,9 +353,9 @@ Action Creature::tryToMoveOrAttack(Dir8 direction)
     if (!destination)
         return NoAction;
 
-    if (!destination->getCreatures().empty())
+    if (destination->hasCreature())
     {
-        attack(destination->getCreature(0));
+        attack(*destination->getCreature());
         return Attack;
     }
 
@@ -385,7 +380,12 @@ Action Creature::tryToMoveTowardsOrAttack(Creature& target)
 
 void Creature::moveTo(Tile& destination)
 {
-    getTileUnder(0).transferCreature(*this, destination);
+    for (auto tile : getTilesUnder())
+        tile->removeCreature();
+
+    // TODO: Multi-tile creature support.
+    destination.setCreature(this);
+
     tilesUnder.clear();
     tilesUnder.push_back(&destination);
 
@@ -486,17 +486,10 @@ void Creature::onDeath()
     for (auto* observer : getCreaturesCurrentlySeenBy(20))
         observer->addMessage("The ", getName(), " dies.");
 
-    if (getTilesUnder().size() == 1)
-    {
-        std::unique_ptr<Creature> self = getTileUnder(0).removeSingleTileCreature(*this);
-        getTileUnder(0).addItem(std::make_unique<Corpse>(std::move(self)));
-    }
-    else
-    {
-        // TODO: Implement multi-tile creature corpses.
-        for (auto* tile : getTilesUnder())
-            tile->removeCreature(*this);
-    }
+    for (auto* tile : getTilesUnder())
+        tile->removeCreature();
+
+    getTileUnder(0).addItem(std::make_unique<Corpse>(getWorld().removeCreature(this)));
 }
 
 void Creature::bleed()

@@ -29,10 +29,8 @@ Tile::Tile(const SaveFile& file, World& world, Vector2 position, int level)
     groundSprite(getSprite(*Game::groundSpriteSheet, *Game::groundConfig, groundId)),
     light(Color::black)
 {
-    auto creatureCount = file.readInt32();
-    creatures.reserve(size_t(creatureCount));
-    for (int i = 0; i < creatureCount; ++i)
-        creatures.push_back(std::make_unique<Creature>(file, this));
+    if (file.readBool())
+        spawnCreature(file);
 
     auto itemCount = file.readInt32();
     items.reserve(size_t(itemCount));
@@ -51,7 +49,9 @@ Tile::Tile(const SaveFile& file, World& world, Vector2 position, int level)
 void Tile::save(SaveFile& file) const
 {
     file.write(groundId);
-    file.write(creatures);
+    file.write(creature != nullptr);
+    if (creature)
+        creature->save(file);
     file.write(items);
     file.write(liquids);
     file.write(object != nullptr);
@@ -100,7 +100,7 @@ void Tile::render(Window& window, RenderLayer layer, bool fogOfWar, bool renderL
             }
             else
             {
-                for (const auto& creature : creatures)
+                if (creature)
                     creature->render(window, renderPosition);
 
                 if (renderLight)
@@ -150,14 +150,13 @@ void Tile::render(Window& window, RenderLayer layer, bool fogOfWar, bool renderL
             break;
         }
     }
-
 }
 
 std::string Tile::getTooltip() const
 {
     std::string tooltip;
 
-    for (auto& creature : creatures)
+    if (creature)
     {
         tooltip += creature->getName();
         tooltip += '\n';
@@ -178,43 +177,23 @@ std::string Tile::getTooltip() const
     return tooltip;
 }
 
-void Tile::transferCreature(Creature& creature, Tile& destination)
+Creature* Tile::spawnCreature(std::string_view id, std::unique_ptr<Controller> controller)
 {
-    for (auto it = creatures.begin(); it != creatures.end(); ++it)
-    {
-        if (it->get() == &creature)
-        {
-            destination.addCreature(std::move(*it));
-            creatures.erase(it);
-            return;
-        }
-    }
-
-    assert(false);
+    auto creature = world.addCreature(std::make_unique<Creature>(this, id, std::move(controller)));
+    setCreature(creature);
+    return creature;
 }
 
-std::unique_ptr<Creature> Tile::removeSingleTileCreature(Creature& creature)
+Creature* Tile::spawnCreature(const SaveFile& file)
 {
-    assert(creature.getTilesUnder().size() == 1);
-
-    for (auto it = creatures.begin(); it != creatures.end(); ++it)
-    {
-        if (it->get() == &creature)
-        {
-            auto removed = std::move(*it);
-            creatures.erase(it);
-            return removed;
-        }
-    }
-
-    assert(false);
+    auto creature = world.addCreature(std::make_unique<Creature>(this, file));
+    setCreature(creature);
+    return creature;
 }
 
-void Tile::removeCreature(Creature& creature)
+void Tile::removeCreature()
 {
-    auto newEnd = std::remove_if(creatures.begin(), creatures.end(),
-                                 [&](auto& ptr) { return ptr.get() == &creature; });
-    creatures.erase(newEnd, creatures.end());
+    creature = nullptr;
 }
 
 std::unique_ptr<Item> Tile::removeTopmostItem()
@@ -249,9 +228,9 @@ std::vector<Entity*> Tile::getEntities() const
 {
     std::vector<Entity*> entities;
 
-    for (auto& creature : creatures)
+    if (creature)
     {
-        entities.push_back(creature.get());
+        entities.push_back(creature);
 
         for (auto item : creature->getEquipment())
             if (item)

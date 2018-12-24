@@ -48,7 +48,7 @@ std::unique_ptr<Item> Item::load(const SaveFile& file)
     if (endsWith(itemId, corpseSuffix))
     {
         if (file.readBool())
-            item = std::make_unique<Corpse>(std::make_unique<Creature>(file, nullptr));
+            item = std::make_unique<Corpse>(std::make_unique<Creature>(nullptr, file));
         else
             item = std::make_unique<Corpse>(removeSuffix(itemId, corpseSuffix));
     }

@@ -432,6 +432,6 @@ void Game::load()
     auto playerLevel = file.readInt32();
     world.load(file);
 
-    player = &world.getTile(playerPosition, playerLevel)->getCreature(0);
+    player = world.getTile(playerPosition, playerLevel)->getCreature();
     player->setController(std::make_unique<PlayerController>(*this));
 }

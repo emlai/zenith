@@ -29,6 +29,8 @@ public:
     Tile* getOrCreateTile(Vector2 position, int level);
     Tile* getTile(Vector2 position, int level);
     std::vector<Tile*> getTiles(Rect region, int level);
+    Creature* addCreature(std::unique_ptr<Creature> creature);
+    std::unique_ptr<Creature> removeCreature(Creature* creature);
     Color getSunlight() const { return sunlight; }
 
 private:
@@ -40,6 +42,7 @@ private:
     const Game* game;
     std::unordered_map<Vector3, Area> areas;
     std::unordered_map<Vector3, int64_t> savedAreaOffsets;
+    std::vector<std::unique_ptr<Creature>> creatures;
     std::unique_ptr<SaveFile> saveFile;
     Color sunlight;
 };

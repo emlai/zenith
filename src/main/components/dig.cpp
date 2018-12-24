@@ -15,7 +15,7 @@ bool Dig::use(Creature& digger, Item& digItem, Game& game)
         }
         else if (tileToDig->hasCreature())
         {
-            digger.addMessage("You can't dig the ", tileToDig->getCreature(0).getName(), ".");
+            digger.addMessage("You can't dig the ", tileToDig->getCreature()->getName(), ".");
             return false;
         }
         else

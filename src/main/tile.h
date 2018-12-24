@@ -35,20 +35,18 @@ public:
     void save(SaveFile& file) const;
     void exist();
     void render(Window& window, RenderLayer layer, bool fogOfWar, bool renderLight) const;
-    template<typename... Args>
-    Creature* spawnCreature(Args&&...);
-    bool hasCreature() const { return !creatures.empty(); }
-    const auto& getCreatures() const { return creatures; }
-    Creature& getCreature(int index) const { return *creatures[index]; }
-    void transferCreature(Creature&, Tile&);
-    std::unique_ptr<Creature> removeSingleTileCreature(Creature&);
-    void removeCreature(Creature&);
+    Creature* spawnCreature(std::string_view id, std::unique_ptr<Controller> controller = nullptr);
+    Creature* spawnCreature(const SaveFile& file);
+    bool hasCreature() const { return creature != nullptr; }
+    Creature* getCreature() const { return creature; }
+    void setCreature(Creature* creature) { this->creature = creature; }
+    void removeCreature();
     bool hasItems() const { return !items.empty(); }
     const std::vector<std::unique_ptr<Item>>& getItems() const { return items; }
     std::unique_ptr<Item> removeTopmostItem();
     void addItem(std::unique_ptr<Item> item);
     void addLiquid(std::string_view materialId);
-    bool hasObject() const { return bool(object); }
+    bool hasObject() const { return object != nullptr; }
     Object* getObject() { return object.get(); }
     const Object* getObject() const { return object.get(); }
     void setObject(std::unique_ptr<Object>);
@@ -75,9 +73,8 @@ public:
 
 private:
     std::string getTooltip() const;
-    void addCreature(std::unique_ptr<Creature> creature) { creatures.push_back(std::move(creature)); }
 
-    std::vector<std::unique_ptr<Creature>> creatures;
+    Creature* creature = nullptr;
     std::vector<std::unique_ptr<Item>> items;
     std::vector<Liquid> liquids;
     std::unique_ptr<Object> object;
@@ -88,10 +85,3 @@ private:
     Sprite groundSprite;
     Color light;
 };
-
-template<typename... Args>
-Creature* Tile::spawnCreature(Args&&... creatureArgs)
-{
-    addCreature(std::make_unique<Creature>(this, std::forward<Args>(creatureArgs)...));
-    return creatures.back().get();
-}

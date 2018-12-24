@@ -49,24 +49,16 @@ int World::getTurn() const
 
 void World::exist(Rect region, int level)
 {
-    // Collect the creatures into a vector to avoid updating the same creature more than once.
-    std::vector<Creature*> creaturesToUpdate;
-
     for (auto* tile : getTiles(region, level))
-    {
         tile->exist();
 
-        for (auto& creature : tile->getCreatures())
-            creaturesToUpdate.push_back(creature.get());
+    for (auto& creature : creatures)
+    {
+        if (creature)
+            creature->exist();
     }
 
-    // Sort the creatures according to their memory addresses to update them in a consistent order.
-    std::sort(creaturesToUpdate.begin(), creaturesToUpdate.end());
-    creaturesToUpdate.erase(std::unique(creaturesToUpdate.begin(), creaturesToUpdate.end()),
-                            creaturesToUpdate.end());
-
-    for (auto* creature : creaturesToUpdate)
-        creature->exist();
+    creatures.erase(std::remove(creatures.begin(), creatures.end(), nullptr), creatures.end());
 }
 
 void World::render(Window& window, Rect region, int level, const Creature& player)
@@ -180,4 +172,21 @@ std::vector<Tile*> World::getTiles(Rect region, int level)
     }
 
     return tiles;
+}
+
+Creature* World::addCreature(std::unique_ptr<Creature> creature)
+{
+    creatures.push_back(std::move(creature));
+    return creatures.back().get();
+}
+
+std::unique_ptr<Creature> World::removeCreature(Creature* creature)
+{
+    for (auto& c : creatures)
+    {
+        if (c.get() == creature)
+            return std::move(c);
+    }
+
+    assert(false);
 }

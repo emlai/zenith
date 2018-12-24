@@ -77,9 +77,8 @@ std::string_view toString(EquipmentSlot slot);
 class Creature final : public Entity
 {
 public:
-    Creature(Tile*, std::string_view id);
-    Creature(Tile*, std::string_view id, std::unique_ptr<Controller> controller);
-    Creature(const SaveFile& file, Tile* tile);
+    Creature(Tile* tile, std::string_view id, std::unique_ptr<Controller> controller);
+    Creature(Tile* tile, const SaveFile& file);
     void save(SaveFile& file) const;
     void exist();
     void render(Window& window, Vector2 position) const;
