@@ -52,9 +52,9 @@ void World::exist(Rect region, int level)
     for (auto* tile : getTiles(region, level))
         tile->exist();
 
-    for (auto& creature : creatures)
+    for (int i = 0, size = creatures.size(); i < size; ++i)
     {
-        if (creature)
+        if (auto creature = &*creatures[i])
             creature->exist();
     }
 
