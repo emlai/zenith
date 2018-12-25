@@ -294,7 +294,7 @@ void Game::renderAtPosition(Window& window, Vector2 centerPosition)
     window.context.setView(&view);
     window.context.setViewport(&worldViewport);
 
-    auto cursorPosition = window.getMousePosition().divideRoundingDown(Tile::spriteSize);
+    auto cursorPosition = window.getMousePosition().divFloor(Tile::spriteSize);
     hoveredTile = cursorPosition.isWithin(visibleRegion) ? world.getTile(cursorPosition, player->getLevel()) : nullptr;
     world.render(window, visibleRegion, player->getLevel(), *player);
 

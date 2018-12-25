@@ -113,7 +113,7 @@ Area* World::getArea(Vector3 position)
 
 Vector3 World::globalPositionToAreaPosition(Vector2 position, int level)
 {
-    return Vector3(position.divideRoundingDown(Area::size)) + Vector3(0, 0, level);
+    return Vector3(position.divFloor(Area::size)) + Vector3(0, 0, level);
 }
 
 Vector2 World::globalPositionToTilePosition(Vector2 position)

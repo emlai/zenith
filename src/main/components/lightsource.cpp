@@ -19,7 +19,7 @@ static bool emitHandler(Vector2 vector, EmitHandlerData* data)
 
 void LightSource::emitLight(World& world, Vector2 position, int level) const
 {
-    position = position.divideRoundingDown(Tile::getSize());
+    position = position.divFloor(Tile::getSize());
     auto color = Color(parent->getConfig().get<uint32_t>(parent->getId(), "LightColor"));
     int radius = parent->getConfig().get<int>(parent->getId(), "LightRadius");
     assert(radius <= maxRadius);

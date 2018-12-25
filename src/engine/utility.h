@@ -14,8 +14,8 @@ std::ostream& operator<<(std::ostream& outputStream, const std::vector<T>& eleme
     return outputStream;
 }
 
-/// Performs integer division, rounding towards negative infinity.
-inline int divideRoundingDown(int dividend, int divisor)
+/// Divides rounding towards negative infinity.
+inline int divFloor(int dividend, int divisor)
 {
     const int quotient = dividend / divisor;
 

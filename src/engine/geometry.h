@@ -100,14 +100,14 @@ struct Vector2Base
     bool isWithin(Vector2Base<U>) const;
     bool isWithin(struct Rect) const;
 
-    Vector2 divideRoundingDown(int divisor) const
+    Vector2 divFloor(int divisor) const
     {
-        return Vector2(::divideRoundingDown(x, divisor), ::divideRoundingDown(y, divisor));
+        return Vector2(::divFloor(x, divisor), ::divFloor(y, divisor));
     }
 
-    Vector2 divideRoundingDown(Vector2 divisor) const
+    Vector2 divFloor(Vector2 divisor) const
     {
-        return Vector2(::divideRoundingDown(x, divisor.x), ::divideRoundingDown(y, divisor.y));
+        return Vector2(::divFloor(x, divisor.x), ::divFloor(y, divisor.y));
     }
 
     Dir8 getDir8() const;
@@ -231,11 +231,9 @@ struct Vector3Base
     bool operator==(Vector3Base vector) const { return x == vector.x && y == vector.y && z == vector.z; }
     bool operator!=(Vector3Base vector) const { return x != vector.x || y != vector.y || z != vector.z; }
 
-    Vector3Base divideRoundingDown(int divisor) const
+    Vector3Base divFloor(int divisor) const
     {
-        return Vector3Base(::divideRoundingDown(x, divisor),
-                           ::divideRoundingDown(y, divisor),
-                           ::divideRoundingDown(z, divisor));
+        return Vector3Base(::divFloor(x, divisor), ::divFloor(y, divisor), ::divFloor(z, divisor));
     }
 };
 
