@@ -34,7 +34,7 @@ public:
     void enterCommandMode(Window&);
     static const Key commandModeKey = '`';
 #endif
-    static std::optional<Vector2> cursorPosition;
+    static Tile* hoveredTile;
     bool playerSeesEverything;
 
     static std::unique_ptr<Config> creatureConfig;
@@ -53,7 +53,7 @@ public:
 
     void renderAtPosition(Window&, Vector2 centerPosition);
     void render(Window& window) override;
-    void printPlayerInformation(BitmapFont&) const;
+    void renderSidebar(BitmapFont& font) const;
     void printStat(BitmapFont&, std::string_view, double current, double max, Color) const;
     void printAttribute(BitmapFont&, std::string_view, double current) const;
 

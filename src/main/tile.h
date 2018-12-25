@@ -19,14 +19,6 @@ class SaveFile;
 class Window;
 class World;
 
-enum class RenderLayer
-{
-    Bottom,
-    Top
-};
-
-constexpr RenderLayer renderLayers[] = { RenderLayer::Bottom, RenderLayer::Top };
-
 class Tile
 {
 public:
@@ -34,7 +26,7 @@ public:
     Tile(const SaveFile& file, World& world, Vector2 position, int level);
     void save(SaveFile& file) const;
     void exist();
-    void render(Window& window, RenderLayer layer, bool fogOfWar, bool renderLight) const;
+    void render(Window& window, bool fogOfWar, bool renderLight) const;
     Creature* spawnCreature(std::string_view id, std::unique_ptr<Controller> controller = nullptr);
     Creature* spawnCreature(const SaveFile& file);
     bool hasCreature() const { return creature != nullptr; }
@@ -68,12 +60,11 @@ public:
     Vector3 getPosition3D() const { return Vector3(position) + Vector3(0, 0, level); }
     int getLevel() const { return level; }
     Vector2 getCenterPosition() const { return position * getSize() + getSize() / 2; }
+    std::string getTooltip() const;
     static Vector2 getSize();
     static const Vector2 spriteSize;
 
 private:
-    std::string getTooltip() const;
-
     Creature* creature = nullptr;
     std::vector<std::unique_ptr<Item>> items;
     std::vector<Liquid> liquids;

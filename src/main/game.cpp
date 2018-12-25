@@ -25,7 +25,7 @@ std::unique_ptr<Texture> Game::cursorTexture;
 std::unique_ptr<Texture> Game::fogOfWarTexture;
 
 static const Color transparentColor(0x5A5268FF);
-std::optional<Vector2> Game::cursorPosition;
+Tile* Game::hoveredTile;
 
 Game::Game(bool loadSavedGame)
 :   playerSeesEverything(false),
@@ -287,23 +287,22 @@ void Game::render(Window& window)
 
 void Game::renderAtPosition(Window& window, Vector2 centerPosition)
 {
-    cursorPosition = std::nullopt;
-    printPlayerInformation(*window.context.font);
-    MessageSystem::drawMessages(window, *window.context.font, player->getMessages(), getTurn());
-
     Rect worldViewport = GUI::getWorldViewport(getWindow());
+    Rect view(centerPosition * Tile::getSize() + Tile::getSize() / 2 - worldViewport.size / 2, worldViewport.size);
+    Rect visibleRegion(centerPosition - worldViewport.size / Tile::getSize() / 2, worldViewport.size / Tile::getSize());
 
-    Rect view(centerPosition * Tile::getSize() + Tile::getSize() / 2 - worldViewport.size / 2,
-              worldViewport.size);
     window.context.setView(&view);
     window.context.setViewport(&worldViewport);
 
-    Rect visibleRegion(centerPosition - worldViewport.size / Tile::getSize() / 2,
-                       worldViewport.size / Tile::getSize());
+    auto cursorPosition = window.getMousePosition().divideRoundingDown(Tile::spriteSize);
+    hoveredTile = cursorPosition.isWithin(visibleRegion) ? world.getTile(cursorPosition, player->getLevel()) : nullptr;
     world.render(window, visibleRegion, player->getLevel(), *player);
 
     window.context.setView(nullptr);
     window.context.setViewport(nullptr);
+
+    renderSidebar(*window.context.font);
+    MessageSystem::drawMessages(window, *window.context.font, player->getMessages(), getTurn());
 
     bool enableGUIDebugRectangles = false;
     if (enableGUIDebugRectangles)
@@ -320,7 +319,7 @@ void Game::renderAtPosition(Window& window, Vector2 centerPosition)
     }
 }
 
-void Game::printPlayerInformation(BitmapFont& font) const
+void Game::renderSidebar(BitmapFont& font) const
 {
     font.setArea(GUI::getSidebarArea(getWindow()));
     printStat(font, "HP", player->getHP(), player->getMaxHP(), TextColor::Red);
@@ -333,6 +332,16 @@ void Game::printPlayerInformation(BitmapFont& font) const
     {
         font.printLine(getWindow(), "");
         font.printLine(getWindow(), "Running");
+    }
+
+    if (hoveredTile && player->remembers(*hoveredTile))
+    {
+        auto tooltip = hoveredTile->getTooltip();
+        if (!tooltip.empty())
+        {
+            font.printLine(getWindow(), "");
+            font.printLine(getWindow(), tooltip);
+        }
     }
 
 #ifdef DEBUG

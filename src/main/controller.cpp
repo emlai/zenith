@@ -260,8 +260,8 @@ Dir8 getDirectionFromEvent(Event event, Vector2 origin)
     switch (event.type)
     {
         case Event::MouseButtonDown:
-            if (Game::cursorPosition)
-                if (auto direction = (*Game::cursorPosition - origin).getDir8())
+            if (Game::hoveredTile)
+                if (auto direction = (Game::hoveredTile->getPosition() - origin).getDir8())
                     return direction;
 
             break;

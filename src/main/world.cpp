@@ -74,16 +74,13 @@ void World::render(Window& window, Rect region, int level, const Creature& playe
     for (auto* tile : getTiles(emitRegion, level))
         tile->emitLight();
 
-    for (auto layer : renderLayers)
+    for (auto* tile : tiles)
     {
-        for (auto* tile : tiles)
-        {
-            bool sees = game->playerSeesEverything || player.sees(*tile);
-            bool fogOfWar = !sees && player.remembers(*tile);
+        bool sees = game->playerSeesEverything || player.sees(*tile);
+        bool fogOfWar = !sees && player.remembers(*tile);
 
-            if (sees || fogOfWar)
-                tile->render(window, layer, fogOfWar, !game->playerSeesEverything);
-        }
+        if (sees || fogOfWar)
+            tile->render(window, fogOfWar, !game->playerSeesEverything);
     }
 }
 

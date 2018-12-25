@@ -124,9 +124,9 @@ public:
     std::vector<Creature*> getCurrentlySeenCreatures() const;
     Creature* getNearestEnemy() const;
     void setController(std::unique_ptr<Controller> controller);
+    World& getWorld() const;
 
 private:
-    World& getWorld() const;
     int getTurn() const;
     void moveTo(Tile&);
     void attack(Creature&);

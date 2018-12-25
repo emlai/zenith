@@ -76,79 +76,43 @@ void Tile::exist()
         item->exist();
 }
 
-void Tile::render(Window& window, RenderLayer layer, bool fogOfWar, bool renderLight) const
+void Tile::render(Window& window, bool fogOfWar, bool renderLight) const
 {
     Vector2 renderPosition = position * getSize();
+    groundSprite.render(window, renderPosition);
 
-    switch (layer)
+    for (auto& liquid : liquids)
+        liquid.render(window, renderPosition);
+
+    for (auto& item : items)
+        item->render(window, renderPosition);
+
+    if (object)
+        object->render(window, renderPosition);
+
+    if (fogOfWar)
+        Game::fogOfWarTexture->render(window, renderPosition, getSize());
+    else
     {
-        case RenderLayer::Bottom:
-            groundSprite.render(window, renderPosition);
+        if (creature)
+            creature->render(window, renderPosition);
 
-            for (auto& liquid : liquids)
-                liquid.render(window, renderPosition);
+        if (renderLight)
+            window.context.renderFilledRectangle(Rect(renderPosition, getSize()), light, BlendMode::LinearLight);
+    }
 
-            for (const auto& item : items)
-                item->render(window, renderPosition);
+    Rect tileRect(renderPosition, getSize());
 
-            if (object)
-                object->render(window, renderPosition);
-
-            if (fogOfWar)
-            {
-                Game::fogOfWarTexture->render(window, renderPosition, getSize());
-            }
-            else
-            {
-                if (creature)
-                    creature->render(window, renderPosition);
-
-                if (renderLight)
-                    window.context.renderFilledRectangle(Rect(renderPosition, getSize()), light, BlendMode::LinearLight);
-            }
-            break;
-
-        case RenderLayer::Top:
-        {
-            bool showTooltip = true;
-            if (showTooltip)
-            {
-                Rect tileRect(renderPosition, getSize());
-
-                if (window.getMousePosition().isWithin(tileRect))
-                {
-                    Game::cursorPosition = getPosition();
-                    double cursorBreathRateMS = 150.0;
-                    double sine = std::sin(SDL_GetTicks() / cursorBreathRateMS);
-                    double minAlpha = 0.0;
-                    double maxAlpha = 0.5;
-                    double currentAlpha = minAlpha + (sine + 1) / 2 * (maxAlpha - minAlpha);
-                    auto cursorColor = Color(0xFF, 0xFF, 0xFF, currentAlpha * 0xFF);
-                    Game::cursorTexture->setColor(cursorColor);
-                    Game::cursorTexture->render(window, tileRect);
-
-                    auto tooltip = getTooltip();
-                    if (!tooltip.empty())
-                    {
-                        int lineHeight = 2;
-                        Rect lineArea(tileRect.position.x + getSize().x,
-                                      tileRect.position.y + getSize().y / 2 - lineHeight / 2,
-                                      getSize().x / 2, lineHeight);
-                        window.context.renderFilledRectangle(lineArea, GUIColor::Black);
-
-                        Vector2 inset = Vector2(window.context.font->getColumnWidth(),
-                                                window.context.font->getRowHeight() / 2);
-                        Rect tooltipArea(Vector2(lineArea.getRight(), tileRect.getTop()),
-                                         window.context.font->getTextSize(tooltip) + inset * 2);
-                        window.context.renderFilledRectangle(tooltipArea.inset(Vector2(0, 1)), GUIColor::Black);
-                        window.context.renderFilledRectangle(tooltipArea.inset(Vector2(1, 0)), GUIColor::Black);
-                        window.context.font->setArea(tooltipArea.offset(inset));
-                        window.context.font->print(window, tooltip, TextColor::White, GUIColor::Black, true, PreserveLines);
-                    }
-                }
-            }
-            break;
-        }
+    if (window.getMousePosition().isWithin(tileRect))
+    {
+        double cursorBreathRateMS = 150.0;
+        double sine = std::sin(SDL_GetTicks() / cursorBreathRateMS);
+        double minAlpha = 0.0;
+        double maxAlpha = 0.5;
+        double currentAlpha = minAlpha + (sine + 1) / 2 * (maxAlpha - minAlpha);
+        auto cursorColor = Color(0xFF, 0xFF, 0xFF, currentAlpha * 0xFF);
+        Game::cursorTexture->setColor(cursorColor);
+        Game::cursorTexture->render(window, tileRect);
     }
 }
 

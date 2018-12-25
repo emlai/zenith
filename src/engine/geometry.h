@@ -112,6 +112,11 @@ struct Vector2Base
 
     Dir8 getDir8() const;
 
+    std::string toString() const
+    {
+        return "(" + std::to_string(x) + ", " + std::to_string(y) + ")";
+    }
+
     static const Vector2Base zeroVector;
 };
 
