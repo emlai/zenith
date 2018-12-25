@@ -332,7 +332,7 @@ void Game::renderSidebar(BitmapFont& font) const
         font.printLine(getWindow(), "Running");
     }
 
-    if (hoveredTile && player->remembers(*hoveredTile))
+    if (hoveredTile && (player->remembers(*hoveredTile) || playerSeesEverything))
     {
         auto tooltip = hoveredTile->getTooltip();
         if (!tooltip.empty())
