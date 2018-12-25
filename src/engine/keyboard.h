@@ -51,6 +51,6 @@ enum : Mod
 
 namespace keyboard
 {
-    int readLine(Window&, std::string& lineContent, Vector2 position, const std::function<void(Window&)>&,
-                 std::string_view prefix = "");
+    int readLine(Window&, std::string& lineContent, Vector2 position,
+                 const std::function<void()>&, std::string_view prefix = "");
 }

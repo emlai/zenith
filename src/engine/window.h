@@ -5,7 +5,7 @@
 #include "keyboard.h"
 #include <memory>
 
-class Engine;
+class StateManager;
 struct SDL_Window;
 
 class Event
@@ -27,7 +27,7 @@ public:
 class Window
 {
 public:
-    Window(Engine& engine, std::string_view title = "", bool fullscreen = true);
+    Window(StateManager* stateManager, std::string_view title = "", bool fullscreen = true);
     Window(Window&& window) = default;
     ~Window();
     Event waitForInput();
@@ -42,13 +42,13 @@ public:
     Vector2 getSize() const;
     int getWidth() const;
     int getHeight() const;
-    std::string_view getTitle() const;
+    const char* getTitle() const;
     static SDL_Window* initWindowHandle(const char* title, bool fullscreen);
     bool handleWindowEvent(int eventType);
 
     enum { CloseRequest = -2 };
 
-    Engine* engine;
+    StateManager* stateManager;
     bool closeRequestReceived;
     std::unique_ptr<SDL_Window, void (&)(SDL_Window*)> windowHandle;
     GraphicsContext context;

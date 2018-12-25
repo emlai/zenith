@@ -46,7 +46,7 @@ public:
     int addItem(MenuItem&& item);
     void clear();
     int execute();
-    void render(Window& window) override;
+    void render() override;
     void setWrap(bool state) { wrapEnabled = state; }
     void setHotkeyStyle(HotkeyStyle style) { hotkeyStyle = style; }
     void setHotkeySuffix(std::string string) { hotkeySuffix = std::move(string); }

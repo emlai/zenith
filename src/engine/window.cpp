@@ -1,7 +1,7 @@
 #include "window.h"
-#include "engine.h"
 #include "geometry.h"
 #include "keyboard.h"
+#include "state.h"
 #include "texture.h"
 #include <SDL.h>
 #include <cctype>
@@ -34,8 +34,8 @@ SDL_Window* Window::initWindowHandle(const char* title, bool fullscreen)
     return windowHandle;
 }
 
-Window::Window(Engine& engine, std::string_view title, bool fullscreen)
-:   engine(&engine),
+Window::Window(StateManager* stateManager, std::string_view title, bool fullscreen)
+:   stateManager(stateManager),
     closeRequestReceived(false),
     windowHandle(initWindowHandle(std::string(title).c_str(), fullscreen), SDL_DestroyWindow),
     context(*this)
@@ -76,7 +76,7 @@ Event Window::waitForInput()
 
     while (true)
     {
-        engine->render(*this);
+        stateManager->render();
         context.updateScreen();
 
         if (!SDL_PollEvent(&event))
@@ -176,7 +176,7 @@ int Window::getHeight() const
     return height;
 }
 
-std::string_view Window::getTitle() const
+const char* Window::getTitle() const
 {
     return SDL_GetWindowTitle(windowHandle.get());
 }

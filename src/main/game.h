@@ -52,7 +52,7 @@ public:
     static constexpr auto saveFileName = "zenith.sav";
 
     void renderAtPosition(Window&, Vector2 centerPosition);
-    void render(Window& window) override;
+    void render() override;
     void renderSidebar(BitmapFont& font) const;
     void printStat(BitmapFont&, std::string_view, double current, double max, Color) const;
     void printAttribute(BitmapFont&, std::string_view, double current) const;

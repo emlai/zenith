@@ -1,19 +1,42 @@
 #pragma once
 
-class Engine;
+#include "utility.h"
+#include <vector>
+
+class State;
 class Window;
+
+class StateManager
+{
+public:
+    void render() const;
+    template<typename T>
+    auto execute(T& state, Window* window)
+    {
+        states.push_back(&state);
+        state.stateManager = this;
+        state.window = window;
+        DEFER { states.pop_back(); };
+        return state.execute();
+    }
+
+private:
+    State* currentState() const { return states[states.size() - 1]; }
+    State* previousState() const { return states[states.size() - 2]; }
+
+    std::vector<State*> states;
+};
 
 class State
 {
 public:
-    State() = default;
-    State(const State&) = delete;
-    State(State&&) = default;
-    State& operator=(const State&) = delete;
-    State& operator=(State&&) = default;
     virtual ~State() = default;
-    virtual void render(Window& window) = 0;
+    virtual void render() = 0;
     virtual bool renderPreviousState() const { return false; }
+    template<typename T>
+    auto executeState(T& state) { return stateManager->execute(state, window); }
 
-    Engine* engine;
+    StateManager* stateManager = nullptr;
+    Window* window = nullptr;
 };
+

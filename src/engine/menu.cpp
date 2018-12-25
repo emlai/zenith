@@ -1,5 +1,4 @@
 #include "menu.h"
-#include "engine.h"
 #include "font.h"
 #include "window.h"
 #include "sprite.h"
@@ -38,8 +37,7 @@ void Menu::clear()
 
 int Menu::execute()
 {
-    auto& window = *engine->window;
-    auto& font = *window.context.font;
+    auto& font = *window->context.font;
     TextLayout oldLayout = font.getLayout();
     font.setLayout(textLayout);
     calculateSize();
@@ -48,7 +46,7 @@ int Menu::execute()
 
     while (exitCode == -3)
     {
-        Event event = window.waitForInput();
+        Event event = window->waitForInput();
 
         if (event.type == Event::MouseButtonDown)
         {
@@ -67,7 +65,7 @@ int Menu::execute()
             continue;
         }
 
-        if (window.shouldClose())
+        if (window->shouldClose())
         {
             exitCode = Window::CloseRequest;
             break;
@@ -188,16 +186,16 @@ int Menu::calculateMainImageColumnWidth() const
     return width + tableCellSpacing.x;
 }
 
-void Menu::render(Window& window)
+void Menu::render()
 {
-    auto& font = *window.context.font;
+    auto& font = *window->context.font;
     int index = 1;
     auto position = itemPositions.begin();
 
     if (!title.empty())
     {
         font.setArea(*position);
-        font.print(window, title, textColor);
+        font.print(*window, title, textColor);
         ++position;
     }
 
@@ -206,16 +204,16 @@ void Menu::render(Window& window)
     for (auto item = menuItems.begin(); item != menuItems.end(); ++item, ++position, ++index)
     {
         Vector2 itemPosition = position->position;
-        bool isHovered = window.getMousePosition().isWithin(Rect(itemPosition, position->size));
+        bool isHovered = window->getMousePosition().isWithin(Rect(itemPosition, position->size));
         auto color = isHovered ? hoverColor : textColor;
 
         auto hotkeyPrefix = getHotkeyPrefix(index);
         font.setArea(Rect(itemPosition, position->size));
-        font.print(window, hotkeyPrefix, color);
+        font.print(*window, hotkeyPrefix, color);
         itemPosition.x += hotkeyPrefix.size() * font.getColumnWidth() + tableCellSpacing.x;
 
         if (item->mainImage)
-            item->mainImage->render(window, itemPosition);
+            item->mainImage->render(*window, itemPosition);
 
         if (mainImageColumnWidth > 0)
         {
@@ -223,12 +221,12 @@ void Menu::render(Window& window)
             font.setArea(Rect(itemPosition, position->size));
         }
 
-        font.print(window, item->mainText, color);
+        font.print(*window, item->mainText, color);
         itemPosition.x += calculateMaxTextSize() * font.getColumnWidth() + tableCellSpacing.x;
 
         if (item->secondaryImage)
         {
-            item->secondaryImage->render(window, itemPosition);
+            item->secondaryImage->render(*window, itemPosition);
             itemPosition.x += item->secondaryImage->getWidth() + tableCellSpacing.x;
         }
 
@@ -237,7 +235,7 @@ void Menu::render(Window& window)
             auto oldLayout = font.getLayout();
             font.setLayout(TextLayout(secondaryColumnAlignment, font.getLayout().verticalAlignment));
             font.setArea(Rect(itemPosition, position->size - Vector2(itemPosition.x - position->position.x, 0)));
-            font.print(window, item->secondaryText, color);
+            font.print(*window, item->secondaryText, color);
             font.setLayout(oldLayout);
         }
     }

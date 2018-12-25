@@ -1,7 +1,6 @@
 #include "action.h"
 #include "game.h"
 #include "gui.h"
-#include "engine/engine.h"
 #include "engine/menu.h"
 #include "engine/filesystem.h"
 #include "engine/geometry.h"
@@ -25,20 +24,20 @@ class LoadingScreen : public State
 public:
     LoadingScreen(std::string text) : text(std::move(text)) {}
 
-    void render(Window& window) override
+    void render() override
     {
-        auto& font = *window.context.font;
+        auto& font = *window->context.font;
         auto oldLayout = font.getLayout();
-        font.setArea(Rect(Vector2(0, 0), window.getResolution()));
+        font.setArea(Rect(Vector2(0, 0), window->getResolution()));
         font.setLayout(TextLayout(HorizontalCenter, VerticalCenter));
-        font.print(window, text);
+        font.print(*window, text);
         font.setLayout(oldLayout);
     }
 
     void execute()
     {
-        engine->render(*engine->window);
-        engine->window->context.updateScreen();
+        stateManager->render();
+        window->context.updateScreen();
     }
 
 private:
@@ -76,7 +75,6 @@ public:
 void KeyMapMenu::execute()
 {
     enum { ResetDefaults };
-    auto& window = *engine->window;
 
     while (true)
     {
@@ -96,7 +94,7 @@ void KeyMapMenu::execute()
         }
 
         addItem(MenuItem(ResetDefaults, "Reset defaults"));
-        setPrefsMenuCommonOptions(*this, window);
+        setPrefsMenuCommonOptions(*this, *window);
 
         auto selection = Menu::execute();
 
@@ -110,7 +108,7 @@ void KeyMapMenu::execute()
                 return;
 
             default:
-                auto event = window.waitForInput();
+                auto event = window->waitForInput();
 
                 if (event.type == Event::KeyDown && getMappedAction(event.key) == NoAction)
                     mapKey(event.key, static_cast<Action>(selection));
@@ -129,7 +127,6 @@ public:
 void PrefsMenu::execute()
 {
     enum { GraphicsScale, Fullscreen, KeyMap };
-    auto& window = *engine->window;
 
     while (true)
     {
@@ -137,33 +134,33 @@ void PrefsMenu::execute()
         addTitle("Preferences");
 
         addItem(MenuItem(GraphicsScale, "Graphics scale",
-                         toStringAvoidingDecimalPlaces(window.context.getScale()) + "x"));
-        addItem(MenuItem(Fullscreen, "Fullscreen", toOnOffString(window.isFullscreen())));
+                         toStringAvoidingDecimalPlaces(window->context.getScale()) + "x"));
+        addItem(MenuItem(Fullscreen, "Fullscreen", toOnOffString(window->isFullscreen())));
         addItem(MenuItem(KeyMap, "Key map"));
 
-        setPrefsMenuCommonOptions(*this, window);
+        setPrefsMenuCommonOptions(*this, *window);
 
         auto selection = Menu::execute();
 
         switch (selection)
         {
             case GraphicsScale:
-                if (window.context.getScale() >= 2)
-                    window.context.setScale(1);
+                if (window->context.getScale() >= 2)
+                    window->context.setScale(1);
                 else
-                    window.context.setScale(window.context.getScale() + 0.5);
+                    window->context.setScale(window->context.getScale() + 0.5);
                 break;
             case Fullscreen:
-                window.toggleFullscreen();
+                window->toggleFullscreen();
                 break;
             case KeyMap:
             {
                 KeyMapMenu keyMapMenu;
-                engine->execute(keyMapMenu);
+                executeState(keyMapMenu);
                 break;
             }
             case Menu::Exit:
-                savePreferencesToFile(window.context.getScale(), window.isFullscreen());
+                savePreferencesToFile(window->context.getScale(), window->isFullscreen());
                 return;
             default:
                 assert(false);
@@ -197,7 +194,7 @@ void MainMenu::execute()
         setItemLayout(Menu::Horizontal);
         setItemSpacing(18);
         setTextLayout(TextLayout(HorizontalCenter, VerticalCenter));
-        setArea(Vector2(0, 0), engine->window->getResolution() / Vector2(1, 6));
+        setArea(Vector2(0, 0), window->getResolution() / Vector2(1, 6));
         setHotkeyStyle(LetterHotkeys);
 
         auto selection = Menu::execute();
@@ -211,7 +208,7 @@ void MainMenu::execute()
                     if (selection == LoadGame)
                     {
                         LoadingScreen loadingScreen("Loading game...");
-                        engine->execute(loadingScreen);
+                        executeState(loadingScreen);
                     }
 
                     std::random_device randomDevice;
@@ -221,7 +218,7 @@ void MainMenu::execute()
 
                 try
                 {
-                    engine->execute(*game);
+                    executeState(*game);
                 }
                 catch (...)
                 {
@@ -239,7 +236,7 @@ void MainMenu::execute()
             case Preferences:
             {
                 PrefsMenu prefsMenu;
-                engine->execute(prefsMenu);
+                executeState(prefsMenu);
                 break;
             }
 
@@ -248,7 +245,7 @@ void MainMenu::execute()
                 if (game)
                 {
                     LoadingScreen loadingScreen("Saving game...");
-                    engine->execute(loadingScreen);
+                    executeState(loadingScreen);
                     game->save();
                 }
                 return;
@@ -264,10 +261,9 @@ int main(int argc, char** argv)
         return 0;
     }
 
-    Engine engine;
-    Window window(engine, PROJECT_NAME, true);
+    StateManager stateManager;
+    Window window(&stateManager, PROJECT_NAME, true);
     window.context.setAnimationFrameRate(4);
-    engine.window = &window;
 
     if (fs::exists(preferencesFileName))
     {
@@ -286,15 +282,18 @@ int main(int argc, char** argv)
     MainMenu mainMenu;
 
 #ifdef DEBUG
-    engine.execute(mainMenu);
+    stateManager.execute(mainMenu, &window);
 #else
     try
     {
-        engine.execute(mainMenu);
+        stateManager.execute(mainMenu, &window);
     }
     catch (const std::exception& exception)
     {
-        engine.reportErrorToUser(std::string("Unhandled exception: ") + exception.what());
+        auto text = std::string("Unhandled exception: ") + exception.what();
+
+        if (SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, window.getTitle(), text.c_str(), window.windowHandle.get()) != 0)
+            std::cerr << text.c_str() << std::endl;
     }
 #endif
 

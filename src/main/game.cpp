@@ -3,7 +3,6 @@
 #include "item.h"
 #include "msgsystem.h"
 #include "tile.h"
-#include "engine/engine.h"
 #include "engine/keyboard.h"
 #include "engine/math.h"
 #include "engine/menu.h"
@@ -56,7 +55,7 @@ Game::Game(bool loadSavedGame)
 
 Window& Game::getWindow() const
 {
-    return *engine->window;
+    return *window;
 }
 
 class InventoryMenu : public Menu
@@ -93,7 +92,7 @@ InventoryMenu::InventoryMenu(Window& window, const Creature& player, std::string
 int Game::showInventory(std::string_view title, bool showNothingAsOption, std::function<bool(const Item&)> itemFilter)
 {
     InventoryMenu inventoryMenu(getWindow(), *player, title, showNothingAsOption, std::move(itemFilter));
-    return engine->execute(inventoryMenu);
+    return executeState(inventoryMenu);
 }
 
 class EquipmentMenu : public Menu
@@ -112,10 +111,10 @@ void EquipmentMenu::execute()
     {
         clear();
         addTitle("Equipment");
-        setArea(GUI::getInventoryArea(*engine->window));
+        setArea(GUI::getInventoryArea(*window));
         setItemSize(Tile::getSize());
         setTextLayout(TextLayout(LeftAlign, VerticalCenter));
-        setTableCellSpacing(Vector2(engine->window->context.font->getColumnWidth(), 0));
+        setTableCellSpacing(Vector2(window->context.font->getColumnWidth(), 0));
         setHotkeyStyle(LetterHotkeys);
 
         for (int i = 0; i < equipmentSlots; ++i)
@@ -132,12 +131,12 @@ void EquipmentMenu::execute()
 
         auto selectedSlot = static_cast<EquipmentSlot>(choice);
 
-        InventoryMenu inventoryMenu(*engine->window, *player, "", true, [&](auto& item)
+        InventoryMenu inventoryMenu(*window, *player, "", true, [&](auto& item)
         {
             return item.getEquipmentSlot() == selectedSlot;
         });
 
-        auto selectedItemIndex = engine->execute(inventoryMenu);
+        auto selectedItemIndex = executeState(inventoryMenu);
 
         if (selectedItemIndex == -1)
             player->equip(selectedSlot, nullptr);
@@ -149,7 +148,7 @@ void EquipmentMenu::execute()
 void Game::showEquipmentMenu()
 {
     EquipmentMenu equipmentMenu(*player);
-    engine->execute(equipmentMenu);
+    executeState(equipmentMenu);
 }
 
 class LookMode : public State
@@ -159,7 +158,7 @@ public:
     void execute();
 
 private:
-    void render(Window& window) override;
+    void render() override;
 
     Game* game;
     Vector2 position;
@@ -169,7 +168,7 @@ void LookMode::execute()
 {
     while (true)
     {
-        Event event = engine->window->waitForInput();
+        Event event = window->waitForInput();
 
         if (event.type != Event::KeyDown)
             continue;
@@ -186,17 +185,17 @@ void LookMode::execute()
     }
 }
 
-void LookMode::render(Window& window)
+void LookMode::render()
 {
-    game->renderAtPosition(window, position);
-    window.context.font->setArea(GUI::getQuestionArea(window));
-    window.context.font->print(window, "Look mode (arrow keys to move around, esc to exit)");
+    game->renderAtPosition(*window, position);
+    window->context.font->setArea(GUI::getQuestionArea(*window));
+    window->context.font->print(*window, "Look mode (arrow keys to move around, esc to exit)");
 }
 
 void Game::lookMode()
 {
     LookMode lookMode(*this);
-    engine->execute(lookMode);
+    executeState(lookMode);
 }
 
 class StringQuestion : public State
@@ -206,7 +205,7 @@ public:
     std::string execute();
 
 private:
-    void render(Window&) override {} // Rendered by keyboard::readLine() in execute().
+    void render() override {} // Rendered by keyboard::readLine() in execute(). (FIXME)
     bool renderPreviousState() const override { return true; }
 
     std::string question;
@@ -214,11 +213,10 @@ private:
 
 std::string StringQuestion::execute()
 {
-    auto& window = *engine->window;
     std::string input;
 
-    int result = keyboard::readLine(window, input, GUI::getQuestionArea(window).position,
-                                    std::bind(&Engine::render, engine, std::placeholders::_1), question);
+    int result = keyboard::readLine(*window, input, GUI::getQuestionArea(*window).position,
+                                    std::bind(&StateManager::render, stateManager), question);
 
     if (result == Esc)
         return "";
@@ -229,7 +227,7 @@ std::string StringQuestion::execute()
 std::string Game::askForString(std::string&& question)
 {
     StringQuestion stringQuestion(question);
-    return engine->execute(stringQuestion);
+    return executeState(stringQuestion);
 }
 
 class DirectionQuestion : public State
@@ -239,7 +237,7 @@ public:
     std::optional<Dir8> execute();
 
 private:
-    void render(Window& window) override;
+    void render() override;
     bool renderPreviousState() const override { return true; }
 
     std::string question;
@@ -248,7 +246,7 @@ private:
 
 std::optional<Dir8> DirectionQuestion::execute()
 {
-    Event event = engine->window->waitForInput();
+    Event event = window->waitForInput();
 
     if (auto direction = getDirectionFromEvent(event, origin))
         return direction;
@@ -256,16 +254,16 @@ std::optional<Dir8> DirectionQuestion::execute()
     return std::nullopt;
 }
 
-void DirectionQuestion::render(Window& window)
+void DirectionQuestion::render()
 {
-    window.context.font->setArea(GUI::getQuestionArea(window));
-    window.context.font->print(window, question);
+    window->context.font->setArea(GUI::getQuestionArea(*window));
+    window->context.font->print(*window, question);
 }
 
 std::optional<Dir8> Game::askForDirection(std::string&& question)
 {
     DirectionQuestion directionQuestion(question, player->getPosition());
-    return engine->execute(directionQuestion);
+    return executeState(directionQuestion);
 }
 
 void Game::execute()
@@ -280,9 +278,9 @@ void Game::execute()
     }
 }
 
-void Game::render(Window& window)
+void Game::render()
 {
-    renderAtPosition(window, player->getPosition());
+    renderAtPosition(*window, player->getPosition());
 }
 
 void Game::renderAtPosition(Window& window, Vector2 centerPosition)
@@ -388,7 +386,7 @@ void Game::enterCommandMode(Window& window)
     for (std::string command;;)
     {
         int result = keyboard::readLine(window, command, GUI::getCommandLineArea(window).position,
-                                        std::bind(&Game::render, this, std::placeholders::_1), ">> ");
+                                        std::bind(&Game::render, this), ">> ");
 
         if (result == Enter && !command.empty())
         {
