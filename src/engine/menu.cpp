@@ -24,7 +24,7 @@ void Menu::clear()
     menuItems.clear();
     wrapEnabled = true;
     hotkeyStyle = CustomHotkeys;
-    hotkeySuffix = ")";
+    hotkeySuffix = ") ";
     itemLayout = Vertical;
     itemSpacing = 1;
     itemSize = std::nullopt;
@@ -210,7 +210,7 @@ void Menu::render()
         auto hotkeyPrefix = getHotkeyPrefix(index);
         font.setArea(Rect(itemPosition, position->size));
         font.print(*window, hotkeyPrefix, color);
-        itemPosition.x += hotkeyPrefix.size() * font.getColumnWidth() + tableCellSpacing.x;
+        itemPosition.x += trim(hotkeyPrefix).size() * font.getColumnWidth() + tableCellSpacing.x;
 
         if (item->mainImage)
             item->mainImage->render(*window, itemPosition);

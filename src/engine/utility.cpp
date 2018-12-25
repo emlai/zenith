@@ -42,6 +42,20 @@ std::string_view removeSuffix(std::string_view a, std::string_view b)
     return a.substr(0, a.size() - b.size());
 }
 
+std::string trim(std::string&& str)
+{
+    str.erase(0, str.find_first_not_of(' '));
+    str.erase(str.find_last_not_of(' ') + 1);
+    return std::move(str);
+}
+
+std::string_view trim(std::string_view str)
+{
+    str.remove_prefix(str.find_first_not_of(' '));
+    str.remove_suffix(str.size() - (str.find_last_not_of(' ') + 1));
+    return str;
+}
+
 std::string pascalCaseToSentenceCase(std::string_view pascalCaseString)
 {
     std::string name;

@@ -29,10 +29,10 @@ public:
     BitmapFont(std::string_view fileName, Vector2 charSize);
     void print(Window& window, std::string_view text, Color color = Color::none,
                Color backgroundColor = Color::none, bool blend = true,
-               LineBreakMode lineBreakMode = SplitLines);
+               LineBreakMode lineBreakMode = PreserveLines);
     void printLine(Window& window, std::string_view text, Color color = Color::none,
                    Color backgroundColor = Color::none, bool blend = true,
-                   LineBreakMode lineBreakMode = SplitLines);
+                   LineBreakMode lineBreakMode = PreserveLines);
     void printWithCursor(Window& window, std::string_view, const char* cursorPosition,
                          Color mainColor = Color::none, Color cursorColor = Color::none,
                          Color backgroundColor = Color::none);

@@ -52,7 +52,7 @@ void MessageSystem::drawMessages(Window& window, BitmapFont& font,
         if (messages[i].count > 1)
             text += " (x" + std::to_string(messages[i].count) + ")";
 
-        font.printLine(window, text, color);
+        font.printLine(window, text, color, Color::none, true, SplitLines);
     }
 
 #ifdef DEBUG

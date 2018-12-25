@@ -27,12 +27,12 @@ inline int divFloor(int dividend, int divisor)
 
 std::string toOnOffString(bool value);
 std::string toStringAvoidingDecimalPlaces(double value);
-
 std::string operator+(std::string_view a, std::string_view b);
 bool startsWith(std::string_view, std::string_view);
 bool endsWith(std::string_view, std::string_view);
 std::string_view removeSuffix(std::string_view, std::string_view);
-
+std::string trim(std::string&& str);
+std::string_view trim(std::string_view str);
 std::string pascalCaseToSentenceCase(std::string_view pascalCaseString);
 
 bool isVowel(char);

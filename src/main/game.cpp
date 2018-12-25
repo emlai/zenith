@@ -368,15 +368,14 @@ void Game::printStat(BitmapFont& font, std::string_view statName, double current
     auto filledColumns = columns * std::max(currentValueInt, 0) / maximumValueInt;
     text.append(columns - text.size(), ' ');
 
-    font.print(getWindow(), std::string_view(text).substr(0, filledColumns), TextColor::White, color, true, PreserveLines);
-    font.printLine(getWindow(), std::string_view(text).substr(filledColumns), TextColor::White, Color::none, true, PreserveLines);
+    font.print(getWindow(), std::string_view(text).substr(0, filledColumns), TextColor::White, color);
+    font.printLine(getWindow(), std::string_view(text).substr(filledColumns), TextColor::White);
 }
 
 void Game::printAttribute(BitmapFont& font, std::string_view attributeName, double attributeValue) const
 {
     std::string padding(5 - attributeName.size(), ' ');
-    font.printLine(getWindow(), attributeName + padding + std::to_string(int(attributeValue)),
-                   Color::none, Color::none, true, PreserveLines);
+    font.printLine(getWindow(), attributeName + padding + std::to_string(int(attributeValue)));
 }
 
 #ifdef DEBUG
