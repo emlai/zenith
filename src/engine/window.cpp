@@ -70,15 +70,6 @@ bool Window::isFullscreen() const
     return SDL_GetWindowFlags(windowHandle.get()) & fullscreenFlag;
 }
 
-static int filterKeyRepeatEvents(void* userdata, SDL_Event* event)
-{
-    if (event->type == SDL_KEYDOWN && event->key.repeat
-        && event->key.keysym.sym == static_cast<const SDL_Event*>(userdata)->key.keysym.sym)
-        return 0;
-
-    return 1;
-}
-
 Event Window::waitForInput()
 {
     SDL_Event event;
@@ -95,8 +86,6 @@ Event Window::waitForInput()
         {
             case SDL_KEYDOWN:
             {
-                SDL_FilterEvents(filterKeyRepeatEvents, &event);
-
                 auto key = event.key.keysym.sym;
 
                 // Use shifts only as modifiers.
