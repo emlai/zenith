@@ -56,6 +56,21 @@ std::string_view trim(std::string_view str)
     return str;
 }
 
+std::string join(const std::vector<std::string>& strings, std::string_view delimiter)
+{
+    std::string result;
+
+    for (auto& str : strings)
+    {
+        result += str;
+
+        if (&str != &strings.back())
+            result += delimiter;
+    }
+
+    return result;
+}
+
 std::string pascalCaseToSentenceCase(std::string_view pascalCaseString)
 {
     std::string name;

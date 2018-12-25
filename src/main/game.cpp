@@ -338,7 +338,7 @@ void Game::renderSidebar(BitmapFont& font) const
         if (!tooltip.empty())
         {
             font.printLine(getWindow(), "");
-            font.printLine(getWindow(), tooltip);
+            font.printLine(getWindow(), tooltip, Color::none, Color::none, true, SplitLines);
         }
     }
 

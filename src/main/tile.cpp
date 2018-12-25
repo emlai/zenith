@@ -118,27 +118,18 @@ void Tile::render(Window& window, bool fogOfWar, bool renderLight) const
 
 std::string Tile::getTooltip() const
 {
-    std::string tooltip;
+    std::vector<std::string> strings;
 
     if (creature)
-    {
-        tooltip += creature->getName();
-        tooltip += '\n';
-    }
+        strings.push_back(creature->getNameIndefinite());
 
     for (auto& item : reverse(items))
-    {
-        tooltip += item->getName();
-        tooltip += '\n';
-    }
+        strings.push_back(item->getNameIndefinite());
 
     if (object)
-    {
-        tooltip += object->getName();
-        tooltip += '\n';
-    }
+        strings.push_back(object->getNameIndefinite());
 
-    return tooltip;
+    return join(strings, ", ");
 }
 
 Creature* Tile::spawnCreature(std::string_view id, std::unique_ptr<Controller> controller)

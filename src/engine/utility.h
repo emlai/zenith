@@ -33,6 +33,7 @@ bool endsWith(std::string_view, std::string_view);
 std::string_view removeSuffix(std::string_view, std::string_view);
 std::string trim(std::string&& str);
 std::string_view trim(std::string_view str);
+std::string join(const std::vector<std::string>& strings, std::string_view delimiter);
 std::string pascalCaseToSentenceCase(std::string_view pascalCaseString);
 
 bool isVowel(char);
