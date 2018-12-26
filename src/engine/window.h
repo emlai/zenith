@@ -11,10 +11,12 @@ struct SDL_Window;
 class Event
 {
 public:
-    enum Type { KeyDown, MouseButtonDown };
+    enum Type { None, KeyDown, MouseButtonDown };
 
-    Event(Key key) : type(KeyDown), key(key) {}
-    Event(Vector2 mousePosition) : type(MouseButtonDown), mousePosition(mousePosition) {}
+    Event() : type(None) {}
+    explicit Event(Key key) : type(KeyDown), key(key) {}
+    explicit Event(Vector2 mousePosition) : type(MouseButtonDown), mousePosition(mousePosition) {}
+    explicit operator bool() const { return type != None; }
 
     Type type;
     union
@@ -30,9 +32,10 @@ public:
     Window(StateManager* stateManager, std::string_view title = "", bool fullscreen = true);
     Window(Window&& window) = default;
     ~Window();
+    Event convertEvent(const SDL_Event& event);
+    Event pollEvent();
     Event waitForInput();
     Vector2 getMousePosition() const;
-    void setShowCursor(bool show);
     void setFullscreen(bool enable);
     void toggleFullscreen();
     bool isFullscreen() const;

@@ -26,31 +26,28 @@ std::unique_ptr<Texture> Game::fogOfWarTexture;
 static const Color transparentColor(0x5A5268FF);
 Tile* Game::hoveredTile;
 
-Game::Game(bool loadSavedGame)
+Game::Game(GameState* state)
 :   playerSeesEverything(false),
-    turn(0),
-    world(*this)
+    gameState(state)
 {
-    creatureConfig = std::make_unique<Config>("data/config/creature.cfg");
-    objectConfig = std::make_unique<Config>("data/config/object.cfg");
-    itemConfig = std::make_unique<Config>("data/config/item.cfg");
-    groundConfig = std::make_unique<Config>("data/config/ground.cfg");
-    materialConfig = std::make_unique<Config>("data/config/material.cfg");
-
-    creatureSpriteSheet = std::make_unique<Texture>("data/graphics/creature.bmp", transparentColor);
-    objectSpriteSheet = std::make_unique<Texture>("data/graphics/object.bmp", transparentColor);
-    itemSpriteSheet = std::make_unique<Texture>("data/graphics/item.bmp", transparentColor);
-    groundSpriteSheet = std::make_unique<Texture>("data/graphics/ground.bmp");
-    cursorTexture = std::make_unique<Texture>("data/graphics/cursor.bmp", transparentColor);
-    fogOfWarTexture = std::make_unique<Texture>("data/graphics/fow.bmp", transparentColor);
-
-    if (loadSavedGame)
-        load();
-    else
+    // TODO: Find a better place for loading assets, and make them non-static.
+    if (!creatureConfig)
     {
-        auto* tile = world.getOrCreateTile({0, 0}, 0);
-        player = tile->spawnCreature("Human", std::make_unique<PlayerController>(*this));
+        creatureConfig = std::make_unique<Config>("data/config/creature.cfg");
+        objectConfig = std::make_unique<Config>("data/config/object.cfg");
+        itemConfig = std::make_unique<Config>("data/config/item.cfg");
+        groundConfig = std::make_unique<Config>("data/config/ground.cfg");
+        materialConfig = std::make_unique<Config>("data/config/material.cfg");
+
+        creatureSpriteSheet = std::make_unique<Texture>("data/graphics/creature.bmp", transparentColor);
+        objectSpriteSheet = std::make_unique<Texture>("data/graphics/object.bmp", transparentColor);
+        itemSpriteSheet = std::make_unique<Texture>("data/graphics/item.bmp", transparentColor);
+        groundSpriteSheet = std::make_unique<Texture>("data/graphics/ground.bmp");
+        cursorTexture = std::make_unique<Texture>("data/graphics/cursor.bmp", transparentColor);
+        fogOfWarTexture = std::make_unique<Texture>("data/graphics/fow.bmp", transparentColor);
     }
+
+    state->world.game = this;
 }
 
 Window& Game::getWindow() const
@@ -91,71 +88,76 @@ InventoryMenu::InventoryMenu(Window& window, const Creature& player, std::string
 
 int Game::showInventory(std::string_view title, bool showNothingAsOption, std::function<bool(const Item&)> itemFilter)
 {
-    InventoryMenu inventoryMenu(getWindow(), *player, title, showNothingAsOption, std::move(itemFilter));
-    return executeState(inventoryMenu);
+    stateManager->pushState(std::make_unique<InventoryMenu>(*window, *getPlayer(), title, showNothingAsOption, std::move(itemFilter)));
+    return stateManager->wait().getInt();
 }
 
 class EquipmentMenu : public Menu
 {
 public:
     EquipmentMenu(Creature& player) : player(&player) {}
-    void execute();
+    StateChange update() override;
+    void render() override;
 
 private:
     Creature* player;
 };
 
-void EquipmentMenu::execute()
+void EquipmentMenu::render()
 {
-    while (true)
+    clear();
+    addTitle("Equipment");
+    setArea(GUI::getInventoryArea(*window));
+    setItemSize(Tile::getSize());
+    setTextLayout(TextLayout(LeftAlign, VerticalCenter));
+    setTableCellSpacing(Vector2(window->context.font->getColumnWidth(), 0));
+    setHotkeyStyle(LetterHotkeys);
+
+    for (int i = 0; i < equipmentSlots; ++i)
     {
-        clear();
-        addTitle("Equipment");
-        setArea(GUI::getInventoryArea(*window));
-        setItemSize(Tile::getSize());
-        setTextLayout(TextLayout(LeftAlign, VerticalCenter));
-        setTableCellSpacing(Vector2(window->context.font->getColumnWidth(), 0));
-        setHotkeyStyle(LetterHotkeys);
-
-        for (int i = 0; i < equipmentSlots; ++i)
-        {
-            auto slot = static_cast<EquipmentSlot>(i);
-            auto* image = player->getEquipment(slot) ? &player->getEquipment(slot)->getSprite() : nullptr;
-            auto itemName = player->getEquipment(slot) ? player->getEquipment(slot)->getName() : "-";
-            addItem(MenuItem(i, toString(slot) + ":", itemName, NoKey, nullptr, image));
-        }
-
-        auto choice = Menu::execute();
-        if (choice == Menu::Exit)
-            break;
-
-        auto selectedSlot = static_cast<EquipmentSlot>(choice);
-
-        InventoryMenu inventoryMenu(*window, *player, "", true, [&](auto& item)
-        {
-            return item.getEquipmentSlot() == selectedSlot;
-        });
-
-        auto selectedItemIndex = executeState(inventoryMenu);
-
-        if (selectedItemIndex == -1)
-            player->equip(selectedSlot, nullptr);
-        else if (selectedItemIndex != Menu::Exit)
-            player->equip(selectedSlot, &*player->getInventory()[selectedItemIndex]);
+        auto slot = static_cast<EquipmentSlot>(i);
+        auto* image = player->getEquipment(slot) ? &player->getEquipment(slot)->getSprite() : nullptr;
+        auto itemName = player->getEquipment(slot) ? player->getEquipment(slot)->getName() : "-";
+        addItem(MenuItem(i, toString(slot) + ":", itemName, NoKey, nullptr, image));
     }
+
+    Menu::render();
+}
+
+StateChange EquipmentMenu::update()
+{
+    auto choice = stateManager->getResult(Menu::update()).getInt();
+
+    if (choice == Menu::Exit)
+        return StateChange::Pop();
+
+    auto selectedSlot = static_cast<EquipmentSlot>(choice);
+
+    stateManager->pushState(std::make_unique<InventoryMenu>(*window, *player, "", true, [&](auto& item)
+    {
+        return item.getEquipmentSlot() == selectedSlot;
+    }));
+    auto selectedItemIndex = stateManager->wait().getInt();
+
+    if (selectedItemIndex == -1)
+        player->equip(selectedSlot, nullptr);
+    else if (selectedItemIndex != Menu::Exit)
+        player->equip(selectedSlot, &*player->getInventory()[selectedItemIndex]);
+
+    return StateChange::None();
 }
 
 void Game::showEquipmentMenu()
 {
-    EquipmentMenu equipmentMenu(*player);
-    executeState(equipmentMenu);
+    stateManager->pushState(std::make_unique<EquipmentMenu>(*getPlayer()));
+    stateManager->wait();
 }
 
 class LookMode : public State
 {
 public:
-    LookMode(Game& game) : game(&game), position(game.player->getPosition()) {}
-    void execute();
+    LookMode(Game& game) : game(&game), position(game.getPlayer()->getPosition()) {}
+    StateChange onKeyDown(Key key) override;
 
 private:
     void render() override;
@@ -164,25 +166,34 @@ private:
     Vector2 position;
 };
 
-void LookMode::execute()
+StateChange LookMode::onKeyDown(Key key)
 {
-    while (true)
+    switch (key)
     {
-        Event event = window->waitForInput();
+        case UpArrow:
+            position += North;
+            break;
 
-        if (event.type != Event::KeyDown)
-            continue;
+        case RightArrow:
+            position += East;
+            break;
 
-        switch (event.key)
-        {
-            case UpArrow: position += North; break;
-            case RightArrow: position += East; break;
-            case DownArrow: position += South; break;
-            case LeftArrow: position += West; break;
-            case Esc: return;
-            default: break;
-        }
+        case DownArrow:
+            position += South;
+            break;
+
+        case LeftArrow:
+            position += West;
+            break;
+
+        case Esc:
+            return StateChange::Pop();
+
+        default:
+            break;
     }
+
+    return StateChange::None();
 }
 
 void LookMode::render()
@@ -194,47 +205,45 @@ void LookMode::render()
 
 void Game::lookMode()
 {
-    LookMode lookMode(*this);
-    executeState(lookMode);
+    stateManager->pushState(std::make_unique<LookMode>(*this));
 }
 
 class StringQuestion : public State
 {
 public:
     StringQuestion(std::string question) : question(std::move(question)) {}
-    std::string execute();
+    StateChange update() override;
 
 private:
-    void render() override {} // Rendered by keyboard::readLine() in execute(). (FIXME)
+    void render() override {} // Rendered by keyboard::readLine() in update(). (FIXME)
     bool renderPreviousState() const override { return true; }
 
     std::string question;
 };
 
-std::string StringQuestion::execute()
+StateChange StringQuestion::update()
 {
     std::string input;
-
     int result = keyboard::readLine(*window, input, GUI::getQuestionArea(*window).position,
                                     std::bind(&StateManager::render, stateManager), question);
 
     if (result == Esc)
-        return "";
+        return StateChange::Pop();
 
-    return input;
+    return StateChange::Pop(std::move(input));
 }
 
 std::string Game::askForString(std::string&& question)
 {
-    StringQuestion stringQuestion(question);
-    return executeState(stringQuestion);
+    stateManager->pushState(std::make_unique<StringQuestion>(std::move(question)));
+    return stateManager->wait().getString();
 }
 
 class DirectionQuestion : public State
 {
 public:
     DirectionQuestion(std::string question, Vector2 origin) : question(std::move(question)), origin(origin) {}
-    std::optional<Dir8> execute();
+    StateChange onEvent(Event event) override;
 
 private:
     void render() override;
@@ -244,14 +253,12 @@ private:
     Vector2 origin;
 };
 
-std::optional<Dir8> DirectionQuestion::execute()
+StateChange DirectionQuestion::onEvent(Event event)
 {
-    Event event = window->waitForInput();
-
     if (auto direction = getDirectionFromEvent(event, origin))
-        return direction;
+        return StateChange::Pop(direction);
 
-    return std::nullopt;
+    return StateChange::None();
 }
 
 void DirectionQuestion::render()
@@ -262,25 +269,34 @@ void DirectionQuestion::render()
 
 std::optional<Dir8> Game::askForDirection(std::string&& question)
 {
-    DirectionQuestion directionQuestion(question, player->getPosition());
-    return executeState(directionQuestion);
+    stateManager->pushState(std::make_unique<DirectionQuestion>(question, getPlayer()->getPosition()));
+
+    if (auto result = stateManager->wait())
+        return result.getDir();
+
+    return std::nullopt;
 }
 
-void Game::execute()
+StateChange Game::update()
 {
-    gameIsRunning = true;
-
-    while (gameIsRunning)
+    if (!gameIsRunning)
     {
-        Vector2 updateDistance(64, 64);
-        Rect regionToUpdate(player->getPosition() - updateDistance, updateDistance * 2);
-        world.exist(regionToUpdate, player->getLevel());
+        if (getPlayer()->isDead())
+            gameState->removeSaveFile();
+
+        return StateChange::Pop();
     }
+
+    Vector2 updateDistance(64, 64);
+    Rect regionToUpdate(getPlayer()->getPosition() - updateDistance, updateDistance * 2);
+    getWorld().exist(regionToUpdate, getPlayer()->getLevel());
+
+    return StateChange::None();
 }
 
 void Game::render()
 {
-    renderAtPosition(*window, player->getPosition());
+    renderAtPosition(*window, getPlayer()->getPosition());
 }
 
 void Game::renderAtPosition(Window& window, Vector2 centerPosition)
@@ -293,14 +309,14 @@ void Game::renderAtPosition(Window& window, Vector2 centerPosition)
     window.context.setViewport(&worldViewport);
 
     auto cursorPosition = window.getMousePosition().divFloor(Tile::spriteSize);
-    hoveredTile = cursorPosition.isWithin(visibleRegion) ? world.getTile(cursorPosition, player->getLevel()) : nullptr;
-    world.render(window, visibleRegion, player->getLevel(), *player);
+    hoveredTile = cursorPosition.isWithin(visibleRegion) ? getWorld().getTile(cursorPosition, getPlayer()->getLevel()) : nullptr;
+    getWorld().render(window, visibleRegion, getPlayer()->getLevel(), *getPlayer());
 
     window.context.setView(nullptr);
     window.context.setViewport(nullptr);
 
     renderSidebar(*window.context.font);
-    MessageSystem::drawMessages(window, *window.context.font, player->getMessages(), getTurn());
+    MessageSystem::drawMessages(window, *window.context.font, getPlayer()->getMessages(), getTurn());
 
     bool enableGUIDebugRectangles = false;
     if (enableGUIDebugRectangles)
@@ -319,6 +335,8 @@ void Game::renderAtPosition(Window& window, Vector2 centerPosition)
 
 void Game::renderSidebar(BitmapFont& font) const
 {
+    auto* player = getPlayer();
+
     font.setArea(GUI::getSidebarArea(getWindow()));
     printStat(font, "HP", player->getHP(), player->getMaxHP(), TextColor::Red);
     printStat(font, "MP", player->getMP(), player->getMaxMP(), TextColor::Blue);
@@ -408,7 +426,7 @@ void Game::enterCommandMode(Window& window)
 void Game::parseCommand(std::string_view command)
 {
     if (command == "respawn")
-        *player = Creature(&player->getTileUnder(0), "Human", std::make_unique<PlayerController>(*this));
+        *getPlayer() = Creature(&getPlayer()->getTileUnder(0), "Human", std::make_unique<PlayerController>(*this));
     else if (command == "clear")
         MessageSystem::clearDebugMessageHistory();
     else if (command == "info")
@@ -421,23 +439,37 @@ void Game::parseCommand(std::string_view command)
 
 #endif
 
-void Game::save()
+void GameState::init(Game* game)
 {
-    SaveFile file(saveFileName, true);
-    file.writeInt32(getTurn());
+    auto* tile = world.getOrCreateTile({0, 0}, 0);
+    player = tile->spawnCreature("Human", std::make_unique<PlayerController>(*game));
+    isLoaded = true;
+}
+
+void GameState::save()
+{
+    SaveFile file(Game::saveFileName, true);
+    file.writeInt32(turn);
     file.write(player->getPosition());
     file.writeInt32(player->getLevel());
     world.save(file);
 }
 
-void Game::load()
+void GameState::load(Game* game)
 {
-    SaveFile file(saveFileName, false);
+    SaveFile file(Game::saveFileName, false);
     turn = file.readInt32();
     auto playerPosition = file.readVector2();
     auto playerLevel = file.readInt32();
     world.load(file);
 
     player = world.getTile(playerPosition, playerLevel)->getCreature();
-    player->setController(std::make_unique<PlayerController>(*this));
+    player->setController(std::make_unique<PlayerController>(*game));
+    isLoaded = true;
+}
+
+void GameState::removeSaveFile()
+{
+    std::remove(Game::saveFileName);
+    isLoaded = false;
 }

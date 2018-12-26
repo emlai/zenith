@@ -44,7 +44,7 @@ void World::save(SaveFile& file) const
 
 int World::getTurn() const
 {
-    return game->getTurn();
+    return game->gameState->turn;
 }
 
 void World::exist(Rect region, int level)

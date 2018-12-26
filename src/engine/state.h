@@ -1,30 +1,67 @@
 #pragma once
 
+#include "keyboard.h"
 #include "utility.h"
+#include "window.h"
+#include <cassert>
+#include <memory>
+#include <variant>
 #include <vector>
 
 class State;
+class StateManager;
 class Window;
 
-class StateManager
+class StateChange
 {
 public:
-    void render() const;
-    template<typename T>
-    auto execute(T& state, Window* window)
+    struct Result
     {
-        states.push_back(&state);
-        state.stateManager = this;
-        state.window = window;
-        DEFER { states.pop_back(); };
-        return state.execute();
-    }
+        enum Type { None, Int, Dir, String };
 
-private:
-    State* currentState() const { return states[states.size() - 1]; }
-    State* previousState() const { return states[states.size() - 2]; }
+        Result() : type(None) {}
+        Result(Result&&);
+        ~Result();
+        int getInt() const { assert(type == Int); return intValue; }
+        Dir8 getDir() const { assert(type == Dir); return dirValue; }
+        std::string getString() const { assert(type == String); return std::move(stringValue); }
+        explicit operator bool() const { return type != None; }
 
-    std::vector<State*> states;
+        Type type;
+        union
+        {
+            int intValue;
+            Dir8 dirValue;
+            std::string stringValue;
+        };
+    };
+
+    struct None {};
+
+    struct Push
+    {
+        Push(std::unique_ptr<State> newState) : newState(std::move(newState)) {}
+
+        std::unique_ptr<State> newState;
+    };
+
+    struct Pop
+    {
+        Pop();
+        Pop(int intValue);
+        Pop(Dir8 dirValue);
+        Pop(std::string stringValue);
+
+        Result result;
+    };
+
+    using Variant = std::variant<None, Push, Pop>;
+
+    StateChange(None variant) : variant(std::move(variant)) {}
+    StateChange(Push variant) : variant(std::move(variant)) {}
+    StateChange(Pop variant) : variant(std::move(variant)) {}
+
+    Variant variant;
 };
 
 class State
@@ -33,10 +70,32 @@ public:
     virtual ~State() = default;
     virtual void render() = 0;
     virtual bool renderPreviousState() const { return false; }
-    template<typename T>
-    auto executeState(T& state) { return stateManager->execute(state, window); }
+    virtual StateChange update() { return StateChange::None(); }
+    virtual StateChange onKeyDown(Key) { return StateChange::None(); }
+    virtual StateChange onEvent(Event) { return StateChange::None(); }
 
     StateManager* stateManager = nullptr;
     Window* window = nullptr;
 };
 
+class StateManager
+{
+public:
+    void pushState(std::unique_ptr<State> newState);
+    StateChange::Result wait();
+    StateChange::Result getResult(StateChange stateChange);
+    void render() const;
+
+    void operator()(StateChange::None& none);
+    void operator()(StateChange::Push& push);
+    void operator()(StateChange::Pop& pop);
+
+    Window* window = nullptr;
+
+private:
+    StateChange::Result handleStateChange(StateChange stateChange);
+    State* currentState() const;
+    State* previousState() const;
+
+    std::vector<std::unique_ptr<State>> states;
+};

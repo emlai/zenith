@@ -123,6 +123,7 @@ public:
     std::vector<Creature*> getCreaturesCurrentlySeenBy(int maxFieldOfVisionRadius) const;
     std::vector<Creature*> getCurrentlySeenCreatures() const;
     Creature* getNearestEnemy() const;
+    Controller* getController() const { return &*controller; }
     void setController(std::unique_ptr<Controller> controller);
     World& getWorld() const;
 

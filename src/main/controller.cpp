@@ -25,7 +25,8 @@ Action AIController::control(Creature& creature)
 
 Action PlayerController::control(Creature& creature)
 {
-    game.advanceTurn();
+    // TODO: Find a better place for this.
+    game.gameState->turn++;
 
     while (true)
     {

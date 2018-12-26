@@ -35,16 +35,9 @@ void Menu::clear()
     area = Rect(0, 0, 0, 0);
 }
 
-int Menu::execute()
+StateChange Menu::update()
 {
-    auto& font = *window->context.font;
-    TextLayout oldLayout = font.getLayout();
-    font.setLayout(textLayout);
-    calculateSize();
-    calculateItemPositions();
-    int exitCode = -3;
-
-    while (exitCode == -3)
+    while (true)
     {
         Event event = window->waitForInput();
 
@@ -58,57 +51,43 @@ int Menu::execute()
                 if (event.mousePosition.isWithin(item))
                 {
                     auto index = &item - &itemPositions[title.empty() ? 0 : 1];
-                    exitCode = menuItems[index].id;
-                    break;
+                    return StateChange::Pop(menuItems[index].id);
                 }
             }
             continue;
         }
 
         if (window->shouldClose())
-        {
-            exitCode = Window::CloseRequest;
-            break;
-        }
+            return StateChange::Pop(Window::CloseRequest);
 
         assert(event.type == Event::KeyDown);
         auto input = event.key;
 
         if (input == Esc)
-        {
-            exitCode = Exit;
-            break;
-        }
+            return StateChange::Pop(Exit);
 
         switch (hotkeyStyle)
         {
             case NumberHotkeys:
                 if (std::isdigit(input) && input != '0' && isValidIndex(input - '1'))
-                    exitCode = menuItems[input - '1'].id;
+                    return StateChange::Pop(menuItems[input - '1'].id);
                 break;
 
             case LetterHotkeys:
                 if (input >= 'a' && input <= 'z' && isValidIndex(input - 'a'))
-                    exitCode = menuItems[input - 'a'].id;
+                    return StateChange::Pop(menuItems[input - 'a'].id);
                 break;
 
             case CustomHotkeys:
                 break;
         }
 
-        // Handle custom shortcuts.
-        for (auto item = menuItems.begin(); item != menuItems.end(); ++item)
+        for (auto& menuItem : menuItems)
         {
-            if (input == item->shortcut)
-            {
-                exitCode = item->id;
-                break;
-            }
+            if (input == menuItem.shortcut)
+                return StateChange::Pop(menuItem.id);
         }
     }
-
-    font.setLayout(oldLayout);
-    return exitCode;
 }
 
 int Menu::calculateMaxTextSize() const
@@ -189,6 +168,16 @@ int Menu::calculateMainImageColumnWidth() const
 void Menu::render()
 {
     auto& font = *window->context.font;
+
+    // TODO: Find a non-ugly way to define the font layout.
+    TextLayout oldLayout = font.getLayout();
+    font.setLayout(textLayout);
+    DEFER { font.setLayout(oldLayout); };
+
+    // TODO: Don't store sizes and item positions as member variables.
+    calculateSize();
+    calculateItemPositions();
+
     int index = 1;
     auto position = itemPositions.begin();
 

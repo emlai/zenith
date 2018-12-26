@@ -16,7 +16,7 @@ class Tile;
 class World
 {
 public:
-    World(const Game& game) : game(&game), sunlight(0x888888FF) {}
+    World() = default;
     World(const World&) = delete;
     World(World&&) = default;
     World& operator=(const World&) = delete;
@@ -33,16 +33,17 @@ public:
     std::unique_ptr<Creature> removeCreature(Creature* creature);
     Color getSunlight() const { return sunlight; }
 
+    const Game* game = nullptr;
+
 private:
     Area* getOrCreateArea(Vector3 position);
     Area* getArea(Vector3 position);
     static Vector3 globalPositionToAreaPosition(Vector2 position, int level);
     static Vector2 globalPositionToTilePosition(Vector2 position);
 
-    const Game* game;
     std::unordered_map<Vector3, Area> areas;
     std::unordered_map<Vector3, int64_t> savedAreaOffsets;
     std::vector<std::unique_ptr<Creature>> creatures;
     std::unique_ptr<SaveFile> saveFile;
-    Color sunlight;
+    Color sunlight = Color(0x888888FF);
 };

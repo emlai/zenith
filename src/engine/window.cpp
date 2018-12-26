@@ -70,47 +70,61 @@ bool Window::isFullscreen() const
     return SDL_GetWindowFlags(windowHandle.get()) & fullscreenFlag;
 }
 
-Event Window::waitForInput()
+Event Window::convertEvent(const SDL_Event& event)
+{
+    switch (event.type)
+    {
+        case SDL_KEYDOWN:
+        {
+            auto key = event.key.keysym.sym;
+
+            // Use shifts only as modifiers.
+            if (key == SDLK_LSHIFT || key == SDLK_RSHIFT)
+                break;
+
+            if ((event.key.keysym.mod & Shift) && key > 0 && key <= UCHAR_MAX && std::isalpha(key))
+                return Event(Key(std::toupper(key)));
+            else
+                return Event(Key(key));
+        }
+
+        case SDL_MOUSEBUTTONDOWN:
+            if (event.button.button == SDL_BUTTON_LEFT)
+            {
+                Vector2 position(event.button.x, event.button.y);
+                return Event(context.mapFromTargetCoordinates(position));
+            }
+            break;
+
+        case SDL_WINDOWEVENT:
+            if (handleWindowEvent(event.window.event))
+                return Event(NoKey);
+
+            break;
+    }
+
+    return Event();
+}
+
+Event Window::pollEvent()
 {
     SDL_Event event;
 
+    if (SDL_PollEvent(&event))
+        return convertEvent(event);
+
+    return Event();
+}
+
+Event Window::waitForInput()
+{
     while (true)
     {
+        if (auto event = pollEvent())
+            return event;
+
         stateManager->render();
         context.updateScreen();
-
-        if (!SDL_PollEvent(&event))
-            continue;
-
-        switch (event.type)
-        {
-            case SDL_KEYDOWN:
-            {
-                auto key = event.key.keysym.sym;
-
-                // Use shifts only as modifiers.
-                if (key == SDLK_LSHIFT || key == SDLK_RSHIFT)
-                    continue;
-
-                if ((event.key.keysym.mod & Shift) && key > 0 && key <= UCHAR_MAX && std::isalpha(key))
-                    return Event(Key(std::toupper(key)));
-                else
-                    return Event(Key(key));
-            }
-
-            case SDL_MOUSEBUTTONDOWN:
-                if (event.button.button == SDL_BUTTON_LEFT)
-                {
-                    Vector2 position(event.button.x, event.button.y);
-                    return Event(context.mapFromTargetCoordinates(position));
-                }
-                break;
-
-            case SDL_WINDOWEVENT:
-                if (handleWindowEvent(event.window.event))
-                    return NoKey;
-                break;
-        }
     }
 }
 
@@ -143,11 +157,6 @@ Vector2 Window::getMousePosition() const
     Vector2 position;
     SDL_GetMouseState(&position.x, &position.y);
     return context.mapFromTargetCoordinates(position);
-}
-
-void Window::setShowCursor(bool show)
-{
-    SDL_ShowCursor(show);
 }
 
 Vector2 Window::getResolution() const

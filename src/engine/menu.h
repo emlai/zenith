@@ -45,7 +45,7 @@ public:
     /// Returns the index of the added menu item.
     int addItem(MenuItem&& item);
     void clear();
-    int execute();
+    StateChange update() override;
     void render() override;
     void setWrap(bool state) { wrapEnabled = state; }
     void setHotkeyStyle(HotkeyStyle style) { hotkeyStyle = style; }

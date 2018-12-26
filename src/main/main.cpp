@@ -22,7 +22,7 @@ static BitmapFont initFont()
 class LoadingScreen : public State
 {
 public:
-    LoadingScreen(std::string text) : text(std::move(text)) {}
+    LoadingScreen(std::string text, std::function<void()> task) : text(std::move(text)), task(std::move(task)) {}
 
     void render() override
     {
@@ -34,14 +34,15 @@ public:
         font.setLayout(oldLayout);
     }
 
-    void execute()
+    StateChange update() override
     {
-        stateManager->render();
-        window->context.updateScreen();
+        task();
+        return StateChange::Pop();
     }
 
 private:
     std::string text;
+    std::function<void()> task;
 };
 
 static const auto preferencesFileName = "prefs.cfg";
@@ -69,187 +70,170 @@ static void setPrefsMenuCommonOptions(Menu& menu, const Window& window)
 class KeyMapMenu : public Menu
 {
 public:
-    void execute();
-};
-
-void KeyMapMenu::execute()
-{
     enum { ResetDefaults };
 
-    while (true)
+    void render() override;
+    StateChange update() override;
+};
+
+void KeyMapMenu::render()
+{
+    clear();
+    addTitle("Key map");
+
+    for (int i = NoAction + 1; i < LastAction; ++i)
     {
-        clear();
-        addTitle("Key map");
+        auto action = static_cast<Action>(i);
 
-        for (int i = NoAction + 1; i < LastAction; ++i)
+        if (auto key = getMappedKey(action))
         {
-            auto action = static_cast<Action>(i);
-
-            if (auto key = getMappedKey(action))
-            {
-                auto text = pascalCaseToSentenceCase(toString(action));
-                text[0] = std::toupper(text[0]);
-                addItem(MenuItem(action, text, toString(key)));
-            }
+            auto text = pascalCaseToSentenceCase(toString(action));
+            text[0] = std::toupper(text[0]);
+            addItem(MenuItem(action, text, toString(key)));
         }
+    }
 
-        addItem(MenuItem(ResetDefaults, "Reset defaults"));
-        setPrefsMenuCommonOptions(*this, *window);
+    addItem(MenuItem(ResetDefaults, "Reset defaults"));
+    setPrefsMenuCommonOptions(*this, *window);
 
-        auto selection = Menu::execute();
+    Menu::render();
+}
 
-        switch (selection)
-        {
-            case ResetDefaults:
-                loadKeyMap(nullptr);
-                break;
+StateChange KeyMapMenu::update()
+{
+    auto selection = stateManager->getResult(Menu::update()).getInt();
 
-            case Menu::Exit:
-                return;
+    switch (selection)
+    {
+        case ResetDefaults:
+            loadKeyMap(nullptr);
+            return StateChange::None();
 
-            default:
-                auto event = window->waitForInput();
+        case Menu::Exit:
+            return StateChange::Pop();
 
-                if (event.type == Event::KeyDown && getMappedAction(event.key) == NoAction)
-                    mapKey(event.key, static_cast<Action>(selection));
+        default:
+            auto event = window->waitForInput();
 
-                break;
-        }
+            if (event.type == Event::KeyDown && getMappedAction(event.key) == NoAction)
+                mapKey(event.key, static_cast<Action>(selection));
+
+            return StateChange::None();
     }
 }
 
 class PrefsMenu : public Menu
 {
 public:
-    void execute();
-};
-
-void PrefsMenu::execute()
-{
     enum { GraphicsScale, Fullscreen, KeyMap };
 
-    while (true)
+    void render() override;
+    StateChange update() override;
+};
+
+void PrefsMenu::render()
+{
+    clear();
+    addTitle("Preferences");
+    addItem(MenuItem(GraphicsScale, "Graphics scale", toStringAvoidingDecimalPlaces(window->context.getScale()) + "x"));
+    addItem(MenuItem(Fullscreen, "Fullscreen", toOnOffString(window->isFullscreen())));
+    addItem(MenuItem(KeyMap, "Key map"));
+    setPrefsMenuCommonOptions(*this, *window);
+
+    Menu::render();
+}
+
+StateChange PrefsMenu::update()
+{
+    auto selection = stateManager->getResult(Menu::update()).getInt();
+
+    switch (selection)
     {
-        clear();
-        addTitle("Preferences");
+        case GraphicsScale:
+            window->context.setScale(window->context.getScale() >= 2 ? 1 : (window->context.getScale() + 0.5));
+            return StateChange::None();
 
-        addItem(MenuItem(GraphicsScale, "Graphics scale",
-                         toStringAvoidingDecimalPlaces(window->context.getScale()) + "x"));
-        addItem(MenuItem(Fullscreen, "Fullscreen", toOnOffString(window->isFullscreen())));
-        addItem(MenuItem(KeyMap, "Key map"));
+        case Fullscreen:
+            window->toggleFullscreen();
+            return StateChange::None();
 
-        setPrefsMenuCommonOptions(*this, *window);
+        case KeyMap:
+            return StateChange::Push(std::make_unique<KeyMapMenu>());
 
-        auto selection = Menu::execute();
+        case Menu::Exit:
+            savePreferencesToFile(window->context.getScale(), window->isFullscreen());
+            return StateChange::Pop();
 
-        switch (selection)
-        {
-            case GraphicsScale:
-                if (window->context.getScale() >= 2)
-                    window->context.setScale(1);
-                else
-                    window->context.setScale(window->context.getScale() + 0.5);
-                break;
-            case Fullscreen:
-                window->toggleFullscreen();
-                break;
-            case KeyMap:
-            {
-                KeyMapMenu keyMapMenu;
-                executeState(keyMapMenu);
-                break;
-            }
-            case Menu::Exit:
-                savePreferencesToFile(window->context.getScale(), window->isFullscreen());
-                return;
-            default:
-                assert(false);
-        }
+        default:
+            assert(false);
     }
 }
 
 class MainMenu : public Menu
 {
 public:
-    void execute();
-};
-
-void MainMenu::execute()
-{
     enum { NewGame, LoadGame, Preferences };
 
-    std::unique_ptr<Game> game;
+    MainMenu(GameState& gameState) : gameState(gameState) {}
+    void render() override;
+    StateChange update() override;
 
-    while (true)
+private:
+    GameState& gameState;
+};
+
+void MainMenu::render()
+{
+    clear();
+
+    if (gameState.isLoaded || fs::exists(Game::saveFileName))
+        addItem(MenuItem(LoadGame, "Load game", 'l'));
+    else
+        addItem(MenuItem(NewGame, "New game", 'n'));
+
+    addItem(MenuItem(Preferences, "Preferences", 'p'));
+    addItem(MenuItem(Menu::Exit, "Quit", 'q'));
+    setItemLayout(Menu::Horizontal);
+    setItemSpacing(18);
+    setTextLayout(TextLayout(HorizontalCenter, VerticalCenter));
+    setArea(Vector2(0, 0), window->getResolution() / Vector2(1, 6));
+    setHotkeyStyle(LetterHotkeys);
+
+    Menu::render();
+}
+
+StateChange MainMenu::update()
+{
+    auto selection = stateManager->getResult(Menu::update()).getInt();
+
+    switch (selection)
     {
-        clear();
-
-        if (game || fs::exists(Game::saveFileName))
-            addItem(MenuItem(LoadGame, "Load game", 'l'));
-        else
-            addItem(MenuItem(NewGame, "New game", 'n'));
-
-        addItem(MenuItem(Preferences, "Preferences", 'p'));
-        addItem(MenuItem(Menu::Exit, "Quit", 'q'));
-        setItemLayout(Menu::Horizontal);
-        setItemSpacing(18);
-        setTextLayout(TextLayout(HorizontalCenter, VerticalCenter));
-        setArea(Vector2(0, 0), window->getResolution() / Vector2(1, 6));
-        setHotkeyStyle(LetterHotkeys);
-
-        auto selection = Menu::execute();
-
-        switch (selection)
+        case NewGame:
+        case LoadGame:
         {
-            case NewGame:
-            case LoadGame:
-                if (!game)
-                {
-                    if (selection == LoadGame)
-                    {
-                        LoadingScreen loadingScreen("Loading game...");
-                        executeState(loadingScreen);
-                    }
+            auto game = std::make_unique<Game>(&gameState);
 
-                    std::random_device randomDevice;
-                    rng.seed(randomDevice());
-                    game = std::make_unique<Game>(selection == LoadGame);
-                }
-
-                try
-                {
-                    executeState(*game);
-                }
-                catch (...)
-                {
-                    game->save();
-                    throw;
-                }
-
-                if (game->player->isDead())
-                {
-                    std::remove(Game::saveFileName);
-                    game = nullptr;
-                }
-                break;
-
-            case Preferences:
+            if (selection == NewGame)
             {
-                PrefsMenu prefsMenu;
-                executeState(prefsMenu);
-                break;
+                gameState.init(&*game);
+            }
+            else if (!gameState.isLoaded)
+            {
+                stateManager->pushState(std::make_unique<LoadingScreen>("Loading game...", [&] { gameState.load(&*game); }));
+                stateManager->wait();
             }
 
-            case Menu::Exit:
-            case Window::CloseRequest:
-                if (game)
-                {
-                    LoadingScreen loadingScreen("Saving game...");
-                    executeState(loadingScreen);
-                    game->save();
-                }
-                return;
+            return StateChange::Push(std::move(game));
         }
+        case Preferences:
+            return StateChange::Push(std::make_unique<PrefsMenu>());
+
+        case Menu::Exit:
+        case Window::CloseRequest:
+            return StateChange::Pop();
+
+        default:
+            assert(false);
     }
 }
 
@@ -264,6 +248,7 @@ int main(int argc, char** argv)
     StateManager stateManager;
     Window window(&stateManager, PROJECT_NAME, true);
     window.context.setAnimationFrameRate(4);
+    stateManager.window = &window;
 
     if (fs::exists(preferencesFileName))
     {
@@ -279,23 +264,31 @@ int main(int argc, char** argv)
     window.context.font = &font;
     Menu::setDefaultTextColor(TextColor::Gray);
 
-    MainMenu mainMenu;
+    GameState gameState;
 
-#ifdef DEBUG
-    stateManager.execute(mainMenu, &window);
-#else
     try
     {
-        stateManager.execute(mainMenu, &window);
+        stateManager.pushState(std::make_unique<MainMenu>(gameState));
+        stateManager.wait();
     }
     catch (const std::exception& exception)
     {
+        if (gameState.isLoaded)
+            gameState.save();
+
         auto text = std::string("Unhandled exception: ") + exception.what();
 
         if (SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, window.getTitle(), text.c_str(), window.windowHandle.get()) != 0)
             std::cerr << text.c_str() << std::endl;
+
+        throw;
     }
-#endif
+
+    if (gameState.isLoaded)
+    {
+        stateManager.pushState(std::make_unique<LoadingScreen>("Saving game...", [&] { gameState.save(); }));
+        stateManager.wait();
+    }
 
     return 0;
 }
