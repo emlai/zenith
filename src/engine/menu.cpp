@@ -22,11 +22,9 @@ int Menu::addItem(MenuItem&& item)
 void Menu::clear()
 {
     menuItems.clear();
-    wrapEnabled = true;
     hotkeyStyle = CustomHotkeys;
     hotkeySuffix = ") ";
     itemLayout = Vertical;
-    itemSpacing = 1;
     itemSize = std::nullopt;
     tableCellSpacing = Vector2(0, 0);
     secondaryColumnAlignment = LeftAlign;
@@ -106,27 +104,6 @@ int Menu::calculateMaxTextSize() const
     return maxSize;
 }
 
-void Menu::calculateSize()
-{
-    int maxCharsPerLine;
-    int lines;
-
-    if (itemLayout == Vertical)
-    {
-        maxCharsPerLine = calculateMaxTextSize();
-        lines = int(menuItems.size() + (menuItems.size() - 1) * (itemSpacing - 1));
-    }
-    else
-    {
-        maxCharsPerLine = int((menuItems.size() - 1) * itemSpacing);
-        maxCharsPerLine += getHotkeyPrefix(menuItems.size()).size();
-        maxCharsPerLine += menuItems.back().mainText.size();
-        lines = 1;
-    }
-
-    size = Vector2(maxCharsPerLine, lines);
-}
-
 void Menu::calculateItemPositions()
 {
     int count = int(menuItems.size()) + (title.empty() ? 0 : 1);
@@ -174,8 +151,7 @@ void Menu::render()
     font.setLayout(textLayout);
     DEFER { font.setLayout(oldLayout); };
 
-    // TODO: Don't store sizes and item positions as member variables.
-    calculateSize();
+    // TODO: Don't store item positions as member variables.
     calculateItemPositions();
 
     int index = 1;

@@ -47,26 +47,19 @@ public:
     void clear();
     StateChange update() override;
     void render() override;
-    void setWrap(bool state) { wrapEnabled = state; }
     void setHotkeyStyle(HotkeyStyle style) { hotkeyStyle = style; }
     void setTextLayout(TextLayout layout) { textLayout = layout; }
     void setItemLayout(ItemLayout layout) { itemLayout = layout; }
-    void setItemSpacing(int amount) { itemSpacing = amount; }
     void setItemSize(std::optional<Vector2> size) { itemSize = size; }
     void setTableCellSpacing(Vector2 spacing) { tableCellSpacing = spacing; }
     void setSecondaryColumnAlignment(HorizontalAlignment alignment) { secondaryColumnAlignment = alignment; }
-    void setTextColor(Color color) { textColor = color; }
-    void setHoverColor(Color color) { hoverColor = color; }
     void setArea(Rect area) { this->area = area; }
     void setArea(Vector2 position, Vector2 size) { area = Rect(position, size); }
-    void setArea(int x, int y, int width, int height) { area = Rect(x, y, width, height); }
     static void setDefaultTextColor(Color color) { defaultTextColor = color; }
-    static void setDefaultHoverColor(Color color) { defaultHoverColor = color; }
 
 private:
     bool isValidIndex(unsigned index) const { return index < menuItems.size(); }
     int calculateMaxTextSize() const;
-    void calculateSize();
     void calculateItemPositions();
     std::string getHotkeyPrefix(int index) const;
     int calculateMainImageColumnWidth() const;
@@ -74,19 +67,16 @@ private:
     std::string title;
     std::vector<MenuItem> menuItems;
     std::vector<Rect> itemPositions;
-    bool wrapEnabled;
     HotkeyStyle hotkeyStyle;
     std::string hotkeySuffix;
     TextLayout textLayout;
     ItemLayout itemLayout;
-    int itemSpacing;
     std::optional<Vector2> itemSize;
     Vector2 tableCellSpacing;
     HorizontalAlignment secondaryColumnAlignment;
     Color textColor;
     Color hoverColor;
     Rect area;
-    Vector2 size;
     static Color defaultTextColor;
     static Color defaultHoverColor;
 };

@@ -194,7 +194,6 @@ void MainMenu::render()
     addItem(MenuItem(Preferences, "Preferences", 'p'));
     addItem(MenuItem(Menu::Exit, "Quit", 'q'));
     setItemLayout(Menu::Horizontal);
-    setItemSpacing(18);
     setTextLayout(TextLayout(HorizontalCenter, VerticalCenter));
     setArea(Vector2(0, 0), window->getResolution() / Vector2(1, 6));
     setHotkeyStyle(LetterHotkeys);
