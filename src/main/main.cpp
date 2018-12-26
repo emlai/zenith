@@ -58,7 +58,7 @@ static void savePreferencesToFile(double graphicsScale, bool fullscreen)
 
 static void setPrefsMenuCommonOptions(Menu& menu, const Window& window)
 {
-    menu.addItem(MenuItem(Menu::Exit, "Back", 'q'));
+    menu.addItem(Menu::Exit, "Back", 'q');
     menu.setItemLayout(Menu::Vertical);
     menu.setItemSize(Tile::getSize());
     menu.setTextLayout(TextLayout(LeftAlign, TopAlign));
@@ -79,7 +79,7 @@ public:
 void KeyMapMenu::render()
 {
     clear();
-    addTitle("Key map");
+    setTitle("Key map");
 
     for (int i = NoAction + 1; i < LastAction; ++i)
     {
@@ -89,11 +89,11 @@ void KeyMapMenu::render()
         {
             auto text = pascalCaseToSentenceCase(toString(action));
             text[0] = std::toupper(text[0]);
-            addItem(MenuItem(action, text, toString(key)));
+            addItem(action, text, toString(key));
         }
     }
 
-    addItem(MenuItem(ResetDefaults, "Reset defaults"));
+    addItem(ResetDefaults, "Reset defaults");
     setPrefsMenuCommonOptions(*this, *window);
 
     Menu::render();
@@ -134,10 +134,10 @@ public:
 void PrefsMenu::render()
 {
     clear();
-    addTitle("Preferences");
-    addItem(MenuItem(GraphicsScale, "Graphics scale", toStringAvoidingDecimalPlaces(window->context.getScale()) + "x"));
-    addItem(MenuItem(Fullscreen, "Fullscreen", toOnOffString(window->isFullscreen())));
-    addItem(MenuItem(KeyMap, "Key map"));
+    setTitle("Preferences");
+    addItem(GraphicsScale, "Graphics scale", toStringAvoidingDecimalPlaces(window->context.getScale()) + "x");
+    addItem(Fullscreen, "Fullscreen", toOnOffString(window->isFullscreen()));
+    addItem(KeyMap, "Key map");
     setPrefsMenuCommonOptions(*this, *window);
 
     Menu::render();
@@ -187,12 +187,12 @@ void MainMenu::render()
     clear();
 
     if (gameState.isLoaded || fs::exists(Game::saveFileName))
-        addItem(MenuItem(LoadGame, "Load game", 'l'));
+        addItem(LoadGame, "Load game", 'l');
     else
-        addItem(MenuItem(NewGame, "New game", 'n'));
+        addItem(NewGame, "New game", 'n');
 
-    addItem(MenuItem(Preferences, "Preferences", 'p'));
-    addItem(MenuItem(Menu::Exit, "Quit", 'q'));
+    addItem(Preferences, "Preferences", 'p');
+    addItem(Menu::Exit, "Quit", 'q');
     setItemLayout(Menu::Horizontal);
     setTextLayout(TextLayout(HorizontalCenter, VerticalCenter));
     setArea(Vector2(0, 0), window->getResolution() / Vector2(1, 6));

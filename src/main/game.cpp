@@ -65,7 +65,7 @@ public:
 InventoryMenu::InventoryMenu(Window& window, const Creature& player, std::string_view title,
                              bool showNothingAsOption, std::function<bool(const Item&)> itemFilter)
 {
-    addTitle(title);
+    setTitle(title);
     setArea(GUI::getInventoryArea(window));
     setItemSize(Tile::getSize());
     setTextLayout(TextLayout(LeftAlign, VerticalCenter));
@@ -73,14 +73,14 @@ InventoryMenu::InventoryMenu(Window& window, const Creature& player, std::string
     setHotkeyStyle(LetterHotkeys);
 
     if (showNothingAsOption)
-        addItem(MenuItem(-1, "nothing"));
+        addItem(-1, "nothing");
 
     int id = 0;
 
     for (auto& item : player.getInventory())
     {
         if (!itemFilter || itemFilter(*item))
-            addItem(MenuItem(id, item->getName(), NoKey, &item->getSprite()));
+            addItem(id, item->getName(), NoKey, &item->getSprite());
 
         ++id;
     }
@@ -106,7 +106,7 @@ private:
 void EquipmentMenu::render()
 {
     clear();
-    addTitle("Equipment");
+    setTitle("Equipment");
     setArea(GUI::getInventoryArea(*window));
     setItemSize(Tile::getSize());
     setTextLayout(TextLayout(LeftAlign, VerticalCenter));
@@ -118,7 +118,7 @@ void EquipmentMenu::render()
         auto slot = static_cast<EquipmentSlot>(i);
         auto* image = player->getEquipment(slot) ? &player->getEquipment(slot)->getSprite() : nullptr;
         auto itemName = player->getEquipment(slot) ? player->getEquipment(slot)->getName() : "-";
-        addItem(MenuItem(i, toString(slot) + ":", itemName, NoKey, nullptr, image));
+        addItem(i, toString(slot) + ":", itemName, NoKey, nullptr, image);
     }
 
     Menu::render();

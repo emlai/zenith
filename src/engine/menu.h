@@ -10,28 +10,6 @@
 #include <vector>
 
 class Sprite;
-class Window;
-
-struct MenuItem
-{
-    MenuItem(int id, std::string_view text, Key shortcut = NoKey, const Sprite* image = nullptr)
-    :   id(id), mainImage(image), mainText(text), secondaryImage(nullptr), shortcut(shortcut)
-    {
-    }
-    MenuItem(int id, std::string_view mainText, std::string_view secondaryText, Key shortcut = NoKey,
-             const Sprite* mainImage = nullptr, const Sprite* secondaryImage = nullptr)
-    :   id(id), mainImage(mainImage), mainText(mainText), secondaryImage(secondaryImage),
-        secondaryText(secondaryText), shortcut(shortcut)
-    {
-    }
-
-    const int id;
-    const Sprite* const mainImage;
-    const std::string mainText;
-    const Sprite* const secondaryImage;
-    const std::string secondaryText;
-    const Key shortcut;
-};
 
 class Menu : public State
 {
@@ -41,9 +19,10 @@ public:
     enum { Exit = INT_MIN };
 
     Menu() { clear(); }
-    void addTitle(std::string_view text);
-    /// Returns the index of the added menu item.
-    int addItem(MenuItem&& item);
+    void setTitle(std::string_view text);
+    void addItem(int id, std::string text, Key shortcut = NoKey, const Sprite* image = nullptr);
+    void addItem(int id, std::string mainText, std::string secondaryText, Key shortcut = NoKey,
+                 const Sprite* mainImage = nullptr, const Sprite* secondaryImage = nullptr);
     void clear();
     StateChange update() override;
     void render() override;
@@ -63,6 +42,16 @@ private:
     void calculateItemPositions();
     std::string getHotkeyPrefix(int index) const;
     int calculateMainImageColumnWidth() const;
+
+    struct MenuItem
+    {
+        int id;
+        const Sprite* mainImage;
+        std::string mainText;
+        const Sprite* secondaryImage;
+        std::string secondaryText;
+        Key shortcut;
+    };
 
     std::string title;
     std::vector<MenuItem> menuItems;

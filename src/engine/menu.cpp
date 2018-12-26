@@ -8,15 +8,20 @@
 Color Menu::defaultTextColor = Color::white * 0.6;
 Color Menu::defaultHoverColor = Color::white;
 
-void Menu::addTitle(std::string_view text)
+void Menu::setTitle(std::string_view text)
 {
     title = text;
 }
 
-int Menu::addItem(MenuItem&& item)
+void Menu::addItem(int id, std::string text, Key shortcut, const Sprite* image)
 {
-    menuItems.push_back(std::move(item));
-    return int(menuItems.size() - 1);
+    addItem(id, std::move(text), "", shortcut, image, nullptr);
+}
+
+void Menu::addItem(int id, std::string mainText, std::string secondaryText, Key shortcut,
+                  const Sprite* mainImage, const Sprite* secondaryImage)
+{
+    menuItems.push_back(MenuItem { id, mainImage, std::move(mainText), secondaryImage, std::move(secondaryText), shortcut });
 }
 
 void Menu::clear()
