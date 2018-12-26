@@ -344,11 +344,8 @@ void Game::renderSidebar(BitmapFont& font) const
     for (auto attribute : player->getDisplayedAttributes())
         printAttribute(font, attributeAbbreviations[attribute], player->getAttribute(attribute));
 
-    if (player->isRunning())
-    {
-        font.printLine(getWindow(), "");
-        font.printLine(getWindow(), "Running");
-    }
+    font.printLine(getWindow(), "");
+    font.printLine(getWindow(), "Running", player->isRunning() ? TextColor::White : TextColor::DarkGray);
 
     if (hoveredTile && (player->remembers(*hoveredTile) || playerSeesEverything))
     {

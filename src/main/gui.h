@@ -14,6 +14,7 @@ namespace GUIColor
 {
     const Color White(0xFFEEEEFF);
     const Color Gray(0x777788FF);
+    const Color DarkGray(0x222233FF);
     const Color Black(0x000000FF);
 }
 
@@ -21,6 +22,7 @@ namespace TextColor
 {
     const Color White(GUIColor::White);
     const Color Gray(GUIColor::Gray);
+    const Color DarkGray(GUIColor::DarkGray);
     const Color Red(0xFF1144FF);
     const Color Green(0x22CC22FF);
     const Color Blue(0x6666FFFF);
