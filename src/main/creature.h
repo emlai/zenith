@@ -74,7 +74,7 @@ const int equipmentSlots = 4;
 
 std::string_view toString(EquipmentSlot slot);
 
-class Creature final : public Entity
+class Creature : public Entity
 {
 public:
     Creature(Tile* tile, std::string_view id, std::unique_ptr<Controller> controller);

@@ -30,7 +30,6 @@ class Window
 {
 public:
     Window(StateManager* stateManager, std::string_view title = "", bool fullscreen = true);
-    Window(Window&& window) = default;
     ~Window();
     Event convertEvent(const SDL_Event& event);
     Event pollEvent();

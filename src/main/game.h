@@ -28,10 +28,6 @@ class Game : public State
 {
 public:
     Game(GameState* state);
-    Game(const Game&) = delete;
-    Game(Game&&) = default;
-    Game& operator=(const Game&) = delete;
-    Game& operator=(Game&&) = default;
     StateChange update() override;
     void stop() { gameIsRunning = false; }
     int showInventory(std::string_view title, bool showNothingAsOption, std::function<bool(const Item&)> itemFilter = nullptr);

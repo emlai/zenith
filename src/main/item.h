@@ -36,7 +36,7 @@ protected:
 
 std::string getRandomMaterialId(std::string_view itemId);
 
-class Corpse final : public Item
+class Corpse : public Item
 {
 public:
     Corpse(std::unique_ptr<Creature> creature);
