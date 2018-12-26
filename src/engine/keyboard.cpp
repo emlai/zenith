@@ -36,8 +36,8 @@ int keyboard::readLine(Window& window, std::string& line, Vector2 position,
         window.context.updateScreen();
         SDL_WaitEvent(&event);
 
-        if (auto key = readLineProcessKey(event, line, cursor))
-            return key;
+        if (auto unhandledKey = readLineProcessKey(event, line, cursor))
+            return unhandledKey;
     }
 }
 
@@ -54,35 +54,27 @@ int keyboard::readLineProcessKey(const SDL_Event& event, std::string& line, std:
     {
         case Backspace:
             if (cursor != line.begin())
-            {
                 cursor = line.erase(cursor - 1);
-                return 0;
-            }
-            break;
+
+            return 0;
 
         case Delete:
             if (cursor != line.end())
-            {
                 cursor = line.erase(cursor);
-                return 0;
-            }
-            break;
+
+            return 0;
 
         case LeftArrow:
             if (cursor-- == line.begin())
-            {
                 cursor = line.end();
-                return 0;
-            }
-            break;
+
+            return 0;
 
         case RightArrow:
             if (cursor++ == line.end())
-            {
                 cursor = line.begin();
-                return 0;
-            }
-            break;
+
+            return 0;
 
         case 'v':
             if (event.key.keysym.mod & Ctrl)
@@ -116,10 +108,21 @@ int keyboard::readLineProcessKey(const SDL_Event& event, std::string& line, std:
                 return 0;
             }
             break;
+
+        case Tab:
+        case Esc:
+        case Enter:
+            return key;
     }
 
     if (key >= 0 && key <= UCHAR_MAX && std::isprint(key) && line.size() < maxBufferSize)
-        cursor = 1 + line.insert(cursor, char(key));
+    {
+        // TODO: Use SDL_StartTextInput et al. to avoid manually doing this.
+        if (event.key.keysym.mod & Shift)
+            key = std::toupper(key);
 
-    return key;
+        cursor = 1 + line.insert(cursor, char(key));
+    }
+
+    return 0;
 }
