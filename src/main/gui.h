@@ -10,25 +10,15 @@
 class Config;
 class Sprite;
 
-namespace GUIColor
-{
-    const Color White(0xFFEEEEFF);
-    const Color Gray(0x777788FF);
-    const Color DarkGray(0x222233FF);
-    const Color Black(0x000000FF);
-}
-
-namespace TextColor
-{
-    const Color White(GUIColor::White);
-    const Color Gray(GUIColor::Gray);
-    const Color DarkGray(GUIColor::DarkGray);
-    const Color Red(0xFF1144FF);
-    const Color Green(0x22CC22FF);
-    const Color Blue(0x6666FFFF);
-    const Color Yellow(0xFFDD11FF);
-    const Color Brown(0xEE7711FF);
-}
+extern const Color White;
+extern const Color Gray;
+extern const Color DarkGray;
+extern const Color Black;
+extern const Color Red;
+extern const Color Green;
+extern const Color Blue;
+extern const Color Yellow;
+extern const Color Brown;
 
 namespace GUI
 {

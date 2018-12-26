@@ -4,6 +4,16 @@
 #include <cctype>
 #include <stdexcept>
 
+const Color White(0xFFEEEEFF);
+const Color Gray(0x777788FF);
+const Color DarkGray(0x222233FF);
+const Color Black(0x000000FF);
+const Color Red(0xFF1144FF);
+const Color Green(0x22CC22FF);
+const Color Blue(0x6666FFFF);
+const Color Yellow(0xFFDD11FF);
+const Color Brown(0xEE7711FF);
+
 static Rect getSpriteTextureRegion(const Config& config, std::string_view id)
 {
     auto components = config.get<std::vector<int>>(id, "spritePosition");

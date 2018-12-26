@@ -14,7 +14,7 @@
 static BitmapFont initFont()
 {
     BitmapFont font("data/graphics/font-8x10.bmp", Vector2(8, 10));
-    font.setDefaultColor(TextColor::White);
+    font.setDefaultColor(White);
     font.setLineSpacing(1);
     return font;
 }
@@ -262,7 +262,7 @@ int main(int argc, char** argv)
 
     BitmapFont font = initFont();
     window.context.font = &font;
-    Menu::setDefaultTextColor(TextColor::Gray);
+    Menu::setDefaultTextColor(Gray);
 
     GameState gameState;
 

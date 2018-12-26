@@ -321,14 +321,14 @@ void Game::renderAtPosition(Window& window, Vector2 centerPosition)
     bool enableGUIDebugRectangles = false;
     if (enableGUIDebugRectangles)
     {
-        window.context.renderRectangle(GUI::getWorldViewport(window), GUIColor::Gray);
-        window.context.renderRectangle(GUI::getMessageArea(window), GUIColor::Gray);
-        window.context.renderRectangle(GUI::getSidebarArea(window), GUIColor::Gray);
-        window.context.renderRectangle(GUI::getQuestionArea(window), GUIColor::Gray);
-        window.context.renderRectangle(GUI::getInventoryArea(window), GUIColor::Gray);
+        window.context.renderRectangle(GUI::getWorldViewport(window), Gray);
+        window.context.renderRectangle(GUI::getMessageArea(window), Gray);
+        window.context.renderRectangle(GUI::getSidebarArea(window), Gray);
+        window.context.renderRectangle(GUI::getQuestionArea(window), Gray);
+        window.context.renderRectangle(GUI::getInventoryArea(window), Gray);
 #ifdef DEBUG
-        window.context.renderRectangle(GUI::getCommandLineArea(window), GUIColor::Gray);
-        window.context.renderRectangle(GUI::getDebugMessageArea(window), GUIColor::Gray);
+        window.context.renderRectangle(GUI::getCommandLineArea(window), Gray);
+        window.context.renderRectangle(GUI::getDebugMessageArea(window), Gray);
 #endif
     }
 }
@@ -338,14 +338,14 @@ void Game::renderSidebar(BitmapFont& font) const
     auto* player = getPlayer();
 
     font.setArea(GUI::getSidebarArea(getWindow()));
-    printStat(font, "HP", player->getHP(), player->getMaxHP(), TextColor::Red);
-    printStat(font, "MP", player->getMP(), player->getMaxMP(), TextColor::Blue);
+    printStat(font, "HP", player->getHP(), player->getMaxHP(), Red);
+    printStat(font, "MP", player->getMP(), player->getMaxMP(), Blue);
 
     for (auto attribute : player->getDisplayedAttributes())
         printAttribute(font, attributeAbbreviations[attribute], player->getAttribute(attribute));
 
     font.printLine(getWindow(), "");
-    font.printLine(getWindow(), "Running", player->isRunning() ? TextColor::White : TextColor::DarkGray);
+    font.printLine(getWindow(), "Running", player->isRunning() ? White : DarkGray);
 
     if (hoveredTile && (player->remembers(*hoveredTile) || playerSeesEverything))
     {
@@ -383,8 +383,8 @@ void Game::printStat(BitmapFont& font, std::string_view statName, double current
     auto filledColumns = columns * std::max(currentValueInt, 0) / maximumValueInt;
     text.append(columns - text.size(), ' ');
 
-    font.print(getWindow(), std::string_view(text).substr(0, filledColumns), TextColor::White, color);
-    font.printLine(getWindow(), std::string_view(text).substr(filledColumns), TextColor::White);
+    font.print(getWindow(), std::string_view(text).substr(0, filledColumns), White, color);
+    font.printLine(getWindow(), std::string_view(text).substr(filledColumns), White);
 }
 
 void Game::printAttribute(BitmapFont& font, std::string_view attributeName, double attributeValue) const

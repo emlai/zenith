@@ -31,7 +31,7 @@ namespace MessageSystem
     };
 
     static const int debugMessageLimit = 16;
-    static const Color messageColors[] = { TextColor::White, TextColor::Red };
+    static const Color messageColors[] = { White, Red };
     static std::deque<DebugMessage> debugMessages;
     static std::vector<std::string> commandHistory;
     static std::vector<std::string>::iterator commandIterator = commandHistory.end();
@@ -45,7 +45,7 @@ void MessageSystem::drawMessages(Window& window, BitmapFont& font,
     for (int end = int(messages.size()), i = std::max(0, end - maxMessagesToPrint); i < end; ++i)
     {
         bool isNewMessage = messages[i].turn >= currentTurn - 1;
-        auto color = isNewMessage ? TextColor::White : TextColor::Gray;
+        auto color = isNewMessage ? White : Gray;
         font.print(window, "- ", color);
         std::string text = messages[i].text;
 
