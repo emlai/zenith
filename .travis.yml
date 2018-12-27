@@ -9,6 +9,9 @@ matrix:
       compiler: gcc
       before_install:
         - CXX=g++-7
+    - os: osx
+      osx_image: xcode10
+      compiler: clang
 
 addons:
   apt:
@@ -17,6 +20,9 @@ addons:
     packages:
       - g++-7
       - libsdl2-dev
+  homebrew:
+    packages:
+      - sdl2
 
 before_install:
   - |
