@@ -171,20 +171,6 @@ Vector2 Window::getSize() const
     return size;
 }
 
-int Window::getWidth() const
-{
-    int width;
-    SDL_GetWindowSize(windowHandle.get(), &width, nullptr);
-    return width;
-}
-
-int Window::getHeight() const
-{
-    int height;
-    SDL_GetWindowSize(windowHandle.get(), nullptr, &height);
-    return height;
-}
-
 const char* Window::getTitle() const
 {
     return SDL_GetWindowTitle(windowHandle.get());

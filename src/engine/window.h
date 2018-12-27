@@ -42,8 +42,6 @@ public:
     bool shouldClose() const;
     Vector2 getResolution() const;
     Vector2 getSize() const;
-    int getWidth() const;
-    int getHeight() const;
     const char* getTitle() const;
     static SDL_Window* initWindowHandle(const char* title, bool fullscreen);
     bool handleWindowEvent(int eventType);
