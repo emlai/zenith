@@ -1,11 +1,14 @@
-sudo: false
-dist: trusty
-
 language: cpp
 
-compiler:
-  - clang
-  - gcc
+matrix:
+  include:
+    - os: windows
+    - os: linux
+      compiler: clang
+    - os: linux
+      compiler: gcc
+      before_install:
+        - CXX=g++-7
 
 addons:
   apt:
@@ -16,12 +19,16 @@ addons:
       - libsdl2-dev
 
 before_install:
-  - if [ $CXX == g++ ]; then export CXX=g++-7; fi
-
-before_script:
-  - mkdir build
-  - cd build
+  - |
+    if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then
+      export SDL_VERSION="2.0.6"
+      export SDL2DIR="C:/sdl_root/SDL2-$SDL_VERSION"
+      wget https://libsdl.org/release/SDL2-devel-$SDL_VERSION-VC.zip
+      7z x SDL2-devel-$SDL_VERSION-VC.zip -oC:/sdl_root/
+    fi
 
 script:
+  - mkdir build
+  - cd build
   - cmake ..
-  - make VERBOSE=1
+  - cmake --build .
