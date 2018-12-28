@@ -48,7 +48,7 @@ public:
 
     enum { CloseRequest = -2 };
 
-    StateManager* stateManager;
+    StateManager* stateManager; // FIXME: Window doesn't have to know about StateManager, only how to render.
     bool closeRequestReceived;
     std::unique_ptr<SDL_Window, void (&)(SDL_Window*)> windowHandle;
     GraphicsContext context;

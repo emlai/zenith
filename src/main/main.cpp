@@ -8,8 +8,12 @@
 #include "engine/window.h"
 #include <cassert>
 #include <cstdio>
+#include <cstdlib>
 #include <iostream>
 #include <memory>
+#include <optional>
+
+using namespace std::literals;
 
 static BitmapFont initFont()
 {
@@ -244,49 +248,51 @@ int main(int argc, char** argv)
         return 0;
     }
 
-    StateManager stateManager;
-    Window window(&stateManager, PROJECT_NAME, true);
-    window.context.setAnimationFrameRate(4);
-    stateManager.window = &window;
-
-    if (fs::exists(preferencesFileName))
-    {
-        Config preferences(preferencesFileName);
-        window.context.setScale(preferences.getOptional<double>("GraphicsScale").value_or(1));
-        window.setFullscreen(preferences.getOptional<bool>("Fullscreen").value_or(true));
-        loadKeyMap(&preferences);
-    }
-    else
-        loadKeyMap(nullptr);
-
-    BitmapFont font = initFont();
-    window.context.font = &font;
-    Menu::setDefaultTextColor(Gray);
-
     GameState gameState;
+    StateManager stateManager;
+    std::optional<Window> window;
 
     try
     {
+        window.emplace(&stateManager, PROJECT_NAME, true);
+        window->context.setAnimationFrameRate(4);
+        stateManager.window = &*window;
+
+        if (fs::exists(preferencesFileName))
+        {
+            Config preferences(preferencesFileName);
+            window->context.setScale(preferences.getOptional<double>("GraphicsScale").value_or(1));
+            window->setFullscreen(preferences.getOptional<bool>("Fullscreen").value_or(true));
+            loadKeyMap(&preferences);
+        }
+        else
+            loadKeyMap(nullptr);
+
+        BitmapFont font = initFont();
+        window->context.font = &font;
+        Menu::setDefaultTextColor(Gray);
+
         stateManager.pushState(std::make_unique<MainMenu>(gameState));
         stateManager.wait();
+
+        if (gameState.isLoaded)
+        {
+            stateManager.pushState(std::make_unique<LoadingScreen>("Saving game...", [&] { gameState.save(); }));
+            stateManager.wait();
+        }
     }
     catch (const std::exception& exception)
     {
         if (gameState.isLoaded)
             gameState.save();
 
-        auto text = std::string("Unhandled exception: ") + exception.what();
+        auto text = "Unhandled exception: "sv + exception.what();
 
-        if (SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, window.getTitle(), text.c_str(), window.windowHandle.get()) != 0)
+        // TODO: Pass parent window here when it isn't initially made fullscreen.
+        if (SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, PROJECT_NAME, text.c_str(), nullptr) != 0)
             std::cerr << text.c_str() << std::endl;
 
         throw;
-    }
-
-    if (gameState.isLoaded)
-    {
-        stateManager.pushState(std::make_unique<LoadingScreen>("Saving game...", [&] { gameState.save(); }));
-        stateManager.wait();
     }
 
     return 0;
