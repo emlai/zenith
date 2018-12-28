@@ -170,14 +170,8 @@ Config::Group Config::parseGroup(ConfigReader& reader)
 {
     Config::Group map;
 
-    while (true)
+    while (reader.peek() != '[' && reader.peek() != EOF)
     {
-        auto ch = reader.get();
-
-        if (ch == '}')
-            break;
-
-        reader.unget(ch);
         auto key = reader.getId();
         map.insert(std::move(key), parseProperty(reader));
     }
@@ -192,14 +186,7 @@ Config::Value Config::parseProperty(ConfigReader& reader)
     if (ch != '=')
         throw reader.syntaxError("'='", char(ch));
 
-    auto value = parseValue(reader);
-
-    ch = reader.get();
-
-    if (ch != ';')
-        throw reader.syntaxError("';'", char(ch));
-
-    return value;
+    return parseValue(reader);
 }
 
 Config::Value Config::parseValue(ConfigReader& reader)
@@ -324,20 +311,29 @@ Config::Config(std::string_view filePath)
         if (reader.peek() == EOF)
             break;
 
-        std::string id = reader.getId();
         auto ch = reader.get();
 
         switch (ch)
         {
-            case '{':
+            case '[':
+            {
+                std::string id = reader.getId();
+                ch = reader.get();
+
+                if (ch != ']')
+                    throw reader.syntaxError("']'", char(ch));
+
                 data.insert(std::move(id), parseGroup(reader));
                 break;
-            case '=':
+            }
+
+            default:
+            {
                 reader.unget(ch);
+                std::string id = reader.getId();
                 data.insert(std::move(id), parseProperty(reader));
                 break;
-            default:
-                throw reader.syntaxError("'{' or '='", char(ch));
+            }
         }
     }
 }
@@ -381,11 +377,11 @@ void Config::writeToFile(const std::string& filePath) const
 {
     std::ofstream file(filePath);
 
-    for (auto& keyAndValue : data)
+    for (auto& [key, value] : data)
     {
-        file << keyAndValue.first << " = ";
-        printValue(file, keyAndValue.second);
-        file << ";\n";
+        file << key << " = ";
+        printValue(file, value);
+        file << '\n';
     }
 }
 
