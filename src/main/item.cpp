@@ -1,10 +1,10 @@
 #include "item.h"
 #include "creature.h"
+#include "error.h"
 #include "game.h"
 #include "gui.h"
 #include "tile.h"
 #include "engine/savefile.h"
-#include <iostream>
 
 static Color getMaterialColor(std::string_view materialId)
 {
@@ -102,15 +102,14 @@ bool Item::isEdible() const
 
 EquipmentSlot Item::getEquipmentSlot() const
 {
-    auto slotString = getConfig().getOptional<std::string>(getId(), "EquipmentSlot").value_or("Hand");
+    auto slot = getConfig().getOptional<std::string>(getId(), "EquipmentSlot").value_or("Hand");
 
-    if (slotString == "Head") return Head;
-    if (slotString == "Torso") return Torso;
-    if (slotString == "Hand") return Hand;
-    if (slotString == "Legs") return Legs;
+    if (slot == "Head") return Head;
+    if (slot == "Torso") return Torso;
+    if (slot == "Hand") return Hand;
+    if (slot == "Legs") return Legs;
 
-    std::cerr << "'" << getId() << "' has unknown EquipmentSlot '" << slotString << "'\n";
-    assert(false);
+    warn("'" + getId() + "' has unknown EquipmentSlot '" + slot + "'");
     return Hand;
 }
 

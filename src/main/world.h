@@ -4,9 +4,8 @@
 #include "engine/color.h"
 #include "engine/geometry.h"
 #include <unordered_map>
-#include <fstream>
-#include <functional>
 #include <memory>
+#include <vector>
 
 class Creature;
 class Game;

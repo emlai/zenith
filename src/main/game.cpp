@@ -8,7 +8,6 @@
 #include "engine/menu.h"
 #include "engine/savefile.h"
 #include <cmath>
-#include <fstream>
 #include <functional>
 
 std::unique_ptr<Config> Game::creatureConfig;

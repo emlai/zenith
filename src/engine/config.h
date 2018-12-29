@@ -3,8 +3,8 @@
 #include "utility.h"
 #include <optional>
 #include <unordered_map>
-#include <fstream>
 #include <functional>
+#include <iosfwd>
 #include <memory>
 #include <stdexcept>
 #include <string>

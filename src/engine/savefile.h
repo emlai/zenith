@@ -2,7 +2,6 @@
 
 #include "geometry.h"
 #include <string_view>
-#include <fstream>
 #include <memory>
 #include <vector>
 
@@ -60,7 +59,7 @@ private:
     T read() const { return T::load(*this); }
 
     std::vector<char> buffer;
-    std::unique_ptr<SDL_RWops, void (*)(SDL_RWops*)> file;
+    std::unique_ptr<SDL_RWops, void (&)(SDL_RWops*)> file;
 };
 
 template<typename T>

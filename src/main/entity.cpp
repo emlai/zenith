@@ -1,13 +1,13 @@
 #include "entity.h"
+#include "error.h"
 #include <unordered_set>
-#include <iostream>
 
 static void reportUnknownComponent(std::string_view name)
 {
     static std::unordered_set<std::string> reportedNames;
 
     if (reportedNames.insert(std::string(name)).second)
-        std::cerr << "Unknown component '" << name << "'\n";
+        warn("Unknown component '" + name + "'");
 }
 
 Entity::Entity(std::string_view id, const Config& config)
