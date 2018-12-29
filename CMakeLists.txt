@@ -28,12 +28,19 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
 target_include_directories(zenith PUBLIC "${PROJECT_SOURCE_DIR}/src")
 set_target_properties(zenith PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
 
-set(CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR}/cmake-modules)
+set(CMAKE_MODULE_PATH "${CMAKE_BINARY_DIR}/cmake-modules")
 
 if(NOT EXISTS "${CMAKE_BINARY_DIR}/cmake-modules/FindSDL2.cmake")
-    file(DOWNLOAD "https://github.com/tcbrindle/sdl2-cmake-scripts/raw/master/FindSDL2.cmake"
-         "${CMAKE_BINARY_DIR}/cmake-modules/FindSDL2.cmake")
+    file(DOWNLOAD "https://github.com/tcbrindle/sdl2-cmake-scripts/raw/master/FindSDL2.cmake" "${CMAKE_BINARY_DIR}/cmake-modules/FindSDL2.cmake")
 endif()
+
+if(NOT EXISTS "${CMAKE_BINARY_DIR}/cmake-modules/cotire.cmake")
+    file(DOWNLOAD "https://github.com/sakra/cotire/raw/master/CMake/cotire.cmake" "${CMAKE_BINARY_DIR}/cmake-modules/cotire.cmake")
+endif()
+
 find_package(SDL2 REQUIRED)
 target_include_directories(zenith SYSTEM PUBLIC ${SDL2_INCLUDE_DIR})
 target_link_libraries(zenith ${SDL2_LIBRARY})
+
+include(cotire)
+cotire(zenith)
