@@ -170,8 +170,3 @@ Vector2 Window::getSize() const
     SDL_GetWindowSize(windowHandle.get(), &size.x, &size.y);
     return size;
 }
-
-const char* Window::getTitle() const
-{
-    return SDL_GetWindowTitle(windowHandle.get());
-}
