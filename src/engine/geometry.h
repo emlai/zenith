@@ -5,6 +5,10 @@
 #include <cassert>
 #include <cmath>
 
+struct Vector2;
+struct Vector3;
+struct Rect;
+
 enum Dir8
 {
     NoDir,
@@ -35,70 +39,54 @@ inline Dir8 randomDir8()
     assert(false);
 }
 
-template<typename T>
-struct Vector2Base;
-template<typename T>
-struct Vector3Base;
-
-using Vector2 = Vector2Base<int>;
-using Vector2f = Vector2Base<double>;
-using Vector3 = Vector3Base<int>;
-using Vector3f = Vector3Base<double>;
-
 extern const Vector2 directionVectors[]; // Definition in math.cpp.
 
-/// 2D vector structure for representing values with x and y components.
-template<typename T>
-struct Vector2Base
+struct Vector2
 {
-    T x, y;
+    int x, y;
 
-    Vector2Base() = default;
-    constexpr Vector2Base(T x, T y) : x(x), y(y) {}
-    constexpr Vector2Base(Dir8 direction) : Vector2Base(directionVectors[direction]) {}
-    template<typename U>
-    explicit constexpr Vector2Base(Vector2Base<U> vector) : x(T(vector.x)), y(T(vector.y)) {}
-    explicit constexpr Vector2Base(Vector3Base<T> vector) : x(vector.x), y(vector.y) {}
+    Vector2() = default;
+    constexpr Vector2(int x, int y) : x(x), y(y) {}
+    constexpr Vector2(Dir8 direction) : Vector2(directionVectors[direction]) {}
+    explicit constexpr Vector2(Vector3 vector);
 
-    Vector2Base& operator+=(Vector2Base vector) { x += vector.x; y += vector.y; return *this; }
-    Vector2Base& operator-=(Vector2Base vector) { x -= vector.x; y -= vector.y; return *this; }
-    Vector2Base& operator*=(Vector2Base vector) { x *= vector.x; y *= vector.y; return *this; }
-    Vector2Base& operator/=(Vector2Base vector) { x /= vector.x; y /= vector.y; return *this; }
-    Vector2Base& operator%=(Vector2Base vector) { x %= vector.x; y %= vector.y; return *this; }
+    Vector2& operator+=(Vector2 vector) { x += vector.x; y += vector.y; return *this; }
+    Vector2& operator-=(Vector2 vector) { x -= vector.x; y -= vector.y; return *this; }
+    Vector2& operator*=(Vector2 vector) { x *= vector.x; y *= vector.y; return *this; }
+    Vector2& operator/=(Vector2 vector) { x /= vector.x; y /= vector.y; return *this; }
+    Vector2& operator%=(Vector2 vector) { x %= vector.x; y %= vector.y; return *this; }
 
     template<typename U, typename = std::enable_if_t<std::is_arithmetic<U>::value>>
-    Vector2Base& operator*=(U multiplier) { x *= multiplier; y *= multiplier; return *this; }
+    Vector2& operator*=(U multiplier) { x *= multiplier; y *= multiplier; return *this; }
     template<typename U, typename = std::enable_if_t<std::is_arithmetic<U>::value>>
-    Vector2Base& operator/=(U divisor) { x /= divisor; y /= divisor; return *this; }
+    Vector2& operator/=(U divisor) { x /= divisor; y /= divisor; return *this; }
     template<typename U, typename = std::enable_if_t<std::is_arithmetic<U>::value>>
-    Vector2Base& operator%=(U divisor) { x %= divisor; y %= divisor; return *this; }
+    Vector2& operator%=(U divisor) { x %= divisor; y %= divisor; return *this; }
 
-    Vector2Base operator+(Vector2Base vector) const { return Vector2Base(x + vector.x, y + vector.y); }
-    Vector2Base operator-(Vector2Base vector) const { return Vector2Base(x - vector.x, y - vector.y); }
-    Vector2Base operator*(Vector2Base vector) const { return Vector2Base(x * vector.x, y * vector.y); }
-    Vector2Base operator/(Vector2Base vector) const { return Vector2Base(x / vector.x, y / vector.y); }
-    Vector2Base operator%(Vector2Base vector) const { return Vector2Base(x % vector.x, y % vector.y); }
+    Vector2 operator+(Vector2 vector) const { return Vector2(x + vector.x, y + vector.y); }
+    Vector2 operator-(Vector2 vector) const { return Vector2(x - vector.x, y - vector.y); }
+    Vector2 operator*(Vector2 vector) const { return Vector2(x * vector.x, y * vector.y); }
+    Vector2 operator/(Vector2 vector) const { return Vector2(x / vector.x, y / vector.y); }
+    Vector2 operator%(Vector2 vector) const { return Vector2(x % vector.x, y % vector.y); }
 
     template<typename U, typename = std::enable_if_t<std::is_arithmetic<U>::value>>
-    Vector2Base operator*(U multiplier) const { return Vector2Base(T(x * multiplier), T(y * multiplier)); }
+    Vector2 operator*(U multiplier) const { return Vector2(int(x * multiplier), int(y * multiplier)); }
     template<typename U, typename = std::enable_if_t<std::is_arithmetic<U>::value>>
-    Vector2Base operator/(U divisor) const { return Vector2Base(T(x / divisor), T(y / divisor)); }
+    Vector2 operator/(U divisor) const { return Vector2(int(x / divisor), int(y / divisor)); }
     template<typename U, typename = std::enable_if_t<std::is_arithmetic<U>::value>>
-    Vector2Base operator%(U divisor) const { return Vector2Base(T(x % divisor), T(y % divisor)); }
+    Vector2 operator%(U divisor) const { return Vector2(int(x % divisor), int(y % divisor)); }
 
-    Vector2Base operator+() const { return *this; }
-    Vector2Base operator-() const { return Vector2Base(-x, -y); }
+    Vector2 operator+() const { return *this; }
+    Vector2 operator-() const { return Vector2(-x, -y); }
 
-    bool operator==(Vector2Base vector) const { return x == vector.x && y == vector.y; }
-    bool operator!=(Vector2Base vector) const { return x != vector.x || y != vector.y; }
+    bool operator==(Vector2 vector) const { return x == vector.x && y == vector.y; }
+    bool operator!=(Vector2 vector) const { return x != vector.x || y != vector.y; }
 
-    auto getLength() const { return std::sqrt(getLengthSquared()); }
-    auto getLengthSquared() const { return x * x + y * y; }
+    double getLength() const { return std::sqrt(getLengthSquared()); }
+    int getLengthSquared() const { return x * x + y * y; }
     auto getArea() const { return x * y; }
     bool isZero() const { return x == 0 && y == 0; }
-    template<typename U>
-    bool isWithin(Vector2Base<U>) const;
-    bool isWithin(struct Rect) const;
+    bool isWithin(Rect) const;
 
     Vector2 divFloor(int divisor) const
     {
@@ -110,84 +98,61 @@ struct Vector2Base
         return Vector2(::divFloor(x, divisor.x), ::divFloor(y, divisor.y));
     }
 
-    Dir8 getDir8() const;
+    Dir8 getDir8() const
+    {
+        if (isZero()) return NoDir;
+        double angle = std::atan2(y, x);
+        int octant = static_cast<int>(std::round(8 * angle / (2 * M_PI) + 8)) % 8;
+        return static_cast<Dir8>(octant + 1);
+    }
 
     std::string toString() const
     {
         return "(" + std::to_string(x) + ", " + std::to_string(y) + ")";
     }
 
-    static const Vector2Base zeroVector;
+    static const Vector2 zeroVector;
 };
 
-template<typename T>
-template<typename U>
-inline bool Vector2Base<T>::isWithin(Vector2Base<U> vector) const
+inline const Vector2 Vector2::zeroVector = Vector2(0, 0);
+
+inline Vector2 abs(Vector2 vector)
 {
-    return x >= 0 && U(x) < vector.x && y >= 0 && U(y) < vector.y;
+    return Vector2(abs(vector.x), abs(vector.y));
 }
 
-template<typename T>
-Dir8 Vector2Base<T>::getDir8() const
+inline Vector2 sign(Vector2 vector)
 {
-    if (isZero()) return NoDir;
-    double angle = std::atan2(y, x);
-    int octant = static_cast<int>(std::round(8 * angle / (2 * M_PI) + 8)) % 8;
-    return static_cast<Dir8>(octant + 1);
+    return Vector2(sign(vector.x), sign(vector.y));
 }
 
-template<typename T>
-const Vector2Base<T> Vector2Base<T>::zeroVector = Vector2Base<T>(0, 0);
-
-template<typename T>
-inline Vector2Base<T> abs(Vector2Base<T> vector)
-{
-    return Vector2Base<T>(abs(vector.x), abs(vector.y));
-}
-
-template<typename T>
-inline Vector2Base<T> sign(Vector2Base<T> vector)
-{
-    return Vector2Base<T>(sign(vector.x), sign(vector.y));
-}
-
-template<typename T>
-inline auto getDistanceSquared(Vector2Base<T> a, Vector2Base<T> b)
+inline int getDistanceSquared(Vector2 a, Vector2 b)
 {
     return (b - a).getLengthSquared();
 }
 
-template<typename T>
-inline auto getDistance(Vector2Base<T> a, Vector2Base<T> b)
+inline double getDistance(Vector2 a, Vector2 b)
 {
     return std::sqrt(getDistanceSquared(a, b));
 }
 
-template<typename T>
-inline Vector2Base<T> makeRandomVector(Vector2Base<T> max)
+inline Vector2 makeRandomVector(Vector2 max)
 {
-    // TODO: Add support for floating-point numbers.
     return { randInt(max.x), randInt(max.y) };
 }
 
-template<typename T>
-inline Vector2Base<T> makeRandomVector(Vector2Base<T> min, Vector2Base<T> max)
+inline Vector2 makeRandomVector(Vector2 min, Vector2 max)
 {
-    // TODO: Add support for floating-point numbers.
     return { randInt(min.x, max.x), randInt(min.y, max.y) };
 }
 
-template<typename T>
-inline Vector2Base<T> makeRandomVector(T max)
+inline Vector2 makeRandomVector(int max)
 {
-    // TODO: Add support for floating-point numbers.
     return { randInt(max), randInt(max) };
 }
 
-template<typename T>
-inline Vector2Base<T> makeRandomVector(T min, T max)
+inline Vector2 makeRandomVector(int min, int max)
 {
-    // TODO: Add support for floating-point numbers.
     return { randInt(min, max), randInt(min, max) };
 }
 
@@ -203,37 +168,35 @@ namespace std
     };
 }
 
-/// 3D vector structure for representing values with x, y, and z components.
-template<typename T>
-struct Vector3Base
+struct Vector3
 {
-    T x, y, z;
+    int x, y, z;
 
-    Vector3Base() = default;
-    constexpr Vector3Base(T x, T y, T z) : x(x), y(y), z(z) {}
-    explicit constexpr Vector3Base(Vector2Base<T> vector) : x(vector.x), y(vector.y), z(0) {}
+    Vector3() = default;
+    constexpr Vector3(int x, int y, int z) : x(x), y(y), z(z) {}
+    explicit constexpr Vector3(Vector2 vector) : x(vector.x), y(vector.y), z(0) {}
 
-    Vector3Base& operator+=(Vector3Base vector) { x += vector.x; y += vector.y; z += vector.z; return *this; }
-    Vector3Base& operator-=(Vector3Base vector) { x -= vector.x; y -= vector.y; z -= vector.z; return *this; }
-    Vector3Base& operator*=(Vector3Base vector) { x *= vector.x; y *= vector.y; z *= vector.z; return *this; }
-    Vector3Base& operator/=(Vector3Base vector) { x /= vector.x; y /= vector.y; z /= vector.z; return *this; }
-    Vector3Base& operator%=(Vector3Base vector) { x %= vector.x; y %= vector.y; z %= vector.z; return *this; }
+    Vector3& operator+=(Vector3 vector) { x += vector.x; y += vector.y; z += vector.z; return *this; }
+    Vector3& operator-=(Vector3 vector) { x -= vector.x; y -= vector.y; z -= vector.z; return *this; }
+    Vector3& operator*=(Vector3 vector) { x *= vector.x; y *= vector.y; z *= vector.z; return *this; }
+    Vector3& operator/=(Vector3 vector) { x /= vector.x; y /= vector.y; z /= vector.z; return *this; }
+    Vector3& operator%=(Vector3 vector) { x %= vector.x; y %= vector.y; z %= vector.z; return *this; }
 
-    Vector3Base operator+(Vector3Base vector) const { return Vector3Base(x + vector.x, y + vector.y, z + vector.z); }
-    Vector3Base operator-(Vector3Base vector) const { return Vector3Base(x - vector.x, y - vector.y, z - vector.z); }
-    Vector3Base operator*(Vector3Base vector) const { return Vector3Base(x * vector.x, y * vector.y, z * vector.z); }
-    Vector3Base operator/(Vector3Base vector) const { return Vector3Base(x / vector.x, y / vector.y, z / vector.z); }
-    Vector3Base operator%(Vector3Base vector) const { return Vector3Base(x % vector.x, y % vector.y, z % vector.z); }
+    Vector3 operator+(Vector3 vector) const { return Vector3(x + vector.x, y + vector.y, z + vector.z); }
+    Vector3 operator-(Vector3 vector) const { return Vector3(x - vector.x, y - vector.y, z - vector.z); }
+    Vector3 operator*(Vector3 vector) const { return Vector3(x * vector.x, y * vector.y, z * vector.z); }
+    Vector3 operator/(Vector3 vector) const { return Vector3(x / vector.x, y / vector.y, z / vector.z); }
+    Vector3 operator%(Vector3 vector) const { return Vector3(x % vector.x, y % vector.y, z % vector.z); }
 
-    Vector3Base operator+() const { return *this; }
-    Vector3Base operator-() const { return Vector3Base(-x, -y, -z); }
+    Vector3 operator+() const { return *this; }
+    Vector3 operator-() const { return Vector3(-x, -y, -z); }
 
-    bool operator==(Vector3Base vector) const { return x == vector.x && y == vector.y && z == vector.z; }
-    bool operator!=(Vector3Base vector) const { return x != vector.x || y != vector.y || z != vector.z; }
+    bool operator==(Vector3 vector) const { return x == vector.x && y == vector.y && z == vector.z; }
+    bool operator!=(Vector3 vector) const { return x != vector.x || y != vector.y || z != vector.z; }
 
-    Vector3Base divFloor(int divisor) const
+    Vector3 divFloor(int divisor) const
     {
-        return Vector3Base(::divFloor(x, divisor), ::divFloor(y, divisor), ::divFloor(z, divisor));
+        return Vector3(::divFloor(x, divisor), ::divFloor(y, divisor), ::divFloor(z, divisor));
     }
 };
 
@@ -265,11 +228,8 @@ struct Rect
     Vector2 getCenter() const { return position + size / 2; }
     int getWidth() const { return size.x; }
     int getHeight() const { return size.y; }
-
     int getArea() const { return size.getArea(); }
     int getPerimeter() const { return 2 * (size.x + size.y); }
-    bool isSquare() const { return size.x == size.y; }
-
     Rect offset(Vector2 offset) const { return Rect(position + offset, size); }
     Rect inset(Vector2 amount) const { return Rect(position + amount, size - amount * 2); }
 
@@ -280,8 +240,9 @@ struct Rect
     }
 };
 
-template<typename T>
-inline bool Vector2Base<T>::isWithin(Rect rect) const
+inline constexpr Vector2::Vector2(Vector3 vector) : x(vector.x), y(vector.y) {}
+
+inline bool Vector2::isWithin(Rect rect) const
 {
     return x >= rect.getLeft() && x <= rect.getRight() &&
            y >= rect.getTop() && y <= rect.getBottom();
