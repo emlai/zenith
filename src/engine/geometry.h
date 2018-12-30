@@ -111,10 +111,8 @@ struct Vector2
         return "(" + std::to_string(x) + ", " + std::to_string(y) + ")";
     }
 
-    static const Vector2 zeroVector;
+    static const Vector2 zero;
 };
-
-inline const Vector2 Vector2::zeroVector = Vector2(0, 0);
 
 inline Vector2 abs(Vector2 vector)
 {

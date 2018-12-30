@@ -61,12 +61,12 @@ void Texture::render(Window& window, Vector2 position, Vector2 size) const
     if (size.isZero())
         size = getSize();
 
-    render(window, Rect(Vector2::zeroVector, size), Rect(position, size));
+    render(window, Rect(Vector2::zero, size), Rect(position, size));
 }
 
 void Texture::render(Window& window, Rect target) const
 {
-    render(window, Rect(Vector2::zeroVector, getSize()), target);
+    render(window, Rect(Vector2::zero, getSize()), target);
 }
 
 void Texture::render(Window& window, Rect source, Rect target) const
