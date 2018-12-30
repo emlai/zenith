@@ -1,4 +1,5 @@
 #include "state.h"
+#include "assert.h"
 #include "window.h"
 
 StateChange::Result::~Result()
@@ -141,12 +142,12 @@ StateChange::Result StateManager::handleStateChange(StateChange stateChange)
 
 State* StateManager::currentState() const
 {
-    assert(states.size() >= 1);
+    ASSERT(states.size() >= 1);
     return &*states[states.size() - 1];
 }
 
 State* StateManager::previousState() const
 {
-    assert(states.size() >= 2);
+    ASSERT(states.size() >= 2);
     return &*states[states.size() - 2];
 }

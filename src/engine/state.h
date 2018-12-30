@@ -1,9 +1,9 @@
 #pragma once
 
+#include "assert.h"
 #include "keyboard.h"
 #include "utility.h"
 #include "window.h"
-#include <cassert>
 #include <memory>
 #include <variant>
 #include <vector>
@@ -22,9 +22,9 @@ public:
         Result() : type(None) {}
         Result(Result&&);
         ~Result();
-        int getInt() const { assert(type == Int); return intValue; }
-        Dir8 getDir() const { assert(type == Dir); return dirValue; }
-        std::string getString() const { assert(type == String); return std::move(stringValue); }
+        int getInt() const { ASSERT(type == Int); return intValue; }
+        Dir8 getDir() const { ASSERT(type == Dir); return dirValue; }
+        std::string getString() const { ASSERT(type == String); return std::move(stringValue); }
         explicit operator bool() const { return type != None; }
 
         Type type;

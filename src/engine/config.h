@@ -274,8 +274,7 @@ std::optional<ValueType> Config::getOptional(std::string_view type, std::string_
             if (auto converted = convert<ValueType>(*value))
                 return *converted;
             else
-                throw std::runtime_error("attribute \"" + attribute + "\" of class \"" + current +
-                                         "\" has wrong type!");
+                throw std::runtime_error("attribute \"" + attribute + "\" of class \"" + current + "\" has wrong type!");
         }
 
         auto baseType = group.getOptional("BaseType");

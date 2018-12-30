@@ -1,5 +1,5 @@
 #include "config.h"
-#include <cassert>
+#include "assert.h"
 #include <cctype>
 #include <fstream>
 
@@ -199,7 +199,7 @@ Config::Value Config::parseValue(ConfigReader& reader)
 
 Config::Value Config::parseArray(ConfigReader& reader)
 {
-    assert(reader.peek() == '[');
+    ASSERT(reader.peek() == '[');
     reader.get();
     std::vector<Value> values;
 
@@ -368,7 +368,7 @@ void Config::printValue(std::ostream& stream, const Config::Value& value) const
             break;
         }
         case Value::Type::Group:
-            assert(false && "unimplemented");
+            ASSERT(false && "unimplemented");
             break;
     }
 }

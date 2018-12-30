@@ -4,7 +4,6 @@
 #include "window.h"
 #include <SDL.h>
 #include <cctype>
-#include <cassert>
 #include <climits>
 
 std::string toString(Key key)

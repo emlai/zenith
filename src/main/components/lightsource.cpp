@@ -1,6 +1,7 @@
 #include "lightsource.h"
 #include "../tile.h"
 #include "../world.h"
+#include "engine/assert.h"
 #include "engine/raycast.h"
 #include "engine/window.h"
 
@@ -22,7 +23,7 @@ void LightSource::emitLight(World& world, Vector2 position, int level) const
     position = position.divFloor(Tile::getSize());
     auto color = Color(parent->getConfig().get<uint32_t>(parent->getId(), "LightColor"));
     int radius = parent->getConfig().get<int>(parent->getId(), "LightRadius");
-    assert(radius <= maxRadius);
+    ASSERT(radius <= maxRadius); // TODO: Convert to warning.
     double radiusSquared = radius * radius;
 
     for (int dx = -radius; dx <= radius; ++dx)

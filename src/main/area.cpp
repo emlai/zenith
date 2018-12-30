@@ -1,5 +1,6 @@
 #include "area.h"
 #include "tile.h"
+#include "engine/assert.h"
 #include "engine/savefile.h"
 
 const Vector2 Area::sizeVector = Vector2(Area::size, Area::size);
@@ -42,7 +43,7 @@ void Area::save(SaveFile& file) const
 
 Tile& Area::getTileAt(Vector2 position)
 {
-    assert(position.x >= 0 && position.x < size);
-    assert(position.y >= 0 && position.y < size);
+    ASSERT(position.x >= 0 && position.x < size);
+    ASSERT(position.y >= 0 && position.y < size);
     return tiles[position.x + size * position.y];
 }

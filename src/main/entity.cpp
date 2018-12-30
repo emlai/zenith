@@ -1,5 +1,5 @@
 #include "entity.h"
-#include "error.h"
+#include "engine/error.h"
 #include <unordered_set>
 
 static void reportUnknownComponent(std::string_view name)

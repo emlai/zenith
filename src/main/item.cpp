@@ -1,9 +1,10 @@
 #include "item.h"
 #include "creature.h"
-#include "error.h"
 #include "game.h"
 #include "gui.h"
 #include "tile.h"
+#include "engine/assert.h"
+#include "engine/error.h"
 #include "engine/savefile.h"
 
 static Color getMaterialColor(std::string_view materialId)
@@ -85,7 +86,7 @@ bool Item::isUsable() const
 
 bool Item::use(Creature& user, Game& game)
 {
-    assert(isUsable());
+    ASSERT(isUsable());
     bool returnValue = false;
 
     for (auto& component : getComponents())

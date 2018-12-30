@@ -2,6 +2,7 @@
 #include "action.h"
 #include "creature.h"
 #include "game.h"
+#include "engine/assert.h"
 #include "engine/menu.h"
 #include "engine/window.h"
 
@@ -19,7 +20,7 @@ Action AIController::control(Creature& creature)
         return Wait;
 
     auto action = ai->control();
-    assert(action != NoAction);
+    ASSERT(action != NoAction);
     return action;
 }
 
@@ -137,7 +138,7 @@ Action PlayerController::control(Creature& creature)
             case Move:
             case Attack:
             case LastAction:
-                assert(false);
+                ASSERT(false);
                 break;
 
             case NoAction:
@@ -230,7 +231,7 @@ static Key getDefaultKeyForAction(Action action)
             return NoKey;
     }
 
-    assert(false);
+    ASSERT(false);
 }
 
 void loadKeyMap(const Config* config)
@@ -282,6 +283,10 @@ Dir8 getDirectionFromEvent(Event event, Vector2 origin)
                 case UpArrow:
                     return North;
             }
+            break;
+
+        case Event::None:
+            ASSERT(false);
             break;
     }
 

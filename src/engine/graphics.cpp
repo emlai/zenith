@@ -1,4 +1,5 @@
 #include "graphics.h"
+#include "assert.h"
 #include "texture.h"
 #include "color.h"
 #include "font.h"
@@ -70,7 +71,7 @@ void GraphicsContext::updateScreen()
     void* pixels;
     int pitch;
     int result = SDL_LockTexture(framebuffer.get(), nullptr, &pixels, &pitch);
-    assert(result == 0);
+    ASSERT(result == 0);
 
     SDL_Surface* surface = targetTexture.surface.get();
     std::memcpy(pixels, surface->pixels, surface->h * pitch);

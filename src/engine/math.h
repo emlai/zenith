@@ -1,7 +1,7 @@
 #pragma once
 
+#include "assert.h"
 #include <algorithm>
-#include <cassert>
 #include <functional>
 #include <limits>
 #include <random>
@@ -38,6 +38,6 @@ T randInt(T min, T max)
 template<typename IndexableContainer>
 auto& randomElement(IndexableContainer&& container)
 {
-    assert(!container.empty());
+    ASSERT(!container.empty());
     return container[randInt(container.size() - 1)];
 }

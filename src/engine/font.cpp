@@ -1,4 +1,5 @@
 #include "font.h"
+#include "assert.h"
 #include "geometry.h"
 #include "window.h"
 #include <algorithm>
@@ -85,7 +86,7 @@ Vector2 BitmapFont::printHelper(Window& window, std::string_view text, Vector2 p
                     break;
                 }
 
-                assert(splitText.back() == ' ');
+                ASSERT(splitText.back() == ' ');
                 splitText.back() = '\n';
                 currentLineSize = 0;
             }

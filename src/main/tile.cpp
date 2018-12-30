@@ -6,7 +6,6 @@
 #include "components/lightsource.h"
 #include "engine/savefile.h"
 #include "engine/texture.h"
-#include <cassert>
 #include <cmath>
 
 const Vector2 Tile::spriteSize(20, 20);

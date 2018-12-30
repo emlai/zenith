@@ -1,18 +1,19 @@
 #include "ai.h"
 #include "action.h"
 #include "creature.h"
+#include "engine/assert.h"
 #include <stdexcept>
 
 std::unique_ptr<AI> AI::get(std::string_view id, Creature& creature)
 {
     if (id == "AttackNearestEnemy") return std::make_unique<AttackNearestEnemy>(creature);
 
-    throw std::runtime_error("Unknown AI '" + id + "'\n");
+    throw std::runtime_error("Unknown AI '" + id + "'");
 }
 
 Action AttackNearestEnemy::control()
 {
-    assert(!creature->isDead());
+    ASSERT(!creature->isDead());
     Action action;
 
     if (auto* nearestEnemy = creature->getNearestEnemy())

@@ -4,9 +4,9 @@
 #include "game.h"
 #include "msgsystem.h"
 #include "tile.h"
+#include "engine/assert.h"
 #include "engine/raycast.h"
 #include "engine/savefile.h"
-#include <cassert>
 #include <cctype>
 #include <climits>
 #include <iomanip>
@@ -22,7 +22,7 @@ std::string_view toString(EquipmentSlot slot)
         case Legs: return "legs";
     }
 
-    assert(false);
+    ASSERT(false);
 }
 
 std::vector<Attribute> Creature::initDisplayedAttributes(std::string_view id)
@@ -255,7 +255,7 @@ static bool sightHandler(Vector2 vector, const Tile* tile)
 
 bool Creature::sees(const Tile& tile) const
 {
-    assert(tile.getLevel() == getLevel());
+    ASSERT(tile.getLevel() == getLevel());
 
     if (getDistance(getPosition(), tile.getPosition()) > getFieldOfVisionRadius())
         return false;
@@ -468,7 +468,7 @@ void Creature::attack(Creature& target)
 
 void Creature::takeDamage(double amount)
 {
-    assert(!isDead());
+    ASSERT(!isDead());
 
     if (amount > 0)
     {
@@ -529,7 +529,7 @@ void Creature::equip(EquipmentSlot slot, Item* item)
 
 bool Creature::use(Item& itemToUse, Game& game)
 {
-    assert(itemToUse.isUsable());
+    ASSERT(itemToUse.isUsable());
     return itemToUse.use(*this, game);
 }
 
@@ -545,7 +545,7 @@ void Creature::drop(Item& itemToDrop)
 
 bool Creature::eat(Item& itemToEat)
 {
-    assert(itemToEat.isEdible());
+    ASSERT(itemToEat.isEdible());
 
     if (auto leftoverItemId = Game::itemConfig->getOptional<std::string>(itemToEat.getId(), "leftoverItem"))
         getTileUnder(0).addItem(std::make_unique<Item>(*leftoverItemId, ""));
@@ -569,7 +569,7 @@ int Creature::getInventoryIndex(const Item& item) const
         if (&*inventory[i] == &item)
             return i;
 
-    assert(false);
+    ASSERT(false);
 }
 
 bool Creature::close(Dir8 direction)

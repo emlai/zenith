@@ -1,5 +1,6 @@
 #include "action.h"
 #include "creature.h"
+#include "engine/assert.h"
 
 static bool isMovementAction(Action action)
 {
@@ -28,12 +29,12 @@ const char* toString(Action action)
             break;
     }
 
-    assert(false);
+    ASSERT(false);
 }
 
 double getAPCost(Action action, const Creature& actor)
 {
-    assert(action != NoAction);
+    ASSERT(action != NoAction);
 
     if (isMovementAction(action) && actor.isRunning())
         return 0.5;

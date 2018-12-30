@@ -1,5 +1,6 @@
 #pragma once
 
+#include "assert.h"
 #include "geometry.h"
 #include <string_view>
 #include <memory>
@@ -75,7 +76,7 @@ template<typename T>
 void SaveFile::read(std::vector<T>& vector) const
 {
     auto size = readInt32();
-    assert(vector.empty());
+    ASSERT(vector.empty());
     vector.reserve(size_t(size));
 
     for (int i = 0; i < size; ++i)

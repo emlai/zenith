@@ -1,8 +1,8 @@
 #pragma once
 
+#include "assert.h"
 #include "math.h"
 #include "utility.h"
-#include <cassert>
 #include <cmath>
 
 struct Vector2;
@@ -36,7 +36,7 @@ inline Dir8 randomDir8()
         case 7: return NorthEast;
     }
 
-    assert(false);
+    ASSERT(false);
 }
 
 extern const Vector2 directionVectors[]; // Definition in math.cpp.
@@ -222,9 +222,9 @@ struct Rect
     constexpr Rect(int x, int y, int w, int h) : position(x, y), size(w, h) {}
 
     int getLeft() const { return position.x; }
-    int getRight() const { assert(size.x > 0); return position.x + size.x - 1; }
+    int getRight() const { ASSERT(size.x > 0); return position.x + size.x - 1; }
     int getTop() const { return position.y; }
-    int getBottom() const { assert(size.y > 0); return position.y + size.y - 1; }
+    int getBottom() const { ASSERT(size.y > 0); return position.y + size.y - 1; }
     Vector2 getCenter() const { return position + size / 2; }
     int getWidth() const { return size.x; }
     int getHeight() const { return size.y; }

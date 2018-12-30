@@ -3,6 +3,7 @@
 #include "tile.h"
 #include "worldgen.h"
 #include "components/lightsource.h"
+#include "engine/assert.h"
 #include "engine/savefile.h"
 
 void World::load(SaveFile& file)
@@ -185,5 +186,5 @@ std::unique_ptr<Creature> World::removeCreature(Creature* creature)
             return std::move(c);
     }
 
-    assert(false);
+    ASSERT(false);
 }

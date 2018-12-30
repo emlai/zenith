@@ -1,12 +1,12 @@
 #include "action.h"
 #include "game.h"
 #include "gui.h"
+#include "engine/assert.h"
 #include "engine/menu.h"
 #include "engine/filesystem.h"
 #include "engine/geometry.h"
 #include "engine/utility.h"
 #include "engine/window.h"
-#include <cassert>
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
@@ -169,7 +169,7 @@ StateChange PrefsMenu::update()
             return StateChange::Pop();
 
         default:
-            assert(false);
+            ASSERT(false);
     }
 }
 
@@ -236,7 +236,7 @@ StateChange MainMenu::update()
             return StateChange::Pop();
 
         default:
-            assert(false);
+            ASSERT(false);
     }
 }
 

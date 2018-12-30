@@ -1,4 +1,5 @@
 #include "menu.h"
+#include "assert.h"
 #include "font.h"
 #include "window.h"
 #include "sprite.h"
@@ -63,7 +64,7 @@ StateChange Menu::update()
         if (window->shouldClose())
             return StateChange::Pop(Window::CloseRequest);
 
-        assert(event.type == Event::KeyDown);
+        ASSERT(event.type == Event::KeyDown);
         auto input = event.key;
 
         if (input == Esc)
@@ -220,5 +221,5 @@ std::string Menu::getHotkeyPrefix(int index) const
         case LetterHotkeys: return char('a' + index - 1) + hotkeySuffix;
     }
 
-    assert(false);
+    ASSERT(false);
 }

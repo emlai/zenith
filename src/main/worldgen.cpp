@@ -3,6 +3,7 @@
 #include "object.h"
 #include "tile.h"
 #include "world.h"
+#include "engine/assert.h"
 #include "engine/geometry.h"
 #include "engine/math.h"
 #include <climits>
@@ -12,7 +13,7 @@
 Building::Building(std::vector<Room>&& rooms)
 :   rooms(std::move(rooms))
 {
-    assert(this->rooms.size() >= 1);
+    ASSERT(this->rooms.size() >= 1);
 }
 
 std::vector<Tile*> Building::getDoorTiles() const
@@ -163,7 +164,7 @@ std::optional<Room> WorldGenerator::generateRoom(Rect region, int level)
         generateWall(Vector2(region.getRight(), y));
     }
 
-    assert(nonCornerWalls.size() == nonCornerWallCount);
+    ASSERT(nonCornerWalls.size() == nonCornerWallCount);
     auto* doorTile = randomElement(nonCornerWalls);
     doorTile->setObject(std::make_unique<Object>(doorId));
 
