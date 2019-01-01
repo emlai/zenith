@@ -2,6 +2,7 @@
 #include "game.h"
 #include "gui.h"
 #include "engine/assert.h"
+#include "engine/config.h"
 #include "engine/menu.h"
 #include "engine/filesystem.h"
 #include "engine/geometry.h"

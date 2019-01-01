@@ -4,6 +4,7 @@
 #include "tile.h"
 #include "world.h"
 #include "engine/assert.h"
+#include "engine/config.h"
 #include "engine/geometry.h"
 #include "engine/math.h"
 #include <climits>
@@ -203,8 +204,7 @@ static std::vector<Tile*> reconstructPath(const std::unordered_map<Tile*, Tile*>
     return totalPath;
 }
 
-std::vector<Tile*> WorldGenerator::findPathAStar(Tile& source, Tile& target,
-                                                 const std::function<bool(Tile&)>& isAllowed) const
+std::vector<Tile*> WorldGenerator::findPathAStar(Tile& source, Tile& target, const std::function<bool(Tile&)>& isAllowed) const
 {
     std::unordered_set<Tile*> closedSet;
     std::unordered_set<Tile*> openSet;

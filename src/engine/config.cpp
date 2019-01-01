@@ -1,7 +1,9 @@
 #include "config.h"
 #include "assert.h"
+#include "utility.h"
 #include <cctype>
 #include <fstream>
+#include <stdexcept>
 
 /// Wrapper around std::ifstream that keeps track of the current line and column.
 class ConfigReader
@@ -438,3 +440,193 @@ Config::Value::~Value()
             break;
     }
 }
+
+const Config::Value* Config::Group::getOptional(const std::string& key) const
+{
+    auto it = properties.find(key);
+
+    if (it != properties.end())
+        return &it->second;
+
+    return nullptr;
+}
+
+void Config::Group::insert(std::string&& key, Config::Value&& value)
+{
+    properties.emplace(std::move(key), std::move(value));
+}
+
+template<typename OutputType>
+std::optional<OutputType> Config::convert(const Value& value)
+{
+    return Converter<OutputType>()(value);
+}
+
+template<typename OutputType>
+struct Config::Converter
+{
+    std::optional<OutputType> operator()(const Value& value);
+};
+
+template<>
+struct Config::Converter<bool>
+{
+    std::optional<bool> operator()(const Value& value)
+    {
+        if (value.isBool())
+            return value.getBool();
+
+        return std::nullopt;
+    }
+};
+
+template<>
+struct Config::Converter<int>
+{
+    std::optional<int> operator()(const Value& value)
+    {
+        if (value.isInt())
+            return static_cast<int>(value.getInt());
+
+        return std::nullopt;
+    }
+};
+
+template<>
+struct Config::Converter<unsigned>
+{
+    std::optional<unsigned> operator()(const Value& value)
+    {
+        if (value.isInt())
+            return static_cast<unsigned>(value.getInt());
+
+        return std::nullopt;
+    }
+};
+
+template<>
+struct Config::Converter<unsigned short>
+{
+    std::optional<unsigned short> operator()(const Value& value)
+    {
+        if (value.isInt())
+            return static_cast<unsigned short>(value.getInt());
+
+        return std::nullopt;
+    }
+};
+
+template<>
+struct Config::Converter<double>
+{
+    std::optional<double> operator()(const Value& value)
+    {
+        if (value.isFloat())
+            return value.getFloat();
+
+        if (value.isInt())
+            return static_cast<double>(value.getInt());
+
+        return std::nullopt;
+    }
+};
+
+template<>
+struct Config::Converter<std::string>
+{
+    std::optional<std::string> operator()(const Value& value)
+    {
+        if (value.isString())
+            return value.getString();
+
+        return std::nullopt;
+    }
+};
+
+template<typename ElementType>
+struct Config::Converter<std::vector<ElementType>>
+{
+    std::optional<std::vector<ElementType>> operator()(const Value& value)
+    {
+        if (!value.isList())
+            return std::nullopt;
+
+        std::vector<ElementType> outputData;
+
+        for (auto& element : value.getList())
+            outputData.push_back(*convert<ElementType>(element));
+
+        return outputData;
+    }
+};
+
+template<typename ValueType>
+std::optional<ValueType> Config::getOptional(std::string_view key) const
+{
+    if (auto value = data.getOptional(std::string(key)))
+        return convert<ValueType>(*value);
+
+    return std::nullopt;
+}
+
+template<typename ValueType>
+ValueType Config::get(std::string_view type, std::string_view attribute) const
+{
+    if (auto value = getOptional<ValueType>(type, attribute))
+        return ValueType(std::move(*value));
+    else
+        throw std::runtime_error("attribute \"" + attribute + "\" not found for \"" + type + "\"!");
+}
+
+template<typename ValueType>
+std::optional<ValueType> Config::getOptional(std::string_view type, std::string_view attribute) const
+{
+    std::string current(type);
+    std::string key(attribute);
+
+    while (true)
+    {
+        auto groupValue = data.getOptional(current);
+
+        if (!groupValue)
+            return std::nullopt;
+
+        auto& group = groupValue->getGroup();
+
+        if (auto value = group.getOptional(key))
+        {
+            if (auto converted = convert<ValueType>(*value))
+                return *converted;
+            else
+                throw std::runtime_error("attribute \"" + attribute + "\" of class \"" + current + "\" has wrong type!");
+        }
+
+        auto baseType = group.getOptional("BaseType");
+
+        if (!baseType)
+            return std::nullopt;
+
+        if (baseType->isString())
+        {
+            auto& baseTypeString = baseType->getString();
+
+            if (data.getOptional(baseTypeString) == nullptr)
+                throw std::runtime_error("BaseType \"" + baseTypeString + "\" doesn't exist!");
+
+            current = baseTypeString;
+        }
+        else
+            throw std::runtime_error("BaseType of \"" + current + "\" has wrong type!");
+    }
+}
+
+template bool Config::get(std::string_view, std::string_view) const;
+template int Config::get(std::string_view, std::string_view) const;
+template unsigned Config::get(std::string_view, std::string_view) const;
+template std::string Config::get(std::string_view, std::string_view) const;
+template std::vector<int> Config::get(std::string_view, std::string_view) const;
+template std::vector<std::string> Config::get(std::string_view, std::string_view) const;
+template std::vector<std::vector<int>> Config::get(std::string_view, std::string_view) const;
+template std::optional<bool> Config::getOptional(std::string_view) const;
+template std::optional<int> Config::getOptional(std::string_view) const;
+template std::optional<double> Config::getOptional(std::string_view) const;

@@ -1,8 +1,8 @@
 #include "gui.h"
 #include "tile.h"
 #include "engine/config.h"
-#include <cctype>
-#include <stdexcept>
+#include "engine/math.h"
+#include "engine/window.h"
 
 const Color White(0xFFEEEEFF);
 const Color Gray(0x777788FF);
@@ -28,3 +28,53 @@ Sprite getSprite(const Texture& spriteSheet, const Config& config, std::string_v
     sprite.setFrame(frame);
     return sprite;
 }
+
+Rect GUI::getSidebarArea(const Window& window)
+{
+    auto height = (window.getResolution().y - questionAreaHeight) / 2 - spacing.y / 2;
+    auto width = height * 3 / 4;
+    return Rect(window.getResolution().x - width - spacing.x, questionAreaHeight, width, height);
+}
+
+Rect GUI::getQuestionArea(const Window& window)
+{
+    return Rect(spacing.x, spacing.y, window.getResolution().x - spacing.x * 2, fontHeight);
+}
+
+Rect GUI::getWorldViewport(const Window& window)
+{
+    auto top = questionAreaHeight;
+    auto resolution = window.getResolution();
+    return Rect(0, top, resolution.x - getSidebarArea(window).getWidth() - spacing.x * 2, resolution.y - top);
+}
+
+Rect GUI::getMessageArea(const Window& window)
+{
+    auto sidebarArea = getSidebarArea(window);
+    return Rect(sidebarArea.getLeft(), sidebarArea.getBottom() + spacing.y,
+                sidebarArea.getWidth(), sidebarArea.getHeight());
+}
+
+Rect GUI::getInventoryArea(const Window& window)
+{
+    return getWorldViewport(window).inset(spacing);
+}
+
+#ifdef DEBUG
+
+Rect GUI::getCommandLineArea(const Window& window)
+{
+    auto worldViewport = getWorldViewport(window);
+    auto questionArea = getQuestionArea(window);
+    return Rect(worldViewport.getLeft() + spacing.x, worldViewport.getTop() + spacing.y,
+                worldViewport.getWidth() - spacing.x * 2, questionArea.getHeight());
+}
+
+Rect GUI::getDebugMessageArea(const Window& window)
+{
+    auto commandLineArea = getCommandLineArea(window);
+    return Rect(commandLineArea.getLeft(), commandLineArea.getBottom() + spacing.y,
+                commandLineArea.getWidth(), 60);
+}
+
+#endif

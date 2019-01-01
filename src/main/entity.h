@@ -1,11 +1,12 @@
 #pragma once
 
 #include "component.h"
-#include "engine/config.h"
 #include <string_view>
 #include <memory>
 #include <string>
 #include <vector>
+
+class Config;
 
 class Entity
 {

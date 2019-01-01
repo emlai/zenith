@@ -1,5 +1,6 @@
 #include "texture.h"
 #include "geometry.h"
+#include "utility.h"
 #include "window.h"
 #include <SDL.h>
 #include <stdexcept>

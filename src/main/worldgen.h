@@ -1,6 +1,7 @@
 #pragma once
 
 #include "engine/geometry.h"
+#include <functional>
 #include <optional>
 #include <vector>
 

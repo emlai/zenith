@@ -1,9 +1,6 @@
 #pragma once
 
 #include "assert.h"
-#include "math.h"
-#include "utility.h"
-#include <cmath>
 
 struct Vector2;
 struct Vector3;
@@ -22,24 +19,12 @@ enum Dir8
     NorthEast
 };
 
-inline Dir8 randomDir8()
-{
-    switch (randInt(7))
-    {
-        case 0: return East;
-        case 1: return SouthEast;
-        case 2: return South;
-        case 3: return SouthWest;
-        case 4: return West;
-        case 5: return NorthWest;
-        case 6: return North;
-        case 7: return NorthEast;
-    }
+Dir8 randomDir8();
 
-    ASSERT(false);
-}
+extern const Vector2 directionVectors[];
 
-extern const Vector2 directionVectors[]; // Definition in math.cpp.
+/// Divides, rounding towards negative infinity.
+int divFloor(int dividend, int divisor);
 
 struct Vector2
 {
@@ -82,77 +67,27 @@ struct Vector2
     bool operator==(Vector2 vector) const { return x == vector.x && y == vector.y; }
     bool operator!=(Vector2 vector) const { return x != vector.x || y != vector.y; }
 
-    double getLength() const { return std::sqrt(getLengthSquared()); }
+    double getLength() const;
     int getLengthSquared() const { return x * x + y * y; }
     auto getArea() const { return x * y; }
     bool isZero() const { return x == 0 && y == 0; }
     bool isWithin(Rect) const;
-
-    Vector2 divFloor(int divisor) const
-    {
-        return Vector2(::divFloor(x, divisor), ::divFloor(y, divisor));
-    }
-
-    Vector2 divFloor(Vector2 divisor) const
-    {
-        return Vector2(::divFloor(x, divisor.x), ::divFloor(y, divisor.y));
-    }
-
-    Dir8 getDir8() const
-    {
-        if (isZero()) return NoDir;
-        double angle = std::atan2(y, x);
-        int octant = static_cast<int>(std::round(8 * angle / (2 * M_PI) + 8)) % 8;
-        return static_cast<Dir8>(octant + 1);
-    }
-
-    std::string toString() const
-    {
-        return "(" + std::to_string(x) + ", " + std::to_string(y) + ")";
-    }
+    Vector2 divFloor(int divisor) const;
+    Vector2 divFloor(Vector2 divisor) const;
+    Dir8 getDir8() const;
+    std::string toString() const;
 
     static const Vector2 zero;
 };
 
-inline Vector2 abs(Vector2 vector)
-{
-    return Vector2(abs(vector.x), abs(vector.y));
-}
-
-inline Vector2 sign(Vector2 vector)
-{
-    return Vector2(sign(vector.x), sign(vector.y));
-}
-
-inline int getDistanceSquared(Vector2 a, Vector2 b)
-{
-    return (b - a).getLengthSquared();
-}
-
-inline double getDistance(Vector2 a, Vector2 b)
-{
-    return std::sqrt(getDistanceSquared(a, b));
-}
-
-inline Vector2 makeRandomVector(Vector2 max)
-{
-    return { randInt(max.x), randInt(max.y) };
-}
-
-inline Vector2 makeRandomVector(Vector2 min, Vector2 max)
-{
-    return { randInt(min.x, max.x), randInt(min.y, max.y) };
-}
-
-inline Vector2 makeRandomVector(int max)
-{
-    return { randInt(max), randInt(max) };
-}
-
-inline Vector2 makeRandomVector(int min, int max)
-{
-    return { randInt(min, max), randInt(min, max) };
-}
+Vector2 abs(Vector2 vector);
+Vector2 sign(Vector2 vector);
+int getDistanceSquared(Vector2 a, Vector2 b);
+double getDistance(Vector2 a, Vector2 b);
+Vector2 makeRandomVector(Vector2 max);
+Vector2 makeRandomVector(Vector2 min, Vector2 max);
+Vector2 makeRandomVector(int max);
+Vector2 makeRandomVector(int min, int max);
 
 namespace std
 {
@@ -192,10 +127,7 @@ struct Vector3
     bool operator==(Vector3 vector) const { return x == vector.x && y == vector.y && z == vector.z; }
     bool operator!=(Vector3 vector) const { return x != vector.x || y != vector.y || z != vector.z; }
 
-    Vector3 divFloor(int divisor) const
-    {
-        return Vector3(::divFloor(x, divisor), ::divFloor(y, divisor), ::divFloor(z, divisor));
-    }
+    Vector3 divFloor(int divisor) const;
 };
 
 namespace std
@@ -218,7 +150,6 @@ struct Rect
     Rect() = default;
     constexpr Rect(Vector2 position, Vector2 size) : position(position), size(size) {}
     constexpr Rect(int x, int y, int w, int h) : position(x, y), size(w, h) {}
-
     int getLeft() const { return position.x; }
     int getRight() const { ASSERT(size.x > 0); return position.x + size.x - 1; }
     int getTop() const { return position.y; }
@@ -230,24 +161,9 @@ struct Rect
     int getPerimeter() const { return 2 * (size.x + size.y); }
     Rect offset(Vector2 offset) const { return Rect(position + offset, size); }
     Rect inset(Vector2 amount) const { return Rect(position + amount, size - amount * 2); }
-
-    bool intersects(Rect other) const
-    {
-        return getLeft() < other.getRight() && getRight() > other.getLeft()
-            && getTop() < other.getBottom() && getBottom() > other.getTop();
-    }
+    bool intersects(Rect other) const;
 };
 
 inline constexpr Vector2::Vector2(Vector3 vector) : x(vector.x), y(vector.y) {}
 
-inline bool Vector2::isWithin(Rect rect) const
-{
-    return x >= rect.getLeft() && x <= rect.getRight() &&
-           y >= rect.getTop() && y <= rect.getBottom();
-}
-
-inline Vector2 makeRandomVectorInside(Rect rect)
-{
-    return Vector2(randInt(rect.getLeft(), rect.getRight()),
-                   randInt(rect.getTop(), rect.getBottom()));
-}
+Vector2 makeRandomVectorInside(Rect rect);

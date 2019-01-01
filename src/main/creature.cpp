@@ -5,6 +5,8 @@
 #include "msgsystem.h"
 #include "tile.h"
 #include "engine/assert.h"
+#include "engine/config.h"
+#include "engine/math.h"
 #include "engine/raycast.h"
 #include "engine/savefile.h"
 #include <cctype>

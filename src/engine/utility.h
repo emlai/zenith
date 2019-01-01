@@ -14,17 +14,6 @@ std::ostream& operator<<(std::ostream& outputStream, const std::vector<T>& eleme
     return outputStream;
 }
 
-/// Divides rounding towards negative infinity.
-inline int divFloor(int dividend, int divisor)
-{
-    const int quotient = dividend / divisor;
-
-    if ((dividend % divisor != 0) && ((dividend < 0) != (divisor < 0)))
-        return quotient - 1;
-    else
-        return quotient;
-}
-
 std::string toOnOffString(bool value);
 std::string toStringAvoidingDecimalPlaces(double value);
 std::string operator+(std::string_view a, std::string_view b);

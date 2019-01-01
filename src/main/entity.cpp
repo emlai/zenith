@@ -1,14 +1,7 @@
 #include "entity.h"
+#include "engine/config.h"
 #include "engine/error.h"
-#include <unordered_set>
-
-static void reportUnknownComponent(std::string_view name)
-{
-    static std::unordered_set<std::string> reportedNames;
-
-    if (reportedNames.insert(std::string(name)).second)
-        warn("Unknown component '" + name + "'");
-}
+#include "engine/utility.h"
 
 Entity::Entity(std::string_view id, const Config& config)
 :   id(id),
@@ -21,7 +14,7 @@ Entity::Entity(std::string_view id, const Config& config)
             if (auto component = Component::get(componentName, *this))
                 components.push_back(std::move(component));
             else
-                reportUnknownComponent(componentName);
+                warn("Unknown component '" + componentName + "'");
         }
     }
 }

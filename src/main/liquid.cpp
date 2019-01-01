@@ -1,6 +1,8 @@
 #include "liquid.h"
 #include "game.h"
 #include "tile.h"
+#include "engine/config.h"
+#include "engine/math.h"
 
 Liquid::Liquid(std::string_view materialId)
 :   materialId(materialId),

@@ -1,6 +1,7 @@
 #include "object.h"
 #include "game.h"
 #include "gui.h"
+#include "engine/config.h"
 
 Object::Object(std::string_view id)
 :   Entity(id, *Game::objectConfig),

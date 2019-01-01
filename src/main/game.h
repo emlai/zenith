@@ -2,7 +2,6 @@
 
 #include "creature.h"
 #include "world.h"
-#include "engine/config.h"
 #include "engine/color.h"
 #include "engine/keyboard.h"
 #include "engine/state.h"

@@ -3,6 +3,7 @@
 #include "creature.h"
 #include "game.h"
 #include "engine/assert.h"
+#include "engine/config.h"
 #include "engine/menu.h"
 #include "engine/window.h"
 

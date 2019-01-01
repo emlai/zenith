@@ -2,6 +2,7 @@
 #include "../tile.h"
 #include "../world.h"
 #include "engine/assert.h"
+#include "engine/config.h"
 #include "engine/raycast.h"
 #include "engine/window.h"
 

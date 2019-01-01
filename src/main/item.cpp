@@ -4,7 +4,9 @@
 #include "gui.h"
 #include "tile.h"
 #include "engine/assert.h"
+#include "engine/config.h"
 #include "engine/error.h"
+#include "engine/math.h"
 #include "engine/savefile.h"
 
 static Color getMaterialColor(std::string_view materialId)

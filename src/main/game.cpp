@@ -3,6 +3,7 @@
 #include "item.h"
 #include "msgsystem.h"
 #include "tile.h"
+#include "engine/config.h"
 #include "engine/keyboard.h"
 #include "engine/math.h"
 #include "engine/menu.h"
