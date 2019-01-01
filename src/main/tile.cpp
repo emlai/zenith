@@ -106,7 +106,7 @@ void Tile::render(Window& window, bool fogOfWar, bool renderLight) const
     {
         double cursorBreathRateMS = 150.0;
         double sine = std::sin(SDL_GetTicks() / cursorBreathRateMS);
-        double minAlpha = 0.0;
+        double minAlpha = 0.1;
         double maxAlpha = 0.5;
         double currentAlpha = minAlpha + (sine + 1) / 2 * (maxAlpha - minAlpha);
         auto cursorColor = Color(0xFF, 0xFF, 0xFF, currentAlpha * 0xFF);
