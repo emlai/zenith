@@ -34,11 +34,6 @@ Action PlayerController::control(Creature& creature)
     {
         Event event = game.getWindow().waitForInput();
 
-        if (!creature.isDead())
-            if (auto direction = getDirectionFromEvent(event, creature.getPosition()))
-                if (auto action = creature.tryToMoveOrAttack(direction))
-                    return action;
-
         if (event.type != Event::KeyDown)
             continue;
 
@@ -46,6 +41,26 @@ Action PlayerController::control(Creature& creature)
 
         switch (action)
         {
+            case MoveUp:
+            case MoveUpLeft:
+            case MoveLeft:
+            case MoveDownLeft:
+            case MoveDown:
+            case MoveDownRight:
+            case MoveRight:
+            case MoveUpRight:
+            {
+                if (creature.isDead())
+                    break;
+
+                auto direction = getMovementDirection(action);
+
+                if (auto action = creature.tryToMoveOrAttack(direction))
+                    return action;
+
+                break;
+            }
+
             case GoUpOrDown:
                 if (!creature.isDead() && creature.enter())
                     return GoUpOrDown;
@@ -136,7 +151,6 @@ Action PlayerController::control(Creature& creature)
                 creature.setRunning(!creature.isRunning());
                 break;
 
-            case Move:
             case Attack:
             case LastAction:
                 ASSERT(false);
@@ -217,7 +231,7 @@ static Key getDefaultKeyForAction(Action action)
         case Wait: return '.';
         case GoUpOrDown: return Enter;
         case PickUpItems: return ',';
-        case DropItem: return 'd';
+        case DropItem: return 'D';
         case UseItem: return 'u';
         case EatItem: return 'e';
         case Close: return 'c';
@@ -225,7 +239,14 @@ static Key getDefaultKeyForAction(Action action)
         case OpenInventory: return 'i';
         case ShowEquipmentMenu: return 'E';
         case ToggleRunning: return 'r';
-        case Move:
+        case MoveUp: return 'w';
+        case MoveLeft: return 'a';
+        case MoveDown: return 's';
+        case MoveRight: return 'd';
+        case MoveUpLeft:
+        case MoveDownLeft:
+        case MoveDownRight:
+        case MoveUpRight:
         case Attack:
         case NoAction:
         case LastAction:
@@ -270,20 +291,10 @@ Dir8 getDirectionFromEvent(Event event, Vector2 origin)
             break;
 
         case Event::KeyDown:
-            switch (event.key)
-            {
-                case RightArrow:
-                    return East;
+            for (auto action : movementActions)
+                if (event.key == getMappedKey(action))
+                    return getMovementDirection(action);
 
-                case LeftArrow:
-                    return West;
-
-                case DownArrow:
-                    return South;
-
-                case UpArrow:
-                    return North;
-            }
             break;
 
         case Event::None:

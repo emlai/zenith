@@ -6,7 +6,7 @@ struct Vector2;
 struct Vector3;
 struct Rect;
 
-enum Dir8
+enum Dir8 : int
 {
     NoDir,
     East,

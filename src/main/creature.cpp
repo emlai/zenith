@@ -371,7 +371,7 @@ Action Creature::tryToMoveOrAttack(Dir8 direction)
     }
 
     moveTo(*destination);
-    return Move;
+    return getMovementAction(direction);
 }
 
 Action Creature::tryToMoveTowardsOrAttack(Creature& target)
