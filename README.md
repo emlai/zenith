@@ -8,24 +8,39 @@ It is written in C++17 using the SDL2 library.
 
 ## Building from source
 
-Install the dependencies: CMake and SDL2.
+1.  Install the dependencies: CMake and SDL2.
 
-Ubuntu:
+    Ubuntu:
 
-    sudo apt-get install cmake libsdl2-dev
+        sudo apt-get install cmake libsdl2-dev
 
-macOS (with [Homebrew](https://brew.sh/)):
+    macOS (with [Homebrew](https://brew.sh/)):
 
-    brew install cmake sdl2
+        brew install cmake sdl2
 
-When invoking CMake, you may need to define the path to SDL2: `-DSDL2_PATH=...`
+    Windows:
 
-Then, generate a build system, and build the project:
+    - Download CMake installer: https://cmake.org/download/
+    - Download SDL2 development libraries: https://libsdl.org/download-2.0.php
 
-    cmake .
-    make -j
+2.  Generate a build system:
 
-This creates the game executable in the project root directory.
+        cmake .
+
+    You may need to define the path to SDL2:
+
+        cmake . -DSDL2_PATH="/path/to/SDL2"
+
+3.  Build the project using the generated build system, or directly from the command line using:
+
+        cmake --build .
+
+    Or in release mode:
+
+        cmake --build . --config Release
+
+    This creates the game executable in the project root directory.
+    On Windows you may need to copy SDL2.dll to this directory to run the game.
 
 Feel free to open an issue if you run into any problems.
 
