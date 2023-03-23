@@ -42,5 +42,10 @@ find_package(SDL2 REQUIRED)
 target_include_directories(zenith SYSTEM PUBLIC ${SDL2_INCLUDE_DIR})
 target_link_libraries(zenith ${SDL2_LIBRARY})
 
+add_subdirectory(llama.cpp)
+target_compile_options(llama PRIVATE -O3)
+target_include_directories(zenith SYSTEM PUBLIC llama.cpp)
+target_link_libraries(zenith llama)
+
 include(cotire)
 cotire(zenith)
