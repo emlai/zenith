@@ -1,4 +1,4 @@
-# Zenith [![Build Status](https://travis-ci.org/emlai/zenith.svg?branch=master)](https://travis-ci.org/emlai/zenith)
+# Zenith
 
 Zenith is an upcoming open-world roguelike-like game currently in development.
 It is written in C++17 using the SDL2 library.
